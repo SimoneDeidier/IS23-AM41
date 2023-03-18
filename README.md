@@ -4,10 +4,10 @@ Professor: Alessandro Margara
 Group name: **IS23-AM41**
 Students:
 
-* (D'Alessio Edoardo)[https://github.com/EdoardoDAlessio]
-* (De Ciechi Samuele)[https://github.com/Samdec01]
-* (Deidier Simone)[https://github.com/SimoneDeidier]
-* (Ermacora Iacopo)[https://github.com/IacopoErmacoraPolimi]
+* [D'Alessio Edoardo](https://github.com/EdoardoDAlessio)
+* [De Ciechi Samuele](https://github.com/Samdec01)
+* [Deidier Simone](https://github.com/SimoneDeidier)
+* [Ermacora Iacopo](https://github.com/IacopoErmacoraPolimi)
 
 ## Objectives
 

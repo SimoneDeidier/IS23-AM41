@@ -10,7 +10,7 @@ Thumbs.db
 **/packages
 
 # Ignore compiled code
-.class
+*/.class
 
 # Ignore build output
 **/bin
