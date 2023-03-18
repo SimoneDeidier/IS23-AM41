@@ -1,2 +1,23 @@
-
+# Ignore all hidden system files
 .DS_Store
+Thumbs.db
+
+# Ignore personal IDE config files
+.idea/workspace.xml
+
+# Ignore dependency caches
+**/node_modules
+**/packages
+
+# Ignore compiled code
+.class
+
+# Ignore build output
+**/bin
+**/out
+**/target
+
+# Ignore runtime generated files
+*.log
+*.lock
+*.tmp
