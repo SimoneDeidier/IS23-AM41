@@ -4,6 +4,8 @@ Thumbs.db
 
 # Ignore personal IDE config files
 .idea/*.xml
+.idea/**
+.idea/*
 
 # Ignore dependency caches
 **/node_modules
