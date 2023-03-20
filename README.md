@@ -1,6 +1,6 @@
 # Software Engeneering - Final Project 2023
 
-Professor: Alessandro Margara
+Professor: Alessandro Margara $\newline$
 Group name: **IS23-AM41**
 Students:
 

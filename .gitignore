@@ -3,7 +3,7 @@
 Thumbs.db
 
 # Ignore personal IDE config files
-.idea/workspace.xml
+.idea/*.xml
 
 # Ignore dependency caches
 **/node_modules
