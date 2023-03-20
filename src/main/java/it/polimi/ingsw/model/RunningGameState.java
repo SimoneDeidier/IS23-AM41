@@ -6,7 +6,7 @@ public class RunningGameState extends GameState{
 
     @Override
     public int getAvailableSlot(int maxPlayerNumber, int listSize) {
-        return super.getAvailableSlot(maxPlayerNumber, listSize);
+        return -2;
     }
 
     @Override
@@ -16,7 +16,7 @@ public class RunningGameState extends GameState{
 
     @Override
     public void setupGame() {
-        super.setupGame();
+        //Serve anche qui il setupGame per sistemare la board nel caso di tessere insufficienti?
     }
 }
 

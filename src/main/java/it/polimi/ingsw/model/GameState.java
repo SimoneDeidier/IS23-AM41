@@ -4,15 +4,9 @@ import java.util.List;
 
 public abstract class GameState {
 
-    public int getAvailableSlot(int maxPlayerNumber, int listSize) {
-        return 0;
-    }
+    public abstract int getAvailableSlot(int maxPlayerNumber, int listSize);
 
-    public void addPlayer(Player player, List<Player> playerList) {
+    public abstract void addPlayer(Player player, List<Player> playerList);
 
-    }
-
-    public void setupGame() {
-
-    }
+    public abstract void setupGame();
 }
