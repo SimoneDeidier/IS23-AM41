@@ -4,8 +4,12 @@ public class Board {
     private Board instance;
     private Item[][] boardMatrix;
     private ItemsBag itemsBag;
-    private Board Board();
-    public getBoard(){
+
+    private Board() {
+
+    }
+
+    public Board getBoard(){
         if(instance==null)
             instance=new Board();
         return instance;

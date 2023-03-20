@@ -9,21 +9,24 @@ public class Shelf {
     }
 
     public boolean isFull(){
-        for(i=0;i<5;i++)
-            if(shelfMatrix[0][i]==null) //it is enough to check the top line of the matrix
-                return false;           //as the items gets inserted one by one in the same column
+        for(i=0;i<5;i++) {
+            if (shelfMatrix[0][i] == null) //it is enough to check the top line of the matrix
+                return false;//as the items gets inserted one by one in the same column
+        }
         return true;
 
     }
-    public void insertItems(int column,Item[3] items){ //items is already in the order the user wants to put the items in the shelf
-        if(items[1]==null)
-            if(columnFreeSpace(column)>=1)  //server-side check for chosen column
-                shelfMatrix[columnFreeSpace(column)-1][column]=items[0];
-        else if(items[2]==null)
-            if(columnFreeSpace(column)>=2) { //server-side check for chosen column
+    public void insertItems(int column,Item items[3]){ //items is already in the order the user wants to put the items in the shelf
+        if(items[1]==null) {
+            if (columnFreeSpace(column) >= 1)  //server-side check for chosen column
+                shelfMatrix[columnFreeSpace(column) - 1][column] = items[0];
+        }
+        else if(items[2]==null) {
+            if (columnFreeSpace(column) >= 2) { //server-side check for chosen column
                 shelfMatrix[columnFreeSpace(column) - 1][column] = items[0];
                 shelfMatrix[columnFreeSpace(column) - 1][column] = items[1];
             }
+        }
         else{
                 if(columnFreeSpace(column)>=3) { //server-side check for chosen column
                     shelfMatrix[columnFreeSpace(column) - 1][column] = items[0];
