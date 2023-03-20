@@ -9,5 +9,8 @@
         <module name="IS23-AM41" />
       </profile>
     </annotationProcessing>
+    <bytecodeTargetLevel>
+      <module name="IS23-AM41" target="1.5" />
+    </bytecodeTargetLevel>
   </component>
 </project>
