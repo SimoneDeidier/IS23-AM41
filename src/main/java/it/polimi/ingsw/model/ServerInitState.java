@@ -20,7 +20,8 @@ public class ServerInitState extends GameState {
     }
 
     @Override
-    public void setupGame() {
-        // va implementata tutta la logica di setup del game (crea la board, le card ecc...)
+    public void setupGame(ItemsBag bag) {
+        // in server initialization state we initialize only the items bag
+        bag.setupBag();
     }
 }

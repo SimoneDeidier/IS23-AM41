@@ -9,6 +9,7 @@ public class Game {
     private boolean lastTurn;
     private GameState state;
     private List<Player> playerList;
+    private ItemsBag itemsBag;
 
     private Game(GameState state) {
         this.state = state;
@@ -33,13 +34,17 @@ public class Game {
         state.addPlayer(player, playerList);
     }
 
-    public void setupGame() {
-        state.setupGame();
+    public void setupGame(ItemsBag bag) {
+        state.setupGame(bag);
     }
 
     public boolean checkLastTurn() {
-        // todo da implementare
-        return true;
+        for(Player p : playerList) {
+            if(p.getShelf().isFull()) {
+                return true;
+            }
+        }
+        return false;
     }
 
 }

@@ -8,5 +8,5 @@ public abstract class GameState {
 
     public abstract void addPlayer(Player player, List<Player> playerList);
 
-    public abstract void setupGame();
+    public abstract void setupGame(ItemsBag bag);
 }
