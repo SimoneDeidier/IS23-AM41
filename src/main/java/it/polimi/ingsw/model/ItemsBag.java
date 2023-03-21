@@ -3,10 +3,12 @@ package it.polimi.ingsw.model;
 import java.awt.*;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Random;
 
 public class ItemsBag {
     private ItemsBag instance = null;
     private List<Item> itemList;
+    Random random = new Random();
 
     private ItemsBag() {
         itemList = new ArrayList<Item>(132);
@@ -27,13 +29,14 @@ public class ItemsBag {
         }
     }
 
-    public int getItemsRemainingCount() {
+    public int getRemainingItemsCount() {
         return itemList.size();
     }
 
     public Item pickItem() {
-        // random ritorna un item
-        return null;
+        Item picked = itemList.get(random.nextInt(itemList.size()));
+        itemList.remove(picked);
+        return picked;
     }
 
 }

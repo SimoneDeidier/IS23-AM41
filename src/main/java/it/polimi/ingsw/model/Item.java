@@ -28,4 +28,25 @@ public class Item {
         }
     }
 
+    public ItemType getType() {
+        return type;
+    }
+
+    public ItemColor getColor() {
+        return color;
+    }
+
+    public void setType(ItemType type) {
+        this.type = type;
+    }
+
+    public void setColor(ItemColor color) {
+        this.color = color;
+    }
+
+    public Item(Item item) {
+        this.type = item.getType();
+        this.color = item.getColor();
+    }
+
 }

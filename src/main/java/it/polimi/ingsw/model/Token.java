@@ -1,13 +1,11 @@
 package it.polimi.ingsw.model;
 
 public abstract class Token {
-    private int value;
-    private Player owner;
+    protected int value;
+    protected Player owner = null;
 
-    public boolean isTakeable(){ //Not abstract because it's the same
-        if owner==null           //for both Scoring and EndGame tokens
-            return true;
-        return false;
+    public boolean isTakeable(){
+        return owner == null;
     }
 
     public int getValue() {

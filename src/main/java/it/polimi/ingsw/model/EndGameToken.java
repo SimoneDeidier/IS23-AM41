@@ -3,11 +3,13 @@ package it.polimi.ingsw.model;
 public class EndGameToken extends Token{
     private EndGameToken instance;
 
-    private EndGameToken();
+    private EndGameToken(int value) {
+        this.value = value;
+    }
 
-    public getEndGameToken(){
+    public EndGameToken getEndGameToken(){
         if(instance==null)
-            instance = new EndGameToken();
+            instance = new EndGameToken(1);
         return instance;
     }
 
