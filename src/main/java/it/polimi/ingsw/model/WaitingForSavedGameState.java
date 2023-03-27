@@ -2,7 +2,7 @@ package it.polimi.ingsw.model;
 
 import java.util.List;
 
-public class WaitingForSavedGameState extends GameState{
+public class WaitingForSavedGameState extends GameState {
 
     @Override
     public int getAvailableSlot(int maxPlayerNumber, int listSize) {
@@ -21,7 +21,7 @@ public class WaitingForSavedGameState extends GameState{
     }
 
     @Override
-    public void setupGame() {
-        super.setupGame();
+    public void setupGame(ItemsBag itemsBag) {
+        return;
     }
 }

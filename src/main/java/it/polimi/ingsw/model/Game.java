@@ -47,4 +47,7 @@ public class Game {
         return false;
     }
 
+    public void setLastTurn(boolean lastTurn) {
+        this.lastTurn = lastTurn;
+    }
 }

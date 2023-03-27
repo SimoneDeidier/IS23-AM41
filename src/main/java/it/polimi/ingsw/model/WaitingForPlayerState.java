@@ -11,13 +11,11 @@ public class WaitingForPlayerState extends GameState {
 
     @Override
     public void addPlayer(Player player, List<Player> playerList) {
-        //Non usiamo questa classe per controllare tutto il processo di aggiunta?
-        // E quindi servirebbe un if(getAvailabelSlots >0) qui per esempio
         playerList.add(player);
     }
 
     @Override
-    public void setupGame() {
-        super.setupGame();
+    public void setupGame(ItemsBag itemsBag) {
+        return;
     }
 }

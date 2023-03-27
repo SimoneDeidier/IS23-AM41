@@ -17,6 +17,7 @@ public class ServerInitState extends GameState {
         // da quelli salvati nel json, ed invece che vada in waiting forSaved nel caso contrario
         //Cambia molto perchè per esempio se dobbiamo andare in waitingForSaved non
         //serve chiedere per quanti giocatori vuole la partita
+        playerList.add(player);
     }
 
     @Override
