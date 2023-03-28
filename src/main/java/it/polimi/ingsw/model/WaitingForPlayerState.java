@@ -15,7 +15,7 @@ public class WaitingForPlayerState extends GameState {
     }
 
     @Override
-    public void setupGame() {
-        super.setupGame();
+    public void setupGame(ItemsBag itemsBag) {
+        return;
     }
 }

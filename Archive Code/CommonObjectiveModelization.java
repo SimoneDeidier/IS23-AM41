@@ -13,8 +13,8 @@ Ogni tessera si distingue per: colore, tipo
 /* IPOTESI DI CARTA CON ENUM (approssimativa e con molte caratteristiche non tenute 
 in considerazione, ma per rendere l'idea) */
 
-public class CommonObjective {
-    enum objectives {
+public class CommonTargetCard {
+    enum TargetCard {
       one,
       two,
       three,
@@ -29,8 +29,8 @@ public class CommonObjective {
       twelve
     }
   
-    public static void check(String[] args) {
-      objectives nextObj = objectives.three; 
+    public static void check(//shelf) {
+      targetCard nextObj = targetCard.three;
 
     switch(nextObj) {
         case one:
@@ -39,12 +39,12 @@ public class CommonObjective {
             }
             break;
         case two:
-            if(checkObb1(matrix[][])){
+            if(checkObb2(matrix[][])){
                 //assign token
             }
             break;
         case three:
-            if(checkObb1(matrix[][])){
+            if(checkObb3(matrix[][])){
                 //assign token
             }
             break;

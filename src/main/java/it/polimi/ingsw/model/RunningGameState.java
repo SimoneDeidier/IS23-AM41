@@ -6,17 +6,17 @@ public class RunningGameState extends GameState{
 
     @Override
     public int getAvailableSlot(int maxPlayerNumber, int listSize) {
-        return super.getAvailableSlot(maxPlayerNumber, listSize);
+        return 0;
     }
 
     @Override
     public void addPlayer(Player player, List<Player> playerList) {
-        super.addPlayer(player, playerList);
+        return;
     }
 
     @Override
-    public void setupGame() {
-        super.setupGame();
+    public void setupGame(ItemsBag itemsBag) {
+        return;
     }
 }
 
