@@ -9,7 +9,6 @@ public class Game {
     private boolean lastTurn;
     private GameState state;
     private List<Player> playerList;
-    private ItemsBag itemsBag;
 
     private Game(GameState state) {
         this.state = state;

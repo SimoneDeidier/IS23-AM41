@@ -6,11 +6,16 @@ public class Player {
     private String nickname;
     private boolean connected;
     private int playerScore;
-    private boolean EndGameToken;
+    private EndGameToken endGameToken;
     private Shelf shelf;
     private List<ScoringToken> scoringToken;
     private List<CommonTargetCard> commonTargetCard;
     private PersonalTargetCard personalTargetCard;
+
+    public Player(String nickname) {
+        this.nickname = nickname;
+        endGameToken = null;
+    }
 
     public String getNickname() {
         return nickname;
@@ -36,12 +41,12 @@ public class Player {
         this.playerScore = playerScore;
     }
 
-    public boolean isEndGameToken() {
-        return EndGameToken;
+    public EndGameToken getEndGameToken() {
+        return endGameToken;
     }
 
-    public void setEndGameToken(boolean endGameToken) {
-        EndGameToken = endGameToken;
+    public void setEndGameToken(EndGameToken endGameToken) {
+        this.endGameToken = endGameToken;
     }
 
     public Shelf getShelf() {
@@ -74,5 +79,19 @@ public class Player {
 
     public void setPersonalTargetCard(PersonalTargetCard personalTargetCard) {
         this.personalTargetCard = personalTargetCard;
+    }
+
+    public void updateScore() {
+        playerScore = 0;
+        if(endGameToken != null) {
+            playerScore += endGameToken.getValue();
+        }
+        for(ScoringToken token : scoringToken) {
+            if(token != null) {
+                playerScore += token.getValue();
+            }
+        }
+        playerScore += personalTargetCard.calculatePoints(shelf);
+        playerScore += shelf.updateAdjacentItemsPoints();
     }
 }
