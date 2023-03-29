@@ -1,6 +1,6 @@
 package it.polimi.ingsw.model;
 
-import java.util.List;
+import java.util.ArrayList;
 
 public class Player {
     private String nickname;
@@ -8,8 +8,8 @@ public class Player {
     private int playerScore;
     private EndGameToken endGameToken;
     private Shelf shelf;
-    private List<ScoringToken> scoringToken;
-    private List<CommonTargetCard> commonTargetCard;
+    private ArrayList<ScoringToken> scoringToken;
+    private ArrayList<CommonTargetCard> commonTargetCard;
     private PersonalTargetCard personalTargetCard;
 
     public Player(String nickname) {
@@ -57,19 +57,19 @@ public class Player {
         this.shelf = shelf;
     }
 
-    public List<ScoringToken> getScoringToken() {
+    public ArrayList<ScoringToken> getScoringToken() {
         return scoringToken;
     }
 
-    public void setScoringToken(List<ScoringToken> scoringToken) {
+    public void setScoringToken(ArrayList<ScoringToken> scoringToken) {
         this.scoringToken = scoringToken;
     }
 
-    public List<CommonTargetCard> getCommonTargetCard() {
+    public ArrayList<CommonTargetCard> getCommonTargetCard() {
         return commonTargetCard;
     }
 
-    public void setCommonTargetCard(List<CommonTargetCard> commonTargetCard) {
+    public void setCommonTargetCard(ArrayList<CommonTargetCard> commonTargetCard) {
         this.commonTargetCard = commonTargetCard;
     }
 
