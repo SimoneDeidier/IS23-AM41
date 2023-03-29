@@ -1,6 +1,7 @@
 package it.polimi.ingsw.model;
 
 public class EndGameToken extends Token{
+
     private static EndGameToken instance;
 
     private EndGameToken(int value) {
