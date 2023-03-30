@@ -1,5 +1,7 @@
 package it.polimi.ingsw.model;
 
+import javax.sql.rowset.RowSetWarning;
+
 public abstract class BoardFactory {
 
     protected Item[][] boardMatrix= new Item[9][9];
@@ -17,14 +19,15 @@ public abstract class BoardFactory {
 
 
     public  void refillBoard() {
-        for(int i = 0; i < 9; i++) {
-            for(int j = 0; j < 9; j++) {
-                if(bitMask[i][j] == 1 && boardMatrix[i][j] == null) {
+        for (int i = 0; i < 9; i++) {
+            for (int j = 0; j < 9; j++) {
+                if (bitMask[i][j] == 1 && boardMatrix[i][j] == null) {
                     boardMatrix[i][j] = itemsBag.pickItem();
                 }
             }
         }
     }
+
     public int[][] createBitMask() {
         int[][] bitMask = new int[9][9];
 
