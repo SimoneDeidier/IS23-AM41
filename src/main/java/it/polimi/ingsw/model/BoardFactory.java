@@ -65,7 +65,7 @@ public abstract class BoardFactory {
             }
             else {
                 //però il pick dovrebbe essere di tutti gli item insieme, perchè pickiamo un solo item?
-                Item item = boardMatrix[x][y];
+                Item item = new Item(boardMatrix[x][y].getColor());
                 boardMatrix[x][y] = null;
                 bitMask[x][y] = 1;
                 return item;

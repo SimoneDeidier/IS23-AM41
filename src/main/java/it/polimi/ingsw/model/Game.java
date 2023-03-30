@@ -9,7 +9,7 @@ public class Game {
     private int maxPlayerNumber;
     private boolean lastTurn;
     private GameState state;
-    private ArrayList<Player> playerList;
+    private List<Player> playerList;
 
     private Game(GameState state) {
         this.state = state;

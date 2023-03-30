@@ -13,7 +13,7 @@ public class App {
     public static void main(String[] args) throws NotEnoughSpaceInColumnException, InvalidBoardPositionException, NullItemPickedException {
         Shelf shelf = new Shelf();
         ItemsBag itemsBag = ItemsBag.getItemsBag();
-        BoardFactory board = TwoPlayersBoardFactory.getTwoPlayersBoard(itemsBag);
+        BoardFactory board = TwoPlayersBoard.getTwoPlayersBoard(itemsBag);
 
         itemsBag.setupBag();
         board.refillBoard();

@@ -1,6 +1,7 @@
 package it.polimi.ingsw.model;
 
 import java.util.ArrayList;
+import java.util.List;
 
 public class ServerInitState extends GameState {
 
@@ -10,7 +11,7 @@ public class ServerInitState extends GameState {
     }
 
     @Override
-    public void addPlayer(Player player, ArrayList<Player> playerList) {
+    public void addPlayer(Player player, List<Player> playerList) {
         // come gestiamo l'inserimento del primo giocatore?
         //Serve un check che dica se passare in waitingForPlayer nel caso in cui
         //il nickname del giocatore iniziale che sta provando a collegarsi sia diverso

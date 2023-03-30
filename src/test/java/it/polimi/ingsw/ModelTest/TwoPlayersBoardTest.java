@@ -3,16 +3,16 @@ package it.polimi.ingsw.ModelTest;
 import it.polimi.ingsw.model.*;
 import static org.junit.jupiter.api.Assertions.*;
 import junit.framework.TestCase;
+import org.junit.jupiter.api.Test;
+public class TwoPlayersBoardTest extends TestCase {
 
-public class TwoPlayersBoardTestFactory extends TestCase {
-
+    @Test
     public void testRefillBoard() throws InvalidBoardPositionException, NullItemPickedException {
         ItemsBag itemsBag = ItemsBag.getItemsBag();
         itemsBag.setupBag();
-        BoardFactory board = TwoPlayersBoardFactory.getTwoPlayersBoard(itemsBag);
-        //refill board it's already in the constructor for the TwoPlayerBoard
-
-        Item item=board.pickItem(5,4);
+        BoardFactory board = TwoPlayersBoard.getTwoPlayersBoard(itemsBag);
+        board.refillBoard();
+        board.pickItem(5,4);
         board.refillBoard();
         int count=0;
 
@@ -31,11 +31,12 @@ public class TwoPlayersBoardTestFactory extends TestCase {
 
     }
 
-
-    public void testPickItem() throws InvalidBoardPositionException,NullItemPickedException {
+    @Test
+    public void testPickItem() throws InvalidBoardPositionException, NullItemPickedException {
         ItemsBag itemsBag = ItemsBag.getItemsBag();
         itemsBag.setupBag();
-        BoardFactory board = TwoPlayersBoardFactory.getTwoPlayersBoard(itemsBag);
+        BoardFactory board = TwoPlayersBoard.getTwoPlayersBoard(itemsBag);
+        board.refillBoard();
         board.pickItem(5,4);
         assertThrows(NullItemPickedException.class,()->board.pickItem(5,4));
         assertThrows(InvalidBoardPositionException.class,()->board.pickItem(1,1));

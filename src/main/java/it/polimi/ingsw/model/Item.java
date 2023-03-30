@@ -44,10 +44,5 @@ public class Item {
         this.color = color;
     }
 
-    //Da cancellare? Mi sembra useless,usiamo l'altro in itemsBag e non mi sembra che creiamo altri item da qualche altra parte
-    public Item(Item item) {
-        this.type = item.getType();
-        this.color = item.getColor();
-    }
 
 }

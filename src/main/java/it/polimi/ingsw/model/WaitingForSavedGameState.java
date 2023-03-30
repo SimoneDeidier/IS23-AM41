@@ -1,6 +1,7 @@
 package it.polimi.ingsw.model;
 
 import java.util.ArrayList;
+import java.util.List;
 
 public class WaitingForSavedGameState extends GameState {
 
@@ -10,7 +11,7 @@ public class WaitingForSavedGameState extends GameState {
     }
 
     @Override
-    public void addPlayer(Player player, ArrayList<Player> playerList) {
+    public void addPlayer(Player player, List<Player> playerList) {
         //DA IMPLEMENTARE
         //Io l'avevo pensata come
         // chiamata a funzione check che il nome sia di quelli della partita salvata
