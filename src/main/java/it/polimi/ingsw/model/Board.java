@@ -1,10 +1,20 @@
 package it.polimi.ingsw.model;
 
-public abstract class BoardFactory {
+public abstract class Board {
 
-    protected Item[][] boardMatrix;
+    protected Item[][] boardMatrix= new Item[9][9];
     protected int[][] bitMask;
     protected ItemsBag itemsBag;
+
+
+    public int getBitMaskElement(int i,int j) {
+        return bitMask[i][j];
+    }
+
+    public Item getBoardMatrixElement(int i,int j){
+        return boardMatrix[i][j];
+    }
+
 
     public  void refillBoard() {
         for(int i = 0; i < 9; i++) {
@@ -26,11 +36,13 @@ public abstract class BoardFactory {
         for(int i = 3; i < 5; i++) {
             bitMask[1][i] = 1;
         }
-        for(int i = 2; i < 6; i++) {
+        for(int i = 3; i < 6; i++) {
             bitMask[2][i] = 1;
         }
-        for(int i = 1; i < 8; i++) {
+        for(int i = 2; i < 8; i++) {
             bitMask[3][i] = 1;
+        }
+        for(int i = 1; i < 8; i++) {
             bitMask[4][i] = 1;
         }
         for(int i = 1; i < 7; i++) {
@@ -53,7 +65,7 @@ public abstract class BoardFactory {
             }
             else {
                 //però il pick dovrebbe essere di tutti gli item insieme, perchè pickiamo un solo item?
-                Item item = new Item(boardMatrix[x][y]);
+                Item item = boardMatrix[x][y];
                 boardMatrix[x][y] = null;
                 bitMask[x][y] = 1;
                 return item;

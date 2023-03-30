@@ -1,6 +1,6 @@
 package it.polimi.ingsw.model;
 
-public class TwoPlayersBoard extends BoardFactory{
+public class TwoPlayersBoard extends Board {
 
     private static BoardFactory instance;
 

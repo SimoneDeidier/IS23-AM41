@@ -1,6 +1,6 @@
 package it.polimi.ingsw.model;
 
-import java.util.List;
+import java.util.ArrayList;
 
 public class RunningGameState extends GameState{
 
@@ -10,12 +10,12 @@ public class RunningGameState extends GameState{
     }
 
     @Override
-    public void addPlayer(Player player, List<Player> playerList) {
+    public void addPlayer(Player player, ArrayList<Player> playerList) {
         return;
     }
 
     @Override
-    public void setupGame(ItemsBag itemsBag) {
+    public void setupGame() {
         return;
     }
 }

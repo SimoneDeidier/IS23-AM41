@@ -1,15 +1,16 @@
 package it.polimi.ingsw.model;
 
-public class ThreePlayersBoard extends BoardFactory{
+public class ThreePlayersBoard extends Board {
 
-    private BoardFactory instance;
+    private static Board instance;
 
     private ThreePlayersBoard(ItemsBag itemsBag) {
         this.itemsBag = itemsBag;
         bitMask = createBitMask();
+        refillBoard();
     }
 
-    public BoardFactory getThreePlayersBoard(ItemsBag itemsBag) {
+    public static Board getThreePlayersBoard(ItemsBag itemsBag) {
         if(instance == null) {
             instance = new ThreePlayersBoard(itemsBag);
         }
@@ -20,6 +21,7 @@ public class ThreePlayersBoard extends BoardFactory{
     public int[][] createBitMask() {
         int[][] bitMask = super.createBitMask();
         bitMask[0][3] = 1;
+        bitMask[2][2] = 1;
         bitMask[2][6] = 1;
         bitMask[3][8] = 1;
         bitMask[5][0] = 1;

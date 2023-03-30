@@ -2840,7 +2840,7 @@
 											"top": 935,
 											"width": 292.6015625,
 											"height": 13,
-											"text": "BoardFactory"
+											"text": "Board"
 										},
 										{
 											"_type": "LabelView",
@@ -15318,7 +15318,7 @@
 											"top": 1102,
 											"width": 337.7841796875,
 											"height": 13,
-											"text": "-instance: BoardFactory",
+											"text": "-instance: Board",
 											"horizontalAlignment": 0
 										}
 									],
@@ -15352,7 +15352,7 @@
 											"top": 1125,
 											"width": 337.7841796875,
 											"height": 13,
-											"text": "-TwoPlayersBoard(itemsBag: ItemsBag): BoardFactory",
+											"text": "-TwoPlayersBoard(itemsBag: ItemsBag): Board",
 											"horizontalAlignment": 0
 										},
 										{
@@ -15369,7 +15369,7 @@
 											"top": 1140,
 											"width": 337.7841796875,
 											"height": 13,
-											"text": "+getTwoPlayersBoard(itemsBag: ItemsBag): BoardFactory",
+											"text": "+getTwoPlayersBoard(itemsBag: ItemsBag): Board",
 											"horizontalAlignment": 0
 										}
 									],
@@ -15549,7 +15549,7 @@
 											"top": 1326,
 											"width": 340.67236328125,
 											"height": 13,
-											"text": "-instance: BoardFactory",
+											"text": "-instance: Board",
 											"horizontalAlignment": 0
 										}
 									],
@@ -15583,7 +15583,7 @@
 											"top": 1349,
 											"width": 340.67236328125,
 											"height": 13,
-											"text": "-FourPlayersBoard(itemsBag: ItemsBag): BoardFactory",
+											"text": "-FourPlayersBoard(itemsBag: ItemsBag): Board",
 											"horizontalAlignment": 0
 										},
 										{
@@ -15600,7 +15600,7 @@
 											"top": 1364,
 											"width": 340.67236328125,
 											"height": 13,
-											"text": "+getFourPlayersBoard(itemsBag: ItemsBag): BoardFactory",
+											"text": "+getFourPlayersBoard(itemsBag: ItemsBag): Board",
 											"horizontalAlignment": 0
 										},
 										{
@@ -15983,7 +15983,7 @@
 											"top": 1382,
 											"width": 347.90234375,
 											"height": 13,
-											"text": "-instance: BoardFactory",
+											"text": "-instance: Board",
 											"horizontalAlignment": 0
 										}
 									],
@@ -16034,7 +16034,7 @@
 											"top": 1420,
 											"width": 347.90234375,
 											"height": 13,
-											"text": "+getThreePlayersBoard(itemsBag: ItemsBag): BoardFactory",
+											"text": "+getThreePlayersBoard(itemsBag: ItemsBag): Board",
 											"horizontalAlignment": 0
 										},
 										{
@@ -16051,7 +16051,7 @@
 											"top": 1435,
 											"width": 347.90234375,
 											"height": 13,
-											"text": "-ThreePlayersBoard(itemsBag: ItemsBag): BoardFactory",
+											"text": "-ThreePlayersBoard(itemsBag: ItemsBag): Board",
 											"horizontalAlignment": 0
 										}
 									],
@@ -17931,7 +17931,7 @@
 							"_parent": {
 								"$ref": "AAAAAAGG6WNslYkhNus="
 							},
-							"name": "BoardFactory",
+							"name": "Board",
 							"ownedElements": [
 								{
 									"_type": "UMLAssociation",
