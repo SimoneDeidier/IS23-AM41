@@ -4,12 +4,12 @@ import it.polimi.ingsw.model.*;
 import static org.junit.jupiter.api.Assertions.*;
 import junit.framework.TestCase;
 
-public class TwoPlayersBoardTest extends TestCase {
+public class TwoPlayersBoardTestFactory extends TestCase {
 
     public void testRefillBoard() throws InvalidBoardPositionException, NullItemPickedException {
         ItemsBag itemsBag = ItemsBag.getItemsBag();
         itemsBag.setupBag();
-        Board board = TwoPlayersBoard.getTwoPlayersBoard(itemsBag);
+        BoardFactory board = TwoPlayersBoardFactory.getTwoPlayersBoard(itemsBag);
         //refill board it's already in the constructor for the TwoPlayerBoard
 
         Item item=board.pickItem(5,4);
@@ -35,7 +35,7 @@ public class TwoPlayersBoardTest extends TestCase {
     public void testPickItem() throws InvalidBoardPositionException,NullItemPickedException {
         ItemsBag itemsBag = ItemsBag.getItemsBag();
         itemsBag.setupBag();
-        Board board = TwoPlayersBoard.getTwoPlayersBoard(itemsBag);
+        BoardFactory board = TwoPlayersBoardFactory.getTwoPlayersBoard(itemsBag);
         board.pickItem(5,4);
         assertThrows(NullItemPickedException.class,()->board.pickItem(5,4));
         assertThrows(InvalidBoardPositionException.class,()->board.pickItem(1,1));

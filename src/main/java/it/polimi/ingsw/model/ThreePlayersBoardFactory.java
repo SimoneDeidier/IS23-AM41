@@ -1,18 +1,18 @@
 package it.polimi.ingsw.model;
 
-public class ThreePlayersBoard extends Board {
+public class ThreePlayersBoardFactory extends BoardFactory {
 
-    private static Board instance;
+    private static BoardFactory instance;
 
-    private ThreePlayersBoard(ItemsBag itemsBag) {
+    private ThreePlayersBoardFactory(ItemsBag itemsBag) {
         this.itemsBag = itemsBag;
         bitMask = createBitMask();
         refillBoard();
     }
 
-    public static Board getThreePlayersBoard(ItemsBag itemsBag) {
+    public static BoardFactory getThreePlayersBoard(ItemsBag itemsBag) {
         if(instance == null) {
-            instance = new ThreePlayersBoard(itemsBag);
+            instance = new ThreePlayersBoardFactory(itemsBag);
         }
         return instance;
     }

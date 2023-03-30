@@ -1,6 +1,6 @@
 package it.polimi.ingsw.model;
 
-public abstract class Board {
+public abstract class BoardFactory {
 
     protected Item[][] boardMatrix= new Item[9][9];
     protected int[][] bitMask;
