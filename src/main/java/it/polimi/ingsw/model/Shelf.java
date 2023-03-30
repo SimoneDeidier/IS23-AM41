@@ -15,16 +15,27 @@ public class Shelf {
     }
 
     public int calculateAdjacentItemsPoints(){
-        int totalPoints = 0, row = 0;
+        int totalPoints = 0, row;
         boolean[][] bitMask = new boolean[ROWS][COLUMNS];
         boolean[][] visitedBitmask = new boolean[ROWS][COLUMNS];
 
         for(ItemColor color: ItemColor.values()) {
             for(int i = 0; i < ROWS; i++) {
                 for(int j = 0; j < COLUMNS; j++) {
-                    bitMask[i][j] = shelfMatrix[i][j].getColor() == color;
+                    if(shelfMatrix[i][j] != null) {
+                        bitMask[i][j] = shelfMatrix[i][j].getColor() == color;
+                    }
+                    else {
+                        bitMask[i][j] = false;
+                    }
                 }
             }
+            for(int i = 0; i < ROWS; i++) {
+                for(int j = 0; j < COLUMNS; j++) {
+                    visitedBitmask[i][j] = false;
+                }
+            }
+            row = 0;
             while(row != ROWS) {
                 for (int col = 0; col < COLUMNS; col++) {
                     if (bitMask[row][col] && !visitedBitmask[row][col]) {
@@ -96,6 +107,10 @@ public class Shelf {
                 freeSpace--;
             }
         }
+    }
+
+    public Item getItemByCoordinates(int row, int col) {
+        return shelfMatrix[row][col];
     }
 
 }
