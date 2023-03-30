@@ -6,7 +6,7 @@ import java.util.List;
 import java.util.Random;
 
 public class ItemsBag {
-    private ItemsBag instance = null;
+    private static ItemsBag instance = null;
     private List<Item> itemList;
     Random random = new Random();
 
@@ -14,7 +14,7 @@ public class ItemsBag {
         itemList = new ArrayList<Item>(132);
     }
 
-    public ItemsBag getItemsBag() {
+    public static ItemsBag getItemsBag() {
         if(instance == null) {
             instance = new ItemsBag();
         }

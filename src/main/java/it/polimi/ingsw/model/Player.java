@@ -92,6 +92,6 @@ public class Player {
             }
         }
         playerScore += personalTargetCard.calculatePoints(shelf);
-        playerScore += shelf.updateAdjacentItemsPoints();
+        playerScore += shelf.calculateAdjacentItemsPoints();
     }
 }

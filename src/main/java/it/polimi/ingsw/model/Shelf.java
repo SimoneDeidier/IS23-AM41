@@ -6,7 +6,6 @@ public class Shelf {
 
     private final static int ROWS = 6;
     private final static int COLUMNS = 5;
-    private final static int VALUES = 2;
 
     private int shelfPoints;
     private final Item[][] shelfMatrix;
@@ -15,33 +14,27 @@ public class Shelf {
         shelfMatrix = new Item[ROWS][COLUMNS];
     }
 
-    public int updateAdjacentItemsPoints(){
-        int totalPoints = 0;
+    public int calculateAdjacentItemsPoints(){
+        int totalPoints = 0, row = 0;
         boolean[][] bitMask = new boolean[ROWS][COLUMNS];
         boolean[][] visitedBitmask = new boolean[ROWS][COLUMNS];
-        boolean startFound = false;
-        int[] startIndexes = new int[VALUES];
 
         for(ItemColor color: ItemColor.values()) {
             for(int i = 0; i < ROWS; i++) {
                 for(int j = 0; j < COLUMNS; j++) {
-                    if(shelfMatrix[i][j].getColor() != color) {
-                        bitMask[i][j] = false;
-                    }
-                    else {
-                        bitMask[i][j] = true;
-                        if(!startFound) {
-                            startIndexes[0] = i;
-                            startIndexes[1] = j;
-                            startFound = true;
-                        }
-                    }
+                    bitMask[i][j] = shelfMatrix[i][j].getColor() == color;
                 }
             }
-            // todo simo deve finire di fare cose qui
+            while(row != ROWS) {
+                for (int col = 0; col < COLUMNS; col++) {
+                    if (bitMask[row][col] && !visitedBitmask[row][col]) {
+                        totalPoints += decodePoints(exploreGraph(bitMask, visitedBitmask, row, col));
+                    }
+                }
+                row++;
+            }
         }
-
-        return 0;
+        return totalPoints;
     }
 
     public int exploreGraph(boolean[][] bitMask, boolean[][] visited, int row, int col) {
@@ -59,6 +52,22 @@ public class Shelf {
             val += exploreGraph(bitMask, visited, row, col + 1);
         }
         return val;
+    }
+
+    public int decodePoints(int adjacentTiles) {
+        if(adjacentTiles == 3) {
+            return 2;
+        }
+        else if(adjacentTiles == 4) {
+            return 3;
+        }
+        else if (adjacentTiles == 5) {
+            return 5;
+        }
+        else if(adjacentTiles >= 6) {
+            return 8;
+        }
+        else return 0;
     }
 
     public boolean isFull(){
