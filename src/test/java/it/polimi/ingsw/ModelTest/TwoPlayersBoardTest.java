@@ -11,7 +11,8 @@ public class TwoPlayersBoardTest extends TestCase {
         itemsBag.setupBag();
         Board board = TwoPlayersBoard.getTwoPlayersBoard(itemsBag);
         //refill board it's already in the constructor for the TwoPlayerBoard
-        board.pickItem(5,4);
+
+        Item item=board.pickItem(5,4);
         board.refillBoard();
         int count=0;
 
@@ -19,7 +20,7 @@ public class TwoPlayersBoardTest extends TestCase {
 
             for(int j=0;j<9;j++){
 
-                if(board.getBitMaskElement(i,j)==1 && board.getBoardMatrixElement(i,j)!=null)
+                if(board.getBitMaskElement(i,j) == 1 && board.getBoardMatrixElement(i,j) != null)
 
                     count ++;
 
@@ -27,7 +28,7 @@ public class TwoPlayersBoardTest extends TestCase {
         }
         assertEquals(29,count);
 
-        //ADD assertThrows
+
     }
 
 
@@ -35,12 +36,9 @@ public class TwoPlayersBoardTest extends TestCase {
         ItemsBag itemsBag = ItemsBag.getItemsBag();
         itemsBag.setupBag();
         Board board = TwoPlayersBoard.getTwoPlayersBoard(itemsBag);
-        Item itemTest;
-        itemTest=board.pickItem(5,4);
-        if(itemTest!=null){
-            assertNull(board.getBoardMatrixElement(5,4));
-        }
-        //ADD assertThrows
+        board.pickItem(5,4);
+        assertThrows(NullItemPickedException.class,()->board.pickItem(5,4));
+        assertThrows(InvalidBoardPositionException.class,()->board.pickItem(1,1));
 
     }
 }
