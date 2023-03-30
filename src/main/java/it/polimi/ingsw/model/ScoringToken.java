@@ -1,5 +1,7 @@
 package it.polimi.ingsw.model;
 
 public class ScoringToken extends Token{
-    // Nothing to implement
+    public ScoringToken(int value) {
+        this.value=value;
+    }
 }
