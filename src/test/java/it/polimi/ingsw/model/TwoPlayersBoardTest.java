@@ -20,7 +20,7 @@ public class TwoPlayersBoardTest extends TestCase {
 
             for(int j=0;j<9;j++){
 
-                if(board.getBitMaskElement(i,j) == 1 && board.getBoardMatrixElement(i,j) != null)
+                if(board.getBitMaskElement(i,j) == true && board.getBoardMatrixElement(i,j) != null)
 
                     count ++;
 
