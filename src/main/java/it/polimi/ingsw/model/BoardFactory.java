@@ -4,7 +4,10 @@ import javax.sql.rowset.RowSetWarning;
 
 public abstract class BoardFactory {
 
-    protected Item[][] boardMatrix= new Item[9][9];
+    private final static int ROWS = 9;
+    private final static int COLUMNS = 9;
+
+    protected Item[][] boardMatrix= new Item[ROWS][COLUMNS];
     protected boolean[][] bitMask;
     protected ItemsBag itemsBag;
 
@@ -19,8 +22,8 @@ public abstract class BoardFactory {
 
 
     public  void refillBoard() {
-        for (int i = 0; i < 9; i++) {
-            for (int j = 0; j < 9; j++) {
+        for (int i = 0; i < ROWS; i++) {
+            for (int j = 0; j < COLUMNS; j++) {
                 if (bitMask[i][j] == true && boardMatrix[i][j] == null) {
                     boardMatrix[i][j] = itemsBag.pickItem();
                 }
@@ -29,10 +32,10 @@ public abstract class BoardFactory {
     }
 
     public boolean[][] createBitMask() {
-        boolean[][] bitMask = new boolean[9][9];
+        boolean[][] bitMask = new boolean[ROWS][COLUMNS];
 
-        for(int i = 0; i < 9; i++) {
-            for(int j = 0; j < 9; j++) {
+        for(int i = 0; i < ROWS; i++) {
+            for(int j = 0; j < COLUMNS; j++) {
                 bitMask[i][j] = false;
             }
         }
@@ -68,7 +71,7 @@ public abstract class BoardFactory {
                 throw new NullItemPickedException();
             }
             else {
-                //però il pick dovrebbe essere di tutti gli item insieme, perchè pickiamo un solo item?
+                //Manca però il test della validità complessiva della mossa, non del singolo pezzo
                 Item item = new Item(boardMatrix[x][y].getColor());
                 boardMatrix[x][y] = null;
                 bitMask[x][y] = true;
