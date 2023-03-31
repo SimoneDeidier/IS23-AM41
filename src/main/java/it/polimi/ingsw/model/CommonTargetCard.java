@@ -1,4 +1,5 @@
 package it.polimi.ingsw.model;
 
-public class CommonTargetCard {
+public interface CommonTargetCard {
+    public boolean check(int[][] shelf);
 }
