@@ -31,16 +31,22 @@ public class Player {
     }
 
     public void updateScore() {
-        playerScore = 0;
-        if(endGameToken != null) {
-            playerScore += endGameToken.getValue();
-        }
-        for(ScoringToken token : scoringToken) {
-            if(token != null) {
-                playerScore += token.getValue();
+        try {
+            playerScore = 0;
+            if (endGameToken != null) {
+                playerScore += endGameToken.getValue();
             }
+            for (ScoringToken token : scoringToken) {
+                if (token != null) {
+                    playerScore += token.getValue();
+                }
+            }
+            playerScore += personalTargetCard.calculatePoints(shelf);
+            playerScore += shelf.calculateAdjacentItemsPoints();
         }
-        playerScore += personalTargetCard.calculatePoints(shelf);
-        playerScore += shelf.calculateAdjacentItemsPoints();
+        catch (EmptyShelfException e) {
+            System.out.println("EMPTY SHELF EXCEPTION");
+            System.out.println("Player: " + nickname);
+        }
     }
 }
