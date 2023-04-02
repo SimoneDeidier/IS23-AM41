@@ -1,6 +1,9 @@
-package it.polimi.ingsw.model;
+package it.polimi.ingsw.servercotroller;
 
-import java.util.ArrayList;
+import it.polimi.ingsw.model.ItemsBag;
+import it.polimi.ingsw.model.Player;
+import it.polimi.ingsw.servercotroller.GameState;
+
 import java.util.List;
 
 public class ServerInitState extends GameState {

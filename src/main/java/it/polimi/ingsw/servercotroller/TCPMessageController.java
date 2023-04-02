@@ -1,7 +1,5 @@
 package it.polimi.ingsw.servercotroller;
 
-import it.polimi.ingsw.model.Game;
-
 public class TCPMessageController {
 
     private TCPMessageController instance;
