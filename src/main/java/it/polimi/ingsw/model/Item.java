@@ -28,6 +28,30 @@ public class Item {
         }
     }
 
+    public Item(ItemType type) {
+        this.type = type;
+        switch (type) {
+            case CAT: {
+                color = ItemColor.GREEN;
+            }
+            case BOOKS: {
+                color = ItemColor.WHITE;
+            }
+            case GAMES: {
+                color = ItemColor.YELLOW;
+            }
+            case FRAMES: {
+                color = ItemColor.BLUE;
+            }
+            case TROPHIES: {
+                color = ItemColor.LIGHT_BLUE;
+            }
+            case PLANTS: {
+                color = ItemColor.PINK;
+            }
+        }
+    }
+
     public ItemType getType() {
         return type;
     }
