@@ -49,4 +49,9 @@ public class Player {
             System.out.println("Player: " + nickname);
         }
     }
+
+    public void addCommonTargetCard(CommonTargetCard card){
+        commonTargetCard.add(card);
+    }
+
 }
