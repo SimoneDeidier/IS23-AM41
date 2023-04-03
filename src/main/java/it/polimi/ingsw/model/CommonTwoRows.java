@@ -12,8 +12,8 @@ public class CommonTwoRows implements CommonTargetCard {
         for(int row = 0; row < 5 ; row++){
             int col = 0;
             while( col < 6 ){
-                if(shelf[row][col] != null) {
-                    switch (shelf[row][col].getType()) {
+                if(shelf.getItemByCoordinates(row, col) != null) {
+                    switch (shelf.getItemByCoordinates(row, col).getType()) {
                         case TROPHIES -> ricorrenze[0]++;
                         case PLANTS -> ricorrenze[1]++;
                         case FRAMES -> ricorrenze[2]++;

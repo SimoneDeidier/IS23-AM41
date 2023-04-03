@@ -20,10 +20,10 @@ public class CommonStairway implements CommonTargetCard {
         *
         * */
 
-        if( shelf[0][0] == null ){
-            if( shelf[1][0] == null){
-                if( shelf[0][4] == null){
-                    if( shelf[1][4] == null){
+        if( shelf.getItemByCoordinates(0, 0) == null ){
+            if( shelf.getItemByCoordinates(1, 0) == null){
+                if( shelf.getItemByCoordinates(0, 4) == null){
+                    if( shelf.getItemByCoordinates(1, 4) == null){
                         //non siamo in nessun caso possibile
                         return false;
                     }
@@ -51,7 +51,7 @@ public class CommonStairway implements CommonTargetCard {
 
         if(decrescente){
             for(int i = 1; i < 5; i++){
-                if( !(shelf[i + offset][i] != null && shelf[i + offset - 1][i] == null )){
+                if( !(shelf.getItemByCoordinates(i + offset, i) != null && shelf.getItemByCoordinates(i + offset - 1, i) == null )){
                     //se non è vero che non c'è un elemento nella colonna i e nella riga i (+ 1 di offset nel caso 2) e la riga sopra non è vuota, allora la condizione non è soddisfatta
                     return false;
                 }
@@ -60,7 +60,7 @@ public class CommonStairway implements CommonTargetCard {
         else{
 
             for(int i = 3; i >= 0; i--){
-                if( !(shelf[4 - i + offset][i] != null && shelf[3 - i + offset][i] == null )){
+                if( !(shelf.getItemByCoordinates(4 - i + offset, i) != null && shelf.getItemByCoordinates(3 - i + offset, i) == null )){
                     //se non è vero che non c'è un elemento nella colonna i e nella riga i (+ 1 di offset nel caso 2) e la riga sopra non è vuota, allora la condizione non è soddisfatta
                     return false;
                 }

@@ -8,7 +8,7 @@ public class CommonEightSame implements CommonTargetCard {
 
         for(int row = 0; row < 6; row++){
             for(int col = 0; col < 5; col++){
-                switch( shelf[row][col].getType() ){
+                switch( shelf.getItemByCoordinates(row, col).getType() ){
                     case CAT -> ricorrenze[0]++;
                     case BOOKS -> ricorrenze[1]++;
                     case GAMES -> ricorrenze[2]++;

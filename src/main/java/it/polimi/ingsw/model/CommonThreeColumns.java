@@ -12,10 +12,10 @@ public class CommonThreeColumns implements CommonTargetCard {
         int colonneCorrette = 0;
 
         for( int col = 0; col < 5; col ++ ){
-            if( shelf[0][col] != null ){
+            if( shelf.getItemByCoordinates(0, col) != null ){
                 //se la colonna è piena
                 for( int row = 0; row < 6; row++){
-                    switch (shelf[row][col].getType()) {
+                    switch (shelf.getItemByCoordinates(row, col).getType()) {
                         case TROPHIES -> ricorrenze[0]++;
                         case PLANTS -> ricorrenze[1]++;
                         case FRAMES -> ricorrenze[2]++;

@@ -9,7 +9,7 @@ public class CommonFourRows implements CommonTargetCard {
             countSamePerRow=0;
             for (int j = 0; j < 5; j++) {
                 for (int k = 0; k < 5; k++) {
-                    if (shelf[i][j].getType() == shelf[i][k].getType() && j != k){
+                    if (shelf.getItemByCoordinates(i, j).getType() == shelf.getItemByCoordinates(i, k).getType() && j != k){
                         countSamePerRow++;
                         break;
                     }

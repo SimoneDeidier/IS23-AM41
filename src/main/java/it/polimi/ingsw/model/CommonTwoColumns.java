@@ -9,7 +9,7 @@ public class CommonTwoColumns implements CommonTargetCard {
             columnAcceptable = 1;
             for (int i = 0; i < 5; i++) {
                 for (int k = i+1; k < 6; k++) {
-                    if (shelf[i][j].getType() == shelf[k][j].getType() && i != k){
+                    if (shelf.getItemByCoordinates(i, j).getType() == shelf.getItemByCoordinates(k, j).getType() && i != k){
                         columnAcceptable = 0;
                         break;
                     }
