@@ -3,52 +3,34 @@ package it.polimi.ingsw.model;
 public class CommonFourGroupsOfFour implements CommonTargetCard {
     @Override
     public boolean check(Shelf shelf) {
-        int numGroups = 0;
+        int count = 0;
         boolean[][] visited = new boolean[6][5];
         for (int i = 0; i < 6; i++) {
             for (int j = 0; j < 5; j++) {
                 if (!visited[i][j]) {
-                    Item val = shelf.getItemByCoordinates(i, j);
-                    boolean foundGroup = false;
-                    //check square
-                    //check vertical group
-                    //check horizontal group
-                    //check vertical, right facing L, start from small end
-                    //check vertical, left facing L, start from small end
-                    //check vertical, right facing L, start from long end
-                    //check vertical, left facing L, start from long end
-                    //check horizontal, up facing L, start from small end
-                    //check horizontal, down facing L, start from small end
-                    //check horizontal, up facing L, start from long end
-                    //check horizontal, down facing L, start from long end
-                    //check T, pointing down (always start from down part of regular T)
-                    //check T, pointing right (always start from down part of regular T)
-                    //check T, pointing up (always start from down part of regular T)
-                    //check T, pointing left (always start from down part of regular T)
-                    //check S --> to finish
-
-
-                    //OLD CODE
-                    // check horizontal group
-                    if (j < 4 && shelf.getItemByCoordinates(i, j+1).getType() == val.getType()) {
-                        numGroups++;
-                        foundGroup = true;
-                        visited[i][j] = true;
-                        visited[i][j+1] = true;
-                    }
-                    // check vertical group
-                    if (i < 5 && shelf.getItemByCoordinates(i+1, j).getType() == val.getType() && !foundGroup) {
-                        numGroups++;
-                        foundGroup = true;
-                        visited[i][j] = true;
-                        visited[i+1][j] = true;
-                    }
-                    if (foundGroup && numGroups >= 6) {
-                        return true; // found all groups
+                    ItemType value = shelf.getItemByCoordinates(i, j).getType();
+                    if (dfs(shelf, visited, i, j, value) >= 4) {
+                        count++;
                     }
                 }
             }
         }
-        return false; // didn't find enough groups
+        if (count >= 6)
+            return true;
+        return false;
+    }
+
+    private static int dfs(Shelf shelf, boolean[][] visited, int i, int j, ItemType value) {
+        visited[i][j] = true;
+        int count = 1;
+        int[][] neighbors = {{-1, 0}, {0, -1}, {1, 0}, {0, 1}};
+        for (int[] neighbor : neighbors) {
+            int row = i + neighbor[0];
+            int col = j + neighbor[1];
+            if (row >= 0 && row < 6 && col >= 0 && col < 5 && !visited[row][col] && shelf.getItemByCoordinates(row, col).getType() == value) {
+                count += dfs(shelf, visited, row, col, value);
+            }
+        }
+        return count;
     }
 }
