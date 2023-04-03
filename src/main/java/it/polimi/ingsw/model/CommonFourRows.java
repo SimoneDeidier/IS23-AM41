@@ -2,7 +2,7 @@ package it.polimi.ingsw.model;
 
 public class CommonFourRows implements CommonTargetCard {
     @Override
-    public boolean check(Item[][] shelf) {
+    public boolean check(Shelf shelf) {
         int countSamePerRow;
         int countAcceptableRows = 0;
         for (int i = 0; i < 6; i++) {

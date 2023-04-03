@@ -2,7 +2,7 @@ package it.polimi.ingsw.model;
 
 public class CommonStairway implements CommonTargetCard {
     @Override
-    public boolean check(Item[][] shelf) {
+    public boolean check(Shelf shelf) {
         int neededFreeSpaces = 0;
         boolean decrescente = false;
         int offset = 0;

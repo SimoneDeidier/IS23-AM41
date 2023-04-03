@@ -2,7 +2,7 @@ package it.polimi.ingsw.model;
 
 public class CommonEightSame implements CommonTargetCard {
     @Override
-    public boolean check(Item[][] shelf) {
+    public boolean check(Shelf shelf) {
 
         int[] ricorrenze = new int[6]; //array per contare le riccorenze di ciascun tipo
 

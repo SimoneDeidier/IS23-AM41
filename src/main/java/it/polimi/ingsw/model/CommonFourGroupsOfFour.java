@@ -2,7 +2,7 @@ package it.polimi.ingsw.model;
 
 public class CommonFourGroupsOfFour implements CommonTargetCard {
     @Override
-    public boolean check(Item[][] shelf) {
+    public boolean check(Shelf shelf) {
         int numGroups = 0;
         boolean[][] visited = new boolean[6][5];
         for (int i = 0; i < 6; i++) {

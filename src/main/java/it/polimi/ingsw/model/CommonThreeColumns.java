@@ -5,7 +5,7 @@ import java.util.ArrayList;
 
 public class CommonThreeColumns implements CommonTargetCard {
     @Override
-    public boolean check(Item[][] shelf) {
+    public boolean check(Shelf shelf) {
 
         int[] ricorrenze = new int[6]; //array per contare le riccorenze di ciascun tipo
         int tipiDisponibili = 3;

@@ -2,7 +2,7 @@ package it.polimi.ingsw.model;
 
 public class CommonDiagonal implements CommonTargetCard {
     @Override
-    public boolean check(Item[][] shelf) {
+    public boolean check(Shelf shelf) {
         int unfound = 0;
         for (int k = 0; k <=1; k++){
             for(int i = k; i < k+5; i++)

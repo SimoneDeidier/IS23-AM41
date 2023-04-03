@@ -2,7 +2,7 @@ package it.polimi.ingsw.model;
 
 public class CommonTwoColumns implements CommonTargetCard {
     @Override
-    public boolean check(Item[][] shelf) {
+    public boolean check(Shelf shelf) {
         int countAcceptableColumns = 5;
         int columnAcceptable;
         for (int j = 0; j < 5; j++) {

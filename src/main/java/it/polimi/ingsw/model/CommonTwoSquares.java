@@ -2,7 +2,7 @@ package it.polimi.ingsw.model;
 
 public class CommonTwoSquares implements CommonTargetCard {
     @Override
-    public boolean check(Item[][] shelf) {
+    public boolean check(Shelf shelf) {
 
         boolean[][] bitMask = new boolean[6][5]; //è inizializzato a false
         Item tipoQuadrato;
