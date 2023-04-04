@@ -1,4 +1,6 @@
-package it.polimi.ingsw.model;
+package it.polimi.ingsw.servercotroller;
+
+import it.polimi.ingsw.model.Player;
 
 import java.util.ArrayList;
 import java.util.List;

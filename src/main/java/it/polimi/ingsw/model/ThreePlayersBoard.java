@@ -4,14 +4,15 @@ public class ThreePlayersBoard extends BoardFactory {
 
     private static BoardFactory instance;
 
-    private ThreePlayersBoard(ItemsBag itemsBag) {
-        this.itemsBag = itemsBag;
+    private ThreePlayersBoard() {
+        this.itemsBag = ItemsBag.getItemsBag();
+        itemsBag.setupBag();
         bitMask = createBitMask();
     }
 
-    public static BoardFactory getThreePlayersBoard(ItemsBag itemsBag) {
+    public static BoardFactory getThreePlayersBoard() {
         if(instance == null) {
-            instance = new ThreePlayersBoard(itemsBag);
+            instance = new ThreePlayersBoard();
         }
         return instance;
     }

@@ -1,18 +1,20 @@
-package it.polimi.ingsw.model;
+package it.polimi.ingsw.servercotroller;
 
-import java.util.ArrayList;
+import it.polimi.ingsw.model.Player;
+import it.polimi.ingsw.servercotroller.GameState;
+
 import java.util.List;
 
-public class RunningGameState extends GameState{
+public class WaitingForPlayerState extends GameState {
 
     @Override
     public int getAvailableSlot(int maxPlayerNumber, int listSize) {
-        return 0;
+        return maxPlayerNumber - listSize;
     }
 
     @Override
     public void addPlayer(Player player, List<Player> playerList) {
-        return;
+        playerList.add(player);
     }
 
     @Override
@@ -20,4 +22,3 @@ public class RunningGameState extends GameState{
         return;
     }
 }
-

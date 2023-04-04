@@ -1,6 +1,7 @@
-package it.polimi.ingsw.model;
+package it.polimi.ingsw.servercotroller;
 
-import java.util.ArrayList;
+import it.polimi.ingsw.model.Player;
+
 import java.util.List;
 
 public class Game {
@@ -10,6 +11,7 @@ public class Game {
     private boolean lastTurn;
     private GameState state;
     private List<Player> playerList;
+    private Player activePlayer; //acts as a kind of turn
 
     private Game(GameState state) {
         this.state = state;
@@ -49,5 +51,21 @@ public class Game {
 
     public void setLastTurn(boolean lastTurn) {
         this.lastTurn = lastTurn;
+    }
+
+    public Player getActivePlayer() {
+        return activePlayer;
+    }
+
+    public void setActivePlayer(Player activePlayer) {
+        this.activePlayer = activePlayer;
+    }
+
+    public int getMaxPlayerNumber() {
+        return maxPlayerNumber;
+    }
+
+    public void setMaxPlayerNumber(int maxPlayerNumber) {
+        this.maxPlayerNumber = maxPlayerNumber;
     }
 }

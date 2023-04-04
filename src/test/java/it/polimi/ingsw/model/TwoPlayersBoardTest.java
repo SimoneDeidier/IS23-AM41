@@ -8,9 +8,7 @@ public class TwoPlayersBoardTest extends TestCase {
 
     @Test
     public void testRefillBoard() throws InvalidBoardPositionException, NullItemPickedException {
-        ItemsBag itemsBag = ItemsBag.getItemsBag();
-        itemsBag.setupBag();
-        BoardFactory board = TwoPlayersBoard.getTwoPlayersBoard(itemsBag);
+        BoardFactory board = TwoPlayersBoard.getTwoPlayersBoard();
         board.refillBoard();
         board.pickItem(5,4);
         board.refillBoard();
@@ -35,7 +33,7 @@ public class TwoPlayersBoardTest extends TestCase {
     public void testPickItem() throws InvalidBoardPositionException, NullItemPickedException {
         ItemsBag itemsBag = ItemsBag.getItemsBag();
         itemsBag.setupBag();
-        BoardFactory board = TwoPlayersBoard.getTwoPlayersBoard(itemsBag);
+        BoardFactory board = TwoPlayersBoard.getTwoPlayersBoard();
         board.refillBoard();
         board.pickItem(5,4);
         assertThrows(NullItemPickedException.class,()->board.pickItem(5,4));
