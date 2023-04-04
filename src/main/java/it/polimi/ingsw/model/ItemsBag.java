@@ -8,6 +8,7 @@ import java.util.Random;
 public class ItemsBag {
     private static ItemsBag instance = null;
     private List<Item> itemList;
+    private final static int ITEMNUMBERFORTYPE = 22;
     Random random = new Random();
 
     private ItemsBag() {
@@ -23,7 +24,7 @@ public class ItemsBag {
 
     public void setupBag() {
         for(ItemColor c : ItemColor.values()) {
-            for(int i = 0; i < 22; i ++) {
+            for(int i = 0; i < ITEMNUMBERFORTYPE; i ++) {
                 itemList.add(new Item(c));
             }
         }

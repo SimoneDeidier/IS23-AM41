@@ -10,29 +10,28 @@ public class GameController {
 
     private GameController instance;
     private final List<Player> playerList;
-    private final Game game;
-
+    private int maxPlayerNumber;
+    private boolean lastTurn;
+    private Player activePlayer; //acts as a kind of turn
     private BoardFactory board;
+    private GameState state;
 
-    private GameController(List<Player> playerList, Game game) {
+    private GameController(List<Player> playerList) {
         this.playerList = playerList;
-        this.game = game;
     }
 
-    public GameController getGameController(List<Player> playerList, Game game) {
+    public GameController getGameController(List<Player> playerList) {
         if (instance == null) {
-            instance = new GameController(playerList, game);
+            instance = new GameController(playerList);
         }
         return instance;
     }
 
     public boolean checkMove(Move move){
-       if(move.getPlayer().equals(game.getActivePlayer())) {
+       if(move.getPlayer().equals(activePlayer)) {
             for(int[] choices: move.positionsPicked){
-                if(game.getMaxPlayerNumber()==2){
+                if(maxPlayerNumber==2){
                     board = TwoPlayersBoard.getTwoPlayersBoard();
-                    //Non è bello passare itemsBag a board
-                    //Passarla al refill
                 }
             }
        }
@@ -49,5 +48,30 @@ public class GameController {
     public void checkBoard() {
 
     }
+    public void changeState(GameState state) {
+        this.state = state;
+    }
+    public int getAvailableSlot() {
+        return state.getAvailableSlot(maxPlayerNumber, playerList.size());
+    }
+    public void addPlayer(Player player) {
+        state.addPlayer(player, playerList);
+    }
 
+    public void setupGame() {
+        state.setupGame();
+    }
+
+    public boolean checkLastTurn() {
+        for(Player p : playerList) {
+            if(p.getShelf().isFull()) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    public void setLastTurn(boolean lastTurn) {
+        this.lastTurn = lastTurn;
+    }
 }

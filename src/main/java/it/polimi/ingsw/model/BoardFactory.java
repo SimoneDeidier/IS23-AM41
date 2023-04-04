@@ -61,26 +61,21 @@ public abstract class BoardFactory {
             bitMask[7][i] = true;
         }
 
-            return bitMask;
+        return bitMask;
     }
 
     public Item pickItem(int x, int y) throws NullItemPickedException, InvalidBoardPositionException {
         //check server-side of the validity of the move
-        if (bitMask[x][y] == true) {
-            if(boardMatrix[x][y] == null) {
-                throw new NullItemPickedException();
-            }
-            else {
-                //Manca però il test della validità complessiva della mossa, non del singolo pezzo
-                Item item = new Item(boardMatrix[x][y].getColor());
-                boardMatrix[x][y] = null;
-                bitMask[x][y] = true;
-                return item;
-            }
-        }
-        else {
+        if (bitMask[x][y] == false) {
             throw new InvalidBoardPositionException();
         }
+        if(boardMatrix[x][y] == null) {
+            throw new NullItemPickedException();
+        }
+        Item item = new Item(boardMatrix[x][y].getColor());
+        boardMatrix[x][y] = null;
+        bitMask[x][y] = true;
+        return item;
     }
 
 }

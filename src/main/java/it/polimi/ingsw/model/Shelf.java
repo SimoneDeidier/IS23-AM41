@@ -103,22 +103,19 @@ public class Shelf {
         if(items == null || items.size() == 0) {
             throw new EmptyItemListToInsert();
         }
-        else {
-            int freeSpace = 0;
+        int freeSpace = 0;
 
-            for (int i = 0; i < ROWS; i++) {
-                if (shelfMatrix[i][column] == null) {
-                    freeSpace++;
-                }
+        for (int i = 0; i < ROWS; i++) {
+            if (shelfMatrix[i][column] == null) {
+                freeSpace++;
             }
-            if (freeSpace < items.size()) {
-                throw new NotEnoughSpaceInColumnException();
-            } else {
-                for (Item i : items) {
-                    shelfMatrix[freeSpace - 1][column] = i;
-                    freeSpace--;
-                }
-            }
+        }
+        if (freeSpace < items.size()) {
+            throw new NotEnoughSpaceInColumnException();
+        }
+        for (Item i : items) {
+            shelfMatrix[freeSpace - 1][column] = i;
+            freeSpace--;
         }
     }
 
