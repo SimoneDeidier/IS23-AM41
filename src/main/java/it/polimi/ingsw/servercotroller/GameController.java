@@ -30,15 +30,18 @@ public class GameController {
        if(move.getPlayer().equals(game.getActivePlayer())) {
             for(int[] choices: move.positionsPicked){
                 if(game.getMaxPlayerNumber()==2){
-                    board== TwoPlayersBoard.getTwoPlayersBoard();
-                    //Non è corretto passare al get l'ItemsBag!
+                    board = TwoPlayersBoard.getTwoPlayersBoard();
+                    //Non è bello passare itemsBag a board
+                    //Passarla al refill
                 }
             }
        }
+        return true;
     }
 
     public boolean executeMove(Move move){
         checkMove(move);
+        return true;
     }
 
 

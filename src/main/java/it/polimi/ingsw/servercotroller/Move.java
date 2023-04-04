@@ -9,6 +9,8 @@ public class Move {
 
     List<int[]> positionsPicked; //like (4 0) (4 1) (4 2)
 
+    int column;
+
     public Player getPlayer() {
         return player;
     }

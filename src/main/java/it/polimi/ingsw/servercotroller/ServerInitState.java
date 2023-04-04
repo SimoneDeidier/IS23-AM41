@@ -26,8 +26,6 @@ public class ServerInitState extends GameState {
 
     @Override
     public void setupGame() {
-        // in server initialization state we initialize only the items bag
-        ItemsBag itemsBag = ItemsBag.getItemsBag();
-        //todo e mo?
+        //e invece no itemsBag, la fa board
     }
 }

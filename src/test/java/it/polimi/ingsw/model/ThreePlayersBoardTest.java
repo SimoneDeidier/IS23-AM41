@@ -8,9 +8,7 @@ import org.junit.jupiter.api.Test;
 public class ThreePlayersBoardTest extends TestCase {
 
     public void testRefillBoard() throws InvalidBoardPositionException, NullItemPickedException {
-        ItemsBag itemsBag = ItemsBag.getItemsBag();
-        itemsBag.setupBag();
-        BoardFactory board = ThreePlayersBoard.getThreePlayersBoard(itemsBag);
+        BoardFactory board = ThreePlayersBoard.getThreePlayersBoard();
         board.refillBoard();
         board.pickItem(5,4);
         board.refillBoard();
@@ -33,7 +31,7 @@ public class ThreePlayersBoardTest extends TestCase {
     public void testPickItem() throws InvalidBoardPositionException, NullItemPickedException {
         ItemsBag itemsBag = ItemsBag.getItemsBag();
         itemsBag.setupBag();
-        BoardFactory board = ThreePlayersBoard.getThreePlayersBoard(itemsBag);
+        BoardFactory board = ThreePlayersBoard.getThreePlayersBoard();
         board.refillBoard();
         board.pickItem(0,3);
         assertThrows(NullItemPickedException.class,()->board.pickItem(0,3));
