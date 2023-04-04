@@ -6,14 +6,15 @@ import com.google.gson.annotations.SerializedName;
 import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
+import java.net.URISyntaxException;
 import java.util.List;
 
 public class PersonalTargetCard {
 
-    public int calculatePoints(Shelf shelf, int personal) {
+    public int calculatePoints(Shelf shelf, int personal) throws URISyntaxException {
         int correctCards = 0;
         Gson gson = new Gson();
-        File jsonFile = new File("PersonalTargetCards.json");
+        File jsonFile = new File(ClassLoader.getSystemResource("PersonalTargetCards.json").toURI());
         String jsonString = FileUtils.readFileToString(jsonFile, StandardCharsets.UTF_8);
 
         JsonArray jsonArray = gson.fromJson(jsonString, JsonArray.class);
