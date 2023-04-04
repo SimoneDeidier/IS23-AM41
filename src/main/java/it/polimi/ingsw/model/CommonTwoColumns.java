@@ -20,8 +20,6 @@ public class CommonTwoColumns implements CommonTargetCard {
                 }
             }
         }
-        if (countAcceptableColumns>=2)
-            return true;
-        return false;
+        return countAcceptableColumns >= 2;
     }
 }

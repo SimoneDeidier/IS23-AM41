@@ -15,9 +15,7 @@ public class CommonFourGroupsOfFour implements CommonTargetCard {
                 }
             }
         }
-        if (count >= 6)
-            return true;
-        return false;
+        return count >= 6;
     }
 
     private static int dfs(Shelf shelf, boolean[][] visited, int i, int j, ItemType value) {

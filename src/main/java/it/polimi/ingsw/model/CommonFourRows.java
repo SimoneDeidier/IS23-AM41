@@ -18,8 +18,6 @@ public class CommonFourRows implements CommonTargetCard {
             if (countSamePerRow >= 3)
                 countAcceptableRows++;
         }
-        if (countAcceptableRows>=4)
-            return true;
-        return false;
+        return countAcceptableRows >= 4;
     }
 }

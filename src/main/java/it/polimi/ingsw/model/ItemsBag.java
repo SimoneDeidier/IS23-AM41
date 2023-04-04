@@ -12,7 +12,7 @@ public class ItemsBag {
     Random random = new Random();
 
     private ItemsBag() {
-        itemList = new ArrayList<Item>(132);
+        itemList = new ArrayList<>(132);
     }
 
     public static ItemsBag getItemsBag() {
