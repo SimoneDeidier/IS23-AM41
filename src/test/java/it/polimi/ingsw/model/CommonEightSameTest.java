@@ -14,7 +14,7 @@ class CommonEightSameTest {
     void check() throws EmptyItemListToInsert, NotEnoughSpaceInColumnException {
 
         Shelf shelf = new Shelf();
-        CommonTargetCard card  = new CommonEightSame();
+        CommonTargetCard card  = new CommonEightSame(4);
         List<Item> list = new ArrayList<Item>();
         List<Item> list2 = new ArrayList<Item>();
         List<Item> list3 = new ArrayList<Item>();

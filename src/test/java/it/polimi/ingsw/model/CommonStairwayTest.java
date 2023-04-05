@@ -12,7 +12,7 @@ class CommonStairwayTest {
 
     @Test
     void check() throws EmptyItemListToInsert, NotEnoughSpaceInColumnException {
-        CommonTargetCard card  = new CommonStairway();
+        CommonTargetCard card  = new CommonStairway(2);
 
         Shelf case1 = new Shelf();
         Shelf case2 = new Shelf();
@@ -30,10 +30,9 @@ class CommonStairwayTest {
         Item i5 = new Item(ItemColor.PINK);
         Item i6 = new Item(ItemColor.WHITE);
 
-
         Collections.addAll(oneSize, i3);
         Collections.addAll(twoSize, i4, i6);
-        Collections.addAll(threeSize, i2, i2, i1);
+        Collections.addAll(threeSize, i2, i5, i1);
 
         //controlliamo i 4 casi:
 
@@ -88,11 +87,21 @@ class CommonStairwayTest {
         assertTrue(card.check(case3));
 
         //case 4:
-        case4.insertItems(0, threeSize);
-        case4.insertItems(0, threeSize);
-        case4.insertItems(1, threeSize);
-        case4.insertItems(2, threeSize);
 
+        //first column, one
+        case4.insertItems(0, oneSize);
+        //second column, two
+        case4.insertItems(1, twoSize);
+        //third column, three
+        case4.insertItems(2, threeSize);
+        //fourth column, four
+        case4.insertItems(3, twoSize);
+        case4.insertItems(3, twoSize);
+        //fifth column, five
+        case4.insertItems(4, threeSize);
+        case4.insertItems(4, twoSize);
+        //check
+        assertTrue(card.check(case4));
 
     }
 }

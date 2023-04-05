@@ -7,40 +7,44 @@ public class CommonTwoSquares extends CommonTargetCard {
     @Override
     public boolean check(Shelf shelf) {
 
-        boolean[][] bitMask = new boolean[6][5]; //è inizializzato a false
-        Item tipoQuadrato;
-        int Quadrati = 0;
-
-        for( int row = 0; row < 5; row++ ){
-            for( int col = 0; col < 4; col ++) {
-                if (!bitMask[row][col]) {
-                    tipoQuadrato = shelf.getItemByCoordinates(row, col);
-
-                    if (shelf.getItemByCoordinates(row, col + 1) != null && shelf.getItemByCoordinates(row + 1, col) != null && shelf.getItemByCoordinates(row + 1, col + 1) != null &&
-                            tipoQuadrato.getType() == shelf.getItemByCoordinates(row    , col + 1).getType() &&
-                            tipoQuadrato.getType() == shelf.getItemByCoordinates(row + 1, col    ).getType() &&
-                            tipoQuadrato.getType() == shelf.getItemByCoordinates(row + 1, col + 1).getType()) {
-                        //il controllo funziona così: item a destra, item sotto, item in diagonale
-                        //allora ho trovato un quadrato
-
-                        //segnamo i 4 posti del quadrato sulla bitmask
-
-                        bitMask[row    ][ col    ] = true;
-                        bitMask[row    ][ col + 1] = true;
-                        bitMask[row + 1][ col    ] = true;
-                        bitMask[row + 1][ col + 1] = true;
+        boolean[][] bitMask = new boolean[6][5];
+        Item squaresColor = null;
+        int squareFound = 0;
+        boolean[] colorCheck = new boolean[6];
+        for(int j = 0; j < 6; j++){
+            for( int row = 0; row < 5; row++ ){
+                for( int col = 0; col < 4; col ++) {
+                    if (!bitMask[row][col]) {
+                        if(squareFound == 0){
+                            squaresColor = shelf.getItemByCoordinates(row, col);
+                        }
 
 
+                        if (shelf.getItemByCoordinates(row, col + 1) != null && shelf.getItemByCoordinates(row + 1, col) != null && shelf.getItemByCoordinates(row + 1, col + 1) != null &&
+                                squaresColor.getColor() == shelf.getItemByCoordinates(row    , col + 1).getColor() &&
+                                squaresColor.getColor() == shelf.getItemByCoordinates(row + 1, col    ).getColor() &&
+                                squaresColor.getColor() == shelf.getItemByCoordinates(row + 1, col + 1).getColor())
+                        {
+                            //first check if positions are null,
+                            //if not, then check if all four items have the same color
+                            //if so, we found a square
+
+                            bitMask[row    ][ col    ] = true;
+                            bitMask[row    ][ col + 1] = true;
+                            bitMask[row + 1][ col    ] = true;
+                            bitMask[row + 1][ col + 1] = true;
 
 
-                        Quadrati++;
-                        if (Quadrati == 2)
-                            return true;
+                            squareFound++;
+                            if (squareFound == 2)
+                                return true;
+                        }
+
                     }
-
                 }
             }
         }
+
 
 
 

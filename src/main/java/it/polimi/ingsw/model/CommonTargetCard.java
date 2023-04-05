@@ -7,6 +7,10 @@ import java.util.List;
 import java.util.Random;
 
 public abstract class CommonTargetCard {
+
+
+    protected final static int ROWS = 6;
+    protected final static int COLUMNS = 5;
     private List<ScoringToken> scoringTokensList;
     public CommonTargetCard(int numberOfPlayers){
         ScoringToken token1=new ScoringToken(8);
