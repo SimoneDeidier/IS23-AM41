@@ -28,10 +28,14 @@ public class GameController {
     }
 
     public boolean checkMove(Move move){
+        //Il primo check non è utile? Aveva detto qualcosa Margara,tipo che un player potrebbe fingersi con un username
+        //Quindi qua il primo check dovrebbe essere sulla porta TCP,che quindi dovrebbe essere in Move
+        //Però aspe, qua il controllo è proprio sull'oggetto PLayer, probabilmente in Move non dovrebbe poter stare perchè
+        //il client non può passarlo(?)
        if(!move.getPlayer().equals(activePlayer)) {
            return false;
        }
-       return board.check(move.getPositionsPicked());
+       return board.checkMove(move.getPositionsPicked());
     }
 
     public boolean executeMove(Move move){
