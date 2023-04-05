@@ -9,7 +9,7 @@ import static org.junit.jupiter.api.Assertions.*;
 class CommonFourCornersTest {
 
     @Test
-    void check() {
+    void check() throws EmptyItemListToInsert, NotEnoughSpaceInColumnException {
 
         CommonTargetCard commonFourCorners = new CommonFourCorners();
 

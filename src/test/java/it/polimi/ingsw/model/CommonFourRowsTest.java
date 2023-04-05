@@ -9,7 +9,7 @@ import static org.junit.jupiter.api.Assertions.*;
 class CommonFourRowsTest {
 
     @Test
-    void check() {
+    void check() throws EmptyItemListToInsert, NotEnoughSpaceInColumnException {
         CommonTargetCard commonFourRows = new CommonFourCorners();
 
         // create a sample shelf with four rows of one, two or three different types
