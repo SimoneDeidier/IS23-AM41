@@ -14,6 +14,8 @@ class CommonXTest {
     void check() throws EmptyItemListToInsert, NotEnoughSpaceInColumnException {
 
         Shelf shelf = new Shelf();
+        Shelf shelf2 = new Shelf();
+        Shelf shelf3 = new Shelf();
 
         Item i1 = new Item(ItemColor.LIGHT_BLUE);
         Item i2 = new Item(ItemColor.BLUE);
@@ -22,22 +24,53 @@ class CommonXTest {
         Item i5 = new Item(ItemColor.PINK);
         Item i6 = new Item(ItemColor.WHITE);
 
-        List<Item> list = new ArrayList<Item>();
-        Collections.addAll(list, i1, i1, i1);
+        List<Item> list1 = new ArrayList<Item>();
+        Collections.addAll(list1, i1, i1, i1);
+        List<Item> list2 = new ArrayList<Item>();
+        Collections.addAll(list2, i1, i2, i1);
+        List<Item> list3 = new ArrayList<Item>();
+        Collections.addAll(list3, i2, i1, i2);
+        List<Item> list4 = new ArrayList<Item>();
+        Collections.addAll(list4, i6, i6);
+
 
         CommonTargetCard card = new CommonX();
 
-        shelf.insertItems(0, list);
-        assertFalse(card.check(shelf));
 
-        shelf.insertItems(1, list);
-        assertFalse(card.check(shelf));
 
-        shelf.insertItems(2, list);
+        //test 1
+        shelf.insertItems(0, list1);
+        assertFalse(card.check(shelf));
+        shelf.insertItems(1, list1);
+        assertFalse(card.check(shelf));
+        shelf.insertItems(2, list1);
         assertTrue(card.check(shelf));
 
 
+        //test 2
+        shelf2.insertItems(2, list3);
+        assertFalse(card.check(shelf2));
+        shelf2.insertItems(3, list2);
+        assertFalse(card.check(shelf2));
+        shelf2.insertItems(4, list3);
+        assertTrue(card.check(shelf2));
 
+
+
+
+        //test 3
+        shelf3.insertItems(2, list4);
+        assertFalse(card.check(shelf3));
+        shelf3.insertItems(3, list4);
+        assertFalse(card.check(shelf3));
+        shelf3.insertItems(4, list4);
+        assertFalse(card.check(shelf3));
+        shelf3.insertItems(2, list1);
+        assertFalse(card.check(shelf3));
+        shelf3.insertItems(3, list1);
+        assertFalse(card.check(shelf3));
+        shelf3.insertItems(4, list1);
+        assertTrue(card.check(shelf3));
 
     }
 }
