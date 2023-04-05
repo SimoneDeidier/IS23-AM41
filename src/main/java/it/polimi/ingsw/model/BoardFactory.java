@@ -1,6 +1,5 @@
 package it.polimi.ingsw.model;
 
-import javax.sql.rowset.RowSetWarning;
 import java.util.List;
 
 public abstract class BoardFactory {
@@ -19,6 +18,11 @@ public abstract class BoardFactory {
 
     public Item getBoardMatrixElement(int i,int j){
         return boardMatrix[i][j];
+    }
+
+    //used for testing checkInLine in TwoplayerBoardTest
+    public void setBoardMatrixElement(int i,int j,Item item){
+        boardMatrix[i][j]=item;
     }
 
 
@@ -79,7 +83,7 @@ public abstract class BoardFactory {
         return item;
     }
 
-    public boolean check(List<int[]> list){
+    public boolean checkMove(List<int[]> list){
         int size = list.size();
         if(size < 1 || size>3) {
             return false;
@@ -116,7 +120,30 @@ public abstract class BoardFactory {
     }
 
     public boolean checkInLine(List<int[]> list){
-        return false;
+        int x1=list.get(0)[0],y1=list.get(0)[1];
+        if(list.size()==2){
+            int x2=list.get(1)[0],y2=list.get(1)[1];
+
+            if((x1 != (x2 - 1)) && (x1 != (x2 + 1)) && (y1 != (y2 + 1)) && (y1 != (y2 - 1))) {
+                return false;
+            }
+        }
+
+        if(list.size()==3){
+            int x2=list.get(1)[0],y2=list.get(1)[1],x3=list.get(2)[0],y3=list.get(2)[1];
+            if(x1 == (x2 + 1) && (x3==x2-1 || x3==x1+1)){
+                return true;
+            }
+            if(x1 == (x2 - 1) && (x3==x1-1 || x3==x2+1)){
+                return true;
+            }
+            if(y1 == (y2 + 1) && (y3==y2-1 || y3==y1+1)){
+                return true;
+            }
+            return y1 == (y2 - 1) && (y3 == y2 + 1 || y3 == y1 - 1);
+        }
+        return true;
+
     }
 
 }

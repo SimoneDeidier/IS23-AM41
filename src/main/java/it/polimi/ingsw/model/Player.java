@@ -1,5 +1,7 @@
 package it.polimi.ingsw.model;
 
+import java.io.IOException;
+import java.net.URISyntaxException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -41,12 +43,14 @@ public class Player {
                     playerScore += token.getValue();
                 }
             }
-            //playerScore += personalTargetCard.calculatePoints(shelf);
+            playerScore += personalTargetCard.calculatePoints(shelf, 0);
             playerScore += shelf.calculateAdjacentItemsPoints();
         }
         catch (EmptyShelfException e) {
             System.out.println("EMPTY SHELF EXCEPTION");
             System.out.println("Player: " + nickname);
+        } catch (URISyntaxException | IOException e) {
+            throw new RuntimeException(e);
         }
     }
 
