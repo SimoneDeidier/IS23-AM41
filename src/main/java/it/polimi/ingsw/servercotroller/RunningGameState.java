@@ -18,7 +18,7 @@ public class RunningGameState extends GameState {
     }
 
     @Override
-    public void setupGame() {
+    public void setupGame(int maxPlayerNumber) {
         return;
     }
 }

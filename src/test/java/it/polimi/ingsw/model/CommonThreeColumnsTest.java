@@ -14,7 +14,7 @@ class CommonThreeColumnsTest {
     void check() throws EmptyItemListToInsert, NotEnoughSpaceInColumnException {
 
         Shelf shelf = new Shelf();
-        CommonTargetCard card  = new CommonThreeColumns();
+        CommonTargetCard card  = new CommonThreeColumns(2);
         List<Item> list = new ArrayList<Item>();
         Item i1 = new Item(ItemColor.LIGHT_BLUE);
         Item i2 = new Item(ItemColor.BLUE);

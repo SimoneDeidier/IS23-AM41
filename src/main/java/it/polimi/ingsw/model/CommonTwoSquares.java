@@ -1,6 +1,9 @@
 package it.polimi.ingsw.model;
 
-public class CommonTwoSquares implements CommonTargetCard {
+public class CommonTwoSquares extends CommonTargetCard {
+    public CommonTwoSquares(int maxPlayerNumber) {
+        super(maxPlayerNumber);
+    }
     @Override
     public boolean check(Shelf shelf) {
 

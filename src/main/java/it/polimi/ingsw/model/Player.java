@@ -11,8 +11,8 @@ public class Player {
     private int playerScore;
     private EndGameToken endGameToken;
     private Shelf shelf;
-    private List<ScoringToken> scoringToken;
-    private List<CommonTargetCard> commonTargetCard;
+    private List<ScoringToken> scoringTokenList;
+    private List<CommonTargetCard> commonTargetCardList;
     private PersonalTargetCard personalTargetCard;
 
     public Player(String nickname) {
@@ -38,7 +38,8 @@ public class Player {
             if (endGameToken != null) {
                 playerScore += endGameToken.getValue();
             }
-            for (ScoringToken token : scoringToken) {
+            //Assegnare token
+            for (ScoringToken token : scoringTokenList) {
                 if (token != null) {
                     playerScore += token.getValue();
                 }
@@ -55,7 +56,10 @@ public class Player {
     }
 
     public void addCommonTargetCard(CommonTargetCard card){
-        commonTargetCard.add(card);
+        commonTargetCardList.add(card);
     }
 
+    public void setEndGameToken(EndGameToken endGameToken) {
+        this.endGameToken = endGameToken;
+    }
 }

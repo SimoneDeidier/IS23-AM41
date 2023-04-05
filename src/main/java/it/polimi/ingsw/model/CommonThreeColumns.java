@@ -3,7 +3,10 @@ package it.polimi.ingsw.model;
 import java.lang.reflect.Array;
 import java.util.ArrayList;
 
-public class CommonThreeColumns implements CommonTargetCard {
+public class CommonThreeColumns extends CommonTargetCard {
+    public CommonThreeColumns(int maxPlayerNumber) {
+        super(maxPlayerNumber);
+    }
     @Override
     public boolean check(Shelf shelf) {
 

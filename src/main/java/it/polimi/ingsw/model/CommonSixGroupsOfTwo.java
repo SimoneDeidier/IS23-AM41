@@ -1,6 +1,9 @@
 package it.polimi.ingsw.model;
 
-public class CommonSixGroupsOfTwo implements CommonTargetCard {
+public class CommonSixGroupsOfTwo extends CommonTargetCard {
+    public CommonSixGroupsOfTwo(int maxPlayerNumber) {
+        super(maxPlayerNumber);
+    }
     @Override
     public boolean check(Shelf shelf) {
         int count = 0;

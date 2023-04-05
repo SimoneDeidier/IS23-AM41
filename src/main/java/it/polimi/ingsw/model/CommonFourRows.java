@@ -1,6 +1,9 @@
 package it.polimi.ingsw.model;
 
-public class CommonFourRows implements CommonTargetCard {
+public class CommonFourRows extends CommonTargetCard {
+    public CommonFourRows(int maxPlayerNumber) {
+        super(maxPlayerNumber);
+    }
     @Override
     public boolean check(Shelf shelf) {
         int countSamePerRow;

@@ -20,6 +20,13 @@ public abstract class BoardFactory {
         return boardMatrix[i][j];
     }
 
+    public int getBoardNumberOfRows(){
+        return ROWS;
+    }
+    public int getBoardNumberOfColumns(){
+        return COLUMNS;
+    }
+
     public  void refillBoard() {
 
         for (int i = 0; i < ROWS; i++) {
@@ -118,6 +125,10 @@ public abstract class BoardFactory {
         //Check right
         return getBoardMatrixElement(i, j + 1) == null;
 
+    }
+
+    public boolean itemHasAllFreeSide(int i,int j){
+        return (getBoardMatrixElement(i-1,j)==null && getBoardMatrixElement(i+1,j)==null && getBoardMatrixElement(i,j-1)==null && getBoardMatrixElement(i, j + 1) == null);
     }
 
     public boolean checkInLine(List<int[]> list){

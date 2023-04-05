@@ -1,6 +1,9 @@
 package it.polimi.ingsw.model;
 
-public class CommonStairway implements CommonTargetCard {
+public class CommonStairway extends CommonTargetCard {
+    public CommonStairway(int maxPlayerNumber) {
+        super(maxPlayerNumber);
+    }
     @Override
     public boolean check(Shelf shelf) {
 

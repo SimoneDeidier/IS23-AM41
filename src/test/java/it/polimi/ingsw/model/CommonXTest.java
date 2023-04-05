@@ -34,7 +34,7 @@ class CommonXTest {
         Collections.addAll(list4, i6, i6);
 
 
-        CommonTargetCard card = new CommonX();
+        CommonTargetCard card = new CommonX(2);
 
 
 
