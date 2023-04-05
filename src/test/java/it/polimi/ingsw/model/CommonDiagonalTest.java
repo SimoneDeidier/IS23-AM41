@@ -10,7 +10,7 @@ class CommonDiagonalTest {
 
     @Test
     void check() throws EmptyItemListToInsert, NotEnoughSpaceInColumnException {
-        CommonTargetCard CommonDiagonal = new CommonDiagonal();
+        CommonTargetCard CommonDiagonal = new CommonDiagonal(2);
         // create a sample shelf with a left-to-right diagonal
         Shelf shelfA = new Shelf();
 

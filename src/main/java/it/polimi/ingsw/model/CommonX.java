@@ -1,6 +1,9 @@
 package it.polimi.ingsw.model;
 
-public class CommonX implements CommonTargetCard {
+public class CommonX extends CommonTargetCard {
+    public CommonX(int maxPlayerNumber) {
+        super(maxPlayerNumber);
+    }
     @Override
     public boolean check(Shelf shelf) {
         

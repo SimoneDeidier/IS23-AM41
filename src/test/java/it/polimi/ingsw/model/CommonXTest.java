@@ -25,7 +25,7 @@ class CommonXTest {
         List<Item> list = new ArrayList<Item>();
         Collections.addAll(list, i1, i1, i1);
 
-        CommonTargetCard card = new CommonX();
+        CommonTargetCard card = new CommonX(2);
 
         shelf.insertItems(0, list);
         assertFalse(card.check(shelf));

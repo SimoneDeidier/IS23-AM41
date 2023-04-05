@@ -1,6 +1,10 @@
 package it.polimi.ingsw.model;
 
-public class CommonDiagonal implements CommonTargetCard {
+public class CommonDiagonal extends CommonTargetCard {
+
+    public CommonDiagonal(int maxPlayerNumber) {
+        super(maxPlayerNumber);
+    }
     @Override
     public boolean check(Shelf shelf) {
         int unfound = 0;

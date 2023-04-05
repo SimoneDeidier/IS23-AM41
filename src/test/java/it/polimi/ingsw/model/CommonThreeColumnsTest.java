@@ -28,7 +28,7 @@ class CommonThreeColumnsTest {
         shelf.insertItems(0, list);
         shelf.insertItems(0, list);
 
-        CommonTargetCard card  = new CommonThreeColumns();
+        CommonTargetCard card  = new CommonThreeColumns(2);
 
         assertFalse(card.check(shelf));
 

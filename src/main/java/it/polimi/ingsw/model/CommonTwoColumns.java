@@ -1,6 +1,9 @@
 package it.polimi.ingsw.model;
 
-public class CommonTwoColumns implements CommonTargetCard {
+public class CommonTwoColumns extends CommonTargetCard {
+    public CommonTwoColumns(int maxPlayerNumber) {
+        super(maxPlayerNumber);
+    }
     @Override
     public boolean check(Shelf shelf) {
         int countAcceptableColumns = 5;

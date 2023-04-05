@@ -1,6 +1,9 @@
 package it.polimi.ingsw.model;
 
-public class CommonFourGroupsOfFour implements CommonTargetCard {
+public class CommonFourGroupsOfFour extends CommonTargetCard {
+    public CommonFourGroupsOfFour(int maxPlayerNumber) {
+        super(maxPlayerNumber);
+    }
     @Override
     public boolean check(Shelf shelf) {
         int count = 0;

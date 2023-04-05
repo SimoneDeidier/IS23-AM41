@@ -10,7 +10,7 @@ class CommonTwoColumnsTest {
 
     @Test
     void check() throws EmptyItemListToInsert, NotEnoughSpaceInColumnException {
-        CommonTargetCard commonTwoColumns = new CommonTwoColumns();
+        CommonTargetCard commonTwoColumns = new CommonTwoColumns(2);
         //create a sample shelf with two columns of 6 different types of items
         Shelf shelfA = new Shelf();
 

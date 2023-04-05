@@ -11,7 +11,7 @@ class CommonFourCornersTest {
     @Test
     void check() throws EmptyItemListToInsert, NotEnoughSpaceInColumnException {
 
-        CommonTargetCard commonFourCorners = new CommonFourCorners();
+        CommonTargetCard commonFourCorners = new CommonFourCorners(2);
 
         // create a sample shelf with four corners of the same type
         Shelf shelfA = new Shelf();

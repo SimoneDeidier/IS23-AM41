@@ -1,6 +1,9 @@
 package it.polimi.ingsw.model;
 
-public class CommonEightSame implements CommonTargetCard {
+public class CommonEightSame extends CommonTargetCard {
+    public CommonEightSame(int maxPlayerNumber) {
+        super(maxPlayerNumber);
+    }
     @Override
     public boolean check(Shelf shelf) {
 
