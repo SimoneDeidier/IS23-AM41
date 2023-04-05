@@ -1,6 +1,7 @@
 package it.polimi.ingsw.model;
 
 import javax.sql.rowset.RowSetWarning;
+import java.util.List;
 
 public abstract class BoardFactory {
 
@@ -24,7 +25,7 @@ public abstract class BoardFactory {
     public  void refillBoard() {
         for (int i = 0; i < ROWS; i++) {
             for (int j = 0; j < COLUMNS; j++) {
-                if (bitMask[i][j] == true && boardMatrix[i][j] == null) {
+                if (bitMask[i][j] && boardMatrix[i][j] == null) {
                     boardMatrix[i][j] = itemsBag.pickItem();
                 }
             }
@@ -66,7 +67,7 @@ public abstract class BoardFactory {
 
     public Item pickItem(int x, int y) throws NullItemPickedException, InvalidBoardPositionException {
         //check server-side of the validity of the move
-        if (bitMask[x][y] == false) {
+        if (!bitMask[x][y]) {
             throw new InvalidBoardPositionException();
         }
         if(boardMatrix[x][y] == null) {
@@ -76,6 +77,46 @@ public abstract class BoardFactory {
         boardMatrix[x][y] = null;
         bitMask[x][y] = true;
         return item;
+    }
+
+    public boolean check(List<int[]> list){
+        int size = list.size();
+        if(size < 1 || size>3) {
+            return false;
+        }
+        //Check for free side
+        for(int[] i : list){
+            if(!hasFreeSide(i[0],i[1])){
+                return false;
+            }
+        }
+        return checkInLine(list);
+    }
+
+    public boolean hasFreeSide(int i,int j){
+        //Check border
+        if(i==0||i==ROWS||j==0||j==COLUMNS){
+            return true;
+        }
+        //Check up
+        if(getBitMaskElement(i-1,j) && getBoardMatrixElement(i-1,j)==null){
+            return true;
+        }
+        //Check down
+        if(getBitMaskElement(i+1,j) && getBoardMatrixElement(i+1,j)==null){
+            return true;
+        }
+        //Check left
+        if(getBitMaskElement(i,j-1) && getBoardMatrixElement(i,j-1)==null){
+            return true;
+        }
+        //Check right
+        return getBitMaskElement(i, j + 1) && getBoardMatrixElement(i, j + 1) == null;
+
+    }
+
+    public boolean checkInLine(List<int[]> list){
+
     }
 
 }

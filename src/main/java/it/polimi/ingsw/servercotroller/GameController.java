@@ -28,14 +28,10 @@ public class GameController {
     }
 
     public boolean checkMove(Move move){
-       if(move.getPlayer().equals(activePlayer)) {
-            for(int[] choices: move.positionsPicked){
-                if(maxPlayerNumber==2){
-                    board = TwoPlayersBoard.getTwoPlayersBoard();
-                }
-            }
+       if(!move.getPlayer().equals(activePlayer)) {
+           return false;
        }
-        return true;
+       return board.check(move.getPositionsPicked());
     }
 
     public boolean executeMove(Move move){
