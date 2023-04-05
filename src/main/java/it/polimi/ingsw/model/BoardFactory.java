@@ -116,7 +116,7 @@ public abstract class BoardFactory {
     }
 
     public boolean checkInLine(List<int[]> list){
-
+        return false;
     }
 
 }

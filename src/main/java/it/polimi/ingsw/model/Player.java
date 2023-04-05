@@ -41,7 +41,7 @@ public class Player {
                     playerScore += token.getValue();
                 }
             }
-            playerScore += personalTargetCard.calculatePoints(shelf);
+            //playerScore += personalTargetCard.calculatePoints(shelf);
             playerScore += shelf.calculateAdjacentItemsPoints();
         }
         catch (EmptyShelfException e) {
