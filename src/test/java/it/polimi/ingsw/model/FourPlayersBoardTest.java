@@ -26,7 +26,7 @@ public class FourPlayersBoardTest extends TestCase {
         assertEquals(45,count);
     }
 
-    public void testPickItem1() throws InvalidBoardPositionException, NullItemPickedException {
+    public void testPickNullItem() throws InvalidBoardPositionException, NullItemPickedException {
         ItemsBag itemsBag = ItemsBag.getItemsBag();
         itemsBag.setupBag();
         BoardFactory board = FourPlayersBoard.getFourPlayersBoard();
@@ -35,7 +35,7 @@ public class FourPlayersBoardTest extends TestCase {
         assertThrows(NullItemPickedException.class,()->board.pickItem(0,4));
     }
 
-    public void testPickItem2() throws InvalidBoardPositionException, NullItemPickedException {
+    public void testPickItemInInvalidPosition() throws InvalidBoardPositionException, NullItemPickedException {
         ItemsBag itemsBag = ItemsBag.getItemsBag();
         itemsBag.setupBag();
         BoardFactory board = FourPlayersBoard.getFourPlayersBoard();

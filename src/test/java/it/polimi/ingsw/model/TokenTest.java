@@ -8,6 +8,7 @@ import org.junit.jupiter.api.Test;
 
 public class TokenTest extends TestCase {
 
+    @Test
     public void testIsTakeable() {
         Token token=new ScoringToken(5);
         Player player=new Player("Samuele");

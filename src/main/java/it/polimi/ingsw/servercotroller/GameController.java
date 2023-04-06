@@ -16,6 +16,7 @@ public class GameController {
     private Player activePlayer; //acts as a kind of turn
     private BoardFactory board;
     private GameState state;
+    private List<CommonTargetCard> commonTargetCardsList; //?????
 
     private GameController(List<Player> playerList) {
         this.playerList = playerList;
@@ -41,7 +42,6 @@ public class GameController {
 
     public boolean executeMove(Move move) throws EmptyItemListToInsert {
         if(checkMove(move)) {
-            //actually executes the move
             List<Item> items = getListItems(move);
             try {
                 activePlayer.getShelf().insertItems(move.getColumn(), items);
@@ -55,8 +55,7 @@ public class GameController {
                 activePlayer.setEndGameToken(EndGameToken.getEndGameToken());
                 lastTurn=true;
             }
-            //Manca solo cosa che faccia assegnare i token delle common al player
-            activePlayer.updateScore();
+            activePlayer.updateScore(activePlayer);
 
             return true;
         }

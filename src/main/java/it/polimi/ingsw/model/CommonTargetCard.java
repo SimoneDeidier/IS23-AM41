@@ -60,4 +60,18 @@ public abstract class CommonTargetCard {
         return constructor.newInstance(numberOfPlayers);
     }
 
+    public ScoringToken assignToken(Player player){
+        for(ScoringToken token: scoringTokensList){
+            if(token.getOwner().equals(player)){
+                return token;
+            }
+            if(token.isTakeable()){
+                token.setOwner(player);
+                return token;
+            }
+        }
+        return null;
+
+    }
+
 }

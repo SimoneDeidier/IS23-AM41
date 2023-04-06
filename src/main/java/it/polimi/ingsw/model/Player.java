@@ -32,20 +32,25 @@ public class Player {
         return shelf;
     }
 
-    public void updateScore() {
+    public void updateScore(Player player) {
         try {
             playerScore = 0;
             if (endGameToken != null) {
                 playerScore += endGameToken.getValue();
             }
-            //Assegnare token
+            playerScore += personalTargetCard.calculatePoints(shelf, 0);
+            playerScore += shelf.calculateAdjacentItemsPoints();
+            if(commonTargetCardList.get(0).check(shelf)){
+                scoringTokenList.add(commonTargetCardList.get(0).assignToken(player));
+            }
+            if(commonTargetCardList.size()==2 && commonTargetCardList.get(1).check(shelf)){
+                scoringTokenList.add(commonTargetCardList.get(1).assignToken(player));
+            }
             for (ScoringToken token : scoringTokenList) {
                 if (token != null) {
                     playerScore += token.getValue();
                 }
             }
-            playerScore += personalTargetCard.calculatePoints(shelf, 0);
-            playerScore += shelf.calculateAdjacentItemsPoints();
         }
         catch (EmptyShelfException e) {
             System.out.println("EMPTY SHELF EXCEPTION");
