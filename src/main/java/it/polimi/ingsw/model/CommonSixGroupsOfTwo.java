@@ -8,8 +8,8 @@ public class CommonSixGroupsOfTwo extends CommonTargetCard {
     public boolean check(Shelf shelf) {
         int count = 0;
         boolean[][] visited = new boolean[6][5];
-        for (int i = 0; i < 6; i++) {
-            for (int j = 0; j < 5; j++) {
+        for (int i = 0; i < ROWS; i++) {
+            for (int j = 0; j < COLUMNS; j++) {
                 if (!visited[i][j]) {
                     ItemType value = shelf.getItemByCoordinates(i, j).getType();
                     if (dfs(shelf, visited, i, j, value) >= 2) {
@@ -28,7 +28,7 @@ public class CommonSixGroupsOfTwo extends CommonTargetCard {
         for (int[] neighbor : neighbors) {
             int row = i + neighbor[0];
             int col = j + neighbor[1];
-            if (row >= 0 && row < 6 && col >= 0 && col < 5 && !visited[row][col] && shelf.getItemByCoordinates(row, col).getType() == value) {
+            if (row >= 0 && row < ROWS && col >= 0 && col < COLUMNS && !visited[row][col] && shelf.getItemByCoordinates(row, col).getType() == value) {
                 count += dfs(shelf, visited, row, col, value);
             }
         }

@@ -9,7 +9,7 @@ import static org.junit.jupiter.api.Assertions.*;
 class CommonFourCornersTest {
 
     @Test
-    void check() throws EmptyItemListToInsert, NotEnoughSpaceInColumnException {
+    void checkFourCorners() throws EmptyItemListToInsert, NotEnoughSpaceInColumnException {
 
         CommonTargetCard commonFourCorners = new CommonFourCorners(2);
 
@@ -23,6 +23,11 @@ class CommonFourCornersTest {
         shelfA.insertItems(4, Arrays.asList(new Item(ItemType.PLANTS), new Item(ItemType.PLANTS), new Item(ItemType.PLANTS), new Item(ItemType.TROPHIES), new Item(ItemType.PLANTS), new Item(ItemType.PLANTS)));
 
         assertTrue(commonFourCorners.check(shelfA));
+    }
+    @Test
+    void checkNoFourCorners() throws EmptyItemListToInsert, NotEnoughSpaceInColumnException {
+
+        CommonTargetCard commonFourCorners = new CommonFourCorners(2);
 
         // create a sample shelf with four corners of different types
         Shelf shelfB = new Shelf();
@@ -31,7 +36,7 @@ class CommonFourCornersTest {
         shelfB.insertItems(1, Arrays.asList(new Item(ItemType.TROPHIES), new Item(ItemType.BOOKS), new Item(ItemType.TROPHIES), new Item(ItemType.FRAMES), new Item(ItemType.BOOKS), new Item(ItemType.BOOKS)));
         shelfB.insertItems(2, Arrays.asList(new Item(ItemType.CAT), new Item(ItemType.CAT), new Item(ItemType.FRAMES), new Item(ItemType.PLANTS), new Item(ItemType.TROPHIES), new Item(ItemType.CAT)));
         shelfB.insertItems(3, Arrays.asList(new Item(ItemType.GAMES), new Item(ItemType.FRAMES), new Item(ItemType.TROPHIES), new Item(ItemType.GAMES), new Item(ItemType.TROPHIES), new Item(ItemType.GAMES)));
-        shelfB.insertItems(4, Arrays.asList(new Item(ItemType.PLANTS), new Item(ItemType.FRAMES), new Item(ItemType.PLANTS), new Item(ItemType.TROPHIES), new Item(ItemType.PLANTS), new Item(ItemType.PLANTS)));
+        shelfB.insertItems(4, Arrays.asList(new Item(ItemType.GAMES), new Item(ItemType.FRAMES), new Item(ItemType.PLANTS), new Item(ItemType.TROPHIES), new Item(ItemType.PLANTS), new Item(ItemType.PLANTS)));
 
         assertFalse(commonFourCorners.check(shelfB));
     }
