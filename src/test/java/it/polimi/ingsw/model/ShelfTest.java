@@ -1,5 +1,6 @@
 package it.polimi.ingsw.model;
 
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.RepeatedTest;
 import org.junit.jupiter.api.Test;
 
@@ -14,29 +15,40 @@ class ShelfTest {
     private static final int MAXITEMS = 3;
     private static final int COLUMNS = 5;
     private static final int ROWS = 6;
+    private Shelf shelf;
+    private Random random;
+
+    @BeforeEach
+    void initialize() {
+        shelf = new Shelf();
+        random = new Random();
+    }
 
     @Test
     void calculateAdjacentItemsPoints() {
-
     }
 
     @Test
     void exploreGraph() {
     }
 
-    @Test
-    void decodePoints() {
-        Random random = new Random();
-        Shelf shelf = new Shelf();
+    @RepeatedTest(5000)
+    void decodeNegativePoints() {
+        assertEquals(0, shelf.decodePoints(random.nextInt(0, 9999) * -1));
+    }
 
-        assertEquals(shelf.decodePoints(random.nextInt() * -1), 0);
-        assertEquals(shelf.decodePoints(random.nextInt(3)), 0);
-        assertEquals(shelf.decodePoints(random.nextInt(6, 9999)), 8);
+    @RepeatedTest(5000)
+    void decodeZeroPoints() {
+        assertEquals(0, shelf.decodePoints(random.nextInt(3)));
+    }
+
+    @RepeatedTest(5000)
+    void decodeMaxPoints() {
+        assertEquals(8, shelf.decodePoints(random.nextInt(6, 9999)));
     }
 
     @Test
     void isFull() throws NotEnoughSpaceInColumnException, EmptyItemListToInsert {
-        Shelf shelf = new Shelf();
 
         boolean res = shelf.isFull();
         assert(!res);
