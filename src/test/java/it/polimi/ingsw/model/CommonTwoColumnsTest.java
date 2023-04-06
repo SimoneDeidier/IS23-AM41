@@ -9,7 +9,7 @@ import static org.junit.jupiter.api.Assertions.*;
 class CommonTwoColumnsTest {
 
     @Test
-    void check() throws EmptyItemListToInsert, NotEnoughSpaceInColumnException {
+    void checkTwoColumns() throws EmptyItemListToInsert, NotEnoughSpaceInColumnException {
         CommonTargetCard commonTwoColumns = new CommonTwoColumns(2);
         //create a sample shelf with two columns of 6 different types of items
         Shelf shelfA = new Shelf();
@@ -20,7 +20,11 @@ class CommonTwoColumnsTest {
         shelfA.insertItems(3, Arrays.asList(new Item(ItemType.GAMES), new Item(ItemType.GAMES), new Item(ItemType.TROPHIES), new Item(ItemType.GAMES), new Item(ItemType.TROPHIES), new Item(ItemType.GAMES)));
         shelfA.insertItems(4, Arrays.asList(new Item(ItemType.PLANTS), new Item(ItemType.PLANTS), new Item(ItemType.PLANTS), new Item(ItemType.TROPHIES), new Item(ItemType.PLANTS), new Item(ItemType.PLANTS)));
         assertTrue(commonTwoColumns.check(shelfA));
+    }
 
+    @Test
+    void checkNoTwoColumns() throws EmptyItemListToInsert, NotEnoughSpaceInColumnException {
+        CommonTargetCard commonTwoColumns = new CommonTwoColumns(2);
         //create a sample shelf with two columns of 6 different types of items
         Shelf shelfB = new Shelf();
 
