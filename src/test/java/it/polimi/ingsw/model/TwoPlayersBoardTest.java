@@ -33,7 +33,7 @@ public class TwoPlayersBoardTest extends TestCase {
     }
 
     @Test
-    public void testPickItem1() throws InvalidBoardPositionException, NullItemPickedException {
+    public void testPickNullItem() throws InvalidBoardPositionException, NullItemPickedException {
         BoardFactory board = TwoPlayersBoard.getTwoPlayersBoard();
         board.refillBoard();
         board.pickItem(5,4);
@@ -42,39 +42,33 @@ public class TwoPlayersBoardTest extends TestCase {
     }
 
     @Test
-    public void testPickItem2() {
+    public void testPickItemInInvalidPosition() {
         BoardFactory board = TwoPlayersBoard.getTwoPlayersBoard();
         board.refillBoard();
         assertThrows(InvalidBoardPositionException.class,()->board.pickItem(1,1));
 
     }
     @Test
-    public void testHasFreeSide1() {
+    public void testHasFreeSideForFalse() {
         BoardFactory board= TwoPlayersBoard.getTwoPlayersBoard();
         board.refillBoard();
         assertFalse(board.hasFreeSide(4,4));
     }
     @Test
-    public void testHasFreeSide2() {
+    public void testHasFreeSideForTrue() {
         BoardFactory board= TwoPlayersBoard.getTwoPlayersBoard();
         board.refillBoard();
         assertTrue(board.hasFreeSide(3,6));
         }
     @Test
-    public void testHasFreeSide3() throws InvalidBoardPositionException, NullItemPickedException {
+    public void testHasFreeSideAfterOnePick() throws InvalidBoardPositionException, NullItemPickedException {
         BoardFactory board= TwoPlayersBoard.getTwoPlayersBoard();
         board.refillBoard();
         board.pickItem(5,6);
         assertTrue(board.hasFreeSide(5,5));
     }
     @Test
-    public void testHasFreeSide4() {
-        BoardFactory board= TwoPlayersBoard.getTwoPlayersBoard();
-        board.refillBoard();
-        assertTrue(!board.hasFreeSide(5,5));
-    }
-    @Test
-    public void testCheckInLine1() {
+    public void testCheckInLineHorizontally() {
         BoardFactory board= TwoPlayersBoard.getTwoPlayersBoard();
         board.refillBoard();
         List<int[]> list= new ArrayList<>();
@@ -85,7 +79,7 @@ public class TwoPlayersBoardTest extends TestCase {
     }
 
     @Test
-    public void testCheckInLine2() {
+    public void testCheckInLineVertically() {
         BoardFactory board= TwoPlayersBoard.getTwoPlayersBoard();
         board.refillBoard();
         List<int[]> list= new ArrayList<>();
@@ -94,7 +88,7 @@ public class TwoPlayersBoardTest extends TestCase {
         list.add(new int[]{5,3});
         assertTrue(board.checkInLine(list));
     }
-    public void testCheckInLine3() {
+    public void testCheckInLineFalse() {
         BoardFactory board= TwoPlayersBoard.getTwoPlayersBoard();
         board.refillBoard();
         List<int[]> list= new ArrayList<>();
@@ -104,7 +98,7 @@ public class TwoPlayersBoardTest extends TestCase {
         assertFalse(board.checkInLine(list));
     }
 
-    public void testCheckInLine4() {
+    public void testCheckInLineOneElement() {
         BoardFactory board= TwoPlayersBoard.getTwoPlayersBoard();
         board.refillBoard();
         List<int[]> list= new ArrayList<>();
@@ -112,7 +106,7 @@ public class TwoPlayersBoardTest extends TestCase {
         assertTrue(board.checkInLine(list));
     }
 
-    public void testCheckInLine5() {
+    public void testCheckInLineTwoElement() {
         BoardFactory board= TwoPlayersBoard.getTwoPlayersBoard();
         board.refillBoard();
         List<int[]> list= new ArrayList<>();

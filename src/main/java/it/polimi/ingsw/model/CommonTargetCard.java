@@ -2,9 +2,7 @@ package it.polimi.ingsw.model;
 
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Random;
+import java.util.*;
 
 public abstract class CommonTargetCard {
 
@@ -44,6 +42,9 @@ public abstract class CommonTargetCard {
                 scoringTokensList.add(new ScoringToken(2));
             }
         }
+        //We already order the list having the first element with the highest value
+        scoringTokensList.sort(Comparator.comparing(ScoringToken::getValue));
+        Collections.reverse(scoringTokensList);
 
     }
 
@@ -57,6 +58,18 @@ public abstract class CommonTargetCard {
         return constructor.newInstance(numberOfPlayers);
     }
 
+    public ScoringToken assignToken(Player player){
+        for(ScoringToken token: scoringTokensList){
+            if(token.getOwner().equals(player)){
+                return token;
+            }
+            if(token.isTakeable()){
+                token.setOwner(player);
+                return token;
+            }
+        }
+        return null;
 
+    }
 
 }

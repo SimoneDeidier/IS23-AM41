@@ -28,7 +28,7 @@ public class ThreePlayersBoardTest extends TestCase {
 
     }
 
-    public void testPickItem1() throws InvalidBoardPositionException, NullItemPickedException {
+    public void testPickNullItem() throws InvalidBoardPositionException, NullItemPickedException {
         ItemsBag itemsBag = ItemsBag.getItemsBag();
         itemsBag.setupBag();
         BoardFactory board = ThreePlayersBoard.getThreePlayersBoard();
@@ -37,7 +37,7 @@ public class ThreePlayersBoardTest extends TestCase {
         assertThrows(NullItemPickedException.class,()->board.pickItem(0,3));
     }
 
-    public void testPickItem2() throws InvalidBoardPositionException, NullItemPickedException {
+    public void testPickItemInInvalidPosition() throws InvalidBoardPositionException, NullItemPickedException {
         ItemsBag itemsBag = ItemsBag.getItemsBag();
         itemsBag.setupBag();
         BoardFactory board = ThreePlayersBoard.getThreePlayersBoard();
