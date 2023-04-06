@@ -35,7 +35,7 @@ public class ItemsBag {
     }
 
     public Item pickItem() {
-        Item picked = itemList.get(random.nextInt(itemList.size()));
+        Item picked = new Item(itemList.get(random.nextInt(itemList.size())).getColor());
         itemList.remove(picked);
         return picked;
     }

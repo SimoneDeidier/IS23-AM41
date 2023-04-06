@@ -3,7 +3,10 @@ package it.polimi.ingsw.model;
 import java.lang.reflect.Array;
 import java.util.ArrayList;
 
-public class CommonThreeColumns implements CommonTargetCard {
+public class CommonThreeColumns extends CommonTargetCard {
+    public CommonThreeColumns(int maxPlayerNumber) {
+        super(maxPlayerNumber);
+    }
     @Override
     public boolean check(Shelf shelf) {
 
@@ -15,13 +18,13 @@ public class CommonThreeColumns implements CommonTargetCard {
             if( shelf.getItemByCoordinates(0, col) != null ){
                 //se la colonna è piena
                 for( int row = 0; row < 6; row++){
-                    switch (shelf.getItemByCoordinates(row, col).getType()) {
-                        case TROPHIES -> ricorrenze[0]++;
-                        case PLANTS -> ricorrenze[1]++;
-                        case FRAMES -> ricorrenze[2]++;
-                        case GAMES -> ricorrenze[3]++;
-                        case BOOKS -> ricorrenze[4]++;
-                        case CAT -> ricorrenze[5]++;
+                    switch (shelf.getItemByCoordinates(row, col).getColor()) {
+                        case GREEN -> ricorrenze[0]++;
+                        case BLUE-> ricorrenze[1]++;
+                        case LIGHT_BLUE -> ricorrenze[2]++;
+                        case YELLOW -> ricorrenze[3]++;
+                        case WHITE -> ricorrenze[4]++;
+                        case PINK -> ricorrenze[5]++;
                     }
                 }
 
@@ -37,10 +40,15 @@ public class CommonThreeColumns implements CommonTargetCard {
             if(tipiDisponibili == 0){
                 //la colonna soddifa la condizione
                 colonneCorrette++;
+                tipiDisponibili = 3;
                 if(colonneCorrette == 3)
                     return true;
             }
 
+
+            for(int j = 0; j < 6; j++){
+                ricorrenze[j] = 0;
+            }
 
         }
 

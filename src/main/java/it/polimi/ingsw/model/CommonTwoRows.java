@@ -1,51 +1,54 @@
 package it.polimi.ingsw.model;
 
-public class CommonTwoRows implements CommonTargetCard {
+public class CommonTwoRows extends CommonTargetCard {
+    public CommonTwoRows(int maxPlayerNumber) {
+        super(maxPlayerNumber);
+    }
     @Override
     public boolean check(Shelf shelf) {
 
-        int[] ricorrenze = new int[6]; //array per contare le riccorenze di ciascun tipo
-        int RigheCorrette = 0;
-        boolean NoDuplicati = true;
+        int rowsThatSatisfiedCondition = 0;
+        boolean rowSatisfiedCondition = true;
+        int[] counterOccurence = new int[6];
 
-
-        for(int row = 0; row < 5 ; row++){
-            int col = 0;
-            while( col < 6 ){
-                if(shelf.getItemByCoordinates(row, col) != null) {
-                    switch (shelf.getItemByCoordinates(row, col).getType()) {
-                        case TROPHIES -> ricorrenze[0]++;
-                        case PLANTS -> ricorrenze[1]++;
-                        case FRAMES -> ricorrenze[2]++;
-                        case GAMES -> ricorrenze[3]++;
-                        case BOOKS -> ricorrenze[4]++;
-                        case CAT -> ricorrenze[5]++;
+        for( int row = 0; row < ROWS; row++ ){
+            if(     shelf.getItemByCoordinates(row, 0) != null &&
+                    shelf.getItemByCoordinates(row, 1) != null &&
+                    shelf.getItemByCoordinates(row, 2) != null &&
+                    shelf.getItemByCoordinates(row, 3) != null &&
+                    shelf.getItemByCoordinates(row, 4) != null
+            ){
+                for( int col = 0; col < COLUMNS; col++){
+                    switch (shelf.getItemByCoordinates(row, col).getColor()) {
+                        case PINK -> counterOccurence[0]++;
+                        case BLUE -> counterOccurence[1]++;
+                        case LIGHT_BLUE -> counterOccurence[2]++;
+                        case YELLOW -> counterOccurence[3]++;
+                        case GREEN -> counterOccurence[4]++;
+                        case WHITE -> counterOccurence[5]++;
                     }
                 }
-                col++;
-            }
-            
-            int i = 0;
-            while( i < 6 ){
-                //se nell'array ricorrenza c'è una posione con più di uno significa che c'è un tipo in più
-                if(ricorrenze[i] > 1){
-                    NoDuplicati = false;
-                    break;
+
+                for( int i = 0; i < 6; i++ ){
+                    if(counterOccurence[i] > 1){
+                        rowSatisfiedCondition = false;
+                        break;
+                    }
+                    counterOccurence[i] = 0;
+               }
+                if (rowSatisfiedCondition) {
+                    rowsThatSatisfiedCondition++;
+                    if(rowsThatSatisfiedCondition == 2){
+                        return true;
+                    }
                 }
-                i++;
+                rowSatisfiedCondition = true;
             }
-            
-            if (NoDuplicati){
-                //se non ci sono duplicati la riga soddisfa la condizione, dunque aggiorniamo il contatore delle colonne che soddisfano la condizione
-                RigheCorrette++;
-                if( RigheCorrette == 2)
-                    return true;
-            }
-
-            NoDuplicati = false;
-
         }
+
+
+
+
         return false;
-        
     }
 }

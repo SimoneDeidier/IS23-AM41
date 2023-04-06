@@ -24,7 +24,7 @@ public class WaitingForSavedGameState extends GameState {
     }
 
     @Override
-    public void setupGame() {
+    public void setupGame(int maxPlayerNumber) {
         return;
     }
 }

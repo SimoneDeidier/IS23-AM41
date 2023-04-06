@@ -1,6 +1,9 @@
 package it.polimi.ingsw.model;
 
-public class CommonEightSame implements CommonTargetCard {
+public class CommonEightSame extends CommonTargetCard {
+    public CommonEightSame(int maxPlayerNumber) {
+        super(maxPlayerNumber);
+    }
     @Override
     public boolean check(Shelf shelf) {
 
@@ -8,14 +11,17 @@ public class CommonEightSame implements CommonTargetCard {
 
         for(int row = 0; row < 6; row++){
             for(int col = 0; col < 5; col++){
-                switch( shelf.getItemByCoordinates(row, col).getType() ){
-                    case CAT -> ricorrenze[0]++;
-                    case BOOKS -> ricorrenze[1]++;
-                    case GAMES -> ricorrenze[2]++;
-                    case FRAMES -> ricorrenze[3]++;
-                    case PLANTS -> ricorrenze[4]++;
-                    case TROPHIES -> ricorrenze[5]++;
+                if(shelf.getItemByCoordinates(row, col) != null){
+                    switch( shelf.getItemByCoordinates(row, col).getType() ){
+                        case CAT -> ricorrenze[0]++;
+                        case BOOKS -> ricorrenze[1]++;
+                        case GAMES -> ricorrenze[2]++;
+                        case FRAMES -> ricorrenze[3]++;
+                        case PLANTS -> ricorrenze[4]++;
+                        case TROPHIES -> ricorrenze[5]++;
+                    }
                 }
+
             }
         }
 

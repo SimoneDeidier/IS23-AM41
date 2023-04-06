@@ -1,6 +1,9 @@
 package it.polimi.ingsw.model;
 
-public class CommonX implements CommonTargetCard {
+public class CommonX extends CommonTargetCard {
+    public CommonX(int maxPlayerNumber) {
+        super(maxPlayerNumber);
+    }
     @Override
     public boolean check(Shelf shelf) {
         
@@ -16,11 +19,11 @@ public class CommonX implements CommonTargetCard {
                         shelf.getItemByCoordinates(row + 2, col    ) != null &&
                         shelf.getItemByCoordinates(row + 2, col + 2) != null &&
                         
-                        shelf.getItemByCoordinates(row    , col    ).getType()!= tipoSelezionato.getType() &&
-                        shelf.getItemByCoordinates(row    , col + 2).getType()!= tipoSelezionato.getType() &&
-                        shelf.getItemByCoordinates(row + 1, col + 1).getType()!= tipoSelezionato.getType() &&
-                        shelf.getItemByCoordinates(row + 2, col    ).getType()!= tipoSelezionato.getType() &&
-                        shelf.getItemByCoordinates(row + 2, col + 2).getType()!= tipoSelezionato.getType()
+                        shelf.getItemByCoordinates(row    , col    ).getType()== tipoSelezionato.getType() &&
+                        shelf.getItemByCoordinates(row    , col + 2).getType()== tipoSelezionato.getType() &&
+                        shelf.getItemByCoordinates(row + 1, col + 1).getType()== tipoSelezionato.getType() &&
+                        shelf.getItemByCoordinates(row + 2, col    ).getType()== tipoSelezionato.getType() &&
+                        shelf.getItemByCoordinates(row + 2, col + 2).getType()== tipoSelezionato.getType()
 
                 ){
                     return true;

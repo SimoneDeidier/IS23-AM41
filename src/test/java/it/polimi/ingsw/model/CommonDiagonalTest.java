@@ -9,8 +9,8 @@ import static org.junit.jupiter.api.Assertions.*;
 class CommonDiagonalTest {
 
     @Test
-    void check() {
-        CommonTargetCard CommonDiagonal = new CommonDiagonal();
+    void check() throws EmptyItemListToInsert, NotEnoughSpaceInColumnException {
+        CommonTargetCard CommonDiagonal = new CommonDiagonal(2);
         // create a sample shelf with a left-to-right diagonal
         Shelf shelfA = new Shelf();
 

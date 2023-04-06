@@ -123,4 +123,20 @@ public class Shelf {
         return shelfMatrix[row][col];
     }
 
+
+    public int freeSpaces(int col){
+        int res = 6;
+
+        for( int row = ROWS - 1 ; row >= 0; row-- ){
+            if(shelfMatrix[row][col] == null){
+                return res;
+            }
+            res--;
+        }
+        return 0;
+    }
+
+
+
+
 }

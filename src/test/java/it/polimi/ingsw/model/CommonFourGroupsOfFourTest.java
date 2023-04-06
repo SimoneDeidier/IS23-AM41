@@ -9,8 +9,8 @@ import static org.junit.jupiter.api.Assertions.*;
 class CommonFourGroupsOfFourTest {
 
     @Test
-    void check() {
-        CommonTargetCard commonFourGroupsOfFour = new CommonFourGroupsOfFour();
+    void check() throws EmptyItemListToInsert, NotEnoughSpaceInColumnException {
+        CommonTargetCard commonFourGroupsOfFour = new CommonFourGroupsOfFour(2);
 
         // create a sample shelf with four groups of four
         Shelf shelfA = new Shelf();

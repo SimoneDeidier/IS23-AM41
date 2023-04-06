@@ -18,7 +18,7 @@ public class ThreePlayersBoardTest extends TestCase {
 
             for(int j=0;j<9;j++){
 
-                if(board.getBitMaskElement(i,j) == true && board.getBoardMatrixElement(i,j) != null)
+                if(board.getBitMaskElement(i, j) && board.getBoardMatrixElement(i,j) != null)
 
                     count ++;
 
@@ -28,13 +28,20 @@ public class ThreePlayersBoardTest extends TestCase {
 
     }
 
-    public void testPickItem() throws InvalidBoardPositionException, NullItemPickedException {
+    public void testPickItem1() throws InvalidBoardPositionException, NullItemPickedException {
         ItemsBag itemsBag = ItemsBag.getItemsBag();
         itemsBag.setupBag();
         BoardFactory board = ThreePlayersBoard.getThreePlayersBoard();
         board.refillBoard();
         board.pickItem(0,3);
         assertThrows(NullItemPickedException.class,()->board.pickItem(0,3));
+    }
+
+    public void testPickItem2() throws InvalidBoardPositionException, NullItemPickedException {
+        ItemsBag itemsBag = ItemsBag.getItemsBag();
+        itemsBag.setupBag();
+        BoardFactory board = ThreePlayersBoard.getThreePlayersBoard();
+        board.refillBoard();
         assertThrows(InvalidBoardPositionException.class,()->board.pickItem(1,1));
     }
 }
