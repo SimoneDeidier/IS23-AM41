@@ -7,11 +7,11 @@ public class CommonX extends CommonTargetCard {
     @Override
     public boolean check(Shelf shelf) {
         
-        Item tipoSelezionato;
+        Item chosenColor;
 
-        for( int row = 0; row < 4; row++ ) {
-            for (int col = 0; col < 3; col++) {
-                tipoSelezionato = shelf.getItemByCoordinates(row, col);
+        for( int row = 0; row < ROWS - 2; row++ ) {
+            for (int col = 0; col < COLUMNS - 2; col++) {
+                chosenColor = shelf.getItemByCoordinates(row, col);
                 
                 if(     shelf.getItemByCoordinates(row    , col    ) != null &&
                         shelf.getItemByCoordinates(row    , col + 2)!= null &&
@@ -19,11 +19,11 @@ public class CommonX extends CommonTargetCard {
                         shelf.getItemByCoordinates(row + 2, col    ) != null &&
                         shelf.getItemByCoordinates(row + 2, col + 2) != null &&
                         
-                        shelf.getItemByCoordinates(row    , col    ).getType()== tipoSelezionato.getType() &&
-                        shelf.getItemByCoordinates(row    , col + 2).getType()== tipoSelezionato.getType() &&
-                        shelf.getItemByCoordinates(row + 1, col + 1).getType()== tipoSelezionato.getType() &&
-                        shelf.getItemByCoordinates(row + 2, col    ).getType()== tipoSelezionato.getType() &&
-                        shelf.getItemByCoordinates(row + 2, col + 2).getType()== tipoSelezionato.getType()
+                        shelf.getItemByCoordinates(row    , col    ).getType()== chosenColor.getType() &&
+                        shelf.getItemByCoordinates(row    , col + 2).getType()== chosenColor.getType() &&
+                        shelf.getItemByCoordinates(row + 1, col + 1).getType()== chosenColor.getType() &&
+                        shelf.getItemByCoordinates(row + 2, col    ).getType()== chosenColor.getType() &&
+                        shelf.getItemByCoordinates(row + 2, col + 2).getType()== chosenColor.getType()
 
                 ){
                     return true;

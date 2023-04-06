@@ -99,7 +99,6 @@ class CommonTwoSquaresTest {
         shelf3.insertItems(3, list8);
         shelf3.insertItems(3, list6);
 
-
         shelf3.insertItems(4, list8);
         shelf3.insertItems(4, list6);
 

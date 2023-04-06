@@ -7,7 +7,7 @@ public class CommonStairway extends CommonTargetCard {
     @Override
     public boolean check(Shelf shelf) {
 
-        int[] columnSpaces = new int[5];
+        int[] columnSpaces = new int[COLUMNS];
         /*
          * i casi possibili sono 4:
          *
@@ -20,21 +20,21 @@ public class CommonStairway extends CommonTargetCard {
          * 4) le colonne sono occupate così: 1 - 2 - 3 - 4 - 5
          *
          * */
-        for (int col = 0; col < 5; col++) {
+        for (int col = 0; col < COLUMNS; col++) {
             columnSpaces[col] = shelf.freeSpaces(col);
         }
 
         if (columnSpaces[0] == 0 || columnSpaces[0] == 1) {
             //decrementing case staircase: left to right
-            for (int col = 1; col < 5; col++) {
+            for (int col = 1; col < COLUMNS; col++) {
                 if (columnSpaces[col] - 1 != columnSpaces[col - 1]) {
                     return false;
                 }
             }
             return true;
-        } else if (columnSpaces[4] == 0 || columnSpaces[4] == 1) {
+        } else if (columnSpaces[COLUMNS - 1] == 0 || columnSpaces[COLUMNS - 1] == 1) {
             //decrementing case staircase: right to left
-            for (int col = 3; col >= 0; col--) {
+            for (int col = COLUMNS - 2; col >= 0; col--) {
                 if (columnSpaces[col] - 1 != columnSpaces[col + 1]) {
                     return false;
                 }

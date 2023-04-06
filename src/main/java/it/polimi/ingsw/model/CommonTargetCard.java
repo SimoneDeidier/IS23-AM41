@@ -11,6 +11,9 @@ public abstract class CommonTargetCard {
 
     protected final static int ROWS = 6;
     protected final static int COLUMNS = 5;
+
+    protected final static int COLORS = 6;
+
     protected List<ScoringToken> scoringTokensList;
 
     private static final List<Class<? extends CommonTargetCard>> SUBCLASSES = List.of(

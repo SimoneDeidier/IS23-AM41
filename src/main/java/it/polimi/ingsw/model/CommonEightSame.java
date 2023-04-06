@@ -1,6 +1,9 @@
 package it.polimi.ingsw.model;
 
 public class CommonEightSame extends CommonTargetCard {
+
+    private final int  NUMBER_COLOR_EQUALS = 8;
+
     public CommonEightSame(int maxPlayerNumber) {
         super(maxPlayerNumber);
     }
@@ -9,8 +12,8 @@ public class CommonEightSame extends CommonTargetCard {
 
         int[] ricorrenze = new int[6]; //array per contare le riccorenze di ciascun tipo
 
-        for(int row = 0; row < 6; row++){
-            for(int col = 0; col < 5; col++){
+        for(int row = 0; row < ROWS; row++){
+            for(int col = 0; col < COLUMNS; col++){
                 if(shelf.getItemByCoordinates(row, col) != null){
                     switch( shelf.getItemByCoordinates(row, col).getType() ){
                         case CAT -> ricorrenze[0]++;
@@ -25,7 +28,7 @@ public class CommonEightSame extends CommonTargetCard {
             }
         }
 
-        for(int i = 0; i < 6; i++){
+        for(int i = 0; i < COLORS; i++){
             if(ricorrenze[i] >= 8){
                 return true;
             }
