@@ -15,13 +15,25 @@ class ShelfTest {
     private static final int MAXITEMS = 3;
     private static final int COLUMNS = 5;
     private static final int ROWS = 6;
-    private Shelf shelf;
+    private Shelf emptyShelf;
     private Random random;
+    private List<Item> itemList;
+    private Shelf fullShelf;
+    private final List<Item> emptyList = new ArrayList<>(3);
 
     @BeforeEach
-    void initialize() {
-        shelf = new Shelf();
+    void initialize() throws EmptyItemListToInsert, NotEnoughSpaceInColumnException {
+        emptyShelf = new Shelf();
         random = new Random();
+        itemList = new ArrayList<>(3);
+        for(int i = 0; i < MAXITEMS; i++) {
+            itemList.add(new Item(ItemColor.PINK));
+        }
+        fullShelf = new Shelf();
+        for(int i = 0; i < COLUMNS; i++) {
+            fullShelf.insertItems(i, itemList);
+            fullShelf.insertItems(i, itemList);
+        }
     }
 
     @Test
@@ -34,74 +46,73 @@ class ShelfTest {
 
     @RepeatedTest(5000)
     void decodeNegativePoints() {
-        assertEquals(0, shelf.decodePoints(random.nextInt(0, 9999) * -1));
+        assertEquals(0, emptyShelf.decodePoints(random.nextInt(0, 9999) * -1));
     }
 
     @RepeatedTest(5000)
     void decodeZeroPoints() {
-        assertEquals(0, shelf.decodePoints(random.nextInt(3)));
+        assertEquals(0, emptyShelf.decodePoints(random.nextInt(3)));
     }
 
     @RepeatedTest(5000)
     void decodeMaxPoints() {
-        assertEquals(8, shelf.decodePoints(random.nextInt(6, 9999)));
+        assertEquals(8, emptyShelf.decodePoints(random.nextInt(6, 9999)));
     }
 
     @Test
-    void isFull() throws NotEnoughSpaceInColumnException, EmptyItemListToInsert {
+    void emptyShelf() {
+        assert(!emptyShelf.isFull());
+    }
 
-        boolean res = shelf.isFull();
-        assert(!res);
-        List<Item> itemList = new ArrayList<>(1);
-        for(int i = 0; i < MAXITEMS; i++) {
-            itemList.add(new Item(ItemColor.PINK));
-        }
-        shelf.insertItems(0, itemList);
-        shelf.insertItems(0, itemList);
-        res = shelf.isFull();
-        assert(!res);
-        for(int i = 1; i < COLUMNS; i++) {
-            shelf.insertItems(i, itemList);
-            shelf.insertItems(i, itemList);
-        }
-        res = shelf.isFull();
-        assert(res);
+    @RepeatedTest(5000)
+    void notFullEmptyShelf() throws EmptyItemListToInsert, NotEnoughSpaceInColumnException {
+        emptyShelf = new Shelf();
+        int col = random.nextInt(COLUMNS);
+        emptyShelf.insertItems(col, itemList);
+        assert(!emptyShelf.isFull());
     }
 
     @Test
-    void insertItems() throws EmptyItemListToInsert, NotEnoughSpaceInColumnException {
-        Shelf shelf = new Shelf();
-        Random random = new Random();
-        int row, col;
+    void fullShelf() {
+        assert(fullShelf.isFull());
+    }
 
-        final List<Item> nullItemList = null;
-        assertThrows(EmptyItemListToInsert.class, () -> {
-            shelf.insertItems(0, nullItemList);
-        });
-        final List<Item> emptyItemList = new ArrayList<>(3);
-        assertThrows(EmptyItemListToInsert.class, () -> {
-            shelf.insertItems(0, emptyItemList);
-        });
-        final List<Item> threeItemsList = new ArrayList<>(3);
-        for(int i = 0; i < MAXITEMS; i++) {
-            threeItemsList.add(new Item(ItemColor.PINK));
-        }
-        assertDoesNotThrow(() -> {
-            shelf.insertItems(0, threeItemsList);
-        });
-        for(int i = 0; i < MAXITEMS; i++) {
-            assertNotNull(shelf.getItemByCoordinates(5 - i, 0));
-        }
-        shelf.insertItems(0, threeItemsList);
-        for(int i = 1; i < COLUMNS; i++) {
-            shelf.insertItems(i, threeItemsList);
-            shelf.insertItems(i, threeItemsList);
-        }
-        row = random.nextInt(ROWS);
-        col = random.nextInt(COLUMNS);
-        assertNotNull(shelf.getItemByCoordinates(row, col));
-        assertThrows(NotEnoughSpaceInColumnException.class, () -> {
-            shelf.insertItems(0, threeItemsList);
-        });
+    @RepeatedTest(5000)
+    void insertNullList() {
+        emptyShelf = new Shelf();
+        assertThrows(EmptyItemListToInsert.class, () -> emptyShelf.insertItems(random.nextInt(COLUMNS), null));
+    }
+
+    @RepeatedTest(5000)
+    void insertEmptyList() {
+        emptyShelf = new Shelf();
+        assertThrows(EmptyItemListToInsert.class, () -> emptyShelf.insertItems(random.nextInt(COLUMNS), emptyList));
+    }
+
+    @RepeatedTest(5000)
+    void insertItemNotThrowsException() {
+        emptyShelf = new Shelf();
+        assertDoesNotThrow(() -> emptyShelf.insertItems(random.nextInt(COLUMNS), itemList));
+    }
+
+    @RepeatedTest(5000)
+    void itemExistsInShelfAfterInsertItem() throws EmptyItemListToInsert, NotEnoughSpaceInColumnException {
+        emptyShelf = new Shelf();
+        int col = random.nextInt(COLUMNS);
+        emptyShelf.insertItems(col, itemList);
+        int row = random.nextInt(ROWS-3, ROWS-1);
+        assertNotNull(emptyShelf.getItemByCoordinates(row, col));
+    }
+
+    @RepeatedTest(5000)
+    void randomPickItemInFullShelf() {
+        int row = random.nextInt(ROWS);
+        int col = random.nextInt(COLUMNS);
+        assertNotNull(fullShelf.getItemByCoordinates(row, col));
+    }
+
+    @RepeatedTest(5000)
+    void insertItemThrowsExceptionInFullShelf() {
+        assertThrows(NotEnoughSpaceInColumnException.class, () -> fullShelf.insertItems(random.nextInt(COLUMNS), itemList));
     }
 }
