@@ -1,13 +1,16 @@
 package it.polimi.ingsw.model;
 
 public class CommonTwoSquares extends CommonTargetCard {
+
+    private final static int SQUARES_NEEDED = 2;
+
     public CommonTwoSquares(int maxPlayerNumber) {
         super(maxPlayerNumber);
     }
     @Override
     public boolean check(Shelf shelf) {
 
-        boolean[][] bitMask = new boolean[6][5];
+        boolean[][] bitMask = new boolean[ROWS][COLUMNS];
         Item squaresColor = null;
         int squareFound = 0;
 
@@ -19,7 +22,10 @@ public class CommonTwoSquares extends CommonTargetCard {
                         squaresColor = shelf.getItemByCoordinates(row, col);
                     }
 
-                    if (    shelf.getItemByCoordinates(row, col + 1) != null && shelf.getItemByCoordinates(row + 1, col) != null && shelf.getItemByCoordinates(row + 1, col + 1) != null &&
+                    if (    shelf.getItemByCoordinates(row, col) != null &&
+                            shelf.getItemByCoordinates(row, col + 1) != null &&
+                            shelf.getItemByCoordinates(row + 1, col) != null &&
+                            shelf.getItemByCoordinates(row + 1, col + 1) != null &&
                             squaresColor.getColor() == shelf.getItemByCoordinates(row    , col + 1).getColor() &&
                             squaresColor.getColor() == shelf.getItemByCoordinates(row + 1, col    ).getColor() &&
                             squaresColor.getColor() == shelf.getItemByCoordinates(row + 1, col + 1).getColor())
@@ -35,7 +41,7 @@ public class CommonTwoSquares extends CommonTargetCard {
 
 
                         squareFound++;
-                        if (squareFound == 2)
+                        if (squareFound == SQUARES_NEEDED)
                             return true;
                     }
 

@@ -16,7 +16,6 @@ public class CommonThreeColumns extends CommonTargetCard {
 
         for( int col = 0; col < COLUMNS; col ++ ){
             if( shelf.getItemByCoordinates(0, col) != null ){
-                //se la colonna è piena
                 for( int row = 0; row < ROWS; row++){
                     switch (shelf.getItemByCoordinates(row, col).getColor()) {
                         case GREEN -> ricorrenze[0]++;
@@ -27,32 +26,22 @@ public class CommonThreeColumns extends CommonTargetCard {
                         case PINK -> ricorrenze[5]++;
                     }
                 }
-
             }
-            int i = 0;
-            while( i < COLORS ){
+            for(int i = 0; i < COLORS; i++){
                 if(ricorrenze[i] > 0){
                     colorsAvaiable--;
                 }
-                i++;
+                ricorrenze[i] = 0;
             }
 
-            if(colorsAvaiable == 0){
+            if(colorsAvaiable >= 0 && colorsAvaiable < MAX_DIFFERENT_COLORS_IN_COLUMNS){
                 //la colonna soddifa la condizione
                 columnsThatSadisfiedCondition++;
-                colorsAvaiable = MAX_DIFFERENT_COLORS_IN_COLUMNS;
                 if(columnsThatSadisfiedCondition == NUMBER_OF_COLUMNS_FOR_CONDITION)
                     return true;
             }
-
-
-            for(int j = 0; j < COLORS; j++){
-                ricorrenze[j] = 0;
-            }
-
+            colorsAvaiable = MAX_DIFFERENT_COLORS_IN_COLUMNS;
         }
-
-
         return false;
     }
 }

@@ -10,18 +10,18 @@ public class CommonEightSame extends CommonTargetCard {
     @Override
     public boolean check(Shelf shelf) {
 
-        int[] ricorrenze = new int[6]; //array per contare le riccorenze di ciascun tipo
+        int[] countColorOccurence = new int[COLORS];
 
         for(int row = 0; row < ROWS; row++){
             for(int col = 0; col < COLUMNS; col++){
                 if(shelf.getItemByCoordinates(row, col) != null){
                     switch( shelf.getItemByCoordinates(row, col).getType() ){
-                        case CAT -> ricorrenze[0]++;
-                        case BOOKS -> ricorrenze[1]++;
-                        case GAMES -> ricorrenze[2]++;
-                        case FRAMES -> ricorrenze[3]++;
-                        case PLANTS -> ricorrenze[4]++;
-                        case TROPHIES -> ricorrenze[5]++;
+                        case CAT -> countColorOccurence[0]++;
+                        case BOOKS -> countColorOccurence[1]++;
+                        case GAMES -> countColorOccurence[2]++;
+                        case FRAMES -> countColorOccurence[3]++;
+                        case PLANTS -> countColorOccurence[4]++;
+                        case TROPHIES -> countColorOccurence[5]++;
                     }
                 }
 
@@ -29,7 +29,7 @@ public class CommonEightSame extends CommonTargetCard {
         }
 
         for(int i = 0; i < COLORS; i++){
-            if(ricorrenze[i] >= 8){
+            if(countColorOccurence[i] >= NUMBER_COLOR_EQUALS){
                 return true;
             }
         }
