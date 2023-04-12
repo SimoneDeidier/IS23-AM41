@@ -1,21 +1,31 @@
 package it.polimi.ingsw.model;
 
-import junit.framework.TestCase;
+import static org.junit.jupiter.api.Assertions.*;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
-import static org.junit.jupiter.api.Assertions.assertThrows;
 
-public class FourPlayersBoardTest extends TestCase {
+public class FourPlayersBoardTest {
 
-    public void testRefillBoard() throws InvalidBoardPositionException, NullItemPickedException {
-        BoardFactory board = FourPlayersBoard.getFourPlayersBoard();
+    private static final int COLUMNS = 9;
+    private static final int ROWS = 9;
+    private BoardFactory board;
+
+    @BeforeEach
+    void initialize(){
+        board=FourPlayersBoard.getFourPlayersBoard();
         board.refillBoard();
+    }
+
+    @Test
+    public void testRefillBoard() throws InvalidBoardPositionException, NullItemPickedException {
         board.pickItem(5,4);
         board.refillBoard();
         int count=0;
 
-        for(int i=0;i<9;i++){
+        for(int i=0;i<ROWS;i++){
 
-            for(int j=0;j<9;j++){
+            for(int j=0;j<COLUMNS;j++){
 
                 if(board.getBitMaskElement(i,j) == true && board.getBoardMatrixElement(i,j) != null)
 
@@ -26,20 +36,12 @@ public class FourPlayersBoardTest extends TestCase {
         assertEquals(45,count);
     }
 
+    @Test
     public void testPickNullItem() throws InvalidBoardPositionException, NullItemPickedException {
-        ItemsBag itemsBag = ItemsBag.getItemsBag();
-        itemsBag.setupBag();
-        BoardFactory board = FourPlayersBoard.getFourPlayersBoard();
-        board.refillBoard();
         board.pickItem(0,4);
         assertThrows(NullItemPickedException.class,()->board.pickItem(0,4));
     }
 
-    public void testPickItemInInvalidPosition() throws InvalidBoardPositionException, NullItemPickedException {
-        ItemsBag itemsBag = ItemsBag.getItemsBag();
-        itemsBag.setupBag();
-        BoardFactory board = FourPlayersBoard.getFourPlayersBoard();
-        board.refillBoard();
-        assertThrows(InvalidBoardPositionException.class,()->board.pickItem(1,1));
-    }
+    @Test
+    public void testPickItemInInvalidPosition() throws InvalidBoardPositionException, NullItemPickedException { assertThrows(InvalidBoardPositionException.class,()->board.pickItem(1,1)); }
 }

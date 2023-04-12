@@ -72,13 +72,6 @@ public class Item {
         return color;
     }
 
-    public void setType(ItemType type) {
-        this.type = type;
-    }
-
-    public void setColor(ItemColor color) {
-        this.color = color;
-    }
 
 
 }

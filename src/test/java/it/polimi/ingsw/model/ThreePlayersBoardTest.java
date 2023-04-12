@@ -1,22 +1,30 @@
 package it.polimi.ingsw.model;
 
-import it.polimi.ingsw.model.*;
-import junit.framework.TestCase;
 import static org.junit.jupiter.api.Assertions.*;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
-public class ThreePlayersBoardTest extends TestCase {
+public class ThreePlayersBoardTest {
 
-    public void testRefillBoard() throws InvalidBoardPositionException, NullItemPickedException {
-        BoardFactory board = ThreePlayersBoard.getThreePlayersBoard();
+    private static final int COLUMNS = 9;
+    private static final int ROWS = 9;
+    private BoardFactory board;
+
+    @BeforeEach
+    void initialize(){
+        board=ThreePlayersBoard.getThreePlayersBoard();
         board.refillBoard();
+    }
+
+    @Test
+    public void testRefillBoard() throws InvalidBoardPositionException, NullItemPickedException {
         board.pickItem(5,4);
         board.refillBoard();
         int count=0;
 
-        for(int i=0;i<9;i++){
+        for(int i=0;i<ROWS;i++){
 
-            for(int j=0;j<9;j++){
+            for(int j=0;j<COLUMNS;j++){
 
                 if(board.getBitMaskElement(i, j) && board.getBoardMatrixElement(i,j) != null)
 
@@ -28,20 +36,14 @@ public class ThreePlayersBoardTest extends TestCase {
 
     }
 
+    @Test
     public void testPickNullItem() throws InvalidBoardPositionException, NullItemPickedException {
-        ItemsBag itemsBag = ItemsBag.getItemsBag();
-        itemsBag.setupBag();
-        BoardFactory board = ThreePlayersBoard.getThreePlayersBoard();
-        board.refillBoard();
         board.pickItem(0,3);
         assertThrows(NullItemPickedException.class,()->board.pickItem(0,3));
     }
 
+    @Test
     public void testPickItemInInvalidPosition() throws InvalidBoardPositionException, NullItemPickedException {
-        ItemsBag itemsBag = ItemsBag.getItemsBag();
-        itemsBag.setupBag();
-        BoardFactory board = ThreePlayersBoard.getThreePlayersBoard();
-        board.refillBoard();
         assertThrows(InvalidBoardPositionException.class,()->board.pickItem(1,1));
     }
 }
