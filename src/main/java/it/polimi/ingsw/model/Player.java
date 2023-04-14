@@ -9,6 +9,7 @@ public class Player {
     private String nickname;
     private boolean connected;
     private int playerScore;
+    private BoardFactory board;
     private EndGameToken endGameToken;
     private Shelf shelf;
     private List<ScoringToken> scoringTokenList;
@@ -59,12 +60,23 @@ public class Player {
             throw new RuntimeException(e);
         }
     }
-
-    public void addCommonTargetCard(CommonTargetCard card){
-        commonTargetCardList.add(card);
-    }
-
     public void setEndGameToken(EndGameToken endGameToken) {
         this.endGameToken = endGameToken;
+    }
+
+    public void setBoard(BoardFactory board) {
+        this.board = board;
+    }
+
+    public void setCommonTargetCardList(List<CommonTargetCard> commonTargetCardList) {
+        this.commonTargetCardList = commonTargetCardList;
+    }
+
+    public void setShelf(Shelf shelf) {
+        this.shelf = shelf;
+    }
+
+    public void setPersonalTargetCard(PersonalTargetCard personalTargetCard) {
+        this.personalTargetCard = personalTargetCard;
     }
 }

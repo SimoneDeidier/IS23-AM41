@@ -1,4 +1,4 @@
-package it.polimi.ingsw.servercotroller;
+package it.polimi.ingsw.servercontroller;
 
 public class SerializeDeserialize {
 
