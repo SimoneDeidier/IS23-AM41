@@ -1,0 +1,41 @@
+title SetUp Phase
+
+participant Server
+participant Client1
+participant Client2
+
+activate Server
+activate Client1
+note over Server,Client1: Connection of the first playerand\nset-up of the lobby's parameters.
+Client1->Server: Hello
+Server-->>Client1: Connected
+note over Server,Client1: Number of players & common target\ncards are provided by the first client,\ntogether with the player's nickname.
+Client1->Server: Create Lobby
+loop Stops when correct parameters are provided
+opt Wrong parameters provided
+Server-->>Client1: Wrong Parameters
+Client1->Server: Create Lobby
+end
+end
+Server-->>Client1: Lobby Created
+activate Client2
+note over Server,Client2: New player tries to connect and join the lobby.
+Client2->Server: Hello
+alt Lobby is full
+Server-->>Client2: Goodbye
+else Lobby has a free space
+Server-->>Client2: Connected
+Client2->Server: Presentation
+loop Stops when available nickname is provided
+opt Nickname choosen by the player is not available
+Server-->>Client2: Invalid Nickname
+Client2->Server: Presentation
+end
+end
+Server-->>Client2: Nickname Accepted
+end
+note over Server,Client2: When the lobby is full, game can start.
+parallel 
+Server->Client1: Game Start
+Server->Client2:
+parallel off

@@ -1,0 +1,24 @@
+title Running Game Phase
+
+participant Server
+participant Client1
+participant Client2
+
+activate Server
+activate Client1
+activate Client2
+note over Server,Client2: Player on duty makes a move, server checks it,\nupdates the model and notify all the views.
+Client1->Server: Move
+loop Stops when a correct move is provided
+opt An incorrect move is provided by the player
+Server-->>Client1: Incorrect Move
+Client1->Server: Move
+end
+end
+Server-->>Client1: Move OK
+note over Server,Client1: Server updates model and\ncalculate the player on duty's\nnew total score.
+Server->Client1: Updated Score
+parallel
+Server->Client1: Update View
+Server->Client2:
+parallel off
