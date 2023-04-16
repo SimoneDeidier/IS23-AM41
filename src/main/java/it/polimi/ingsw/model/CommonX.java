@@ -19,11 +19,11 @@ public class CommonX extends CommonTargetCard {
                         shelf.getItemByCoordinates(row + 2, col    ) != null &&
                         shelf.getItemByCoordinates(row + 2, col + 2) != null &&
                         
-                        shelf.getItemByCoordinates(row    , col    ).getType()== chosenColor.getType() &&
-                        shelf.getItemByCoordinates(row    , col + 2).getType()== chosenColor.getType() &&
-                        shelf.getItemByCoordinates(row + 1, col + 1).getType()== chosenColor.getType() &&
-                        shelf.getItemByCoordinates(row + 2, col    ).getType()== chosenColor.getType() &&
-                        shelf.getItemByCoordinates(row + 2, col + 2).getType()== chosenColor.getType()
+                        shelf.getItemByCoordinates(row    , col    ).getColor()== chosenColor.getColor() &&
+                        shelf.getItemByCoordinates(row    , col + 2).getColor()== chosenColor.getColor() &&
+                        shelf.getItemByCoordinates(row + 1, col + 1).getColor()== chosenColor.getColor() &&
+                        shelf.getItemByCoordinates(row + 2, col    ).getColor()== chosenColor.getColor() &&
+                        shelf.getItemByCoordinates(row + 2, col + 2).getColor()== chosenColor.getColor()
 
                 ){
                     return true;

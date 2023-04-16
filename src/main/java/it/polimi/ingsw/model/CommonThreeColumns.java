@@ -10,7 +10,7 @@ public class CommonThreeColumns extends CommonTargetCard {
     @Override
     public boolean check(Shelf shelf) {
 
-        int[] ricorrenze = new int[COLORS]; //array per contare le riccorenze di ciascun tipo
+        int[] colorsCount = new int[COLORS];
         int colorsAvaiable = MAX_DIFFERENT_COLORS_IN_COLUMNS;
         int columnsThatSadisfiedCondition = 0;
 
@@ -18,24 +18,23 @@ public class CommonThreeColumns extends CommonTargetCard {
             if( shelf.getItemByCoordinates(0, col) != null ){
                 for( int row = 0; row < ROWS; row++){
                     switch (shelf.getItemByCoordinates(row, col).getColor()) {
-                        case GREEN -> ricorrenze[0]++;
-                        case BLUE-> ricorrenze[1]++;
-                        case LIGHT_BLUE -> ricorrenze[2]++;
-                        case YELLOW -> ricorrenze[3]++;
-                        case WHITE -> ricorrenze[4]++;
-                        case PINK -> ricorrenze[5]++;
+                        case GREEN -> colorsCount[0]++;
+                        case BLUE-> colorsCount[1]++;
+                        case LIGHT_BLUE -> colorsCount[2]++;
+                        case YELLOW -> colorsCount[3]++;
+                        case WHITE -> colorsCount[4]++;
+                        case PINK -> colorsCount[5]++;
                     }
                 }
             }
             for(int i = 0; i < COLORS; i++){
-                if(ricorrenze[i] > 0){
+                if(colorsCount[i] > 0){
                     colorsAvaiable--;
                 }
-                ricorrenze[i] = 0;
+                colorsCount[i] = 0;
             }
 
             if(colorsAvaiable >= 0 && colorsAvaiable < MAX_DIFFERENT_COLORS_IN_COLUMNS){
-                //la colonna soddifa la condizione
                 columnsThatSadisfiedCondition++;
                 if(columnsThatSadisfiedCondition == NUMBER_OF_COLUMNS_FOR_CONDITION)
                     return true;

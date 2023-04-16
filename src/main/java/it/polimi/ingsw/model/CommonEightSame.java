@@ -15,13 +15,13 @@ public class CommonEightSame extends CommonTargetCard {
         for(int row = 0; row < ROWS; row++){
             for(int col = 0; col < COLUMNS; col++){
                 if(shelf.getItemByCoordinates(row, col) != null){
-                    switch( shelf.getItemByCoordinates(row, col).getType() ){
-                        case CAT -> countColorOccurence[0]++;
-                        case BOOKS -> countColorOccurence[1]++;
-                        case GAMES -> countColorOccurence[2]++;
-                        case FRAMES -> countColorOccurence[3]++;
-                        case PLANTS -> countColorOccurence[4]++;
-                        case TROPHIES -> countColorOccurence[5]++;
+                    switch( shelf.getItemByCoordinates(row, col).getColor() ){
+                        case GREEN -> countColorOccurence[0]++;
+                        case YELLOW -> countColorOccurence[1]++;
+                        case BLUE -> countColorOccurence[2]++;
+                        case LIGHT_BLUE -> countColorOccurence[3]++;
+                        case PINK -> countColorOccurence[4]++;
+                        case WHITE -> countColorOccurence[5]++;
                     }
                 }
 

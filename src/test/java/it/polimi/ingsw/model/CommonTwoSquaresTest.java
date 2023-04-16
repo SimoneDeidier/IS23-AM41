@@ -16,6 +16,10 @@ class CommonTwoSquaresTest {
         Shelf shelf = new Shelf();
         Shelf shelf2 = new Shelf();
         Shelf shelf3 = new Shelf();
+        Shelf shelf4 = new Shelf();
+        Shelf shelf5 = new Shelf();
+        Shelf shelf6 = new Shelf();
+        Shelf shelf7 = new Shelf();
         CommonTargetCard card = new CommonTwoSquares(4);
         Item i1 = new Item(ItemColor.LIGHT_BLUE);
         Item i2 = new Item(ItemColor.BLUE);
@@ -32,6 +36,8 @@ class CommonTwoSquaresTest {
         List<Item> list6 = new ArrayList<Item>();
         List<Item> list7 = new ArrayList<Item>();
         List<Item> list8 = new ArrayList<Item>();
+        List<Item> list9 = new ArrayList<Item>();
+        List<Item> list10 = new ArrayList<Item>();
 
         Collections.addAll(list1, i1, i3);
         Collections.addAll(list2, i2, i6, i4);
@@ -41,7 +47,12 @@ class CommonTwoSquaresTest {
         Collections.addAll(list6, i2, i2, i2);
         Collections.addAll(list7, i6, i2);
         Collections.addAll(list8, i1, i1);
+        Collections.addAll(list9, i1, i2, i2);
+        Collections.addAll(list10, i6);
 
+
+
+        //test 1
         shelf.insertItems(0, list1);
         shelf.insertItems(0, list1);
         shelf.insertItems(0, list1);
@@ -80,7 +91,7 @@ class CommonTwoSquaresTest {
         shelf2.insertItems(4, list7);
         shelf2.insertItems(4, list6);
 
-        assertTrue(card.check(shelf2));
+        assertFalse(card.check(shelf2));
 
 
         
@@ -103,5 +114,88 @@ class CommonTwoSquaresTest {
         shelf3.insertItems(4, list6);
 
         assertFalse(card.check(shelf3));
+
+        //test 4
+
+        shelf4.insertItems(0, list1);
+        shelf4.insertItems(0, list1);
+        shelf4.insertItems(0, list1);
+
+        shelf4.insertItems(1, list2);
+        shelf4.insertItems(1, list2);
+
+        shelf4.insertItems(2, list5);
+        shelf4.insertItems(2, list4);
+
+        shelf4.insertItems(3, list8);
+        shelf4.insertItems(3, list6);
+
+        shelf4.insertItems(4, list8);
+        shelf4.insertItems(4, list8);
+
+        assertFalse(card.check(shelf4));
+
+        //test 5
+        shelf5.insertItems(0, list1);
+        shelf5.insertItems(0, list1);
+        shelf5.insertItems(0, list1);
+
+        shelf5.insertItems(1, list2);
+        shelf5.insertItems(1, list2);
+
+        shelf5.insertItems(2, list5);
+        shelf5.insertItems(2, list4);
+
+        shelf5.insertItems(3, list8);
+        shelf5.insertItems(3, list9);
+
+        shelf5.insertItems(4, list8);
+        shelf5.insertItems(4, list8);
+
+        assertFalse(card.check(shelf5));
+
+        //test 6
+        shelf6.insertItems(0, list1);
+        shelf6.insertItems(0, list1);
+        shelf6.insertItems(0, list1);
+
+        shelf6.insertItems(1, list2);
+        shelf6.insertItems(1, list1);
+
+        shelf6.insertItems(2, list5);
+        shelf6.insertItems(2, list4);
+
+        shelf6.insertItems(3, list8);
+        shelf6.insertItems(3, list9);
+
+        shelf6.insertItems(4, list8);
+        shelf6.insertItems(4, list8);
+
+        assertFalse(card.check(shelf6));
+
+
+        //test 7
+        shelf7.insertItems(0, list1);
+        shelf7.insertItems(0, list1);
+        shelf7.insertItems(0, list1);
+
+        shelf7.insertItems(1, list2);
+        shelf7.insertItems(1, list1);
+
+        shelf7.insertItems(2, list5);
+        shelf7.insertItems(2, list4);
+
+        shelf7.insertItems(3, list8);
+        shelf7.insertItems(3, list10);
+        shelf7.insertItems(3, list4);
+
+        shelf7.insertItems(4, list8);
+        shelf7.insertItems(4, list2);
+
+        assertTrue(card.check(shelf7));
+
+
+
+
     }
 }

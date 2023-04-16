@@ -6,7 +6,7 @@ public class CommonFourCorners extends CommonTargetCard {
     }
     @Override
     public boolean check(Shelf shelf) {
-        ItemType type= shelf.getItemByCoordinates(0, 0).getType();
-        return type == shelf.getItemByCoordinates(0, 4).getType() && type == shelf.getItemByCoordinates(5, 4).getType() && type == shelf.getItemByCoordinates(5, 0).getType();
+        ItemColor type= shelf.getItemByCoordinates(0, 0).getColor();
+        return type == shelf.getItemByCoordinates(0, COLUMNS - 1).getColor() && type == shelf.getItemByCoordinates(ROWS - 1, COLUMNS - 1).getColor() && type == shelf.getItemByCoordinates(ROWS - 1, 0).getColor();
     }
 }
