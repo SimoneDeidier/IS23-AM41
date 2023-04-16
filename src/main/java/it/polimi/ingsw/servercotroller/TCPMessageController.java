@@ -2,20 +2,20 @@ package it.polimi.ingsw.servercotroller;
 
 public class TCPMessageController {
 
-    private TCPMessageController instance;
+    private static TCPMessageController instance;
     private final GameController gameController;
 
-    private TCPMessageController(GameController gameController) {
-        this.gameController = gameController;
+    private TCPMessageController() {
+        this.gameController = GameController.getGameController();
     }
 
-    public TCPMessageController getTCPMessageController(GameController gameController) {
+    public static TCPMessageController getTCPMessageController() {
         if(instance == null) {
-            instance = new TCPMessageController(gameController);
+            instance = new TCPMessageController();
         }
         return instance;
     }
 
-
+    
 
 }

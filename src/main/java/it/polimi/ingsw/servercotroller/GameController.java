@@ -9,48 +9,48 @@ import java.util.List;
 
 public class GameController {
 
-    private GameController instance;
-    private final List<Player> playerList;
+    private static GameController instance;
+    private List<Player> playerList;
     private int maxPlayerNumber;
     private boolean lastTurn;
     private Player activePlayer; //acts as a kind of turn
     private BoardFactory board;
     private GameState state;
     private List<CommonTargetCard> commonTargetCardsList; //?????
+    private final TCPMessageController tcpMessageController;
 
-    private GameController(List<Player> playerList) {
-        this.playerList = playerList;
+    private GameController() {
+        this.tcpMessageController = TCPMessageController.getTCPMessageController();
     }
 
-    public GameController getGameController(List<Player> playerList) {
+    public static GameController getGameController() {
         if (instance == null) {
-            instance = new GameController(playerList);
+            instance = new GameController();
         }
         return instance;
     }
 
     public boolean checkMove(Move move){
-        //Il primo check non è utile? Aveva detto qualcosa Margara,tipo che un player potrebbe fingersi con un username
-        //Quindi qua il primo check dovrebbe essere sulla porta TCP,che quindi dovrebbe essere in Move
-        //Però aspe, qua il controllo è proprio sull'oggetto PLayer, probabilmente in Move non dovrebbe poter stare perchè
-        //il client non può passarlo(?)
-       if(!move.getPlayer().equals(activePlayer)) {
+       if(!move.getPlayerNickname().equals(activePlayer.getNickname())) {
            return false;
        }
        return board.checkMove(move.getPositionsPicked());
     }
 
+    // todo va messa a posto qui secondo me - eccezioni
     public boolean executeMove(Move move) throws EmptyItemListToInsert {
         if(checkMove(move)) {
             List<Item> items = getListItems(move);
             try {
                 activePlayer.getShelf().insertItems(move.getColumn(), items);
-            }catch (Exception NotEnoughSpaceInColumnException){
+            }
+            catch (Exception NotEnoughSpaceInColumnException){
                 System.out.println("Not enough space in the column provided!");
             }
             if (checkBoardNeedForRefill()) {
                 board.refillBoard();
             }
+            // todo usa in modo sbagliato il check
             if(checkLastTurn()){
                 activePlayer.setEndGameToken(EndGameToken.getEndGameToken());
                 lastTurn=true;
@@ -63,16 +63,17 @@ public class GameController {
     }
 
     public List<Item> getListItems(Move move){
+
         List<Item> items= new ArrayList<>();
-        for(int[] picks :move.getPositionsPicked()){
+        for(int[] picks : move.getPositionsPicked()){
             items.add(board.getBoardMatrixElement(picks[0],picks[1]));
         }
         return items;
+
     }
 
-
-
     public boolean checkBoardNeedForRefill() {
+
         for(int i=0;i<board.getBoardNumberOfRows();i++){
             for(int j=0;j<board.getBoardNumberOfColumns();j++){
                 if(board.getBitMaskElement(i,j) && board.getBoardMatrixElement(i,j)!=null && !board.itemHasAllFreeSide(i,j)){
@@ -81,6 +82,7 @@ public class GameController {
             }
         }
         return true; //Needs to be refilled
+
     }
     public void changeState(GameState state) {
         this.state = state;
