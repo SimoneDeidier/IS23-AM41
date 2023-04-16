@@ -12,8 +12,6 @@ import java.nio.charset.StandardCharsets;
 
 public class PersonalTargetCard {
 
-    //Mancano il costruttore e gli attributi per distinguere le carte? O mi sono perso qualcosa?(Sono sam)
-
     public int calculatePoints(Shelf shelf, int personal) throws URISyntaxException, IOException {
         int correctCards = 0;
         Gson gson = new Gson();
