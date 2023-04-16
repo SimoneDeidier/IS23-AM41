@@ -1,7 +1,8 @@
-package it.polimi.ingsw.servercotroller;
+package it.polimi.ingsw.servercontroller;
 
+import it.polimi.ingsw.model.BoardFactory;
+import it.polimi.ingsw.model.CommonTargetCard;
 import it.polimi.ingsw.model.Player;
-import it.polimi.ingsw.servercotroller.GameState;
 
 import java.util.List;
 
@@ -13,7 +14,7 @@ public class WaitingForSavedGameState extends GameState {
     }
 
     @Override
-    public void addPlayer(Player player, List<Player> playerList) {
+    public int handleNewPlayer(Player player, List<Player> playerList){
         //DA IMPLEMENTARE
         //Io l'avevo pensata come
         // chiamata a funzione check che il nome sia di quelli della partita salvata
@@ -21,10 +22,15 @@ public class WaitingForSavedGameState extends GameState {
         //altrimenti diciamo al controller di dire a quel client che già che
         //una partita che sta re iniziando
         //(Dopo init state si può andare solo o in waiting for player o waitinf for saved
+        return 0;
     }
 
     @Override
-    public void setupGame(int maxPlayerNumber) {
-        return;
+    public void addPlayer(Player player, BoardFactory board, List<CommonTargetCard> commonList) {
+    }
+
+    @Override
+    public void setupGame(int maxPlayerNumber,List<CommonTargetCard> commonList,BoardFactory board,boolean firstGame) {
+        //This needs to "re-setup" the game as it is in the gson
     }
 }

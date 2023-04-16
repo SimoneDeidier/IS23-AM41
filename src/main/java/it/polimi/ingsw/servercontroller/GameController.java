@@ -1,9 +1,7 @@
-package it.polimi.ingsw.servercotroller;
+package it.polimi.ingsw.servercontroller;
 
 import it.polimi.ingsw.model.*;
 
-import java.io.IOException;
-import java.net.URISyntaxException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -13,6 +11,7 @@ public class GameController {
     private List<Player> playerList;
     private int maxPlayerNumber;
     private boolean lastTurn;
+    private boolean firstGame;
     private Player activePlayer; //acts as a kind of turn
     private BoardFactory board;
     private GameState state;
@@ -90,12 +89,15 @@ public class GameController {
     public int getAvailableSlot() {
         return state.getAvailableSlot(maxPlayerNumber, playerList.size());
     }
-    public void addPlayer(Player player) throws URISyntaxException, IOException {
-        state.addPlayer(player, playerList);
+    public int handleNewPlayer(Player player){
+        return state.handleNewPlayer(player,playerList);
+    }
+    public void addPlayer() {
+        state.addPlayer(playerList.get(playerList.size()-1),board,commonTargetCardsList);
     }
 
-    public void setupGame(int maxPlayerNumber) {
-        state.setupGame(maxPlayerNumber);
+    public void setupGame() {
+        state.setupGame(maxPlayerNumber,commonTargetCardsList,board,firstGame);
     }
 
     public boolean checkLastTurn() {
