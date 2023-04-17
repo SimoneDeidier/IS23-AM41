@@ -1,0 +1,29 @@
+title Player Disconnection Handling
+
+participant Server
+participant Client1
+
+activate Server
+activate Client1
+note over Server,Client1: Every second the Server sends a Check to each client.
+Server->Client1: Check
+Client1-->>Server: Clear
+note over Server,Client1: After five unanswered checks the server assumes\nthat the player is disconnected.
+Server->Client1: Check
+Server->Client1: Check
+Server->Client1: Check
+Server->Client1: Check
+Server->Client1: Check
+deactivate Client1
+note right of Server: Game continues skipping the\ndisconnected player's turn.
+activate Client1
+Client1->Server: Re-Join
+alt Game still running - former player
+Server-->>Client1: Joined
+else Game still running - wrong player
+Server-->>Client1: Invalid Player
+end
+note over Server,Client1: After re-joining the game continues normally.\nA player can also disconnect intentionally.
+Client1->Server: Disconnect
+Server-->>Client1: Goodbye
+deactivate Client1

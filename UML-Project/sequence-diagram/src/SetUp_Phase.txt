@@ -9,8 +9,10 @@ activate Client1
 note over Server,Client1: Connection of the first playerand\nset-up of the lobby's parameters.
 Client1->Server: Hello
 Server-->>Client1: Connected
-note over Server,Client1: Number of players & common target\ncards are provided by the first client,\ntogether with the player's nickname.
-Client1->Server: Create Lobby
+note over Server,Client1: Client comunicate its nickname.
+Client1->Server: Presentation
+alt The nickname isn't in the server's saving
+note over Server,Client1: Number of players & common target\ncards are provided by the first client.
 loop Stops when correct parameters are provided
 opt Wrong parameters provided
 Server-->>Client1: Wrong Parameters
@@ -18,6 +20,10 @@ Client1->Server: Create Lobby
 end
 end
 Server-->>Client1: Lobby Created
+else The nickname is one of the previous player's nick
+Server-->>Client1: Lobby Restored
+end
+
 activate Client2
 note over Server,Client2: New player tries to connect and join the lobby.
 Client2->Server: Hello
@@ -32,7 +38,13 @@ Server-->>Client2: Invalid Nickname
 Client2->Server: Presentation
 end
 end
+alt New player joins a brand new lobby
 Server-->>Client2: Nickname Accepted
+else Former player joins a restored lobby
+Server-->>Client2: Plyer Restored
+else New player joins a restored lobby
+note over Server,Client2: La mia idea qui era quella di notificare il giocatore\nche ha resettato la lobby e chiedergl i parametri\nper una nuova lobby, ma sorgono parecchi problemi
+end
 end
 note over Server,Client2: When the lobby is full, game can start.
 parallel 
