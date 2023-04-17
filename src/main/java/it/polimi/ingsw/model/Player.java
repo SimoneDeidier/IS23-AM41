@@ -12,7 +12,7 @@ public class Player {
     private BoardFactory board;
     private EndGameToken endGameToken;
     private Shelf shelf;
-    private List<ScoringToken> scoringTokenList;
+    private List<ScoringToken> scoringTokenList = new ArrayList<>(2);
     private List<CommonTargetCard> commonTargetCardList;
     private PersonalTargetCard personalTargetCard;
 
@@ -79,4 +79,15 @@ public class Player {
     public void setPersonalTargetCard(PersonalTargetCard personalTargetCard) {
         this.personalTargetCard = personalTargetCard;
     }
+
+    public void addScoringToken(ScoringToken scoringToken) {
+        if( scoringToken != null )
+            this.scoringTokenList.add(scoringToken);
+    }
+
+    public ScoringToken getScoringToken(int i){
+        return scoringTokenList.get(i);
+    }
+
+
 }
