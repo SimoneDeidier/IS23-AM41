@@ -37,6 +37,23 @@ public class FourPlayersBoardTest {
     }
 
     @Test
+    public void testCreateBitMask() {
+        //assert verifies the bitmask creates exactly 45 valid positions
+        int count=0;
+        for(int i=0;i<COLUMNS;i++){
+
+            for(int j=0;j<ROWS;j++){
+
+                if(board.getBitMaskElement(i, j) && board.getBoardMatrixElement(i,j) != null)
+
+                    count ++;
+
+            }
+        }
+        assertEquals(45,count);
+    }
+
+    @Test
     public void testPickNullItem() throws InvalidBoardPositionException, NullItemPickedException {
         board.pickItem(0,4);
         assertThrows(NullItemPickedException.class,()->board.pickItem(0,4));
