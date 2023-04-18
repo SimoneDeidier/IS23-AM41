@@ -160,6 +160,32 @@ public class TwoPlayersBoardTest {
         assertEquals(9,board.getBoardNumberOfColumns());
     }
 
+    @Test
+    public void testCheckMoveForTrue(){
+        List<int[]> itemsPicked= new ArrayList<>();
+        itemsPicked.add(new int[]{1,3});
+        itemsPicked.add(new int[]{1,4});
+        assert (board.checkMove(itemsPicked));
+    }
+
+    @Test
+    public void testCheckMoveForFalse(){
+        List<int[]> itemsPicked= new ArrayList<>();
+        itemsPicked.add(new int[]{4,1});
+        itemsPicked.add(new int[]{4,2});
+        assert (!board.checkMove(itemsPicked));
+    }
+
+    @Test
+    public void testCheckMoveForTooManyItems(){
+        List<int[]> itemsPicked= new ArrayList<>();
+        itemsPicked.add(new int[]{4,1});
+        itemsPicked.add(new int[]{4,2});
+        itemsPicked.add(new int[]{4,1});
+        itemsPicked.add(new int[]{4,2});
+        assert (!board.checkMove(itemsPicked));
+    }
+
 
 
 }

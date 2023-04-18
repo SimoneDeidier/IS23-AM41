@@ -14,4 +14,8 @@ public class EndGameToken extends Token{
         return instance;
     }
 
+    public void resetEndGameToken(){
+        setOwner(null);
+    }
+
 }

@@ -155,9 +155,12 @@ public abstract class BoardFactory {
 
     }
 
-    //For testing purpose
     public void setBoardMatrixElement(Item item,int i,int j){
         boardMatrix[i][j]=item;
+    }
+
+    public void resetBoard(){
+        boardMatrix= new Item[ROWS][COLUMNS];
     }
 
 }
