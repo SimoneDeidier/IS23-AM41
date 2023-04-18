@@ -30,7 +30,7 @@ public class WaitingForSavedGameState extends GameState {
     }
 
     @Override
-    public void setupGame(int maxPlayerNumber,List<CommonTargetCard> commonList,BoardFactory board,boolean firstGame) {
+    public void setupGame(int maxPlayerNumber,List<CommonTargetCard> commonList,BoardFactory board,boolean onlyOneCommon) {
         //This needs to "re-setup" the game as it is in the gson
     }
 }

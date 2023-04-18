@@ -40,8 +40,8 @@ public class WaitingForPlayerState extends GameState {
     }
 
     @Override
-    public void setupGame(int maxPlayerNumber,List<CommonTargetCard> commonList,BoardFactory board,boolean firstGame) {
-        commonList = generateRandomCommonCards(firstGame,maxPlayerNumber);
+    public void setupGame(int maxPlayerNumber,List<CommonTargetCard> commonList,BoardFactory board,boolean onlyOneCommonCard) {
+        commonList = generateRandomCommonCards(onlyOneCommonCard,maxPlayerNumber);
         switch (maxPlayerNumber){
             case 2:
                 board = TwoPlayersBoard.getTwoPlayersBoard();
@@ -53,10 +53,10 @@ public class WaitingForPlayerState extends GameState {
 
     }
 
-    public List<CommonTargetCard> generateRandomCommonCards(boolean firstMatch,int maxPlayerNumber) {
+    public List<CommonTargetCard> generateRandomCommonCards(boolean onlyOneCommonCard,int maxPlayerNumber) {
         List<CommonTargetCard> list =new ArrayList<>();
         list.add(getRandomCommon(maxPlayerNumber));
-        if(firstMatch){
+        if(onlyOneCommonCard){
             return list;
         }
         CommonTargetCard common2= getRandomCommon(maxPlayerNumber);

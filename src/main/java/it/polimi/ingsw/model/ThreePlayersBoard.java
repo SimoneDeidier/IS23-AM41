@@ -6,6 +6,7 @@ public class ThreePlayersBoard extends BoardFactory {
 
     private ThreePlayersBoard() {
         this.itemsBag = ItemsBag.getItemsBag();
+        itemsBag.resetItemsBag();
         itemsBag.setupBag();
         bitMask = createBitMask();
     }
