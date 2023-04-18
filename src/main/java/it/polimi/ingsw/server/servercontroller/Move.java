@@ -18,4 +18,16 @@ public class Move {
     public int getColumn() {
         return column;
     }
+
+    public void setPlayerNickname(String playerNickname) {
+        this.playerNickname = playerNickname;
+    }
+
+    public void setPositionsPicked(List<int[]> positionsPicked) {
+        this.positionsPicked = positionsPicked;
+    }
+
+    public void setColumn(int column) {
+        this.column = column;
+    }
 }
