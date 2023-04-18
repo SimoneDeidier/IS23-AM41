@@ -16,11 +16,6 @@ public class GameController {
     private BoardFactory board;
     private GameState state;
     private List<CommonTargetCard> commonTargetCardsList;
-    private final TCPMessageController tcpMessageController;
-
-    private GameController() {
-        this.tcpMessageController = TCPMessageController.getTCPMessageController();
-    }
 
     public static GameController getGameController() {
         if (instance == null) {
