@@ -25,10 +25,6 @@ public class Player {
         return nickname;
     }
 
-    public void setNickname(String nickname) {
-        this.nickname = nickname;
-    }
-
     public Shelf getShelf() {
         return shelf;
     }

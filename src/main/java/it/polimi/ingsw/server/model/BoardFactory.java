@@ -100,12 +100,13 @@ public abstract class BoardFactory {
                 return false;
             }
         }
-        //Check for free side
+        //Check if all the elements have a free side
         for(int[] i : list){
             if(!hasFreeSide(i[0],i[1])){
                 return false;
             }
         }
+        //Check if the elements are in line
         return checkInLine(list);
     }
 
