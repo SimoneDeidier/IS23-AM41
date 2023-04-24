@@ -8,10 +8,11 @@ public class ItemsBag {
     private static ItemsBag instance = null;
     private List<Item> itemList;
     private final static int ITEMNUMBERFORTYPE = 22;
+    private final static int INITIAL_CAPACITY = 132;
     Random random = new Random();
 
     private ItemsBag() {
-        itemList = new ArrayList<>(132);
+        itemList = new ArrayList<>(INITIAL_CAPACITY);
     }
 
     public static ItemsBag getItemsBag() {
@@ -34,9 +35,17 @@ public class ItemsBag {
     }
 
     public Item pickItem() {
-        Item picked = new Item(itemList.get(random.nextInt(itemList.size())).getColor());
-        itemList.remove(picked);
+        if(getRemainingItemsCount()==0){
+            return null;
+        }
+        Item item=itemList.get(random.nextInt(itemList.size()));
+        Item picked = new Item(item.getColor());
+        itemList.remove(item);
         return picked;
+    }
+
+    public void resetItemsBag(){
+        itemList = new ArrayList<>(INITIAL_CAPACITY);
     }
 
 }

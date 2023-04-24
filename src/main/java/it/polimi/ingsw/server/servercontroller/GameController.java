@@ -11,11 +11,11 @@ public class GameController {
     private List<Player> playerList;
     private int maxPlayerNumber;
     private boolean lastTurn;
-    private boolean firstGame;
+    private boolean onlyOneCommonCard;
     private Player activePlayer; //acts as a kind of turn
     private BoardFactory board;
     private GameState state;
-    private List<CommonTargetCard> commonTargetCardsList; //?????
+    private List<CommonTargetCard> commonTargetCardsList;
 
     public static GameController getGameController() {
         if (instance == null) {
@@ -44,8 +44,7 @@ public class GameController {
             if (checkBoardNeedForRefill()) {
                 board.refillBoard();
             }
-            // todo usa in modo sbagliato il check
-            if(checkLastTurn()){
+            if(!lastTurn & checkLastTurn()){
                 activePlayer.setEndGameToken(EndGameToken.getEndGameToken());
                 lastTurn=true;
             }
@@ -92,7 +91,7 @@ public class GameController {
     }
 
     public void setupGame() {
-        state.setupGame(maxPlayerNumber,commonTargetCardsList,board,firstGame);
+        state.setupGame(maxPlayerNumber,commonTargetCardsList,board, onlyOneCommonCard);
     }
 
     public boolean checkLastTurn() {
@@ -102,5 +101,15 @@ public class GameController {
             }
         }
         return false;
+    }
+
+    public void prepareForNewGame(){
+        playerList=new ArrayList<>();
+        lastTurn=false;
+        activePlayer=null;
+        board.resetBoard();
+        changeState(new ServerInitState());
+        commonTargetCardsList=new ArrayList<>();
+
     }
 }

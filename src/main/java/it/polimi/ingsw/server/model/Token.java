@@ -7,17 +7,12 @@ public abstract class Token {
     public boolean isTakeable(){
         return owner == null;
     }
-
     public int getValue() {
         return value;
     }
 
     public Player getOwner() {
         return owner;
-    }
-
-    public void setValue(int value) {
-        this.value = value;
     }
 
     public void setOwner(Player owner) {

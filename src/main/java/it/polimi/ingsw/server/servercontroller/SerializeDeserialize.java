@@ -13,7 +13,9 @@ public class SerializeDeserialize {
 
     public String deserialize(String input) {
 
+        System.out.println("New message in input.");
         TCPMessage inputMsg = gson.fromJson(input, TCPMessage.class);
+        System.out.println("Header: " + inputMsg.getHeader() + ".");
         TCPMessage outMsg = null; // tcpMessageController.check(inputMsg);
         return gson.toJson(outMsg);
 

@@ -6,6 +6,7 @@ public class FourPlayersBoard extends BoardFactory {
 
     private FourPlayersBoard() {
         this.itemsBag = ItemsBag.getItemsBag();
+        itemsBag.resetItemsBag();
         itemsBag.setupBag();
         bitMask = createBitMask();
     }
