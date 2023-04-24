@@ -70,9 +70,13 @@ public class TwoPlayersBoardTest {
 
     }
     @Test
-    public void testHasFreeSideForFalse() { assertFalse(board.hasFreeSide(4,4)); }
+    public void testHasFreeSideForFalse() {
+        assertFalse(board.hasFreeSide(4,4));
+    }
     @Test
-    public void testHasFreeSideForTrue()  {  assertTrue(board.hasFreeSide(3,6));  }
+    public void testHasFreeSideForTrue()  {
+        assertTrue(board.hasFreeSide(3,6));
+    }
     @Test
     public void testHasFreeSideAfterOnePick() throws InvalidBoardPositionException, NullItemPickedException {
         board.pickItem(5,6);
@@ -85,6 +89,7 @@ public class TwoPlayersBoardTest {
         board.pickItem(2,4);
         board.pickItem(3,3);
         assertTrue(board.itemHasAllFreeSide(2,3));
+        board.itemHasAllFreeSide(0, 0);
     }
 
     @Test

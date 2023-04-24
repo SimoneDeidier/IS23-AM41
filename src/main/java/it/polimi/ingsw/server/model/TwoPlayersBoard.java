@@ -8,7 +8,7 @@ public class TwoPlayersBoard extends BoardFactory {
         this.itemsBag = ItemsBag.getItemsBag();
         itemsBag.setupBag();
         bitMask = createBitMask();
-        boardMatrix = new Item[9][9];
+        boardMatrix = new Item[ROWS][COLUMNS];
     }
 
     public static BoardFactory getTwoPlayersBoard() {

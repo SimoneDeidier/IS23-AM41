@@ -4,9 +4,8 @@ import java.util.List;
 
 public abstract class BoardFactory {
 
-    private final static int ROWS = 9;
-    private final static int COLUMNS = 9;
-
+    protected final static int ROWS = 9;
+    protected final static int COLUMNS = 9;
     protected Item[][] boardMatrix= new Item[ROWS][COLUMNS];
     protected boolean[][] bitMask;
     protected ItemsBag itemsBag;

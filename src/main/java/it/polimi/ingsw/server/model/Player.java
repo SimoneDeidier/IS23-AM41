@@ -2,6 +2,7 @@ package it.polimi.ingsw.server.model;
 
 import java.io.IOException;
 import java.net.URISyntaxException;
+import java.util.ArrayList;
 import java.util.List;
 
 public class Player {
