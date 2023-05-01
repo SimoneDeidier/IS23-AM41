@@ -14,6 +14,7 @@ Client1->Server: Presentation
 alt The nickname isn't in the server's saving
 note over Server,Client1: Number of players & common target\ncards are provided by the first client.
 loop Stops when correct parameters are provided
+Client1->Server: Create Lobby
 opt Wrong parameters provided
 Server-->>Client1: Wrong Parameters
 Client1->Server: Create Lobby
@@ -41,10 +42,18 @@ end
 alt New player joins a brand new lobby
 Server-->>Client2: Nickname Accepted
 else Former player joins a restored lobby
-Server-->>Client2: Plyer Restored
+Server-->>Client2: Player Restored
 else New player joins a restored lobby
-note over Server,Client2: La mia idea qui era quella di notificare il giocatore\nche ha resettato la lobby e chiedergl i parametri\nper una nuova lobby, ma sorgono parecchi problemi
+parallel
+Server-->>Client1: Cant Restore Lobby
+Server-->>Client2:
+parallel off
+deactivate Client1
+deactivate Client2
+note over Server,Client2: All connections are closed and the saving is deleted.\nPlayers can reconnect and create a former new lobby.
 end
+activate Client1
+activate Client2
 end
 note over Server,Client2: When the lobby is full, game can start.
 parallel 
