@@ -7,10 +7,10 @@ participant Client2
 activate Server
 activate Client1
 activate Client2
-note over Server,Client2: Player on duty makes a move, server checks it,\nupdates the model and notify all the views.
+note over Server,Client2: Player on duty makes a body, server checks it,\nupdates the model and notify all the views.
 Client1->Server: Move
-loop Stops when a correct move is provided
-opt An incorrect move is provided by the player
+loop Stops when a correct body is provided
+opt An incorrect body is provided by the player
 Server-->>Client1: Incorrect Move
 Client1->Server: Move
 end
