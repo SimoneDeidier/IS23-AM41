@@ -13,24 +13,22 @@ public class WaitingForSavedGameState extends GameState {
         return maxPlayerNumber - listSize;
     }
 
-    @Override
-    public int handleNewPlayer(Player player, List<Player> playerList){
-        //DA IMPLEMENTARE
-        //Io l'avevo pensata come
-        // chiamata a funzione check che il nome sia di quelli della partita salvata
-        //e nel caso positivo playerList.add(player)
-        //altrimenti diciamo al controller di dire a quel client che già che
-        //una partita che sta re iniziando
-        //(Dopo init state si può andare solo o in waiting for player o waitinf for saved
-        return 0;
-    }
 
-    @Override
-    public void addPlayer(Player player, BoardFactory board, List<CommonTargetCard> commonList) {
-    }
 
     @Override
     public void setupGame(int maxPlayerNumber,List<CommonTargetCard> commonList,BoardFactory board,boolean onlyOneCommon) {
         //This needs to "re-setup" the game as it is in the gson
+    }
+
+    @Override
+    public boolean checkSavedGame(String player){
+        //todo
+        return false;
+    }
+
+    @Override
+    public boolean isGameReady(){
+        //todo
+        return false;
     }
 }

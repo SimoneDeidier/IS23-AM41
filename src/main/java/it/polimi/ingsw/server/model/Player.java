@@ -85,5 +85,11 @@ public class Player {
         return scoringTokenList.get(i);
     }
 
+    public void setConnected(boolean connected) {
+        this.connected = connected;
+    }
 
+    public boolean isConnected() {
+        return connected;
+    }
 }

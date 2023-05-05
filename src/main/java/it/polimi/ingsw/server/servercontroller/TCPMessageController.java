@@ -36,7 +36,7 @@ public class TCPMessageController {
                 if(gameController.getAvailableSlot() == -1) {
                     // aggiunge questo giocatore
                     Player player = new Player(message.getBody().getPlayerNickname());
-                    gameController.addPlayer();
+                    gameController.addPlayer(player);
                     list.add(new TCPMessage("Get Parameters", null));
                 }
                 else if(gameController.getAvailableSlot() > 0) {

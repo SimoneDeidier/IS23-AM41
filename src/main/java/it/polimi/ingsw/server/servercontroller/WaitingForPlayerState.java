@@ -13,27 +13,6 @@ public class WaitingForPlayerState extends GameState {
         return maxPlayerNumber - listSize;
     }
 
-    @Override
-    public int handleNewPlayer(Player player, List<Player> playerList){
-        //Check se si può aggiungere un nuovo player
-            //Si crea un thread per il nuovo player
-            playerList.add(player);
-            //Nuovo check, la partita è pronta per cominciare?
-            //Se sì, return 2
-            //Altrimenti 1
-        //Altrimenti
-        return 0;
-    }
-
-    @Override
-    public void addPlayer(Player player, BoardFactory board, List<CommonTargetCard> commonList) {
-        player.setBoard(board);
-        player.setCommonTargetCardList(commonList);
-        player.setShelf(new Shelf());
-        player.setPersonalTargetCard(getRandomPersonal());
-
-    }
-
     private PersonalTargetCard getRandomPersonal() {
         //Can't do this without the constructor in Personal Target Card
         return new PersonalTargetCard();
@@ -107,6 +86,18 @@ public class WaitingForPlayerState extends GameState {
                 return new CommonX(maxPlayerNumber);
             }
         }
+    }
+
+    @Override
+    public boolean checkSavedGame(String player){
+        //todo
+        return false;
+    }
+
+    @Override
+    public boolean isGameReady(){
+        //todo
+        return false;
     }
 
 

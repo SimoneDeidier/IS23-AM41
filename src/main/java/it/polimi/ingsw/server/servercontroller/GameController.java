@@ -24,15 +24,27 @@ public class GameController {
         return instance;
     }
 
-    public boolean checkMove(Body body){
+    public boolean checkMove(Body body){  //ok serve
+        //da rifare
        if(!body.getPlayerNickname().equals(activePlayer.getNickname())) {
            return false;
        }
-       return board.checkMove(body.getPositionsPicked());
+       if(!board.checkMove(body.getPositionsPicked())){
+           return false;
+       }
+       //tutti gli if per checkare
+        try {
+            executeMove(body);
+        } catch (EmptyItemListToInsert emptyItemListToInsert)//Ma secondo me si può togliere il try and catch, perchè
+                                                                // la eseguiamo alla fine di un check, che errori potrebbe dare se controlliamo tutto prima di lanciarla?
+             {
+            return false;
+        }
+        return true;
     }
 
     // todo va messa a posto qui secondo me - eccezioni
-    public boolean executeMove(Body body) throws EmptyItemListToInsert {
+    public void executeMove(Body body) throws EmptyItemListToInsert {  //ok supporto a checkMove
         if(checkMove(body)) {
             List<Item> items = getListItems(body);
             try {
@@ -49,13 +61,11 @@ public class GameController {
                 lastTurn=true;
             }
             activePlayer.updateScore(activePlayer);
-
-            return true;
         }
-        return false;
+
     }
 
-    public List<Item> getListItems(Body body){
+    public List<Item> getListItems(Body body){ //ok supporto a checkMove
 
         List<Item> items= new ArrayList<>();
         for(int[] picks : body.getPositionsPicked()){
@@ -65,7 +75,7 @@ public class GameController {
 
     }
 
-    public boolean checkBoardNeedForRefill() {
+    public boolean checkBoardNeedForRefill() { //ok supporto a checkMove
 
         for(int i=0;i<board.getBoardNumberOfRows();i++){
             for(int j=0;j<board.getBoardNumberOfColumns();j++){
@@ -77,24 +87,21 @@ public class GameController {
         return true; //Needs to be refilled
 
     }
-    public void changeState(GameState state) {
+    public void changeState(GameState state) {  //ok
         this.state = state;
     }
-    public int getAvailableSlot() {
+    public int getAvailableSlot() {  //ok
         return state.getAvailableSlot(maxPlayerNumber, playerList.size());
     }
-    public int handleNewPlayer(Player player){
-        return state.handleNewPlayer(player,playerList);
-    }
-    public void addPlayer() {
-        state.addPlayer(playerList.get(playerList.size()-1),board,commonTargetCardsList);
+    public void addPlayer(Player player) { //ok
+        playerList.add(player);
     }
 
-    public void setupGame() {
+    public void setupGame() { //ok supporto a isGameReady
         state.setupGame(maxPlayerNumber,commonTargetCardsList,board, onlyOneCommonCard);
     }
 
-    public boolean checkLastTurn() {
+    public boolean checkLastTurn() {  //ok supporto a checkMove
         for(Player p : playerList) {
             if(p.getShelf().isFull()) {
                 return true;
@@ -103,7 +110,7 @@ public class GameController {
         return false;
     }
 
-    public void prepareForNewGame(){
+    public void prepareForNewGame(){ //ok
         playerList=new ArrayList<>();
         lastTurn=false;
         activePlayer=null;
@@ -112,4 +119,30 @@ public class GameController {
         commonTargetCardsList=new ArrayList<>();
 
     }
+    public boolean checkSavedGame(String nickname){
+        return state.checkSavedGame(nickname);
+    }
+
+    public boolean checkNicknameAvailability(String nickname){
+        for(Player player:playerList){
+            if(player.getNickname().equals(nickname)){
+                return false;
+            }
+        }
+        return true; //true==available
+    }
+
+    public boolean isGameReady(){
+        return state.isGameReady();
+    }
+
+    public void changePlayerConnectionStatus(Player player){
+        player.setConnected(!player.isConnected());
+    }
+
+    //mancherebbero
+    // -sendMessageToAll(String message)
+    // -checkNicknameForMessage(String message,String nickname)
+    // -sendMessageToUser(String message,String nickname)
+    //O forse di queste solo check la fa controller, il resto il server?
 }
