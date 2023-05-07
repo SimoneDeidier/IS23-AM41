@@ -9,7 +9,7 @@ import java.util.List;
 public class ServerInitState extends GameState {
 
     @Override
-    public int getAvailableSlot(int maxPlayerNumber, int listSize) {
+    public int getAvailableSlot(int maxPlayerNumber, List<Player> playerList) {
         return -1;
     }
 
@@ -23,7 +23,8 @@ public class ServerInitState extends GameState {
         return false;
     }
     @Override
-    public boolean isGameReady(){
+    public boolean isGameReady(List<Player> playerList, int maxPlayerNumber){
         //Never will be called here
+        return false;
     }
 }

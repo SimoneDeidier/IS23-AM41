@@ -1,22 +1,34 @@
 package it.polimi.ingsw.server;
 
-import it.polimi.ingsw.Loggable;
+import it.polimi.ingsw.InterfaceClient;
+import it.polimi.ingsw.InterfaceServer;
 
 import java.rmi.AlreadyBoundException;
 import java.rmi.RemoteException;
 import java.rmi.registry.LocateRegistry;
 import java.rmi.registry.Registry;
 import java.rmi.server.UnicastRemoteObject;
+import java.util.ArrayList;
+import java.util.List;
 
-public class ServerRMI implements Loggable {
+public class ServerRMI implements InterfaceServer {
     static int PORT = 1234;
+    private final List<InterfaceClient> clientList;
+    public ServerRMI() throws RemoteException {
+        this.clientList = new ArrayList<>();
+    }
     public static void main( String[] args){
         System.out.println( "Hello from Server!" );
-        Loggable stub =null;
+        InterfaceServer stub =null;
 
-        ServerRMI obj = new ServerRMI();
+        ServerRMI obj = null;
         try {
-            stub = (Loggable) UnicastRemoteObject.exportObject(obj, PORT);
+            obj = new ServerRMI();
+        } catch (RemoteException e) {
+            e.printStackTrace();
+        }
+        try {
+            stub = (InterfaceServer) UnicastRemoteObject.exportObject(obj, PORT);
         } catch (RemoteException e) {
             e.printStackTrace();
         }
@@ -27,23 +39,12 @@ public class ServerRMI implements Loggable {
             e.printStackTrace();
         }
         try {
-            registry.bind("Loggable", stub);
-        } catch (RemoteException e) {
+            registry.bind("serverInterface", stub);
+        } catch (RemoteException | AlreadyBoundException e) {
             e.printStackTrace();;
-        } catch (AlreadyBoundException e) {
-            e.printStackTrace();
         }
         System.err.println("Server ready");
     }
 
-    @Override
-    public boolean login(String nick) throws RemoteException {
-        System.out.println(nick + " is logging..");
-        return false;
-    }
-
-    @Override
-    public void logout(String nick) throws RemoteException {
-
-    }
+    //QUA RIEMPIRE LA INTERFACCIA
 }

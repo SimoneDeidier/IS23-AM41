@@ -91,7 +91,7 @@ public class GameController {
         this.state = state;
     }
     public int getAvailableSlot() {  //ok
-        return state.getAvailableSlot(maxPlayerNumber, playerList.size());
+        return state.getAvailableSlot(maxPlayerNumber,playerList);
     }
     public void addPlayer(Player player) { //ok
         playerList.add(player);
@@ -133,11 +133,15 @@ public class GameController {
     }
 
     public boolean isGameReady(){
-        return state.isGameReady();
+        return state.isGameReady(playerList,maxPlayerNumber);
     }
 
     public void changePlayerConnectionStatus(Player player){
         player.setConnected(!player.isConnected());
+    }
+
+    public boolean checkGameParameters(int maxPlayerNumber){
+        return maxPlayerNumber <= 4 && maxPlayerNumber >= 2;
     }
 
     //mancherebbero

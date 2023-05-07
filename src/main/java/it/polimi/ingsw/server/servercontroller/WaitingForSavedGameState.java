@@ -9,8 +9,14 @@ import java.util.List;
 public class WaitingForSavedGameState extends GameState {
 
     @Override
-    public int getAvailableSlot(int maxPlayerNumber, int listSize) {
-        return maxPlayerNumber - listSize;
+    public int getAvailableSlot(int maxPlayerNumber, List<Player> playerList) {
+        int count=0;
+        for(Player player:playerList){
+            if(!player.isConnected()){
+                count++;
+            }
+        }
+        return count;
     }
 
 
@@ -27,8 +33,12 @@ public class WaitingForSavedGameState extends GameState {
     }
 
     @Override
-    public boolean isGameReady(){
-        //todo
-        return false;
+    public boolean isGameReady(List<Player> playerList, int maxPlayerNumber){
+        for (Player player:playerList){
+            if(!player.isConnected()){
+                return false;
+            }
+        }
+        return true;
     }
 }
