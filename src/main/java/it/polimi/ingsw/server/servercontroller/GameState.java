@@ -4,6 +4,8 @@ import it.polimi.ingsw.server.model.BoardFactory;
 import it.polimi.ingsw.server.model.CommonTargetCard;
 import it.polimi.ingsw.server.model.Player;
 
+import java.io.IOException;
+import java.net.URISyntaxException;
 import java.util.List;
 
 public abstract class GameState {
@@ -12,7 +14,7 @@ public abstract class GameState {
 
     public abstract int handleNewPlayer(Player player, List<Player> playerList);
 
-    public abstract void addPlayer(Player player, BoardFactory board, List<CommonTargetCard> commonList);
+    public abstract void addPlayer(Player player, BoardFactory board, List<CommonTargetCard> commonList) throws IOException, URISyntaxException;
 
     public abstract void setupGame(int maxPlayerNumber,List<CommonTargetCard> commonList,BoardFactory board,boolean firstGame);
 }

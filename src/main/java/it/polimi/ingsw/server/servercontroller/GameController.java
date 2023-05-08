@@ -2,6 +2,8 @@ package it.polimi.ingsw.server.servercontroller;
 
 import it.polimi.ingsw.server.model.*;
 
+import java.io.IOException;
+import java.net.URISyntaxException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -86,7 +88,7 @@ public class GameController {
     public int handleNewPlayer(Player player){
         return state.handleNewPlayer(player,playerList);
     }
-    public void addPlayer() {
+    public void addPlayer() throws IOException, URISyntaxException {
         state.addPlayer(playerList.get(playerList.size()-1),board,commonTargetCardsList);
     }
 

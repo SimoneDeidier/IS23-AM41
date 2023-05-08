@@ -35,7 +35,7 @@ public class Player {
             if (endGameToken != null) {
                 playerScore += endGameToken.getValue();
             }
-            playerScore += personalTargetCard.calculatePoints(shelf, 0);
+            playerScore += personalTargetCard.calculatePoints(shelf);
             playerScore += shelf.calculateAdjacentItemsPoints();
             if(commonTargetCardList.get(0).check(shelf)){
                 scoringTokenList.add(commonTargetCardList.get(0).assignToken(player));
