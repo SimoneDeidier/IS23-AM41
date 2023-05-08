@@ -44,4 +44,8 @@ public class SocketManager implements Runnable {
     public void closeConnection() {
         this.closeConnection = true;
     }
+
+    public Socket getSocket() {
+        return this.socket;
+    }
 }

@@ -2,8 +2,12 @@ package it.polimi.ingsw.server.servercontroller;
 
 import it.polimi.ingsw.server.model.*;
 
+import java.net.Socket;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.ListIterator;
+import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 
 public class GameController {
 
@@ -11,15 +15,23 @@ public class GameController {
     private List<Player> playerList;
     private int maxPlayerNumber;
     private boolean lastTurn;
-    private boolean onlyOneCommonCard;
     private Player activePlayer; //acts as a kind of turn
     private BoardFactory board;
     private GameState state;
     private List<CommonTargetCard> commonTargetCardsList;
+    private static Map<Socket, TCPMessageController> socketMapping = new ConcurrentHashMap<>(4);
 
-    public static GameController getGameController() {
+    public GameController(Socket socket, TCPMessageController tcpMessageController) {
+        this.state = new ServerInitState();
+        socketMapping.put(socket, tcpMessageController);
+    }
+
+    public static GameController getGameController(Socket socket, TCPMessageController tcpMessageController) {
         if (instance == null) {
-            instance = new GameController();
+            instance = new GameController(socket, tcpMessageController);
+        }
+        if(!socketMapping.containsKey(socket)) {
+            socketMapping.put(socket, tcpMessageController);
         }
         return instance;
     }
@@ -97,7 +109,7 @@ public class GameController {
         playerList.add(player);
     }
 
-    public void setupGame() { //ok supporto a isGameReady
+    public void setupGame(boolean onlyOneCommonCard) { //ok supporto a isGameReady
         state.setupGame(maxPlayerNumber,commonTargetCardsList,board, onlyOneCommonCard);
     }
 
@@ -142,6 +154,14 @@ public class GameController {
 
     public boolean checkGameParameters(int maxPlayerNumber){
         return maxPlayerNumber <= 4 && maxPlayerNumber >= 2;
+    }
+
+    public List<String> getConnectedUsersNicks() {
+        List<String> list = new ArrayList<>();
+        for(Player p : playerList) {
+            list.add(p.getNickname());
+        }
+        return list;
     }
 
     //mancherebbero

@@ -16,9 +16,7 @@ public class SerializeDeserialize {
 
     public List<String> deserialize(String input) {
 
-        System.out.println("New message in input.");
         TCPMessage inputMsg = gson.fromJson(input, TCPMessage.class);
-        System.out.println("Header: " + inputMsg.getHeader() + ".");
         List<TCPMessage> tcpMessages = tcpMessageController.executeTCPMessage(inputMsg);
         List<String> outMessages = new ArrayList<>();
         for(TCPMessage msg : tcpMessages) {
