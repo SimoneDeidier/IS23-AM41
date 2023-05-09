@@ -11,7 +11,7 @@ public class CommonDiagonal extends CommonTargetCard {
         for (int k = 0; k <= 1; k++){
             int j = 0;
             for(int i = k; i < k + COLUMNS - 1; i++) {
-                if (shelf.getItemByCoordinates(i, j).getColor() != shelf.getItemByCoordinates(i + 1, j + 1).getColor()) {
+                if (shelf.getItemByCoordinates(i, j) != null && shelf.getItemByCoordinates(i + 1, j + 1) != null && shelf.getItemByCoordinates(i, j).getColor() != shelf.getItemByCoordinates(i + 1, j + 1).getColor()) {
                     unfound = 1;
                     break;
                 }
@@ -25,7 +25,7 @@ public class CommonDiagonal extends CommonTargetCard {
         for (int k = 0; k <= 1; k++){
             int j = 4;
             for(int i = k; i < k + COLUMNS - 1; i++) {
-                if (shelf.getItemByCoordinates(i, j).getColor() != shelf.getItemByCoordinates(i + 1, j - 1).getColor()) {
+                if (shelf.getItemByCoordinates(i, j) != null && shelf.getItemByCoordinates(i + 1, j - 1) != null && shelf.getItemByCoordinates(i, j).getColor() != shelf.getItemByCoordinates(i + 1, j - 1).getColor()) {
                     unfound = 1;
                     break;
                 }
