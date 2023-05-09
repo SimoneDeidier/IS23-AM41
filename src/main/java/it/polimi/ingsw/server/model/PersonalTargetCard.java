@@ -27,7 +27,7 @@ public class PersonalTargetCard {
 
     public PersonalTargetCard(int personal) throws IOException, URISyntaxException {
         Gson gson = new Gson();
-        File jsonFile = new File(ClassLoader.getSystemResource("PersonalTargetCards.json").toURI());
+        File jsonFile = new File(ClassLoader.getSystemResource("jsons/PersonalTargetCards.json").toURI());
         String jsonString = FileUtils.readFileToString(jsonFile, StandardCharsets.UTF_8);
 
         JsonArray jsonArray = gson.fromJson(jsonString, JsonArray.class);

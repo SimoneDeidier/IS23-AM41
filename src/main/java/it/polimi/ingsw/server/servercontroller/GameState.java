@@ -10,11 +10,10 @@ import java.util.List;
 
 public abstract class GameState {
 
-    public abstract int getAvailableSlot(int maxPlayerNumber, int listSize);
-
-    public abstract int handleNewPlayer(Player player, List<Player> playerList);
-
-    public abstract void addPlayer(Player player, BoardFactory board, List<CommonTargetCard> commonList) throws IOException, URISyntaxException;
+    public abstract int getAvailableSlot(int maxPlayerNumber, List<Player> playerList);
 
     public abstract void setupGame(int maxPlayerNumber,List<CommonTargetCard> commonList,BoardFactory board,boolean firstGame);
+    public abstract boolean isGameReady(List<Player> playerList,int maxPlayerNumber);
+    public abstract int checkNicknameAvailability(String nickname,List<Player> playerList);
+    public abstract void addPlayer(Player player,List<Player> playerList);
 }

@@ -9,28 +9,49 @@ import java.util.List;
 public class WaitingForSavedGameState extends GameState {
 
     @Override
-    public int getAvailableSlot(int maxPlayerNumber, int listSize) {
-        return maxPlayerNumber - listSize;
+    public int getAvailableSlot(int maxPlayerNumber, List<Player> playerList) {
+        int count=0;
+        for(Player player:playerList){
+            if(!player.isConnected()){
+                count++;
+            }
+        }
+        return count;
     }
 
-    @Override
-    public int handleNewPlayer(Player player, List<Player> playerList){
-        //DA IMPLEMENTARE
-        //Io l'avevo pensata come
-        // chiamata a funzione check che il nome sia di quelli della partita salvata
-        //e nel caso positivo playerList.add(player)
-        //altrimenti diciamo al controller di dire a quel client che già che
-        //una partita che sta re iniziando
-        //(Dopo init state si può andare solo o in waiting for player o waitinf for saved
-        return 0;
-    }
 
-    @Override
-    public void addPlayer(Player player, BoardFactory board, List<CommonTargetCard> commonList) {
-    }
 
     @Override
     public void setupGame(int maxPlayerNumber,List<CommonTargetCard> commonList,BoardFactory board,boolean onlyOneCommon) {
         //This needs to "re-setup" the game as it is in the gson
+    }
+
+    @Override
+    public boolean isGameReady(List<Player> playerList, int maxPlayerNumber){
+        for (Player player:playerList){
+            if(!player.isConnected()){
+                return false;
+            }
+        }
+        return true;
+    }
+
+    @Override
+    public int checkNicknameAvailability(String nickname,List<Player> playerList){
+        for(Player player:playerList){
+            if(!player.isConnected() && player.getNickname().equals(nickname)){
+                return 1;
+            }
+        }
+        return -1;
+    }
+
+    @Override
+    public void addPlayer(Player player, List<Player> playerList) {
+        for(Player play:playerList){
+            if(!play.isConnected() && play.getNickname().equals(player.getNickname())){
+                play.setConnected(true);
+            }
+        }
     }
 }

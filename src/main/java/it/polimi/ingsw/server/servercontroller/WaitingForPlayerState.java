@@ -11,28 +11,8 @@ import java.util.Random;
 public class WaitingForPlayerState extends GameState {
 
     @Override
-    public int getAvailableSlot(int maxPlayerNumber, int listSize) {
-        return maxPlayerNumber - listSize;
-    }
-
-    @Override
-    public int handleNewPlayer(Player player, List<Player> playerList){
-        //Check se si può aggiungere un nuovo player
-            //Si crea un thread per il nuovo player
-            playerList.add(player);
-            //Nuovo check, la partita è pronta per cominciare?
-            //Se sì, return 2
-            //Altrimenti 1
-        //Altrimenti
-        return 0;
-    }
-
-    @Override
-    public void addPlayer(Player player, BoardFactory board, List<CommonTargetCard> commonList) throws IOException, URISyntaxException {
-        player.setBoard(board);
-        player.setCommonTargetCardList(commonList);
-        player.setShelf(new Shelf());
-        player.setPersonalTargetCard(getRandomPersonal());
+    public int getAvailableSlot(int maxPlayerNumber, List<Player> playerList) {
+        return maxPlayerNumber - playerList.size();
     }
 
     private PersonalTargetCard getRandomPersonal() throws IOException, URISyntaxException {
@@ -42,6 +22,7 @@ public class WaitingForPlayerState extends GameState {
 
     @Override
     public void setupGame(int maxPlayerNumber,List<CommonTargetCard> commonList,BoardFactory board,boolean onlyOneCommonCard) {
+        //DA CONTROLLARE
         commonList = generateRandomCommonCards(onlyOneCommonCard,maxPlayerNumber);
         switch (maxPlayerNumber){
             case 2:
@@ -108,6 +89,26 @@ public class WaitingForPlayerState extends GameState {
                 return new CommonX(maxPlayerNumber);
             }
         }
+    }
+
+    @Override
+    public int checkNicknameAvailability(String nickname,List<Player> playerList){
+        for(Player player:playerList){
+            if(player.getNickname().equals(nickname)){
+                return 0;
+            }
+        }
+        return 1;
+    }
+
+    @Override
+    public void addPlayer(Player player, List<Player> playerList) {
+        playerList.add(player);
+    }
+
+    @Override
+    public boolean isGameReady(List<Player> playerList, int maxPlayerNumber){
+        return playerList.size()==maxPlayerNumber;
     }
 
 

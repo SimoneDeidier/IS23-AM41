@@ -8,21 +8,32 @@ import java.util.List;
 
 public class RunningGameState extends GameState {
 
-    @Override
-    public int getAvailableSlot(int maxPlayerNumber, int listSize) {
-        return 0;
-    }
-    @Override
-    public int handleNewPlayer(Player player, List<Player> playerList){return 0;}
+    //Nessuna funzione è utile qui -> Lo stato è inutile??
 
     @Override
-    public void addPlayer(Player player, BoardFactory board, List<CommonTargetCard> commonList) {
-        return;
+    public int getAvailableSlot(int maxPlayerNumber, List<Player> playerList) {
+        //Never will be called here
+        return 0;
     }
 
     @Override
     public void setupGame(int maxPlayerNumber,List<CommonTargetCard> commonList,BoardFactory board,boolean onlyOneCommon) {
-        //Does nothing in this state
+        //Never will be called here
+    }
+    @Override
+    public boolean isGameReady(List<Player> playerList, int maxPlayerNumber){
+        //Never will be called here
+        return false;
+    }
+    @Override
+    public int checkNicknameAvailability(String nickname,List<Player> playerList){
+        //Never will be called here
+        return 0;
+    }
+
+    @Override
+    public void addPlayer(Player player, List<Player> playerList) {
+        //Never will be called here
     }
 }
 
