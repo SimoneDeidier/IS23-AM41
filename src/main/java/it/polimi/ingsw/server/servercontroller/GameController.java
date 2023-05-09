@@ -3,10 +3,7 @@ package it.polimi.ingsw.server.servercontroller;
 import it.polimi.ingsw.server.model.*;
 
 import java.net.Socket;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.ListIterator;
-import java.util.Map;
+import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 
 public class GameController {
@@ -21,17 +18,18 @@ public class GameController {
     private GameState state;
     private List<CommonTargetCard> commonTargetCardsList;
     private static Map<Socket, TCPMessageController> socketMapping = new ConcurrentHashMap<>(4);
+    private static Map<Socket, String> socketUserMapping = new ConcurrentHashMap<>(4);
 
     public GameController(Socket socket, TCPMessageController tcpMessageController) {
         this.state = new ServerInitState();
         socketMapping.put(socket, tcpMessageController);
     }
 
-    public static GameController getGameController(Socket socket, TCPMessageController tcpMessageController) {
+    public static GameController getGameController(Socket socket, TCPMessageController tcpMessageController, boolean isTCP) {
         if (instance == null) {
             instance = new GameController(socket, tcpMessageController);
         }
-        if (!socketMapping.containsKey(socket)) {
+        if (isTCP && !socketMapping.containsKey(socket)) {
             socketMapping.put(socket, tcpMessageController);
         }
         return instance;
@@ -73,8 +71,26 @@ public class GameController {
                 lastTurn = true;
             }
             activePlayer.updateScore();
+            //Setting the next active player
+            int nextIndex=nextIndexCalc(playerList.indexOf(activePlayer));
+            while(nextIndex!=-1 && !playerList.get(nextIndex).isConnected())
+                nextIndex=nextIndexCalc(nextIndex);
+            if(nextIndex!=-1)
+                activePlayer=playerList.get(nextIndex);
+            else
+                activePlayer=null; //signals to the server the game is over!
         }
 
+    }
+
+    public int nextIndexCalc(int currIndex){
+        if(playerList.size()-1==currIndex) {
+            if(lastTurn)
+                return -1;
+            return 0;
+        }
+        else
+            return currIndex+1;
     }
 
     public List<Item> getListItems(Body body) { //ok supporto a checkMove
@@ -169,11 +185,11 @@ public class GameController {
         return true;
     }
 
-    public boolean clientConnection() { //response to helo from client
+    public synchronized boolean clientConnection() { //response to helo from client
         return getAvailableSlot() == -1 || getAvailableSlot() > 0;
     } //todo in RMI
 
-    public boolean clientPresentation(String nickname) throws FirstPlayerException, CancelGameException { //response to presentation
+    public synchronized boolean clientPresentation(String nickname) throws FirstPlayerException, CancelGameException, GameStartException, FullLobbyException { //response to presentation
         if (getAvailableSlot() == -1) { //handling the first player
             if (checkSavedGame(nickname)) {
                 changeState(new WaitingForSavedGameState());
@@ -189,16 +205,20 @@ public class GameController {
                 throw new FirstPlayerException();
             }
         }
+        else if(getAvailableSlot()<=0)
+            throw new FullLobbyException();
         //for all the other players
-        if (checkNicknameAvailability(nickname) == 1) {
-            addPlayer(new Player(nickname));
-            return true;
-        } else if (checkNicknameAvailability(nickname) == -1)
+        if (checkNicknameAvailability(nickname) == -1) {
             throw new CancelGameException();
-        return false;
+        } else if (checkNicknameAvailability(nickname) != 1)
+            return false;
+        addPlayer(new Player(nickname));
+        if(isGameReady()){
+            throw new GameStartException();
+        }
+        return true;
 
-    }
-    //todo in RMI
+    }  //todo in RMI
 
 
     public List<String> getConnectedUsersNicks() {
@@ -208,6 +228,28 @@ public class GameController {
         }
         return list;
     }
+    public void startGame(){
+        changeState(new RunningGameState());
+        setupGame(onlyOneCommonCard);
+    }
+    public NewView generateUpdatedView(){
+        //todo
+        NewView newView=new NewView();
+        return newView;
+    }
+
+    public NewPersonalView generateUpdatedPersonal(String nickname){
+        NewPersonalView newPersonalView=new NewPersonalView();
+        return newPersonalView;
+    }
+
+    public static Map<Socket, TCPMessageController> getSocketMapping() {
+        return socketMapping;
+    }
+
+    public void addInSocketUserMapping() {}
+
+
 }
     //mancherebbero
     // -sendMessageToAll(String message)
