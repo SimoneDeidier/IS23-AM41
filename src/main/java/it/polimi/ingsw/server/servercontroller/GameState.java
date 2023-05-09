@@ -4,6 +4,8 @@ import it.polimi.ingsw.server.model.BoardFactory;
 import it.polimi.ingsw.server.model.CommonTargetCard;
 import it.polimi.ingsw.server.model.Player;
 
+import java.io.IOException;
+import java.net.URISyntaxException;
 import java.util.List;
 
 public abstract class GameState {

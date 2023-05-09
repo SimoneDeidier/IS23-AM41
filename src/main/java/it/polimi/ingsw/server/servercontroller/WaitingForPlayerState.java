@@ -2,6 +2,8 @@ package it.polimi.ingsw.server.servercontroller;
 
 import it.polimi.ingsw.server.model.*;
 
+import java.io.IOException;
+import java.net.URISyntaxException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
@@ -13,9 +15,9 @@ public class WaitingForPlayerState extends GameState {
         return maxPlayerNumber - playerList.size();
     }
 
-    private PersonalTargetCard getRandomPersonal() {
+    private PersonalTargetCard getRandomPersonal() throws IOException, URISyntaxException {
         //Can't do this without the constructor in Personal Target Card
-        return new PersonalTargetCard();
+        return new PersonalTargetCard(0);
     }
 
     @Override
