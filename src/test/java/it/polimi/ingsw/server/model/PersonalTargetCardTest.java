@@ -21,6 +21,14 @@ class PersonalTargetCardTest {
         shelf.insertItems(3, Arrays.asList(new Item(ItemColor.YELLOW), new Item(ItemColor.BLUE), new Item(ItemColor.WHITE), new Item(ItemColor.WHITE), new Item(ItemColor.LIGHT_BLUE), new Item(ItemColor.YELLOW)));
         shelf.insertItems(4, Arrays.asList(new Item(ItemColor.GREEN), new Item(ItemColor.GREEN), new Item(ItemColor.GREEN), new Item(ItemColor.LIGHT_BLUE), new Item(ItemColor.GREEN), new Item(ItemColor.GREEN)));
 
+        for(int i = 0; i < 6; i++) {
+            System.out.print("| ");
+            for(int j = 0; j < 5; j++) {
+                System.out.print(shelf.getItemByCoordinates(i, j).getColor() + " ");
+            }
+            System.out.print("|\n");
+        }
+
         assertEquals(12, personal.calculatePoints(shelf));
     }
 }

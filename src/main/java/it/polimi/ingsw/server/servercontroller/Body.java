@@ -1,5 +1,6 @@
 package it.polimi.ingsw.server.servercontroller;
 
+import java.net.Socket;
 import java.util.List;
 
 public class Body {
@@ -9,7 +10,9 @@ public class Body {
     private int players;
     private boolean twoCommon;
     private String receiverNickname;
+    private String senderNickname;
     private String text;
+    private Socket socket;
 
     public String getPlayerNickname() {
         return playerNickname;
@@ -49,5 +52,37 @@ public class Body {
 
     public void setTwoCommon(boolean twoCommon) {
         this.twoCommon = twoCommon;
+    }
+
+    public void setReceiverNickname(String receiverNickname) {
+        this.receiverNickname = receiverNickname;
+    }
+
+    public void setText(String text) {
+        this.text = text;
+    }
+
+    public String getReceiverNickname() {
+        return receiverNickname;
+    }
+
+    public String getText() {
+        return text;
+    }
+
+    public String getSenderNickname() {
+        return senderNickname;
+    }
+
+    public void setSenderNickname(String senderNickname) {
+        this.senderNickname = senderNickname;
+    }
+
+    public Socket getSocket() {
+        return socket;
+    }
+
+    public void setSocket(Socket socket) {
+        this.socket = socket;
     }
 }

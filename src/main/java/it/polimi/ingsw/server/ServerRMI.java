@@ -14,11 +14,12 @@ import java.util.concurrent.ConcurrentHashMap;
 
 public class ServerRMI implements InterfaceServer {
     static int PORT = 1234;
-    private final GameController controller = GameController.getGameController(null,null);
+    private final GameController controller = GameController.getGameController(null,null,false);
     private Map<String,InterfaceClient> clientMap;
     public ServerRMI() throws RemoteException {
         this.clientMap = new ConcurrentHashMap<>() {
         };
+
     }
     public static void main( String[] args){
         System.out.println( "Hello from Server!" );
