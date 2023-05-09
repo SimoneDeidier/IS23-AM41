@@ -56,23 +56,30 @@ public class PersonalTargetCard {
 
     public int calculatePoints(Shelf shelf) throws URISyntaxException, IOException {
         int correctCards = 0;
+        Item item;
 
-        if (shelf.getItemByCoordinates(pinkX, pinkY).getColor() == ItemColor.PINK)
+        item = shelf.getItemByCoordinates(pinkX, pinkY);
+        if (item != null && item.getColor() == ItemColor.PINK)
             correctCards++;
 
-        if (shelf.getItemByCoordinates(light_blueX, light_blueY).getColor() == ItemColor.LIGHT_BLUE)
+        item = shelf.getItemByCoordinates(light_blueX, light_blueY);
+        if (item != null && item.getColor() == ItemColor.LIGHT_BLUE)
             correctCards++;
 
-        if (shelf.getItemByCoordinates(yellowX, yellowY).getColor() == ItemColor.YELLOW)
+        item = shelf.getItemByCoordinates(yellowX, yellowY);
+        if (item != null && item.getColor() == ItemColor.YELLOW)
             correctCards++;
 
-        if (shelf.getItemByCoordinates(blueX, blueY).getColor() == ItemColor.BLUE)
+        item = shelf.getItemByCoordinates(blueX, blueY);
+        if (item != null && item.getColor() == ItemColor.BLUE)
             correctCards++;
 
-        if (shelf.getItemByCoordinates(whiteX, whiteY).getColor() == ItemColor.WHITE)
+        item = shelf.getItemByCoordinates(whiteX, whiteY);
+        if (item != null && item.getColor() == ItemColor.WHITE)
             correctCards++;
 
-        if (shelf.getItemByCoordinates(greenX, greenY).getColor() == ItemColor.GREEN)
+        item = shelf.getItemByCoordinates(greenX, greenY);
+        if (item != null && item.getColor() == ItemColor.GREEN)
             correctCards++;
 
         return switch (correctCards) {

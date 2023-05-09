@@ -72,7 +72,7 @@ public class GameController {
                 activePlayer.setEndGameToken(EndGameToken.getEndGameToken());
                 lastTurn = true;
             }
-            activePlayer.updateScore(activePlayer);
+            activePlayer.updateScore();
         }
 
     }

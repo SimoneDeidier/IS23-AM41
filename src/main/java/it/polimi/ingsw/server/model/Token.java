@@ -17,5 +17,8 @@ public abstract class Token {
 
     public void setOwner(Player owner) {
         this.owner = owner;
+        if(owner != null) {
+            owner.addScoringToken(this);
+        }
     }
 }
