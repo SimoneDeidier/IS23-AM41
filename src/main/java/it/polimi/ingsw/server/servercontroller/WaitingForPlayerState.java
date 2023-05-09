@@ -90,9 +90,18 @@ public class WaitingForPlayerState extends GameState {
     }
 
     @Override
-    public boolean checkSavedGame(String player){
-        //Never will be called here
-        return false;
+    public int checkNicknameAvailability(String nickname,List<Player> playerList){
+        for(Player player:playerList){
+            if(player.getNickname().equals(nickname)){
+                return 0;
+            }
+        }
+        return 1;
+    }
+
+    @Override
+    public void addPlayer(Player player, List<Player> playerList) {
+        playerList.add(player);
     }
 
     @Override

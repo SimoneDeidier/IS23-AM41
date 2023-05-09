@@ -18,13 +18,18 @@ public class ServerInitState extends GameState {
         //Does nothing in this state
     }
     @Override
-    public boolean checkSavedGame(String player){
-        //todo
-        return false;
-    }
-    @Override
     public boolean isGameReady(List<Player> playerList, int maxPlayerNumber){
         //Never will be called here
         return false;
+    }
+
+    @Override
+    public int checkNicknameAvailability(String nickname,List<Player> playerList){
+        return 0;
+    }
+
+    @Override
+    public void addPlayer(Player player, List<Player> playerList) {
+        //Never will be called here
     }
 }

@@ -94,7 +94,7 @@ public class GameController {
         return state.getAvailableSlot(maxPlayerNumber,playerList);
     }
     public void addPlayer(Player player) { //ok
-        playerList.add(player);
+        state.addPlayer(player,playerList);
     }
 
     public void setupGame() { //ok supporto a isGameReady
@@ -119,17 +119,13 @@ public class GameController {
         commonTargetCardsList=new ArrayList<>();
 
     }
-    public boolean checkSavedGame(String nickname){
-        return state.checkSavedGame(nickname);
-    }
 
-    public boolean checkNicknameAvailability(String nickname){
-        for(Player player:playerList){
-            if(player.getNickname().equals(nickname)){
-                return false;
-            }
-        }
-        return true; //true==available
+    public int checkNicknameAvailability(String nickname) {
+        if(state.checkNicknameAvailability(nickname,playerList)==1)
+            return 1;
+        else if(state.checkNicknameAvailability(nickname,playerList)==-1)
+            return -1;
+        return 0;
     }
 
     public boolean isGameReady(){
@@ -140,13 +136,59 @@ public class GameController {
         player.setConnected(!player.isConnected());
     }
 
-    public boolean checkGameParameters(int maxPlayerNumber){
-        return maxPlayerNumber <= 4 && maxPlayerNumber >= 2;
+    public boolean checkGameParameters(int maxPlayerNumber,boolean onlyOneCommonCard){ //response to create lobby
+        if( maxPlayerNumber <= 4 && maxPlayerNumber >= 2) {
+            setupLobbyParameters(maxPlayerNumber, onlyOneCommonCard);
+            return true;
+        }
+        return false;
     }
+
+    public void setupLobbyParameters(int maxPlayerNumber,boolean onlyOneCommonCard){
+            this.maxPlayerNumber = maxPlayerNumber;
+            this.onlyOneCommonCard = onlyOneCommonCard;
+    }
+
+    public boolean checkSavedGame(String nickname){
+        //todo look into json and look if the nickname is present there
+        return true;
+    }
+
+    public boolean clientConnection(){ //response to helo from client
+        return getAvailableSlot() == -1 || getAvailableSlot() > 0;
+    } //todo in RMI
+
+    public boolean clientPresentation(String nickname) throws FirstPlayerException, CancelGameException { //response to presentation
+        if(getAvailableSlot()==-1){ //handling the first player
+            if(checkSavedGame(nickname)){
+                changeState(new WaitingForSavedGameState());
+                setupGame();
+                for(Player player:playerList){
+                    if(player.getNickname().equals(nickname))
+                        player.setConnected(true);
+                    return true;
+                }
+            }
+            else {
+                changeState(new WaitingForPlayerState());
+                addPlayer(new Player(nickname));
+                throw new FirstPlayerException();
+            }
+        }
+        //for all the other players
+        if(checkNicknameAvailability(nickname)==1) {
+            addPlayer(new Player(nickname));
+            return true;
+        }
+        else if (checkNicknameAvailability(nickname) == -1)
+                throw new CancelGameException();
+            return false;
+
+        }
+    }   //todo in RMI
 
     //mancherebbero
     // -sendMessageToAll(String message)
     // -checkNicknameForMessage(String message,String nickname)
     // -sendMessageToUser(String message,String nickname)
     //O forse di queste solo check la fa controller, il resto il server?
-}

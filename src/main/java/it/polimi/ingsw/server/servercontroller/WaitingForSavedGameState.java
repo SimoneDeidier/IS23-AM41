@@ -27,12 +27,6 @@ public class WaitingForSavedGameState extends GameState {
     }
 
     @Override
-    public boolean checkSavedGame(String player){
-        //todo
-        return false;
-    }
-
-    @Override
     public boolean isGameReady(List<Player> playerList, int maxPlayerNumber){
         for (Player player:playerList){
             if(!player.isConnected()){
@@ -40,5 +34,24 @@ public class WaitingForSavedGameState extends GameState {
             }
         }
         return true;
+    }
+
+    @Override
+    public int checkNicknameAvailability(String nickname,List<Player> playerList){
+        for(Player player:playerList){
+            if(!player.isConnected() && player.getNickname().equals(nickname)){
+                return 1;
+            }
+        }
+        return -1;
+    }
+
+    @Override
+    public void addPlayer(Player player, List<Player> playerList) {
+        for(Player play:playerList){
+            if(!play.isConnected() && play.getNickname().equals(player.getNickname())){
+                play.setConnected(true);
+            }
+        }
     }
 }
