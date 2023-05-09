@@ -3,10 +3,7 @@ package it.polimi.ingsw.server.servercontroller;
 import it.polimi.ingsw.server.model.*;
 
 import java.net.Socket;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.ListIterator;
-import java.util.Map;
+import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 
 public class GameController {
@@ -21,17 +18,18 @@ public class GameController {
     private GameState state;
     private List<CommonTargetCard> commonTargetCardsList;
     private static Map<Socket, TCPMessageController> socketMapping = new ConcurrentHashMap<>(4);
+    private static Map<Socket, String> socketUserMapping = new ConcurrentHashMap<>(4);
 
     public GameController(Socket socket, TCPMessageController tcpMessageController) {
         this.state = new ServerInitState();
         socketMapping.put(socket, tcpMessageController);
     }
 
-    public static GameController getGameController(Socket socket, TCPMessageController tcpMessageController) {
+    public static GameController getGameController(Socket socket, TCPMessageController tcpMessageController, boolean isTCP) {
         if (instance == null) {
             instance = new GameController(socket, tcpMessageController);
         }
-        if (!socketMapping.containsKey(socket)) {
+        if (isTCP && !socketMapping.containsKey(socket)) {
             socketMapping.put(socket, tcpMessageController);
         }
         return instance;
@@ -208,6 +206,14 @@ public class GameController {
         }
         return list;
     }
+
+    public static Map<Socket, TCPMessageController> getSocketMapping() {
+        return socketMapping;
+    }
+
+    public void addInSocketUserMapping() {}
+
+
 }
     //mancherebbero
     // -sendMessageToAll(String message)

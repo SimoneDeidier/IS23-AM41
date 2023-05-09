@@ -19,7 +19,7 @@ public class ServerRMI implements InterfaceServer {
     private GameController controller;
     private final List<InterfaceClient> clientList;
     public ServerRMI() throws RemoteException {
-        controller = GameController.getGameController(null, null);
+        controller = GameController.getGameController(null, null, false);
         this.clientList = new ArrayList<>();
     }
     public static void main( String[] args){

@@ -1,6 +1,7 @@
 package it.polimi.ingsw.client;
 
 import com.google.gson.Gson;
+import it.polimi.ingsw.server.servercontroller.Body;
 import it.polimi.ingsw.server.servercontroller.SerializeDeserialize;
 import it.polimi.ingsw.server.servercontroller.TCPMessage;
 
@@ -16,6 +17,10 @@ public class Client {
     private static final int PORT = 8888;
     private static final Gson gson = new Gson();
     private static boolean closeConnection = false;
+    private static Socket socket;
+    private static PrintWriter socketOut;
+    private static Scanner socketIn;
+    private static Scanner stdIn;
 
     public static void main(String[] args) {
 
@@ -33,26 +38,50 @@ public class Client {
             System.err.println(e.getMessage());
         }
         try {
-            Socket socket = new Socket(IP, PORT);
-            PrintWriter out = new PrintWriter(socket.getOutputStream());
-            Scanner in = new Scanner(socket.getInputStream());
-            Scanner cli = new Scanner(System.in);
-            while(!closeConnection) {
-                System.out.println("Insert header: ");
-                String header = cli.nextLine();
-                TCPMessage tcpMsg = new TCPMessage(header, null);
-                String outMsg = gson.toJson(tcpMsg);
-                out.println(outMsg);
-                out.flush();
-                String inMsg = in.nextLine();
-                TCPMessage inTCPMsg = gson.fromJson(inMsg, TCPMessage.class);
-                System.out.println("New response: " + inTCPMsg.getHeader());
-                if(Objects.equals(inTCPMsg.getHeader(), "Goodbye")) {
-                    closeConnection = true;
+            socket = new Socket(IP, PORT);
+            socketOut = new PrintWriter(socket.getOutputStream());
+            socketIn = new Scanner(socket.getInputStream());
+            stdIn = new Scanner(System.in);
+
+            // threads
+
+            Thread socketReader = new Thread(() -> {
+                while(true) {
+                    String inMsg;
+                    while ((inMsg = socketIn.nextLine()) != null) {
+                        TCPMessage t = gson.fromJson(inMsg, TCPMessage.class);
+                        System.out.println("New msg: " + t.getBody().getText());
+                    }
                 }
+            });
+
+            Thread socketWriter = new Thread(() -> {
+                while(true) {
+                    String newMsg;
+                    System.out.println("Insert new message: ");
+                    newMsg = stdIn.nextLine();
+                    Body b = new Body();
+                    b.setText(newMsg);
+                    TCPMessage t = new TCPMessage("Broadcast Message", b);
+                    String s = gson.toJson(t);
+                    socketOut.println(s);
+                    socketOut.flush();
+                }
+            });
+
+            socketWriter.start();
+            socketReader.start();
+
+            try {
+                socketWriter.join();
+                socketReader.join();
             }
-            out.close();
-            in.close();
+            catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+
+            socketOut.close();
+            socketIn.close();
             socket.close();
         }
         catch (IOException e) {

@@ -12,6 +12,8 @@ public class SocketManager implements Runnable {
     private final SerializeDeserialize serializeDeserialize;
     private final Socket socket;
     private boolean closeConnection = false;
+    private Scanner socketInput;
+    private PrintWriter socketOutput;
 
     public SocketManager(Socket socket) {
         this.socket = socket;
@@ -22,23 +24,27 @@ public class SocketManager implements Runnable {
     public void run() {
         System.out.println("Socket instantiated correctly - active on port " + socket.getPort() + ".");
         try {
-            Scanner in = new Scanner(socket.getInputStream());
-            PrintWriter out = new PrintWriter(socket.getOutputStream());
+            socketInput = new Scanner(socket.getInputStream());
+            socketOutput = new PrintWriter(socket.getOutputStream());
             while(!closeConnection) {
-                String inMsg = in.nextLine();
-                List<String> outMessages = serializeDeserialize.deserialize(inMsg);
-                for(String s : outMessages) {
-                    out.println(s);
-                }
-                out.flush();
+                String inMsg = socketInput.nextLine();
+                serializeDeserialize.deserialize(inMsg);
             }
-            in.close();
-            out.close();
+            socketInput.close();
+            socketOutput.close();
             socket.close();
         }
         catch (IOException e) {
             System.err.println(e.getMessage());
         }
+    }
+
+    public Scanner getSocketInput() {
+        return socketInput;
+    }
+
+    public PrintWriter getSocketOutput() {
+        return socketOutput;
     }
 
     public void closeConnection() {
