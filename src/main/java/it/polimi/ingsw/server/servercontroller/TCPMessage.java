@@ -18,10 +18,4 @@ public class TCPMessage {
         return body;
     }
 
-    public void printTCPMessage() {
-        System.out.println("Header: " + header);
-        System.out.println("Nickname: " + body.getPlayerNickname());
-        System.out.println("Items: " + body.getPositionsPicked());
-        System.out.println("Col: " + body.getColumn());
-    }
 }

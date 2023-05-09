@@ -15,7 +15,7 @@ public class PersonalTargetCard {
     public int calculatePoints(Shelf shelf, int personal) throws URISyntaxException, IOException {
         int correctCards = 0;
         Gson gson = new Gson();
-        File jsonFile = new File(ClassLoader.getSystemResource("PersonalTargetCards.json").toURI());
+        File jsonFile = new File(ClassLoader.getSystemResource("jsons/PersonalTargetCards.json").toURI());
         String jsonString = FileUtils.readFileToString(jsonFile, StandardCharsets.UTF_8);
 
         JsonArray jsonArray = gson.fromJson(jsonString, JsonArray.class);

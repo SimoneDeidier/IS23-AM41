@@ -25,9 +25,7 @@ public class SocketManager implements Runnable {
             Scanner in = new Scanner(socket.getInputStream());
             PrintWriter out = new PrintWriter(socket.getOutputStream());
             while(!closeConnection) {
-                System.out.println("ENTRATO NEL WHILE");
                 String inMsg = in.nextLine();
-                System.out.println("TCP INPUT STRING: " + inMsg);
                 List<String> outMessages = serializeDeserialize.deserialize(inMsg);
                 for(String s : outMessages) {
                     out.println(s);
@@ -45,5 +43,9 @@ public class SocketManager implements Runnable {
 
     public void closeConnection() {
         this.closeConnection = true;
+    }
+
+    public Socket getSocket() {
+        return this.socket;
     }
 }
