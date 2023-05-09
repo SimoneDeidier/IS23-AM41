@@ -2,6 +2,8 @@ package it.polimi.ingsw.client;
 
 import it.polimi.ingsw.InterfaceClient;
 import it.polimi.ingsw.InterfaceServer;
+import it.polimi.ingsw.server.servercontroller.NewPersonalView;
+import it.polimi.ingsw.server.servercontroller.NewView;
 
 import java.rmi.RemoteException;
 import java.rmi.registry.LocateRegistry;
@@ -24,7 +26,7 @@ public class ClientRMI implements InterfaceClient {
         Registry registry = LocateRegistry.getRegistry("127.0.0.1", PORT);
         // Looking up the registry for the remote object
         stub = (InterfaceServer) registry.lookup("serverInterface");
-        stub.hello(this);
+        stub.hello(this,/*controller.askNickname()*/null);
     }
 
     @Override
@@ -35,13 +37,28 @@ public class ClientRMI implements InterfaceClient {
 
     @Override
     public void askParameters() throws RemoteException {
-        //int numberOfPlayer= view.askParameter(); MA questo dovrebbe essere fatto dal controller, non server
-        //boolean onlyOneCommon = view.askParameter2();
         //while(true){
-        // if(stub.sendParameters(numberOfPlayers,onlyOneCommon))
-        //  break;
+        //  int numberOfPlayer= view.askParameter(); MA questo dovrebbe essere fatto dal controller, non server
+        //  boolean onlyOneCommon = view.askParameter2();
+        //  if(stub.sendParameters(numberOfPlayers,onlyOneCommon))
+        //      break;
         //}
     }
 
-    //QUA RIEMPIRE LA INTERFACCIA
+    @Override
+    public void updateView(NewView newView) throws RemoteException {
+
+    }
+
+    @Override
+    public void updatePersonalView(NewPersonalView newPersonalView) throws RemoteException {
+
+    }
+
+
+    @Override
+    public void disconnectUser() throws RemoteException {
+        //todo
+
+    }
 }
