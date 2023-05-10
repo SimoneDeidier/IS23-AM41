@@ -5,6 +5,7 @@ import it.polimi.ingsw.server.model.*;
 import java.io.IOException;
 import java.net.URISyntaxException;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Random;
 
@@ -15,26 +16,56 @@ public class WaitingForPlayerState extends GameState {
         return maxPlayerNumber - playerList.size();
     }
 
-    private PersonalTargetCard getRandomPersonal() throws IOException, URISyntaxException {
-        //Can't do this without the constructor in Personal Target Card
-        return new PersonalTargetCard(0);
-    }
-
     @Override
     public void setupGame(int maxPlayerNumber, List<CommonTargetCard> commonList, BoardFactory board, boolean onlyOneCommonCard, List<Player> playerList, GameController controller) {
-        //todo da rifare
+
         commonList = generateRandomCommonCards(onlyOneCommonCard,maxPlayerNumber);
+
         switch (maxPlayerNumber){
-            case 2:
+            case 2: {
                 board = TwoPlayersBoard.getTwoPlayersBoard();
-            case 3:
-                board= ThreePlayersBoard.getThreePlayersBoard();
-            default:
-                board= FourPlayersBoard.getFourPlayersBoard();
+            }
+            case 3: {
+                board = ThreePlayersBoard.getThreePlayersBoard();
+            }
+            case 4: {
+                board = FourPlayersBoard.getFourPlayersBoard();
+            }
         }
-        //generare le personal per ognuno
 
+        for(Player player: playerList){
+            player.setBoard(board);
+            player.setShelf(new Shelf());
+            player.setCommonTargetCardList(commonList);
+            try {
+                player.setPersonalTargetCard(generateRandomPersonal(playerList));
+            } catch (IOException | URISyntaxException e) {
+                throw new RuntimeException(e);
+            }
+        }
+    }
 
+    public PersonalTargetCard generateRandomPersonal(List<Player> playerList) throws IOException, URISyntaxException {
+        Random random = new Random();
+        int personalCode= (random.nextInt(12));
+        boolean isAlreadyPresent = false;
+        for(Player playerInFor: playerList){
+            if(playerInFor.getPersonalTargetCard()!=null && playerInFor.getPersonalTargetCard().getValue() == personalCode) {
+                isAlreadyPresent = true;
+                break;
+            }
+        }
+        while(isAlreadyPresent) {
+            isAlreadyPresent = false;
+            personalCode = (random.nextInt(12));
+            for (Player playerInFor : playerList) {
+                if (playerInFor.getPersonalTargetCard() != null && playerInFor.getPersonalTargetCard().getValue() == personalCode) {
+                    isAlreadyPresent = true;
+                    break;
+                }
+            }
+        }
+        return new PersonalTargetCard( personalCode);
     }
 
     public List<CommonTargetCard> generateRandomCommonCards(boolean onlyOneCommonCard,int maxPlayerNumber) {
@@ -53,7 +84,7 @@ public class WaitingForPlayerState extends GameState {
 
     public CommonTargetCard getRandomCommon(int maxPlayerNumber){
         Random random=new Random();
-        switch (random.nextInt(11)) {
+        switch (random.nextInt(12)) {
             case 0 -> {
                 return new CommonDiagonal(maxPlayerNumber);
             }
@@ -87,7 +118,7 @@ public class WaitingForPlayerState extends GameState {
             case 10 -> {
                 return new CommonTwoSquares(maxPlayerNumber);
             }
-            default -> {
+            default -> { //case: 11
                 return new CommonX(maxPlayerNumber);
             }
         }

@@ -6,7 +6,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class Player {
-    private String nickname;
+    private final String nickname;
     private boolean connected;
     private int playerScore;
     private BoardFactory board;
@@ -19,6 +19,7 @@ public class Player {
     public Player(String nickname) {
         this.nickname = nickname;
         endGameToken = null;
+        playerScore=0;
     }
 
     public String getNickname() {
@@ -103,5 +104,9 @@ public class Player {
 
     public int getPlayerScore() {
         return this.playerScore;
+    }
+
+    public PersonalTargetCard getPersonalTargetCard() {
+        return personalTargetCard;
     }
 }
