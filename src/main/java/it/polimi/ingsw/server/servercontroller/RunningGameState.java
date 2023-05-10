@@ -17,7 +17,7 @@ public class RunningGameState extends GameState {
     }
 
     @Override
-    public void setupGame(int maxPlayerNumber,List<CommonTargetCard> commonList,BoardFactory board,boolean onlyOneCommon) {
+    public void setupGame(int maxPlayerNumber, List<CommonTargetCard> commonList, BoardFactory board, boolean onlyOneCommon, List<Player> playerList, GameController controller) {
         //Never will be called here
     }
     @Override

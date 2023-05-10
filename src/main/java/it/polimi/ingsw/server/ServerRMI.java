@@ -55,13 +55,14 @@ public class ServerRMI implements InterfaceServer {
     public void hello(InterfaceClient cl, String nickname) throws RemoteException {
         clientMap.put(nickname,cl);
         try {
-            if (controller.clientPresentation(nickname)==1) { //joined a "new" game
+            int result=controller.clientPresentation(nickname); //o uno switch
+            if (result==1) { //joined a "new" game
                 cl.confirmConnection(false);
             }
-            else if (controller.clientPresentation(nickname)==2) { //joined a "restored" game
+            else if (result==2) { //joined a "restored" game
                 cl.confirmConnection(true);
             }
-            else if(controller.clientPresentation(nickname)==0){  // you're joining but I need another nickname
+            else if(result==0){  // you're joining but I need another nickname
                 clientMap.remove(nickname);
                 cl.askForNewNickname();
             }

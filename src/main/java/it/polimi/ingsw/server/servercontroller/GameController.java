@@ -71,6 +71,7 @@ public class GameController {
                 lastTurn = true;
             }
             activePlayer.updateScore();
+
             //Setting the next active player
             int nextIndex=nextIndexCalc(playerList.indexOf(activePlayer));
             while(nextIndex!=-1 && !playerList.get(nextIndex).isConnected())
@@ -79,6 +80,8 @@ public class GameController {
                 activePlayer=playerList.get(nextIndex);
             else
                 activePlayer=null; //signals to the server the game is over!
+
+            //todo add salvataggio nel json
         }
 
     }
@@ -129,7 +132,7 @@ public class GameController {
     }
 
     public void setupGame(boolean onlyOneCommonCard) { //ok supporto a isGameReady
-        state.setupGame(maxPlayerNumber, commonTargetCardsList, board, onlyOneCommonCard);
+        state.setupGame(maxPlayerNumber, commonTargetCardsList, board, onlyOneCommonCard,playerList,this);
     }
 
     public boolean checkLastTurn() {  //ok supporto a checkMove
@@ -151,12 +154,8 @@ public class GameController {
 
     }
 
-    public int checkNicknameAvailability(String nickname) { //è a posto con gli int vari?
-        if (state.checkNicknameAvailability(nickname, playerList) == 1)
-            return 1;
-        else if (state.checkNicknameAvailability(nickname, playerList) == -1)
-            return -1;
-        return 0;
+    public int checkNicknameAvailability(String nickname) {
+        return (state.checkNicknameAvailability(nickname, playerList));
     }
 
     public boolean isGameReady() {
@@ -190,47 +189,53 @@ public class GameController {
     } //todo in RMI
 
     public synchronized int clientPresentation(String nickname) throws FirstPlayerException, CancelGameException, GameStartException, FullLobbyException { //response to presentation
-        if (getAvailableSlot() == -1) { //handling the first player
-            if (checkSavedGame(nickname)) {
-                changeState(new WaitingForSavedGameState());
+        int availableSlots = getAvailableSlot();
+        if (availableSlots == -1) { //handling the first player
+            if (checkSavedGame(nickname)) { //the first player is present in the saved game
                 setupGame(onlyOneCommonCard);
+                changeState(new WaitingForSavedGameState());
                 for (Player player : playerList) {
                     if (player.getNickname().equals(nickname))
                         player.setConnected(true);
                     return 2;
                 }
             } else {
-                changeState(new WaitingForPlayerState());
+                changeState(new WaitingForPlayerState()); //the first player is new
                 addPlayer(new Player(nickname));
                 throw new FirstPlayerException();
             }
-        }
-        else if(getAvailableSlot()<=0)
+        } else if (availableSlots <= 0)  //No place for a new player
             throw new FullLobbyException();
-        //for all the other players
-        if (checkNicknameAvailability(nickname) == -1) {
-            throw new CancelGameException();
-        } else if (checkNicknameAvailability(nickname) != 1)
-            return 0;
-        addPlayer(new Player(nickname));
-        if(isGameReady()){
-            throw new GameStartException();
-        }
-        return 1;
 
-    }  //todo in RMI
+        switch (checkNicknameAvailability(nickname)) {
+            case -1 -> { //it wasn't possible to restore a saved game, goodbye to everyone
+                throw new CancelGameException();
+            }
+            case 0 -> {     //unavailable nickname
+                return 0;
+            }
+            default -> {  //you're in! (case: 1)
+                addPlayer(new Player(nickname));
+                if (isGameReady()) {
+                    throw new GameStartException();
+                }
+                return 1;
+            }
+        }  //todo in RMI
+    }
 
 
-    public List<String> getConnectedUsersNicks() {
+        public List<String> getConnectedUsersNicks() {
         List<String> list = new ArrayList<>();
         for (Player p : playerList) {
             list.add(p.getNickname());
         }
         return list;
-    }
-    public void startGame(){
-        changeState(new RunningGameState());
+        }
+
+        public void startGame(){
         setupGame(onlyOneCommonCard);
+        changeState(new RunningGameState());
     }
     public NewView generateUpdatedView(){
         //todo

@@ -22,8 +22,8 @@ public class WaitingForSavedGameState extends GameState {
 
 
     @Override
-    public void setupGame(int maxPlayerNumber,List<CommonTargetCard> commonList,BoardFactory board,boolean onlyOneCommon) {
-        //This needs to "re-setup" the game as it is in the gson
+    public void setupGame(int maxPlayerNumber, List<CommonTargetCard> commonList, BoardFactory board, boolean onlyOneCommon, List<Player> playerList, GameController controller) {
+        //This does nothing, the saved game is resumed in the initState
     }
 
     @Override

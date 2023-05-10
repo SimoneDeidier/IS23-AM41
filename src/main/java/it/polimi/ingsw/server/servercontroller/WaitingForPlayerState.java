@@ -21,8 +21,8 @@ public class WaitingForPlayerState extends GameState {
     }
 
     @Override
-    public void setupGame(int maxPlayerNumber,List<CommonTargetCard> commonList,BoardFactory board,boolean onlyOneCommonCard) {
-        //DA CONTROLLARE
+    public void setupGame(int maxPlayerNumber, List<CommonTargetCard> commonList, BoardFactory board, boolean onlyOneCommonCard, List<Player> playerList, GameController controller) {
+        //todo da rifare
         commonList = generateRandomCommonCards(onlyOneCommonCard,maxPlayerNumber);
         switch (maxPlayerNumber){
             case 2:
@@ -32,6 +32,8 @@ public class WaitingForPlayerState extends GameState {
             default:
                 board= FourPlayersBoard.getFourPlayersBoard();
         }
+        //generare le personal per ognuno
+
 
     }
 

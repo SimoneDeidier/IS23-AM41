@@ -14,8 +14,8 @@ public class ServerInitState extends GameState {
     }
 
     @Override
-    public void setupGame(int maxPlayerNumber,List<CommonTargetCard> commonList,BoardFactory board,boolean onlyOneCommon) {
-        //Does nothing in this state
+    public void setupGame(int maxPlayerNumber, List<CommonTargetCard> commonList, BoardFactory board, boolean onlyOneCommon, List<Player> playerList, GameController controller) {
+        //todo setup del game dal file json
     }
     @Override
     public boolean isGameReady(List<Player> playerList, int maxPlayerNumber){
