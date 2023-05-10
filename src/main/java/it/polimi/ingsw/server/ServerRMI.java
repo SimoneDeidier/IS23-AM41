@@ -93,12 +93,33 @@ public class ServerRMI implements InterfaceServer {
     public boolean executeMove(Body move) throws RemoteException {
         if (controller.checkMove(move)) {
             for (Map.Entry<String, InterfaceClient> entry : clientMap.entrySet()) {
-                entry.getValue().updateView(controller.generateUpdatedView());
+                NewView newView= controller.generateUpdatedView();
+                //if newView.getActivePlayer==null
+                //--> game over, risultati
+                //else
+                entry.getValue().updateView(newView);
                 entry.getValue().updatePersonalView(controller.generateUpdatedPersonal(entry.getKey()));
             }
             return true;
         }
         return false;
+    }
 
+    @Override
+    public void sendMessage(InterfaceClient cl,String message) throws RemoteException {
+        try {
+            String receiver=controller.checkMessageType(message);
+            if(receiver==null) { //broadcast message
+                for(InterfaceClient interfaceClient: clientMap.values()){
+                    interfaceClient.receiveMessage(message);
+                }
+            }
+            else{ //direct message
+                cl.receiveMessage(message);
+                clientMap.get(receiver).receiveMessage(message);
+            }
+        } catch (IncorrectNicknameException e) {
+            cl.wrongMessageWarning(message);
+        }
     }
 }

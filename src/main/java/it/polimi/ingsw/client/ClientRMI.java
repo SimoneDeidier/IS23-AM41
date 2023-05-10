@@ -70,4 +70,14 @@ public class ClientRMI implements InterfaceClient {
         //todo
         //tell the controller to show a confirmation the client has had access to the server, boolean false-> a new game, true-> a restored game
     }
+
+    @Override
+    public void receiveMessage(String message) throws RemoteException {
+        //tell the controller to show the message in the view
+    }
+
+    @Override
+    public void wrongMessageWarning(String message) throws RemoteException {
+        //tell the controller to show the message in the view explaining the nickname tagged was wrong
+    }
 }

@@ -14,4 +14,6 @@ public interface InterfaceClient extends Remote {
     void updatePersonalView(NewPersonalView newPersonalView) throws RemoteException;
     void disconnectUser(int whichMessageToShow) throws RemoteException;
     void confirmConnection(boolean bool) throws RemoteException;
+    void receiveMessage(String message) throws RemoteException;
+    void wrongMessageWarning(String message) throws RemoteException;
 }

@@ -225,15 +225,15 @@ public class GameController {
     }
 
 
-        public List<String> getConnectedUsersNicks() {
+    public List<String> getConnectedUsersNicks() {
         List<String> list = new ArrayList<>();
         for (Player p : playerList) {
             list.add(p.getNickname());
         }
         return list;
-        }
+    }
 
-        public void startGame(){
+    public void startGame(){
         setupGame(onlyOneCommonCard);
         changeState(new RunningGameState());
     }
@@ -254,6 +254,17 @@ public class GameController {
 
     public void addInSocketUserMapping() {}
 
+    public String checkMessageType(String message) throws IncorrectNicknameException {
+        String[] words= message.split(" ");
+        if(words[0].startsWith("@")){
+            for(Player player:playerList){
+                if(player.getNickname().equals(words[0].substring(1)))
+                    return player.getNickname();
+            }
+            throw new IncorrectNicknameException();
+        }
+        return null;
+    }
 
 }
     //mancherebbero
