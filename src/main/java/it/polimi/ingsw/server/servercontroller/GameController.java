@@ -151,7 +151,7 @@ public class GameController {
 
     }
 
-    public int checkNicknameAvailability(String nickname) {
+    public int checkNicknameAvailability(String nickname) { //è a posto con gli int vari?
         if (state.checkNicknameAvailability(nickname, playerList) == 1)
             return 1;
         else if (state.checkNicknameAvailability(nickname, playerList) == -1)
@@ -189,7 +189,7 @@ public class GameController {
         return getAvailableSlot() == -1 || getAvailableSlot() > 0;
     } //todo in RMI
 
-    public synchronized boolean clientPresentation(String nickname) throws FirstPlayerException, CancelGameException, GameStartException, FullLobbyException { //response to presentation
+    public synchronized int clientPresentation(String nickname) throws FirstPlayerException, CancelGameException, GameStartException, FullLobbyException { //response to presentation
         if (getAvailableSlot() == -1) { //handling the first player
             if (checkSavedGame(nickname)) {
                 changeState(new WaitingForSavedGameState());
@@ -197,7 +197,7 @@ public class GameController {
                 for (Player player : playerList) {
                     if (player.getNickname().equals(nickname))
                         player.setConnected(true);
-                    return true;
+                    return 2;
                 }
             } else {
                 changeState(new WaitingForPlayerState());
@@ -211,12 +211,12 @@ public class GameController {
         if (checkNicknameAvailability(nickname) == -1) {
             throw new CancelGameException();
         } else if (checkNicknameAvailability(nickname) != 1)
-            return false;
+            return 0;
         addPlayer(new Player(nickname));
         if(isGameReady()){
             throw new GameStartException();
         }
-        return true;
+        return 1;
 
     }  //todo in RMI
 

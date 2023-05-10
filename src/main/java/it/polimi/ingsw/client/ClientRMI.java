@@ -26,13 +26,12 @@ public class ClientRMI implements InterfaceClient {
         Registry registry = LocateRegistry.getRegistry("127.0.0.1", PORT);
         // Looking up the registry for the remote object
         stub = (InterfaceServer) registry.lookup("serverInterface");
-        stub.hello(this,/*controller.askNickname()*/null);
+        stub.hello(this,/*controller.askNickname(false)*/null);
     }
 
     @Override
-    public String askNickname() throws RemoteException {
-        //return controller.askNickname();
-        return null;
+    public void askForNewNickname() throws RemoteException {
+        stub.hello(this,/*controller.askNickname(true)*/null);
     }
 
     @Override
@@ -40,10 +39,13 @@ public class ClientRMI implements InterfaceClient {
         //while(true){
         //  int numberOfPlayer= view.askParameter(); MA questo dovrebbe essere fatto dal controller, non server
         //  boolean onlyOneCommon = view.askParameter2();
-        //  if(stub.sendParameters(numberOfPlayers,onlyOneCommon))
+        //  if(stub.sendParameters(numberOfPlayers,onlyOneCommon)){
+        //      controller.confirmCreation();
         //      break;
         //}
+        //}
     }
+
 
     @Override
     public void updateView(NewView newView) throws RemoteException {
@@ -57,8 +59,15 @@ public class ClientRMI implements InterfaceClient {
 
 
     @Override
-    public void disconnectUser() throws RemoteException {
+    public void disconnectUser(int whichMessageToShow) throws RemoteException {
         //todo
+        //tell the controller to show an error page, prompting the user to restart the client in order to join a new game
 
+    }
+
+    @Override
+    public void confirmConnection(boolean bool) throws RemoteException {
+        //todo
+        //tell the controller to show a confirmation the client has had access to the server, boolean false-> a new game, true-> a restored game
     }
 }

@@ -15,7 +15,7 @@ import java.util.concurrent.ConcurrentHashMap;
 public class ServerRMI implements InterfaceServer {
     static int PORT = 1234;
     private final GameController controller = GameController.getGameController(null,null,false);
-    private Map<String,InterfaceClient> clientMap;
+    private final Map<String,InterfaceClient> clientMap;
     public ServerRMI() throws RemoteException {
         this.clientMap = new ConcurrentHashMap<>() {
         };
@@ -52,34 +52,36 @@ public class ServerRMI implements InterfaceServer {
 
     //QUA RIEMPIRE LA INTERFACCIA
     @Override
-    public boolean hello(InterfaceClient cl, String nickname) throws RemoteException {
+    public void hello(InterfaceClient cl, String nickname) throws RemoteException {
         clientMap.put(nickname,cl);
         try {
-            if (controller.clientPresentation(nickname)) {
-                return true;
+            if (controller.clientPresentation(nickname)==1) { //joined a "new" game
+                cl.confirmConnection(false);
             }
-            else{
+            else if (controller.clientPresentation(nickname)==2) { //joined a "restored" game
+                cl.confirmConnection(true);
+            }
+            else if(controller.clientPresentation(nickname)==0){  // you're joining but I need another nickname
                 clientMap.remove(nickname);
-                return false;
+                cl.askForNewNickname();
             }
-        } catch (CancelGameException e) {
+        } catch (CancelGameException e) { //the game is being canceled because a restoring of a saved game failed
             for(Map.Entry<String,InterfaceClient> entry : clientMap.entrySet()){
-                entry.getValue().disconnectUser();
+                entry.getValue().disconnectUser(0);
                 clientMap.remove(entry.getKey());
             }
-        } catch (GameStartException e) {
+        } catch (GameStartException e) { //the game is starting because everyone is connected, updating everyone views
             controller.startGame();
             for (Map.Entry<String,InterfaceClient> entry : clientMap.entrySet()) {
                 entry.getValue().updateView(controller.generateUpdatedView());
                 entry.getValue().updatePersonalView(controller.generateUpdatedPersonal(entry.getKey()));
             }
-            //se il gioco è pronto per cominciare si arriva qui
-        } catch (FullLobbyException e) {
-            cl.disconnectUser();
-        } catch (FirstPlayerException e) {
+        } catch (FullLobbyException e) { //you can't connect right now, the lobby is full or a game is already playing on the server
+            clientMap.remove(nickname);
+            cl.disconnectUser(1);
+        } catch (FirstPlayerException e) { //you're the first player connecting for creating a new game, I need more parameters from you
             cl.askParameters();
         }
-        return false;
     }
 
     @Override
@@ -90,7 +92,6 @@ public class ServerRMI implements InterfaceServer {
     public boolean executeMove(Body move) throws RemoteException {
         if (controller.checkMove(move)) {
             for (Map.Entry<String, InterfaceClient> entry : clientMap.entrySet()) {
-                NewView newView= controller.generateUpdatedView();
                 entry.getValue().updateView(controller.generateUpdatedView());
                 entry.getValue().updatePersonalView(controller.generateUpdatedPersonal(entry.getKey()));
             }
