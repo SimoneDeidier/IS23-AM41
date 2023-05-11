@@ -26,18 +26,6 @@ public class TCPMessageController implements TCPMessageControllerInterface {
         String header = message.getHeader();
         System.out.printf("New TCP message - header: " + header);
         switch (header) {
-            case "Helo" -> {
-                if(gameController.getAvailableSlot() == -1 || gameController.getAvailableSlot() > 0) {
-                    // primo giocatore o ci sono slot per altri giocatori
-                    printTCPMessage("Connected", null);
-                    return;
-                }
-                else {
-                    // la lobby è piena
-                    printTCPMessage("Goodbye", null);
-                    return;
-                }
-            }
             case "Presentation" -> {
                 if(gameController.getAvailableSlot() == -1) {
                     // aggiunge questo giocatore
