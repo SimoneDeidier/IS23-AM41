@@ -4,9 +4,10 @@ import it.polimi.ingsw.server.model.Player;
 import it.polimi.ingsw.server.model.tokens.ScoringToken;
 import it.polimi.ingsw.server.model.Shelf;
 
+import java.io.Serializable;
 import java.util.*;
 
-public abstract class CommonTargetCard {
+public abstract class CommonTargetCard implements Serializable {
 
 
     protected final static int ROWS = 6;

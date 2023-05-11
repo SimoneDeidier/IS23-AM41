@@ -6,9 +6,10 @@ import it.polimi.ingsw.server.model.exceptions.NotEnoughSpaceInColumnException;
 import it.polimi.ingsw.server.model.items.Item;
 import it.polimi.ingsw.server.model.items.ItemColor;
 
+import java.io.Serializable;
 import java.util.List;
 
-public class Shelf {
+public class Shelf implements Serializable {
 
     private final static int ROWS = 6;
     private final static int COLUMNS = 5;

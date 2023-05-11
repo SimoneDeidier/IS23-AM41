@@ -1,6 +1,8 @@
 package it.polimi.ingsw.server.model.tokens;
 
-public class EndGameToken extends Token{
+import java.io.Serializable;
+
+public class EndGameToken extends Token implements Serializable {
 
     private static EndGameToken instance;
 
