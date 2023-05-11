@@ -5,9 +5,12 @@ import it.polimi.ingsw.server.model.tokens.ScoringToken;
 import it.polimi.ingsw.server.model.Shelf;
 
 import java.io.Serializable;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
+import java.util.List;
 
-public abstract class CommonTargetCard implements Serializable {
+public abstract class CommonTargetCard {
 
 
     protected final static int ROWS = 6;

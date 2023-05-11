@@ -9,12 +9,11 @@ import org.apache.commons.io.FileUtils;
 
 import java.io.File;
 import java.io.IOException;
-import java.io.Serializable;
 import java.net.URISyntaxException;
 import java.nio.charset.StandardCharsets;
 
-public class PersonalTargetCard implements Serializable {
-    int value;
+public class PersonalTargetCard {
+    int whichPersonal;
     final int pinkX;
     final int pinkY;
     final int light_blueX;
@@ -29,7 +28,7 @@ public class PersonalTargetCard implements Serializable {
     final int greenY;
 
     public PersonalTargetCard(int personal) throws IOException, URISyntaxException {
-        value=personal;
+        whichPersonal =personal;
         Gson gson = new Gson();
         File jsonFile = new File(ClassLoader.getSystemResource("jsons/PersonalTargetCards.json").toURI());
         String jsonString = FileUtils.readFileToString(jsonFile, StandardCharsets.UTF_8);
@@ -97,7 +96,7 @@ public class PersonalTargetCard implements Serializable {
         };
     }
 
-    public int getValue() {
-        return value;
+    public int getWhichPersonal() {
+        return whichPersonal;
     }
 }

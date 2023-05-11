@@ -2,7 +2,7 @@ package it.polimi.ingsw.server.model.tokens;
 
 import java.io.Serializable;
 
-public class EndGameToken extends Token implements Serializable {
+public class EndGameToken extends Token {
 
     private static EndGameToken instance;
 

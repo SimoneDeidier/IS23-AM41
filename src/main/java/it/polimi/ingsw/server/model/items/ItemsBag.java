@@ -9,7 +9,6 @@ public class ItemsBag {
     private List<Item> itemList;
     private final static int ITEMNUMBERFORTYPE = 22;
     private final static int INITIAL_CAPACITY = 132;
-    Random random = new Random();
 
     private ItemsBag() {
         itemList = new ArrayList<>(INITIAL_CAPACITY);
@@ -38,6 +37,7 @@ public class ItemsBag {
         if(getRemainingItemsCount()==0){
             return null;
         }
+        Random random=new Random();
         Item item=itemList.get(random.nextInt(itemList.size()));
         Item picked = new Item(item.getColor());
         itemList.remove(item);

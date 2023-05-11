@@ -9,7 +9,7 @@ import it.polimi.ingsw.server.model.items.ItemColor;
 import java.io.Serializable;
 import java.util.List;
 
-public class Shelf implements Serializable {
+public class Shelf {
 
     private final static int ROWS = 6;
     private final static int COLUMNS = 5;
