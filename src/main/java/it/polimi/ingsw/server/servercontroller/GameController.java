@@ -30,19 +30,19 @@ public class GameController {
     private static Map<Socket, TCPMessageController> socketMapping = new ConcurrentHashMap<>(4);
     private static Map<Socket, String> socketUserMapping = new ConcurrentHashMap<>(4);
 
-    public GameController(Socket socket, TCPMessageController tcpMessageController) {
+    public GameController() {
         this.state = new ServerInitState();
-        socketMapping.put(socket, tcpMessageController);
     }
 
-    public static GameController getGameController(Socket socket, TCPMessageController tcpMessageController, boolean isTCP) {
+    public static GameController getGameController() {
         if (instance == null) {
-            instance = new GameController(socket, tcpMessageController);
-        }
-        if (isTCP && !socketMapping.containsKey(socket)) {
-            socketMapping.put(socket, tcpMessageController);
+            instance = new GameController();
         }
         return instance;
+    }
+
+    public void putSocketTCPController(Socket socket, TCPMessageController controller) {
+        socketMapping.put(socket, controller);
     }
 
     public boolean checkMove(Body body) {  //ok serve

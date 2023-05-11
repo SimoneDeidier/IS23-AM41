@@ -1,29 +1,60 @@
 package it.polimi.ingsw.server;
 
+import it.polimi.ingsw.interfaces.InterfaceClient;
+import it.polimi.ingsw.interfaces.InterfaceServer;
+import it.polimi.ingsw.messages.Body;
+import it.polimi.ingsw.messages.NewView;
+import it.polimi.ingsw.server.servercontroller.GameController;
 import it.polimi.ingsw.server.servercontroller.SocketManager;
+import it.polimi.ingsw.server.servercontroller.exceptions.*;
 
 import java.io.IOException;
 import java.net.ServerSocket;
 import java.net.Socket;
+import java.rmi.AlreadyBoundException;
+import java.rmi.RemoteException;
+import java.rmi.registry.LocateRegistry;
+import java.rmi.registry.Registry;
+import java.rmi.server.UnicastRemoteObject;
+import java.util.Map;
 import java.util.Objects;
 import java.util.Scanner;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
-public class Server {
+public class Server implements InterfaceServer {
 
-    private static int port;
+    private static int portRMI;
+    private static int portTCP;
+    private final GameController controller = GameController.getGameController();
+    private final Map<String,InterfaceClient> clientMapRMI = new ConcurrentHashMap<>();
 
     public static boolean parsePortNumber(String[] args) {
 
+        boolean rmiOK = false;
+        boolean tcpOK = false;
+
         for(int i = 0; i < args.length - 1; i++) {
-            if(Objects.equals(args[i], "-p") && args[i+1].matches("[0-9]+")) {
+            if(Objects.equals(args[i], "-r") && args[i+1].matches("[0-9]+")) {
                 int parsed = Integer.parseInt(args[i+1]);
-                if(parsed <= 1024 || parsed > 65535) {
+                if(parsed <= 1024 || parsed > 65535 || (tcpOK && (parsed == portTCP))) {
                     System.out.println("Invalid port number.");
                     return false;
                 }
-                port = parsed;
+                portRMI = parsed;
+                rmiOK = true;
+            }
+            if(Objects.equals(args[i], "-t") && args[i+1].matches("[0-9]+")) {
+                int parsed = Integer.parseInt(args[i+1]);
+                if(parsed <= 1024 || parsed > 65535 || (rmiOK && (parsed == portRMI))) {
+                    System.out.println("Invalid port number.");
+                    return false;
+                }
+                portTCP = parsed;
+                tcpOK = true;
+            }
+            if(rmiOK && tcpOK) {
                 return true;
             }
         }
@@ -31,34 +62,60 @@ public class Server {
 
     }
 
-    public static int setPortNumber() {
+    public static int setPortNumber(String type, int firstPort) {
 
         int input;
         Scanner in = new Scanner(System.in);
 
         do {
-            System.out.print("Please select a port number: ");
+            System.out.print("Please select a port number for the " + type + " server: ");
             input = in.nextInt();
-        }while(input <= 1024 || input > 65535);
+        }while(input <= 1024 || input > 65535 || input == firstPort);
         return input;
 
     }
 
     public static void main(String[] args) {
 
+        // SET THE PORT NUMBER
         if(!parsePortNumber(args)) {
-            port = setPortNumber();
+            portRMI = setPortNumber("RMI", 0);
+            portTCP = setPortNumber("TCP", portRMI);
         }
+
+
+        // START RMI SERVER
+        InterfaceServer stub =null;
+        Server obj =  new Server();
+        try {
+            stub = (InterfaceServer) UnicastRemoteObject.exportObject(obj, portRMI);
+        } catch (RemoteException e) {
+            e.printStackTrace();
+        }
+        Registry registry = null;
+        try {
+            registry = LocateRegistry.createRegistry(portRMI);
+        } catch (RemoteException e) {
+            e.printStackTrace();
+        }
+        try {
+            registry.bind("serverInterface", stub);
+        } catch (RemoteException | AlreadyBoundException e) {
+            e.printStackTrace();
+        }
+        System.err.println("RMI server ready - listening on port " + portRMI + ".");
+
+        // START TCP SERVER
         ExecutorService executor = Executors.newCachedThreadPool();
         ServerSocket serverSocket;
         try {
-            serverSocket = new ServerSocket(port);
+            serverSocket = new ServerSocket(portTCP);
         }
         catch (IOException e) {
             System.err.println(e.getMessage());
             return;
         }
-        System.out.println("Server ready - listening on port " + port + ".");
+        System.err.println("TCP Server ready - listening on port " + portTCP + ".");
         while(true) {
             try {
                 Socket socket = serverSocket.accept();
@@ -74,5 +131,78 @@ public class Server {
         System.out.println("All threads are joined - server shutting down.");
 
     }
+
+    @Override
+    public void presentation(InterfaceClient cl, String nickname) throws RemoteException {
+        clientMapRMI.put(nickname,cl);
+        try {
+            int result=controller.clientPresentation(nickname); //o uno switch
+            if (result==1) { //joined a "new" game
+                cl.confirmConnection(false);
+            }
+            else if (result==2) { //joined a "restored" game
+                cl.confirmConnection(true);
+            }
+            else if(result==0){  // you're joining but I need another nickname
+                clientMapRMI.remove(nickname);
+                cl.askForNewNickname();
+            }
+        } catch (CancelGameException e) { //the game is being canceled because a restoring of a saved game failed
+            for(Map.Entry<String,InterfaceClient> entry : clientMapRMI.entrySet()){
+                entry.getValue().disconnectUser(0);
+                clientMapRMI.remove(entry.getKey());
+            }
+        } catch (GameStartException e) { //the game is starting because everyone is connected, updating everyone views
+            controller.startGame();
+            for (Map.Entry<String,InterfaceClient> entry : clientMapRMI.entrySet()) {
+                entry.getValue().updateView(controller.generateUpdatedView());
+                entry.getValue().updatePersonalView(controller.generateUpdatedPersonal(entry.getKey()));
+            }
+        } catch (FullLobbyException e) { //you can't connect right now, the lobby is full or a game is already playing on the server
+            clientMapRMI.remove(nickname);
+            cl.disconnectUser(1);
+        } catch (FirstPlayerException e) { //you're the first player connecting for creating a new game, I need more parameters from you
+            cl.askParameters();
+        }
+    }
+
+    @Override
+    public boolean sendParameters(int maxPlayerNumber, boolean onlyOneCommonCard) throws RemoteException {
+        return controller.checkGameParameters(maxPlayerNumber,onlyOneCommonCard);
+    }
+
+    public boolean executeMove(Body move) throws RemoteException {
+        if (controller.checkMove(move)) {
+            for (Map.Entry<String, InterfaceClient> entry : clientMapRMI.entrySet()) {
+                NewView newView= controller.generateUpdatedView();
+                //if newView.getActivePlayer==null
+                //--> game over, risultati
+                //else
+                entry.getValue().updateView(newView);
+                entry.getValue().updatePersonalView(controller.generateUpdatedPersonal(entry.getKey()));
+            }
+            return true;
+        }
+        return false;
+    }
+
+    @Override
+    public void sendMessage(InterfaceClient cl,String message) throws RemoteException {
+        try {
+            String receiver=controller.checkMessageType(message);
+            if(receiver==null) { //broadcast message
+                for(InterfaceClient interfaceClient: clientMapRMI.values()){
+                    interfaceClient.receiveMessage(message);
+                }
+            }
+            else{ //direct message
+                cl.receiveMessage(message);
+                clientMapRMI.get(receiver).receiveMessage(message);
+            }
+        } catch (IncorrectNicknameException e) {
+            cl.wrongMessageWarning(message);
+        }
+    }
+
 
 }

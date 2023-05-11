@@ -17,7 +17,8 @@ public class TCPMessageController implements TCPMessageControllerInterface {
 
     public TCPMessageController(SocketManager socketManager, SerializeDeserialize serializeDeserialize) {
         this.socket = socketManager.getSocket();
-        this.gameController = GameController.getGameController(socket, this, true);
+        this.gameController = GameController.getGameController();
+        gameController.putSocketTCPController(socket, this);
         this.serializeDeserialize = serializeDeserialize;
     }
 
