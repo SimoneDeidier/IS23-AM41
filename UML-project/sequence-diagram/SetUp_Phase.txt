@@ -10,7 +10,7 @@ note over Server,Client1: Connection of the first player and\nset-up of the lobb
 
 Client1->Server: Presentation
 alt The nickname isn't in the server's saving
-note over Server,Client1: Number of players & common target\ncards are provided by the first client.
+note over Server,Client1: Number of players & common target\ncards are provided by the first clientTCP.
 Server-->>Client1: Get Parameters
 loop Stops when correct parameters are provided
 Client1->Server: Create Lobby

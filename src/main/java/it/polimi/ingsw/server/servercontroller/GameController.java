@@ -3,6 +3,7 @@ package it.polimi.ingsw.server.servercontroller;
 import it.polimi.ingsw.messages.Body;
 import it.polimi.ingsw.messages.NewPersonalView;
 import it.polimi.ingsw.messages.NewView;
+import it.polimi.ingsw.messages.TCPMessage;
 import it.polimi.ingsw.server.model.*;
 import it.polimi.ingsw.server.model.boards.BoardFactory;
 import it.polimi.ingsw.server.model.commons.CommonTargetCard;
@@ -27,8 +28,7 @@ public class GameController {
     private BoardFactory board;
     private GameState state;
     private List<CommonTargetCard> commonTargetCardsList;
-    private static Map<Socket, TCPMessageController> socketMapping = new ConcurrentHashMap<>(4);
-    private static Map<Socket, String> socketUserMapping = new ConcurrentHashMap<>(4);
+    private Map<String, TCPMessageController> nickToTCPMessageControllerMapping = new ConcurrentHashMap<>(4);
 
     public GameController() {
         this.state = new ServerInitState();
@@ -41,8 +41,16 @@ public class GameController {
         return instance;
     }
 
-    public void putSocketTCPController(Socket socket, TCPMessageController controller) {
-        socketMapping.put(socket, controller);
+    public void putNickToSocketMapping(String nickname, TCPMessageController controller) {
+        nickToTCPMessageControllerMapping.put(nickname, controller);
+    }
+
+    public Map<String, TCPMessageController> getNickToTCPMessageControllerMapping() {
+        return nickToTCPMessageControllerMapping;
+    }
+
+    public List<Player> getPlayerList() {
+        return playerList;
     }
 
     public boolean checkMove(Body body) {  //ok serve
@@ -130,7 +138,9 @@ public class GameController {
     }
 
     public void changeState(GameState state) {  //ok
-        this.state = state;
+        if(state != this.state) {
+            this.state = state;
+        }
     }
 
     public int getAvailableSlot() {  //ok
@@ -191,12 +201,8 @@ public class GameController {
 
     public boolean checkSavedGame(String nickname) {
         //todo look into json and look if the nickname is present there
-        return true;
+        return false;
     }
-
-    public synchronized boolean clientConnection() { //response to helo from client
-        return getAvailableSlot() == -1 || getAvailableSlot() > 0;
-    } //todo in RMI
 
     public synchronized int clientPresentation(String nickname) throws FirstPlayerException, CancelGameException, GameStartException, FullLobbyException { //response to presentation
         int availableSlots = getAvailableSlot();
@@ -249,17 +255,11 @@ public class GameController {
     }
     public NewView generateUpdatedView(){
         //todo
-        NewView newView=new NewView();
-        return newView;
+        return new NewView();
     }
 
     public NewPersonalView generateUpdatedPersonal(String nickname){
-        NewPersonalView newPersonalView=new NewPersonalView();
-        return newPersonalView;
-    }
-
-    public static Map<Socket, TCPMessageController> getSocketMapping() {
-        return socketMapping;
+        return new NewPersonalView();
     }
 
     public void addInSocketUserMapping() {}

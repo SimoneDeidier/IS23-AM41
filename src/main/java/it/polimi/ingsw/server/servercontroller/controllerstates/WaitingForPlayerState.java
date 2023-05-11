@@ -27,15 +27,9 @@ public class WaitingForPlayerState extends GameState {
         commonList = generateRandomCommonCards(onlyOneCommonCard,maxPlayerNumber);
 
         switch (maxPlayerNumber){
-            case 2: {
-                board = TwoPlayersBoard.getTwoPlayersBoard();
-            }
-            case 3: {
-                board = ThreePlayersBoard.getThreePlayersBoard();
-            }
-            case 4: {
-                board = FourPlayersBoard.getFourPlayersBoard();
-            }
+            case 2 -> board = TwoPlayersBoard.getTwoPlayersBoard();
+            case 3 -> board = ThreePlayersBoard.getThreePlayersBoard();
+            case 4 -> board = FourPlayersBoard.getFourPlayersBoard();
         }
 
         for(Player player: playerList){

@@ -1,37 +1,41 @@
 package it.polimi.ingsw.client;
 
-import com.google.gson.Gson;
-import it.polimi.ingsw.messages.Body;
-import it.polimi.ingsw.messages.TCPMessage;
-
-import java.io.*;
-import java.net.Socket;
+import java.io.BufferedReader;
+import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.nio.charset.StandardCharsets;
 import java.util.Scanner;
 
 public class Client {
 
-    private static final String IP = "localhost";
-    private static final int PORT = 8888;
-    private static final Gson gson = new Gson();
-    private static boolean closeConnection = false;
-    private static Socket socket;
-    private static PrintWriter socketOut;
-    private static Scanner socketIn;
-    private static Scanner stdIn;
+    private static Connection connection;
 
-    public Client(String ip, int port) {
-        try {
-            socket = new Socket(ip, port);
-            socketIn = new Scanner(socket.getInputStream());
-            socketOut = new PrintWriter(socket.getOutputStream(), true);
-            stdIn = new Scanner(System.in);
-        } catch (IOException e) {
-            e.printStackTrace();
+    private final static String IP = "localhost";
+    private final static int TCP_PORT = 8888;
+    private final static int RMI_PORT = 1234;
+
+    public static void main(String[] args) {
+
+        drawLogo();
+        Scanner stdin = new Scanner(System.in);
+        System.out.println("Select connection type: ");
+        String type = stdin.nextLine();
+        switch (type) {
+            case "tcp" -> {
+                connection = new ConnectionTCP(IP, TCP_PORT);
+            }
+            case "rmi" -> {
+                connection = new ConnectionRMI(IP, RMI_PORT);
+            }
+            default -> {
+                System.err.println("Wrong parameter, restart server...");
+            }
         }
+        connection.startConnection();
+
     }
 
-    public void drawLogo() {
+    public static void drawLogo() {
         try {
             InputStream inputStream = ClassLoader.getSystemResourceAsStream("files/MyShelfieLogo.txt");
             if(inputStream != null) {
@@ -45,61 +49,6 @@ public class Client {
         } catch (Exception e) {
             System.err.println(e.getMessage());
         }
-    }
-
-    public void startClient() {
-        Thread socketReader = new Thread(() -> {
-            while(!closeConnection) {
-                String inMsg;
-                while ((inMsg = socketIn.nextLine()) != null) {
-                    TCPMessage t = gson.fromJson(inMsg, TCPMessage.class);
-                    System.out.println("New msg: " + t.getBody().getText());
-                }
-            }
-        });
-        Thread socketWriter = new Thread(() -> {
-            while(!closeConnection) {
-                String newMsg;
-                System.out.println("Insert new message: ");
-                newMsg = stdIn.nextLine();
-                Body b = new Body();
-                b.setText(newMsg);
-                TCPMessage t = new TCPMessage("Broadcast Message", b);
-                String s = gson.toJson(t);
-                socketOut.println(s);
-                socketOut.flush();
-            }
-        });
-        socketWriter.start();
-        socketReader.start();
-        try {
-            socketWriter.join();
-            socketReader.join();
-        }
-        catch (InterruptedException e) {
-            e.printStackTrace();
-        }
-        socketOut.close();
-        socketIn.close();
-        try {
-            socket.close();
-        }
-        catch (IOException e) {
-            e.printStackTrace();
-        }
-    }
-
-    public void closeConnection() {
-        closeConnection = true;
-    }
-
-
-    public static void main(String[] args) {
-
-        Client client = new Client(IP, PORT);
-        client.drawLogo();
-        client.startClient();
-
     }
 
 }

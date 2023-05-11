@@ -18,7 +18,6 @@ public class TCPMessageController implements TCPMessageControllerInterface {
     public TCPMessageController(SocketManager socketManager, SerializeDeserialize serializeDeserialize) {
         this.socket = socketManager.getSocket();
         this.gameController = GameController.getGameController();
-        gameController.putSocketTCPController(socket, this);
         this.serializeDeserialize = serializeDeserialize;
     }
 
@@ -31,65 +30,90 @@ public class TCPMessageController implements TCPMessageControllerInterface {
                 if(gameController.getAvailableSlot() == -1) {
                     // aggiunge questo giocatore
                     // todo manca il check sul salvataggio
-                    Player player = new Player(message.getBody().getPlayerNickname());
-
+                    String nickname = message.getBody().getPlayerNickname();
+                    Player player = new Player(nickname);
                     gameController.addPlayer(player);
+                    gameController.putNickToSocketMapping(nickname, this);
                     gameController.changeState(new WaitingForPlayerState());
                     printTCPMessage("Get Parameters", null);
                 }
                 else if(gameController.getAvailableSlot() > 0) {
+                    String nickname = message.getBody().getPlayerNickname();
                     for(String s : gameController.getConnectedUsersNicks()) {
-                        if(Objects.equals(message.getBody().getPlayerNickname(), s)) {
+                        if(Objects.equals(nickname, s)) {
                             printTCPMessage("Invalid Nickname", null);
                             return;
                         }
                     }
                     // todo c'è da implementare tutta la logica dei salvataggi!!!
                     printTCPMessage("Nickname Accepted", null);
-                    gameController.addPlayer(new Player(message.getBody().getPlayerNickname()));
+                    gameController.addPlayer(new Player(nickname));
+                    gameController.putNickToSocketMapping(nickname, this);
                     if(gameController.getAvailableSlot() == 0) {
                         printTCPMessage("Game Start", null);
-                        return;
                     }
                 }
                 else {
                     printTCPMessage("Goodbye", null);
-                    return;
                 }
             }
             case "Create Lobby" -> {
                 int players = message.getBody().getNumberOfPlayers();
                 if(players < 2 || players > 4) {
                     printTCPMessage("Wrong Parameters", null);
-                    return;
                 }
                 else {
                     gameController.setupGame(message.getBody().isOnlyOneCommon());
                     printTCPMessage("Lobby Created", null);
-                    return;
                 }
             }
             case "Disconnect" -> {
+                String nickname = null;
+                for(String s : gameController.getNickToTCPMessageControllerMapping().keySet()) {
+                    if(gameController.getNickToTCPMessageControllerMapping().get(s) == this) {
+                        nickname = s;
+                    }
+                }
+                for(Player p : gameController.getPlayerList()) {
+                    if(Objects.equals(p.getNickname(), nickname)) {
+                        p.setConnected(false);
+                    }
+                }
                 serializeDeserialize.closeConnection();
                 printTCPMessage("Goodbye", null);
-                return;
             }
             case "Move" -> {
-                return;
+                // todo
             }
             case "Broadcast Message" -> {
                 String text = message.getBody().getText();
-                for(Socket s : GameController.getSocketMapping().keySet()) {
+                for(String s : gameController.getNickToTCPMessageControllerMapping().keySet()) {
                     Body body = new Body();
                     body.setText(text);
-                    GameController.getSocketMapping().get(s).printTCPMessage("Broadcast Msg", body);
+                    gameController.getNickToTCPMessageControllerMapping().get(s).printTCPMessage("Broadcast Msg", body);
                 }
             }
             case "Peer-to-Peer Msg" -> {
                 String text = message.getBody().getText();
                 String senderNick = message.getBody().getSenderNickname();
                 String receiverNick = message.getBody().getReceiverNickname();
-
+                boolean receiverFound = false;
+                for(String s : gameController.getNickToTCPMessageControllerMapping().keySet()) {
+                    if (Objects.equals(s, receiverNick)) {
+                        Body body = new Body();
+                        body.setText(text);
+                        gameController.getNickToTCPMessageControllerMapping().get(s).printTCPMessage("Peer-to-Peer Msg", body);
+                        receiverFound = true;
+                    }
+                }
+                if(receiverFound) {
+                    Body body = new Body();
+                    body.setText(text);
+                    gameController.getNickToTCPMessageControllerMapping().get(senderNick).printTCPMessage("Peer-to-Peer Msg", body);
+                }
+                else {
+                    gameController.getNickToTCPMessageControllerMapping().get(senderNick).printTCPMessage("Invalid Nickname", null);
+                }
             }
         }
     }
@@ -98,6 +122,10 @@ public class TCPMessageController implements TCPMessageControllerInterface {
     public void printTCPMessage(String header, Body body) {
         TCPMessage newMsg = new TCPMessage(header, body);
         serializeDeserialize.serialize(newMsg);
+    }
+
+    public Socket getSocket() {
+        return this.socket;
     }
 
 }

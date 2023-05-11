@@ -6,28 +6,35 @@ import it.polimi.ingsw.client.clientontroller.ClientController;
 import it.polimi.ingsw.messages.NewPersonalView;
 import it.polimi.ingsw.messages.NewView;
 
+import java.io.Serializable;
 import java.rmi.RemoteException;
 import java.rmi.registry.LocateRegistry;
 import java.rmi.registry.Registry;
 
-public class ClientRMI implements InterfaceClient {
-    static int PORT = 1234;
+public class ConnectionRMI extends Connection implements InterfaceClient, Serializable {
+    private int PORT;
+    private String IP;
     private InterfaceServer stub;
     private ClientController controller;
-    public static void main(String[] args) {
+
+    public ConnectionRMI(String ip, int port) {
+        this.IP = ip;
+        this.PORT = port;
+    }
+
+    @Override
+    public void startConnection(){
         try {
-            new ClientRMI().startClient();
-        } catch (Exception e) {
-            System.err.println("Client exception: " + e.toString());
+            // Getting the registry
+            Registry registry = LocateRegistry.getRegistry(IP, PORT);
+            // Looking up the registry for the remote object
+            stub = (InterfaceServer) registry.lookup("serverInterface");
+            /*controller.askNickname(false)*/
+            stub.presentation(this, "Samuele");
+        }
+        catch (Exception e) {
             e.printStackTrace();
         }
-    }
-    private void startClient() throws Exception{
-        // Getting the registry
-        Registry registry = LocateRegistry.getRegistry("127.0.0.1", PORT);
-        // Looking up the registry for the remote object
-        stub = (InterfaceServer) registry.lookup("serverInterface");
-        stub.presentation(this,/*controller.askNickname(false)*/null);
     }
 
     @Override
