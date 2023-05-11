@@ -3,13 +3,14 @@ package it.polimi.ingsw.client;
 import it.polimi.ingsw.interfaces.InterfaceClient;
 import it.polimi.ingsw.interfaces.InterfaceServer;
 import it.polimi.ingsw.client.clientontroller.ClientController;
-import it.polimi.ingsw.messages.NewPersonalView;
-import it.polimi.ingsw.messages.NewView;
+import it.polimi.ingsw.server.model.PersonalTargetCard;
+import it.polimi.ingsw.server.model.Player;
 
 import java.io.Serializable;
 import java.rmi.RemoteException;
 import java.rmi.registry.LocateRegistry;
 import java.rmi.registry.Registry;
+import java.util.List;
 
 public class ConnectionRMI extends Connection implements InterfaceClient, Serializable {
     private int PORT;
@@ -43,6 +44,11 @@ public class ConnectionRMI extends Connection implements InterfaceClient, Serial
     }
 
     @Override
+    public void updateView(List<Player> playersList) throws RemoteException {
+
+    }
+
+    @Override
     public void askParameters() throws RemoteException {
         //while(true){
         //  int numberOfPlayer= view.askParameter(); MA questo dovrebbe essere fatto dal controller, non server
@@ -53,18 +59,6 @@ public class ConnectionRMI extends Connection implements InterfaceClient, Serial
         //}
         //}
     }
-
-
-    @Override
-    public void updateView(NewView newView) throws RemoteException {
-
-    }
-
-    @Override
-    public void updatePersonalView(NewPersonalView newPersonalView) throws RemoteException {
-
-    }
-
 
     @Override
     public void disconnectUser(int whichMessageToShow) throws RemoteException {
@@ -87,5 +81,10 @@ public class ConnectionRMI extends Connection implements InterfaceClient, Serial
     @Override
     public void wrongMessageWarning(String message) throws RemoteException {
         //tell the controller to show the message in the view explaining the nickname tagged was wrong
+    }
+
+    @Override
+    public void receivePersonalTargetCard(PersonalTargetCard personalTargetCard) throws RemoteException {
+        // todo
     }
 }

@@ -3,6 +3,9 @@ package it.polimi.ingsw.server.servercontroller;
 import com.google.gson.Gson;
 import it.polimi.ingsw.interfaces.SerializeDeserializeInterface;
 import it.polimi.ingsw.messages.TCPMessage;
+import it.polimi.ingsw.server.model.Player;
+
+import java.rmi.RemoteException;
 
 public class SerializeDeserialize implements SerializeDeserializeInterface {
 
@@ -15,7 +18,7 @@ public class SerializeDeserialize implements SerializeDeserializeInterface {
         this.socketManager = socketManager;
     }
 
-    public void deserialize(String input) {
+    public void deserialize(String input) throws RemoteException {
         TCPMessage inputMsg = gson.fromJson(input, TCPMessage.class);
         tcpMessageController.readTCPMessage(inputMsg);
     }

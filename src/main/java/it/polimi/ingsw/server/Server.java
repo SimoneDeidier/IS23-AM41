@@ -3,7 +3,7 @@ package it.polimi.ingsw.server;
 import it.polimi.ingsw.interfaces.InterfaceClient;
 import it.polimi.ingsw.interfaces.InterfaceServer;
 import it.polimi.ingsw.messages.Body;
-import it.polimi.ingsw.messages.NewView;
+import it.polimi.ingsw.server.model.Player;
 import it.polimi.ingsw.server.servercontroller.GameController;
 import it.polimi.ingsw.server.servercontroller.SocketManager;
 import it.polimi.ingsw.server.servercontroller.exceptions.*;
@@ -16,6 +16,7 @@ import java.rmi.RemoteException;
 import java.rmi.registry.LocateRegistry;
 import java.rmi.registry.Registry;
 import java.rmi.server.UnicastRemoteObject;
+import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Scanner;
@@ -27,7 +28,7 @@ public class Server implements InterfaceServer {
 
     private static int portRMI;
     private static int portTCP;
-    private final GameController controller = GameController.getGameController();
+    private final GameController controller = GameController.getGameController(this);
     private final Map<String,InterfaceClient> clientMapRMI = new ConcurrentHashMap<>();
 
     public static boolean parsePortNumber(String[] args) {
@@ -136,7 +137,7 @@ public class Server implements InterfaceServer {
     public void presentation(InterfaceClient cl, String nickname) throws RemoteException {
         clientMapRMI.put(nickname,cl);
         try {
-            switch(controller.clientPresentation(nickname)) {
+            switch(controller.presentation(nickname)) {
                 case 1: { //joined a "new" game
                     cl.confirmConnection(false);
                 } case 2: { //joined a "restored" game
@@ -148,16 +149,11 @@ public class Server implements InterfaceServer {
                 }
             }
         } catch (CancelGameException e) { //the game is being canceled because a restoring of a saved game failed
-            for(Map.Entry<String,InterfaceClient> entry : clientMapRMI.entrySet()){
-                entry.getValue().disconnectUser(0);
-                clientMapRMI.remove(entry.getKey());
-            }
+            controller.disconnectAllUsers();
         } catch (GameStartException e) { //the game is starting because everyone is connected, updating everyone views
             controller.startGame();
-            for (Map.Entry<String,InterfaceClient> entry : clientMapRMI.entrySet()) {
-                entry.getValue().updateView(controller.generateUpdatedView());
-                entry.getValue().updatePersonalView(controller.generateUpdatedPersonal(entry.getKey()));
-            }
+            controller.sendPersonalTargetCards();
+            controller.updateView();
         } catch (FullLobbyException e) { //you can't connect right now, the lobby is full or a game is already playing on the server
             clientMapRMI.remove(nickname);
             cl.disconnectUser(1);
@@ -173,14 +169,7 @@ public class Server implements InterfaceServer {
 
     public boolean executeMove(Body move) throws RemoteException {
         if (controller.checkMove(move)) {
-            for (Map.Entry<String, InterfaceClient> entry : clientMapRMI.entrySet()) {
-                NewView newView= controller.generateUpdatedView();
-                //if newView.getActivePlayer==null
-                //--> game over, risultati
-                //else
-                entry.getValue().updateView(newView);
-                entry.getValue().updatePersonalView(controller.generateUpdatedPersonal(entry.getKey()));
-            }
+            controller.updateView();
             return true;
         }
         return false;
@@ -204,5 +193,26 @@ public class Server implements InterfaceServer {
         }
     }
 
+    @Override
+    public void updateViewRMI() throws RemoteException {
+        for(InterfaceClient cl: clientMapRMI.values()){
+            List<Player> list = List.copyOf(controller.getPlayerList());
+            cl.updateView(list);
+        }
+    }
 
+    public void disconnectAllRMIUsers() throws RemoteException {
+        for(Map.Entry<String,InterfaceClient> entry : clientMapRMI.entrySet()){
+            entry.getValue().disconnectUser(0);
+            clientMapRMI.remove(entry.getKey());
+        }
+    }
+
+    public void sendPersonalTargetCardsRMI() throws RemoteException {
+        for(Player p : controller.getPlayerList()) {
+            if(clientMapRMI.containsKey(p)) {
+                clientMapRMI.get(p.getNickname()).receivePersonalTargetCard(p.getPersonalTargetCard());
+            }
+        }
+    }
 }

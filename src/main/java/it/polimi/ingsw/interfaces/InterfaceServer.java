@@ -12,4 +12,6 @@ public interface InterfaceServer extends Remote {
     boolean sendParameters(int maxPlayerNumber,boolean onlyOneCommonCard) throws RemoteException;
     boolean executeMove(Body move) throws RemoteException;
     void sendMessage(InterfaceClient cl,String message) throws RemoteException;
+
+    void updateViewRMI() throws RemoteException;
 }

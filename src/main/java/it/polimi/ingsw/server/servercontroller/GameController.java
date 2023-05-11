@@ -1,9 +1,7 @@
 package it.polimi.ingsw.server.servercontroller;
 
 import it.polimi.ingsw.messages.Body;
-import it.polimi.ingsw.messages.NewPersonalView;
-import it.polimi.ingsw.messages.NewView;
-import it.polimi.ingsw.messages.TCPMessage;
+import it.polimi.ingsw.server.Server;
 import it.polimi.ingsw.server.model.*;
 import it.polimi.ingsw.server.model.boards.BoardFactory;
 import it.polimi.ingsw.server.model.commons.CommonTargetCard;
@@ -13,14 +11,14 @@ import it.polimi.ingsw.server.model.tokens.EndGameToken;
 import it.polimi.ingsw.server.servercontroller.controllerstates.*;
 import it.polimi.ingsw.server.servercontroller.exceptions.*;
 
-import java.net.Socket;
+import java.rmi.RemoteException;
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 
 public class GameController {
 
     private static GameController instance;
-    private List<Player> playerList;
+    private List<Player> playerList = new ArrayList<>(4);
     private int maxPlayerNumber;
     private boolean lastTurn;
     private boolean onlyOneCommonCard;
@@ -29,14 +27,16 @@ public class GameController {
     private GameState state;
     private List<CommonTargetCard> commonTargetCardsList;
     private Map<String, TCPMessageController> nickToTCPMessageControllerMapping = new ConcurrentHashMap<>(4);
+    private final Server server;
 
-    public GameController() {
+    public GameController(Server s) {
         this.state = new ServerInitState();
+        this.server = s;
     }
 
-    public static GameController getGameController() {
+    public static GameController getGameController(Server s) {
         if (instance == null) {
-            instance = new GameController();
+            instance = new GameController(s);
         }
         return instance;
     }
@@ -64,15 +64,13 @@ public class GameController {
         //tutti gli if per checkare
         try {
             executeMove(body);
-        } catch (EmptyItemListToInsert emptyItemListToInsert)//Ma secondo me si può togliere il try and catch, perchè
-        // la eseguiamo alla fine di un check, che errori potrebbe dare se controlliamo tutto prima di lanciarla?
-        {
+        }
+        catch (EmptyItemListToInsert emptyItemListToInsert) {
             return false;
         }
         return true;
     }
 
-    // todo va messa a posto qui secondo me - eccezioni
     public void executeMove(Body body) throws EmptyItemListToInsert {  //ok supporto a checkMove
         if (checkMove(body)) {
             List<Item> items = getListItems(body);
@@ -171,7 +169,7 @@ public class GameController {
         board.resetBoard();
         changeState(new ServerInitState());
         commonTargetCardsList = new ArrayList<>();
-
+        nickToTCPMessageControllerMapping = new ConcurrentHashMap<>(4);
     }
 
     public int checkNicknameAvailability(String nickname) {
@@ -204,7 +202,7 @@ public class GameController {
         return false;
     }
 
-    public synchronized int clientPresentation(String nickname) throws FirstPlayerException, CancelGameException, GameStartException, FullLobbyException { //response to presentation
+    public synchronized int presentation(String nickname) throws FirstPlayerException, CancelGameException, GameStartException, FullLobbyException { //response to presentation
         int availableSlots = getAvailableSlot();
         if (availableSlots == -1) { //handling the first player
             if (checkSavedGame(nickname)) { //the first player is present in the saved game
@@ -240,26 +238,9 @@ public class GameController {
         }  //todo in RMI
     }
 
-
-    public List<String> getConnectedUsersNicks() {
-        List<String> list = new ArrayList<>();
-        for (Player p : playerList) {
-            list.add(p.getNickname());
-        }
-        return list;
-    }
-
     public void startGame(){
         setupGame(onlyOneCommonCard);
         changeState(new RunningGameState());
-    }
-    public NewView generateUpdatedView(){
-        //todo
-        return new NewView();
-    }
-
-    public NewPersonalView generateUpdatedPersonal(String nickname){
-        return new NewPersonalView();
     }
 
     public void addInSocketUserMapping() {}
@@ -276,6 +257,36 @@ public class GameController {
         return null;
     }
 
+    public void disconnectAllUsers() throws RemoteException {
+        for(String s : nickToTCPMessageControllerMapping.keySet()) {
+            nickToTCPMessageControllerMapping.get(s).printTCPMessage("Goodbye", null);
+            nickToTCPMessageControllerMapping.get(s).closeConnection();
+        }
+        server.disconnectAllRMIUsers();
+    }
+
+    public void sendPersonalTargetCards() throws RemoteException {
+        for(String s : getNickToTCPMessageControllerMapping().keySet()) {
+            Body body = new Body();
+            for(Player p : playerList) {
+                if(Objects.equals(p.getNickname(), s)) {
+                    body.setPersonalCard(p.getPersonalTargetCard());
+                    break;
+                }
+            }
+            getNickToTCPMessageControllerMapping().get(s).printTCPMessage("Your Target", body);
+        }
+        server.sendPersonalTargetCardsRMI();
+    }
+
+    public void updateView() throws RemoteException {
+        for(String s : getNickToTCPMessageControllerMapping().keySet()) {
+            Body body = new Body();
+            body.setView(playerList);
+            getNickToTCPMessageControllerMapping().get(s).printTCPMessage("Update View", body);
+        }
+        server.updateViewRMI();
+    }
 }
     //mancherebbero
     // -sendMessageToAll(String message)
