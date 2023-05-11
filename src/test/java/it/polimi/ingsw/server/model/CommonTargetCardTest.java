@@ -1,5 +1,7 @@
 package it.polimi.ingsw.server.model;
 
+import it.polimi.ingsw.server.model.commons.CommonTargetCard;
+import it.polimi.ingsw.server.model.commons.CommonTwoSquares;
 import junit.framework.TestCase;
 
 import java.lang.reflect.InvocationTargetException;

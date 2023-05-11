@@ -1,8 +1,10 @@
 package it.polimi.ingsw.server.servercontroller;
 
 import com.google.gson.Gson;
+import it.polimi.ingsw.interfaces.SerializeDeserializeInterface;
+import it.polimi.ingsw.messages.TCPMessage;
 
-public class SerializeDeserialize {
+public class SerializeDeserialize implements SerializeDeserializeInterface {
 
     private final TCPMessageController tcpMessageController;
     private final Gson gson = new Gson();

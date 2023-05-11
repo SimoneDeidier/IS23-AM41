@@ -1,9 +1,10 @@
 package it.polimi.ingsw.client;
 
-import it.polimi.ingsw.InterfaceClient;
-import it.polimi.ingsw.InterfaceServer;
-import it.polimi.ingsw.server.servercontroller.NewPersonalView;
-import it.polimi.ingsw.server.servercontroller.NewView;
+import it.polimi.ingsw.interfaces.InterfaceClient;
+import it.polimi.ingsw.interfaces.InterfaceServer;
+import it.polimi.ingsw.client.clientontroller.ClientController;
+import it.polimi.ingsw.messages.NewPersonalView;
+import it.polimi.ingsw.messages.NewView;
 
 import java.rmi.RemoteException;
 import java.rmi.registry.LocateRegistry;
@@ -26,12 +27,12 @@ public class ClientRMI implements InterfaceClient {
         Registry registry = LocateRegistry.getRegistry("127.0.0.1", PORT);
         // Looking up the registry for the remote object
         stub = (InterfaceServer) registry.lookup("serverInterface");
-        stub.hello(this,/*controller.askNickname(false)*/null);
+        stub.presentation(this,/*controller.askNickname(false)*/null);
     }
 
     @Override
     public void askForNewNickname() throws RemoteException {
-        stub.hello(this,/*controller.askNickname(true)*/null);
+        stub.presentation(this,/*controller.askNickname(true)*/null);
     }
 
     @Override

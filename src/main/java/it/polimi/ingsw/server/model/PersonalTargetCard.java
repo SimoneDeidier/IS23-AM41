@@ -3,6 +3,8 @@ package it.polimi.ingsw.server.model;
 import com.google.gson.Gson;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
+import it.polimi.ingsw.server.model.items.Item;
+import it.polimi.ingsw.server.model.items.ItemColor;
 import org.apache.commons.io.FileUtils;
 
 import java.io.File;

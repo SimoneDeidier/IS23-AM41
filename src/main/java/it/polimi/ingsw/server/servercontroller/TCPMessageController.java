@@ -1,13 +1,15 @@
 package it.polimi.ingsw.server.servercontroller;
 
+import it.polimi.ingsw.interfaces.TCPMessageControllerInterface;
+import it.polimi.ingsw.messages.Body;
+import it.polimi.ingsw.messages.TCPMessage;
 import it.polimi.ingsw.server.model.Player;
+import it.polimi.ingsw.server.servercontroller.controllerstates.WaitingForPlayerState;
 
 import java.net.Socket;
-import java.util.ArrayList;
-import java.util.List;
 import java.util.Objects;
 
-public class TCPMessageController {
+public class TCPMessageController implements TCPMessageControllerInterface {
 
     private final GameController gameController;
     private final Socket socket;
@@ -19,6 +21,7 @@ public class TCPMessageController {
         this.serializeDeserialize = serializeDeserialize;
     }
 
+    @Override
     public void readTCPMessage(TCPMessage message) {
         String header = message.getHeader();
         System.out.printf("New TCP message - header: " + header);
@@ -66,13 +69,13 @@ public class TCPMessageController {
                 }
             }
             case "Create Lobby" -> {
-                int players = message.getBody().getPlayers();
+                int players = message.getBody().getNumberOfPlayers();
                 if(players < 2 || players > 4) {
                     printTCPMessage("Wrong Parameters", null);
                     return;
                 }
                 else {
-                    gameController.setupGame(message.getBody().isTwoCommon());
+                    gameController.setupGame(message.getBody().isOnlyOneCommon());
                     printTCPMessage("Lobby Created", null);
                     return;
                 }
@@ -102,6 +105,7 @@ public class TCPMessageController {
         }
     }
 
+    @Override
     public void printTCPMessage(String header, Body body) {
         TCPMessage newMsg = new TCPMessage(header, body);
         serializeDeserialize.serialize(newMsg);

@@ -1,5 +1,11 @@
 package it.polimi.ingsw.server.model;
 
+import it.polimi.ingsw.server.model.boards.BoardFactory;
+import it.polimi.ingsw.server.model.boards.TwoPlayersBoard;
+import it.polimi.ingsw.server.model.exceptions.InvalidBoardPositionException;
+import it.polimi.ingsw.server.model.exceptions.NullItemPickedException;
+import it.polimi.ingsw.server.model.items.Item;
+import it.polimi.ingsw.server.model.items.ItemColor;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
@@ -17,7 +23,7 @@ class BoardFactoryTest {
 
     @BeforeEach
     void initialize(){
-        board=TwoPlayersBoard.getTwoPlayersBoard(); //Could have been three or four, no changes for the tests
+        board= TwoPlayersBoard.getTwoPlayersBoard(); //Could have been three or four, no changes for the tests
         board.refillBoard();
     }
 

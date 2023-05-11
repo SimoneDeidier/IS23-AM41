@@ -1,8 +1,11 @@
 package it.polimi.ingsw.server;
 
-import it.polimi.ingsw.InterfaceClient;
-import it.polimi.ingsw.InterfaceServer;
-import it.polimi.ingsw.server.servercontroller.*;
+import it.polimi.ingsw.interfaces.InterfaceClient;
+import it.polimi.ingsw.interfaces.InterfaceServer;
+import it.polimi.ingsw.messages.Body;
+import it.polimi.ingsw.messages.NewView;
+import it.polimi.ingsw.server.servercontroller.GameController;
+import it.polimi.ingsw.server.servercontroller.exceptions.*;
 
 import java.rmi.AlreadyBoundException;
 import java.rmi.RemoteException;
@@ -52,7 +55,7 @@ public class ServerRMI implements InterfaceServer {
 
     //QUA RIEMPIRE LA INTERFACCIA
     @Override
-    public void hello(InterfaceClient cl, String nickname) throws RemoteException {
+    public void presentation(InterfaceClient cl, String nickname) throws RemoteException {
         clientMap.put(nickname,cl);
         try {
             int result=controller.clientPresentation(nickname); //o uno switch

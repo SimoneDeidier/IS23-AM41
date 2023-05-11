@@ -1,5 +1,10 @@
 package it.polimi.ingsw.server.model;
 
+import it.polimi.ingsw.server.model.exceptions.EmptyItemListToInsert;
+import it.polimi.ingsw.server.model.exceptions.EmptyShelfException;
+import it.polimi.ingsw.server.model.exceptions.NotEnoughSpaceInColumnException;
+import it.polimi.ingsw.server.model.items.Item;
+import it.polimi.ingsw.server.model.items.ItemColor;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.RepeatedTest;
 import org.junit.jupiter.api.Test;

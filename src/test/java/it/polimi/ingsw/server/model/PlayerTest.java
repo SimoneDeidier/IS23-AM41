@@ -1,12 +1,13 @@
 package it.polimi.ingsw.server.model;
 
+import it.polimi.ingsw.server.model.boards.TwoPlayersBoard;
+import it.polimi.ingsw.server.model.tokens.EndGameToken;
+import it.polimi.ingsw.server.model.tokens.ScoringToken;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import java.io.IOException;
 import java.net.URISyntaxException;
-import java.util.ArrayList;
-import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.*;
 
