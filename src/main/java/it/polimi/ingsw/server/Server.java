@@ -136,16 +136,16 @@ public class Server implements InterfaceServer {
     public void presentation(InterfaceClient cl, String nickname) throws RemoteException {
         clientMapRMI.put(nickname,cl);
         try {
-            int result=controller.clientPresentation(nickname); //o uno switch
-            if (result==1) { //joined a "new" game
-                cl.confirmConnection(false);
-            }
-            else if (result==2) { //joined a "restored" game
-                cl.confirmConnection(true);
-            }
-            else if(result==0){  // you're joining but I need another nickname
-                clientMapRMI.remove(nickname);
-                cl.askForNewNickname();
+            switch(controller.clientPresentation(nickname)) {
+                case 1: { //joined a "new" game
+                    cl.confirmConnection(false);
+                } case 2: { //joined a "restored" game
+                    cl.confirmConnection(true);
+                }
+                case 0: {  // you're joining but I need another nickname
+                    clientMapRMI.remove(nickname);
+                    cl.askForNewNickname();
+                }
             }
         } catch (CancelGameException e) { //the game is being canceled because a restoring of a saved game failed
             for(Map.Entry<String,InterfaceClient> entry : clientMapRMI.entrySet()){
