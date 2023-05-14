@@ -6,6 +6,12 @@ import it.polimi.ingsw.messages.TCPMessage;
 
 public class TCPMessageController implements TCPMessageControllerInterface {
 
+    private final SerializeDeserialize serializeDeserialize;
+
+    public TCPMessageController(SerializeDeserialize serializeDeserialize) {
+        this.serializeDeserialize = serializeDeserialize;
+    }
+
     @Override
     public void readTCPMessage(TCPMessage message) {
 

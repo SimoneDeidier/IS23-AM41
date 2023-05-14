@@ -3,6 +3,7 @@ package it.polimi.ingsw.client;
 import com.google.gson.Gson;
 import it.polimi.ingsw.messages.Body;
 import it.polimi.ingsw.messages.TCPMessage;
+import it.polimi.ingsw.client.clientontroller.SerializeDeserialize;
 
 import java.io.*;
 import java.net.Socket;
@@ -12,12 +13,14 @@ import java.util.Scanner;
 public class ConnectionTCP extends Connection {
 
 
-    private static final Gson gson = new Gson();
-    private static boolean closeConnection = false;
-    private static Socket socket;
-    private static PrintWriter socketOut;
-    private static Scanner socketIn;
-    private static Scanner stdIn;
+    private final Gson gson = new Gson();
+    private boolean closeConnection = false;
+    private Socket socket;
+    private PrintWriter socketOut;
+    private Scanner socketIn;
+    private Scanner stdIn;
+    private final SerializeDeserialize serializeDeserialize;
+
 
     public ConnectionTCP(String ip, int port) {
         try {
@@ -28,6 +31,7 @@ public class ConnectionTCP extends Connection {
         } catch (IOException e) {
             e.printStackTrace();
         }
+        this.serializeDeserialize = new SerializeDeserialize(this);
     }
 
     @Override
@@ -36,8 +40,7 @@ public class ConnectionTCP extends Connection {
             while(!closeConnection) {
                 String inMsg;
                 while ((inMsg = socketIn.nextLine()) != null) {
-                    TCPMessage t = gson.fromJson(inMsg, TCPMessage.class);
-                    System.out.println("New msg: " + t.getBody().getText());
+                    serializeDeserialize.deserialize(inMsg);
                 }
             }
         });
@@ -73,8 +76,8 @@ public class ConnectionTCP extends Connection {
         }
     }
 
-    public void closeConnection() {
-        closeConnection = true;
+    public void setCloseConnection(boolean closeConnection) {
+        this.closeConnection = closeConnection;
     }
 
 }
