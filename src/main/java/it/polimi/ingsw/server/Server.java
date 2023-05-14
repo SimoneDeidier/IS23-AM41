@@ -152,7 +152,7 @@ public class Server implements InterfaceServer {
             controller.disconnectAllUsers();
         } catch (GameStartException e) { //the game is starting because everyone is connected, updating everyone views
             controller.startGame();
-            controller.sendPersonalTargetCards();
+            controller.yourTarget();
             controller.updateView();
         } catch (FullLobbyException e) { //you can't connect right now, the lobby is full or a game is already playing on the server
             clientMapRMI.remove(nickname);
@@ -164,7 +164,7 @@ public class Server implements InterfaceServer {
 
     @Override
     public boolean sendParameters(int maxPlayerNumber, boolean onlyOneCommonCard) throws RemoteException {
-        return controller.checkGameParameters(maxPlayerNumber,onlyOneCommonCard);
+        return controller.createLobby(maxPlayerNumber,onlyOneCommonCard);
     }
 
     public boolean executeMove(Body move) throws RemoteException {
@@ -175,11 +175,12 @@ public class Server implements InterfaceServer {
         return false;
     }
 
+    /* todo da rifare
     @Override
-    public void sendMessage(InterfaceClient cl,String message) throws RemoteException {
+    public void sendMessage(InterfaceClient cl, String message) throws RemoteException {
         try {
-            String receiver=controller.checkMessageType(message);
-            if(receiver==null) { //broadcast message
+            String receiver = controller.checkMessageType(message);
+            if(Objects.equals(receiver, null)) { //broadcast message
                 for(InterfaceClient interfaceClient: clientMapRMI.values()){
                     interfaceClient.receiveMessage(message);
                 }
@@ -191,7 +192,7 @@ public class Server implements InterfaceServer {
         } catch (IncorrectNicknameException e) {
             cl.wrongMessageWarning(message);
         }
-    }
+    }*/
 
     @Override
     public void updateViewRMI() throws RemoteException {
@@ -215,4 +216,22 @@ public class Server implements InterfaceServer {
             }
         }
     }
+
+    public boolean checkReceiver(String nickname) {
+        return clientMapRMI.containsKey(nickname);
+    }
+
+    public void peerToPeerMsg(String sender, String receiver, String text) throws RemoteException {
+        // secondo me serve mandare il nickname di chi ha inviato il messaggio, così lato client
+        // graficamente possiamo scrivere a schermo "nickname: messaggio"
+        clientMapRMI.get(receiver).receiveMessage(sender, text);
+    }
+
+    public void broadcastMsg(String sender, String text) throws RemoteException {
+        for(String s : clientMapRMI.keySet()) {
+            clientMapRMI.get(s).receiveMessage(sender, text);
+        }
+    }
+
+
 }

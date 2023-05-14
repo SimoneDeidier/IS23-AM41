@@ -74,7 +74,7 @@ public class ConnectionRMI extends Connection implements InterfaceClient, Serial
     }
 
     @Override
-    public void receiveMessage(String message) throws RemoteException {
+    public void receiveMessage(String sender, String message) throws RemoteException {
         //tell the controller to show the message in the view
     }
 

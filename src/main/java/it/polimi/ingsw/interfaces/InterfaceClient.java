@@ -14,7 +14,7 @@ public interface InterfaceClient extends Remote {
     void updateView(List<Player> playersList) throws RemoteException;
     void disconnectUser(int whichMessageToShow) throws RemoteException;
     void confirmConnection(boolean bool) throws RemoteException;
-    void receiveMessage(String message) throws RemoteException;
+    void receiveMessage(String sender, String message) throws RemoteException;
     void wrongMessageWarning(String message) throws RemoteException;
     void receivePersonalTargetCard(PersonalTargetCard personalTargetCard) throws RemoteException;
 }

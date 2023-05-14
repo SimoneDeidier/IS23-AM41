@@ -1,4 +1,4 @@
 package it.polimi.ingsw.server.servercontroller.exceptions;
 
-public class IncorrectNicknameException extends Exception{
+public class InvalidNicknameException extends Exception{
 }
