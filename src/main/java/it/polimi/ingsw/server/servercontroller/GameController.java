@@ -29,6 +29,7 @@ public class GameController {
     private List<CommonTargetCard> commonTargetCardsList;
     private Map<String, TCPMessageController> nickToTCPMessageControllerMapping = new ConcurrentHashMap<>(4);
     private final Server server;
+    private Thread checkThread;
 
     public GameController(Server s) {
         this.state = new ServerInitState();
@@ -242,6 +243,18 @@ public class GameController {
     public void startGame(){
         setupGame(onlyOneCommonCard);
         changeState(new RunningGameState());
+        checkThread = new Thread(() -> {
+            while(true) {
+                try {
+                    Thread.sleep(1000);
+                    // mando check a tutti i giocatori
+                } catch (InterruptedException e) {
+                    throw new RuntimeException(e);
+                }
+
+            }
+        });
+        checkThread.start();
     }
 
     public void addInSocketUserMapping() {}

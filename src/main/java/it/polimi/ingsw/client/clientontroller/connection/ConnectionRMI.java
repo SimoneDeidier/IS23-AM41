@@ -1,4 +1,4 @@
-package it.polimi.ingsw.client;
+package it.polimi.ingsw.client.clientontroller.connection;
 
 import it.polimi.ingsw.interfaces.InterfaceClient;
 import it.polimi.ingsw.interfaces.InterfaceServer;
@@ -24,7 +24,7 @@ public class ConnectionRMI extends Connection implements InterfaceClient, Serial
     }
 
     @Override
-    public void startConnection(){
+    public void startConnection(String uiType){
         try {
             // Getting the registry
             Registry registry = LocateRegistry.getRegistry(IP, PORT);

@@ -65,7 +65,6 @@ public class TCPMessageController implements TCPMessageControllerInterface {
             }
             case "Move" -> {
                 if(gameController.checkMove(message.getBody())) {
-                    printTCPMessage("Move OK", null);   // todo vogliamo tenerla???
                     gameController.updateView();
                 }
                 else {

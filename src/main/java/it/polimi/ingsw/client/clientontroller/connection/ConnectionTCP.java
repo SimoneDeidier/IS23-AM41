@@ -1,13 +1,10 @@
-package it.polimi.ingsw.client;
+package it.polimi.ingsw.client.clientontroller.connection;
 
 import com.google.gson.Gson;
-import it.polimi.ingsw.messages.Body;
-import it.polimi.ingsw.messages.TCPMessage;
 import it.polimi.ingsw.client.clientontroller.SerializeDeserialize;
 
 import java.io.*;
 import java.net.Socket;
-import java.nio.charset.StandardCharsets;
 import java.util.Scanner;
 
 public class ConnectionTCP extends Connection {
@@ -35,7 +32,7 @@ public class ConnectionTCP extends Connection {
     }
 
     @Override
-    public void startConnection() {
+    public void startConnection(String uiType) {
         Thread socketReader = new Thread(() -> {
             while(!closeConnection) {
                 String inMsg;
@@ -44,23 +41,9 @@ public class ConnectionTCP extends Connection {
                 }
             }
         });
-        Thread socketWriter = new Thread(() -> {
-            while(!closeConnection) {
-                String newMsg;
-                System.out.println("Insert new message: ");
-                newMsg = stdIn.nextLine();
-                Body b = new Body();
-                b.setText(newMsg);
-                TCPMessage t = new TCPMessage("Broadcast Message", b);
-                String s = gson.toJson(t);
-                socketOut.println(s);
-                socketOut.flush();
-            }
-        });
-        socketWriter.start();
         socketReader.start();
+        // todo qui inizializza la UI
         try {
-            socketWriter.join();
             socketReader.join();
         }
         catch (InterruptedException e) {
@@ -76,8 +59,12 @@ public class ConnectionTCP extends Connection {
         }
     }
 
-    public void setCloseConnection(boolean closeConnection) {
-        this.closeConnection = closeConnection;
+    public PrintWriter getSocketOut() {
+        return socketOut;
+    }
+
+    public void closeConnection() {
+        this.closeConnection = true;
     }
 
 }

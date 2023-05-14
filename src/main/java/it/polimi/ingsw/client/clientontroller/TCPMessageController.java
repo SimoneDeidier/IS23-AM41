@@ -7,18 +7,29 @@ import it.polimi.ingsw.messages.TCPMessage;
 public class TCPMessageController implements TCPMessageControllerInterface {
 
     private final SerializeDeserialize serializeDeserialize;
+    private final ClientController clientController;
 
     public TCPMessageController(SerializeDeserialize serializeDeserialize) {
         this.serializeDeserialize = serializeDeserialize;
+        this.clientController = new ClientController();
     }
 
     @Override
     public void readTCPMessage(TCPMessage message) {
-
+        String header = message.getHeader();
+        switch (header) {
+            case "" -> System.out.println();
+        }
     }
 
     @Override
     public void printTCPMessage(String header, Body body) {
-
+        TCPMessage tcpMessage = new TCPMessage(header, body);
+        serializeDeserialize.serialize(tcpMessage);
     }
+
+    public void closeConnection() {
+        serializeDeserialize.closeConnection();
+    }
+
 }
