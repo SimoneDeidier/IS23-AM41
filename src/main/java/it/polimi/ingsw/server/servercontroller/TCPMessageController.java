@@ -79,7 +79,7 @@ public class TCPMessageController implements TCPMessageControllerInterface {
                     gameController.peerToPeerMsg(sender, receiver, text);
                 }
                 catch (InvalidNicknameException e) {
-                    printTCPMessage("Invalid Nickname", null);
+                    printTCPMessage("Wrong Receiver", null);
                 }
             }
             case "Broadcast Msg" -> {

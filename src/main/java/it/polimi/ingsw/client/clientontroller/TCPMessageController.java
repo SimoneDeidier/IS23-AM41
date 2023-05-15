@@ -18,7 +18,42 @@ public class TCPMessageController implements TCPMessageControllerInterface {
     public void readTCPMessage(TCPMessage message) {
         String header = message.getHeader();
         switch (header) {
-            case "" -> System.out.println();
+            case "Nickname Accepted" -> {
+
+            }
+            case "Player Restored" -> {
+
+            }
+            case "Invalid Nickname" -> {
+
+            }
+            case "Goodbye" -> {
+                closeConnection();
+            }
+            case "Get Parameters" -> {
+
+            }
+            case "Your Target" -> {
+
+            }
+            case "Update View" -> {
+
+            }
+            case "Lobby Created" -> {
+
+            }
+            case "Wrong Parameters" -> {
+
+            }
+            case "Incorrect Move" -> {
+
+            }
+            case "Wrong Receiver" -> {
+
+            }
+            case "New Msg" -> {
+
+            }
         }
     }
 

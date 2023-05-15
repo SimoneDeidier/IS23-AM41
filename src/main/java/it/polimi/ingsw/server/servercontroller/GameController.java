@@ -248,6 +248,7 @@ public class GameController {
                 try {
                     Thread.sleep(1000);
                     // mando check a tutti i giocatori
+                    System.out.printf("Check");
                 } catch (InterruptedException e) {
                     throw new RuntimeException(e);
                 }
