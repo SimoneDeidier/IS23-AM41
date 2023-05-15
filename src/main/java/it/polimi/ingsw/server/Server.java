@@ -135,29 +135,31 @@ public class Server implements InterfaceServer {
 
     @Override
     public void presentation(InterfaceClient cl, String nickname) throws RemoteException {
-        clientMapRMI.put(nickname,cl);
         try {
             switch(controller.presentation(nickname)) {
                 case 1: { //joined a "new" game
+                    clientMapRMI.put(nickname,cl);
                     cl.confirmConnection(false);
                 } case 2: { //joined a "restored" game
+                    clientMapRMI.put(nickname,cl);
                     cl.confirmConnection(true);
                 }
                 case 0: {  // you're joining but I need another nickname
-                    clientMapRMI.remove(nickname);
                     cl.askForNewNickname();
                 }
             }
         } catch (CancelGameException e) { //the game is being canceled because a restoring of a saved game failed
+            clientMapRMI.put(nickname,cl);
             controller.disconnectAllUsers();
         } catch (GameStartException e) { //the game is starting because everyone is connected, updating everyone views
+            clientMapRMI.put(nickname,cl);
             controller.startGame();
             controller.yourTarget();
             controller.updateView();
         } catch (FullLobbyException e) { //you can't connect right now, the lobby is full or a game is already playing on the server
-            clientMapRMI.remove(nickname);
             cl.disconnectUser(1);
         } catch (FirstPlayerException e) { //you're the first player connecting for creating a new game, I need more parameters from you
+            clientMapRMI.put(nickname,cl);
             cl.askParameters();
         }
     }
@@ -175,25 +177,6 @@ public class Server implements InterfaceServer {
         return false;
     }
 
-    /* todo da rifare
-    @Override
-    public void sendMessage(InterfaceClient cl, String message) throws RemoteException {
-        try {
-            String receiver = controller.checkMessageType(message);
-            if(Objects.equals(receiver, null)) { //broadcast message
-                for(InterfaceClient interfaceClient: clientMapRMI.values()){
-                    interfaceClient.receiveMessage(message);
-                }
-            }
-            else{ //direct message
-                cl.receiveMessage(message);
-                clientMapRMI.get(receiver).receiveMessage(message);
-            }
-        } catch (IncorrectNicknameException e) {
-            cl.wrongMessageWarning(message);
-        }
-    }*/
-
     @Override
     public void updateViewRMI() throws RemoteException {
         for(InterfaceClient cl: clientMapRMI.values()){
@@ -201,6 +184,8 @@ public class Server implements InterfaceServer {
             cl.updateView(list);
         }
     }
+
+
 
     public void disconnectAllRMIUsers() throws RemoteException {
         for(Map.Entry<String,InterfaceClient> entry : clientMapRMI.entrySet()){
@@ -222,16 +207,39 @@ public class Server implements InterfaceServer {
     }
 
     public void peerToPeerMsg(String sender, String receiver, String text) throws RemoteException {
-        // secondo me serve mandare il nickname di chi ha inviato il messaggio, così lato client
-        // graficamente possiamo scrivere a schermo "nickname: messaggio"
+        // problema: se la chiamo io da RMI non manda i messaggi ai client TCP, idem la broadcast
         clientMapRMI.get(receiver).receiveMessage(sender, text);
     }
 
     public void broadcastMsg(String sender, String text) throws RemoteException {
-        for(String s : clientMapRMI.keySet()) {
-            clientMapRMI.get(s).receiveMessage(sender, text);
+        for(InterfaceClient interfaceClient: clientMapRMI.values()) {
+            interfaceClient.receiveMessage(sender, text);
         }
     }
+
+    @Override
+    public void clearRMI() throws RemoteException { //ping from client to server
+        //it's empty, we need to check on the other side for RemoteExceptions
+    }
+
+    /* todo da rifare -> non credo serva rifarla, mi basta mettere in InterfaceServer le due funzioni di chat oppure no per problema con TCP
+    @Override
+    public void sendMessage(InterfaceClient cl, String message) throws RemoteException {
+        try {
+            String receiver = controller.checkMessageType(message);
+            if(Objects.equals(receiver, null)) { //broadcast message
+                for(InterfaceClient interfaceClient: clientMapRMI.values()){
+                    interfaceClient.receiveMessage(message);
+                }
+            }
+            else{ //direct message
+                cl.receiveMessage(message);
+                clientMapRMI.get(receiver).receiveMessage(message);
+            }
+        } catch (IncorrectNicknameException e) {
+            cl.wrongMessageWarning(message);
+        }
+    }*/
 
 
 }
