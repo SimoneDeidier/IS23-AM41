@@ -45,12 +45,10 @@ public class ConnectionRMI extends Connection implements InterfaceClient, Serial
     @Override
     public void askParameters() throws RemoteException {
         //while(true){
-        //  int numberOfPlayer= view.askParameter(); MA questo dovrebbe essere fatto dal controller, non server
-        //  boolean onlyOneCommon = view.askParameter2();
-        //  if(stub.sendParameters(numberOfPlayers,onlyOneCommon)){
+        //  if(stub.sendParameters(controller.askParameter(),controller.askParameter2())){
         //      confirmConnection(false);
         //      break;
-        //}
+        //  }
         //}
     }
 

@@ -259,21 +259,6 @@ public class GameController {
         checkThread.start();
     }
 
-    public void addInSocketUserMapping() {}
-
-    /* todo da spostare lato client!!!
-    public String checkMessageType(String message) throws IncorrectNicknameException {
-        String[] words= message.split(" ");
-        if(words[0].startsWith("@")){
-            for(Player player:playerList){
-                if(player.getNickname().equals(words[0].substring(1)))
-                    return player.getNickname();
-            }
-            throw new IncorrectNicknameException();
-        }
-        return null;
-    }*/
-
     public void disconnectAllUsers() throws RemoteException {
         for(String s : nickToTCPMessageControllerMapping.keySet()) {
             nickToTCPMessageControllerMapping.get(s).printTCPMessage("Goodbye", null);
@@ -363,12 +348,21 @@ public class GameController {
         }
     }
 
+    /* todo da spostare lato client!!!
+    public String checkMessageType(String message) throws IncorrectNicknameException {
+        String[] words= message.split(" ");
+        if(words[0].startsWith("@")){
+            for(Player player:playerList){
+                if(player.getNickname().equals(words[0].substring(1)))
+                    return player.getNickname();
+            }
+            throw new IncorrectNicknameException();
+        }
+        return null;
+    }*/
+
     public void disconnectUserRMI() {}  // todo da fare!!!
 
 }
 
-    //mancherebbero
-    // -sendMessageToAll(String message)
-    // -checkNicknameForMessage(String message,String nickname)
-    // -sendMessageToUser(String message,String nickname)
-    //O forse di queste solo check la fa controller, il resto il server?
+

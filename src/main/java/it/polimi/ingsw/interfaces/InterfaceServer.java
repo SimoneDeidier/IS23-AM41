@@ -14,6 +14,6 @@ public interface InterfaceServer extends Remote {
     // void sendMessage(InterfaceClient cl,String message) throws RemoteException;
     void updateViewRMI() throws RemoteException;
     public void clearRMI() throws RemoteException;
-    void peerToPeerMsg(String sender, String receiver, String text) throws RemoteException;
-    void broadcastMsg(String sender, String text) throws RemoteException;
+    void peerToPeerMsgHandler(String sender, String receiver, String text) throws RemoteException;
+    void broadcastMsgHandler(String sender, String text) throws RemoteException;
 }

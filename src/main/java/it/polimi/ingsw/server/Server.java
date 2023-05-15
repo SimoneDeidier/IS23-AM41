@@ -196,7 +196,7 @@ public class Server implements InterfaceServer {
 
     public void sendPersonalTargetCardsRMI() throws RemoteException {
         for(Player p : controller.getPlayerList()) {
-            if(clientMapRMI.containsKey(p)) {
+            if(clientMapRMI.containsKey(p.getNickname())) {
                 clientMapRMI.get(p.getNickname()).receivePersonalTargetCard(p.getPersonalTargetCard());
             }
         }
@@ -206,9 +206,22 @@ public class Server implements InterfaceServer {
         return clientMapRMI.containsKey(nickname);
     }
 
+    @Override
+    public void peerToPeerMsgHandler(String sender, String receiver, String text) throws RemoteException {
+        try {
+            controller.peerToPeerMsg(sender,receiver,text);
+        } catch (InvalidNicknameException e) {
+            clientMapRMI.get(sender).wrongMessageWarning(text);
+        }
+    }
+
     public void peerToPeerMsg(String sender, String receiver, String text) throws RemoteException {
-        // problema: se la chiamo io da RMI non manda i messaggi ai client TCP, idem la broadcast
         clientMapRMI.get(receiver).receiveMessage(sender, text);
+    }
+
+    @Override
+    public void broadcastMsgHandler(String sender, String text) throws RemoteException {
+        controller.broadcastMsg(sender,text);
     }
 
     public void broadcastMsg(String sender, String text) throws RemoteException {
@@ -221,25 +234,5 @@ public class Server implements InterfaceServer {
     public void clearRMI() throws RemoteException { //ping from client to server
         //it's empty, we need to check on the other side for RemoteExceptions
     }
-
-    /* todo da rifare -> non credo serva rifarla, mi basta mettere in InterfaceServer le due funzioni di chat oppure no per problema con TCP
-    @Override
-    public void sendMessage(InterfaceClient cl, String message) throws RemoteException {
-        try {
-            String receiver = controller.checkMessageType(message);
-            if(Objects.equals(receiver, null)) { //broadcast message
-                for(InterfaceClient interfaceClient: clientMapRMI.values()){
-                    interfaceClient.receiveMessage(message);
-                }
-            }
-            else{ //direct message
-                cl.receiveMessage(message);
-                clientMapRMI.get(receiver).receiveMessage(message);
-            }
-        } catch (IncorrectNicknameException e) {
-            cl.wrongMessageWarning(message);
-        }
-    }*/
-
 
 }
