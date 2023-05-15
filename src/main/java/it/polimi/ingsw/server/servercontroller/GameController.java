@@ -1,6 +1,7 @@
 package it.polimi.ingsw.server.servercontroller;
 
 import it.polimi.ingsw.messages.Body;
+import it.polimi.ingsw.messages.TCPMessage;
 import it.polimi.ingsw.server.Server;
 import it.polimi.ingsw.server.model.*;
 import it.polimi.ingsw.server.model.boards.BoardFactory;
@@ -28,6 +29,7 @@ public class GameController {
     private List<CommonTargetCard> commonTargetCardsList;
     private Map<String, TCPMessageController> nickToTCPMessageControllerMapping = new ConcurrentHashMap<>(4);
     private final Server server;
+    private Thread checkThread;
 
     public GameController(Server s) {
         this.state = new ServerInitState();
@@ -66,7 +68,7 @@ public class GameController {
         try { //inutile qui simo, ti convincerò, c'è giusto prima il checkColumnChosen
             executeMove(body);
         }
-        catch (EmptyItemListToInsert emptyItemListToInsert) {
+        catch (EmptyItemListToInsert e) {
             return false;
         }
         return true;
@@ -78,7 +80,7 @@ public class GameController {
             try { //inutile qui simo, ti convincerò
                 activePlayer.getShelf().insertItems(body.getColumn(), items);
             } catch (Exception NotEnoughSpaceInColumnException) {
-                System.out.println("Not enough space in the column provided!");
+                System.err.println("Not enough space in the column provided!");
             }
             if (checkBoardNeedForRefill()) {
                 board.refillBoard();
@@ -185,7 +187,7 @@ public class GameController {
         player.setConnected(!player.isConnected());
     }
 
-    public boolean checkGameParameters(int maxPlayerNumber, boolean onlyOneCommonCard) { //response to create lobby
+    public boolean createLobby(int maxPlayerNumber, boolean onlyOneCommonCard) { //response to create lobby
         if (maxPlayerNumber <= 4 && maxPlayerNumber >= 2) {
             setupLobbyParameters(maxPlayerNumber, onlyOneCommonCard);
             return true;
@@ -236,16 +238,30 @@ public class GameController {
                 }
                 return 1;
             }
-        }  //todo in RMI
+        }
     }
 
     public void startGame(){
         setupGame(onlyOneCommonCard);
         changeState(new RunningGameState());
+        checkThread = new Thread(() -> {
+            while(true) {
+                try {
+                    Thread.sleep(1000);
+                    // mando check a tutti i giocatori
+                    System.out.printf("Check");
+                } catch (InterruptedException e) {
+                    throw new RuntimeException(e);
+                }
+
+            }
+        });
+        checkThread.start();
     }
 
     public void addInSocketUserMapping() {}
 
+    /* todo da spostare lato client!!!
     public String checkMessageType(String message) throws IncorrectNicknameException {
         String[] words= message.split(" ");
         if(words[0].startsWith("@")){
@@ -256,7 +272,7 @@ public class GameController {
             throw new IncorrectNicknameException();
         }
         return null;
-    }
+    }*/
 
     public void disconnectAllUsers() throws RemoteException {
         for(String s : nickToTCPMessageControllerMapping.keySet()) {
@@ -266,7 +282,7 @@ public class GameController {
         server.disconnectAllRMIUsers();
     }
 
-    public void sendPersonalTargetCards() throws RemoteException {
+    public void yourTarget() throws RemoteException {
         for(String s : getNickToTCPMessageControllerMapping().keySet()) {
             Body body = new Body();
             for(Player p : playerList) {
@@ -288,7 +304,69 @@ public class GameController {
         }
         server.updateViewRMI();
     }
+
+    public void peerToPeerMsg(String sender, String receiver, String text) throws InvalidNicknameException, RemoteException {
+        if(!nickToTCPMessageControllerMapping.containsKey(receiver) && !server.checkReceiver(receiver)) {
+            throw new InvalidNicknameException();
+        }
+
+        // send the message to receiver
+        if(nickToTCPMessageControllerMapping.containsKey(receiver)) {
+            Body body = new Body();
+            body.setSenderNickname(sender);
+            body.setText(text);
+            nickToTCPMessageControllerMapping.get(receiver).printTCPMessage("New Msg", body);
+        }
+        else {
+            server.peerToPeerMsg(sender, receiver, text);
+        }
+
+        // send the message to the sender
+        if(nickToTCPMessageControllerMapping.containsKey(sender)) {
+            Body body = new Body();
+            body.setSenderNickname(sender);
+            body.setText(text);
+            nickToTCPMessageControllerMapping.get(sender).printTCPMessage("New Msg", body);
+        }
+        else {
+            server.peerToPeerMsg(sender, sender, text);
+        }
+    }
+
+    public void broadcastMsg(String sender, String text) throws RemoteException {
+        for(String s : nickToTCPMessageControllerMapping.keySet()) {
+            Body body = new Body();
+            body.setSenderNickname(sender);
+            body.setText(text);
+            nickToTCPMessageControllerMapping.get(s).printTCPMessage("New Msg", body);
+        }
+        server.broadcastMsg(sender, text);
+    }
+
+    // le funzioni di disconnessione dell'utente sono diverse tra tcp e rmi secondo me
+    // tanto un utemte tcp che decide di disconnettersi deve sicuro ricevere un messaggio tcp,
+    // mentre uno rmi riceverà una chiamata a metodo rmi
+    public void disconnectUserTCP(TCPMessageController tcpMessageController) {
+        String nickname = null;
+        for(String s : nickToTCPMessageControllerMapping.keySet()) {
+            if(nickToTCPMessageControllerMapping.get(s) == tcpMessageController) {
+                nickname = s;
+                break;
+            }
+        }
+        for(Player p : playerList) {
+            if(Objects.equals(p.getNickname(), nickname)) {
+                p.setConnected(false);
+                tcpMessageController.printTCPMessage("Goodbye", null);
+                return;
+            }
+        }
+    }
+
+    public void disconnectUserRMI() {}  // todo da fare!!!
+
 }
+
     //mancherebbero
     // -sendMessageToAll(String message)
     // -checkNicknameForMessage(String message,String nickname)
