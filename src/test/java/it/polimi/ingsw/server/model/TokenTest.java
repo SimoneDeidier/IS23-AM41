@@ -1,5 +1,7 @@
 package it.polimi.ingsw.server.model;
 
+import it.polimi.ingsw.server.model.tokens.ScoringToken;
+import it.polimi.ingsw.server.model.tokens.Token;
 import org.junit.jupiter.api.Test;
 
 public class TokenTest {

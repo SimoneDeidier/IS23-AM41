@@ -5,7 +5,7 @@ participant Client1
 
 activate Server
 activate Client1
-note over Server,Client1: Every second the Server sends a Check to each client\nand each Client sends a Clear message to the Server.
+note over Server,Client1: Every second the Server sends a Check to each clientTCP\nand each Client sends a Clear message to the Server.
 Server->Client1: Check
 Client1->Server: Clear
 alt Disconnection of the Client.
@@ -34,7 +34,7 @@ else Game still running - wrong player
 Server-->>Client1: Invalid Player
 end
 else Disconnection of the Server.
-note over Server,Client1: After five unanswered clears, the client assumes\nthat the server is crashed, the socket connection\nis closed and the game ends.
+note over Server,Client1: After five unanswered clears, the clientTCP assumes\nthat the server is crashed, the socket connection\nis closed and the game ends.
 Client1->Server: Clear
 Client1->Server: Clear
 Client1->Server: Clear

@@ -1,5 +1,10 @@
 package it.polimi.ingsw.server.model;
 
+import it.polimi.ingsw.server.model.exceptions.EmptyItemListToInsert;
+import it.polimi.ingsw.server.model.exceptions.EmptyShelfException;
+import it.polimi.ingsw.server.model.exceptions.NotEnoughSpaceInColumnException;
+import it.polimi.ingsw.server.model.items.Item;
+import it.polimi.ingsw.server.model.items.ItemColor;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.RepeatedTest;
 import org.junit.jupiter.api.Test;
@@ -19,6 +24,7 @@ class ShelfTest {
     private Random random;
     private List<Item> itemList;
     private Shelf fullShelf;
+    private Shelf chessboardShelf;
     private final List<Item> emptyList = new ArrayList<>(3);
 
     @BeforeEach
@@ -34,15 +40,35 @@ class ShelfTest {
             fullShelf.insertItems(i, itemList);
             fullShelf.insertItems(i, itemList);
         }
+        int x = 0;
+        chessboardShelf = new Shelf();
+        for(int i = 0; i < ROWS; i++) {
+            for(int j = 0; j < COLUMNS; j++) {
+                if(x%2 == 0) {
+                    chessboardShelf.setShelfItem(i, j, new Item(ItemColor.PINK));
+                    x++;
+                }
+                else {
+                    chessboardShelf.setShelfItem(i, j, new Item(ItemColor.YELLOW));
+                    x++;
+                }
+            }
+        }
     }
 
     @Test
-    void calculateAdjacentItemsPoints() {
+    void calculateAdjacentItemsPoints() throws EmptyShelfException {
+        assertThrows(EmptyShelfException.class, () -> emptyShelf.calculateAdjacentItemsPoints());
+        assertEquals(8, fullShelf.calculateAdjacentItemsPoints());
+        assertEquals(0, chessboardShelf.calculateAdjacentItemsPoints());
     }
 
-    @Test
-    void exploreGraph() {
-    }
+   @Test
+   void getShelfPoints() {
+        assertEquals(0, emptyShelf.getShelfPoints());
+        assertEquals(0, chessboardShelf.getShelfPoints());
+        assertEquals(8, fullShelf.getShelfPoints());
+   }
 
     @RepeatedTest(5000)
     void decodeNegativePoints() {

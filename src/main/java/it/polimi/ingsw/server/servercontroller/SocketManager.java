@@ -3,6 +3,7 @@ package it.polimi.ingsw.server.servercontroller;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.net.Socket;
+import java.util.List;
 import java.util.Objects;
 import java.util.Scanner;
 
@@ -10,36 +11,47 @@ public class SocketManager implements Runnable {
 
     private final SerializeDeserialize serializeDeserialize;
     private final Socket socket;
+    private boolean closeConnection = false;
+    private Scanner socketInput;
+    private PrintWriter socketOutput;
 
     public SocketManager(Socket socket) {
         this.socket = socket;
-        serializeDeserialize = new SerializeDeserialize();
+        serializeDeserialize = new SerializeDeserialize(this);
     }
 
     @Override
     public void run() {
-
         System.out.println("Socket instantiated correctly - active on port " + socket.getPort() + ".");
         try {
-            Scanner in = new Scanner(socket.getInputStream());
-            PrintWriter out = new PrintWriter(socket.getOutputStream());
-            while(true) {
-                String inMsg = in.nextLine();
-                String outMsg = serializeDeserialize.deserialize(inMsg);
-                // todo momentaneamente ho scritto questo ma non funziona
-                if(Objects.equals(outMsg, "quit")) {
-                    break;
-                }
-                out.println(outMsg);
-                out.flush();
+            socketInput = new Scanner(socket.getInputStream());
+            socketOutput = new PrintWriter(socket.getOutputStream());
+            while(!closeConnection) {
+                String inMsg = socketInput.nextLine();
+                serializeDeserialize.deserialize(inMsg);
             }
-            in.close();
-            out.close();
+            socketInput.close();
+            socketOutput.close();
             socket.close();
         }
         catch (IOException e) {
             System.err.println(e.getMessage());
         }
+    }
 
+    public Scanner getSocketInput() {
+        return socketInput;
+    }
+
+    public PrintWriter getSocketOutput() {
+        return socketOutput;
+    }
+
+    public void closeConnection() {
+        this.closeConnection = true;
+    }
+
+    public Socket getSocket() {
+        return this.socket;
     }
 }

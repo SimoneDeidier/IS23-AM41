@@ -1,7 +1,6 @@
 package it.polimi.ingsw.model;
 
-import it.polimi.ingsw.server.model.ItemsBag;
-import org.junit.jupiter.api.BeforeAll;
+import it.polimi.ingsw.server.model.items.ItemsBag;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 

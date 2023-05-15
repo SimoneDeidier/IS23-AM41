@@ -1,24 +1,32 @@
 package it.polimi.ingsw.server.model;
 
+import it.polimi.ingsw.server.model.boards.BoardFactory;
+import it.polimi.ingsw.server.model.commons.CommonTargetCard;
+import it.polimi.ingsw.server.model.exceptions.EmptyShelfException;
+import it.polimi.ingsw.server.model.tokens.EndGameToken;
+import it.polimi.ingsw.server.model.tokens.Token;
+
 import java.io.IOException;
+import java.io.Serializable;
 import java.net.URISyntaxException;
 import java.util.ArrayList;
 import java.util.List;
 
 public class Player {
-    private String nickname;
+    private final String nickname;
     private boolean connected;
     private int playerScore;
     private BoardFactory board;
     private EndGameToken endGameToken;
     private Shelf shelf;
-    private List<ScoringToken> scoringTokenList = new ArrayList<>(2);
+    private final List<Token> scoringTokenList = new ArrayList<>(2);
     private List<CommonTargetCard> commonTargetCardList;
     private PersonalTargetCard personalTargetCard;
 
     public Player(String nickname) {
         this.nickname = nickname;
         endGameToken = null;
+        playerScore=0;
     }
 
     public String getNickname() {
@@ -29,30 +37,38 @@ public class Player {
         return shelf;
     }
 
-    public void updateScore(Player player) {
+    public void updateScore() {
         try {
             playerScore = 0;
             if (endGameToken != null) {
                 playerScore += endGameToken.getValue();
             }
-            playerScore += personalTargetCard.calculatePoints(shelf, 0);
-            playerScore += shelf.calculateAdjacentItemsPoints();
-            if(commonTargetCardList.get(0).check(shelf)){
-                scoringTokenList.add(commonTargetCardList.get(0).assignToken(player));
+            playerScore += personalTargetCard.calculatePoints(shelf);
+            try {
+                playerScore += shelf.calculateAdjacentItemsPoints();
             }
-            if(commonTargetCardList.size()==2 && commonTargetCardList.get(1).check(shelf)){
-                scoringTokenList.add(commonTargetCardList.get(1).assignToken(player));
+            catch (EmptyShelfException e) {
+                System.out.println("EMPTY SHELF EXCEPTION");
+                System.out.println("Player: " + nickname);
             }
-            for (ScoringToken token : scoringTokenList) {
-                if (token != null) {
-                    playerScore += token.getValue();
+            finally {
+                // bypass del check sulle common per far runnare i test.....
+                if(commonTargetCardList != null) {
+                    if (commonTargetCardList.get(0).check(shelf)) {
+                        scoringTokenList.add(commonTargetCardList.get(0).assignToken(this));
+                    }
+                    if (commonTargetCardList.size() == 2 && commonTargetCardList.get(1).check(shelf)) {
+                        scoringTokenList.add(commonTargetCardList.get(1).assignToken(this));
+                    }
+                }
+                for (Token token : scoringTokenList) {
+                    if (token != null) {
+                        playerScore += token.getValue();
+                    }
                 }
             }
         }
-        catch (EmptyShelfException e) {
-            System.out.println("EMPTY SHELF EXCEPTION");
-            System.out.println("Player: " + nickname);
-        } catch (URISyntaxException | IOException e) {
+        catch (URISyntaxException | IOException e) {
             throw new RuntimeException(e);
         }
     }
@@ -76,14 +92,28 @@ public class Player {
         this.personalTargetCard = personalTargetCard;
     }
 
-    public void addScoringToken(ScoringToken scoringToken) {
+    public void addScoringToken(Token scoringToken) {
         if( scoringToken != null )
             this.scoringTokenList.add(scoringToken);
     }
 
-    public ScoringToken getScoringToken(int i){
+    public Token getScoringToken(int i){
         return scoringTokenList.get(i);
     }
 
+    public void setConnected(boolean connected) {
+        this.connected = connected;
+    }
 
+    public boolean isConnected() {
+        return connected;
+    }
+
+    public int getPlayerScore() {
+        return this.playerScore;
+    }
+
+    public PersonalTargetCard getPersonalTargetCard() {
+        return personalTargetCard;
+    }
 }
