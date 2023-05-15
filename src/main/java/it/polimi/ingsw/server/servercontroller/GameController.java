@@ -54,15 +54,16 @@ public class GameController {
     }
 
     public boolean checkMove(Body body) {  //ok serve
-        //da rifare
-        if (!body.getPlayerNickname().equals(activePlayer.getNickname())) {
-            return false;
+        if (!body.getPlayerNickname().equals(activePlayer.getNickname())) { //forse questo non va bene?
+            return false; //o throw NotActivePlayer
         }
         if (!board.checkMove(body.getPositionsPicked())) {
-            return false;
+            return false; //o throw InvalidMove
         }
-        //tutti gli if per checkare
-        try {
+        if(!activePlayer.checkColumnChosen(body.getPositionsPicked().size(),body.getColumn())){
+            return false; //o throw NotEnoughSpaceInColumnException
+        }
+        try { //inutile qui simo, ti convincerò, c'è giusto prima il checkColumnChosen
             executeMove(body);
         }
         catch (EmptyItemListToInsert emptyItemListToInsert) {
@@ -74,7 +75,7 @@ public class GameController {
     public void executeMove(Body body) throws EmptyItemListToInsert {  //ok supporto a checkMove
         if (checkMove(body)) {
             List<Item> items = getListItems(body);
-            try {
+            try { //inutile qui simo, ti convincerò
                 activePlayer.getShelf().insertItems(body.getColumn(), items);
             } catch (Exception NotEnoughSpaceInColumnException) {
                 System.out.println("Not enough space in the column provided!");

@@ -161,4 +161,11 @@ public class Shelf {
         this.shelfMatrix[r][c] = i;
     }
 
+    public boolean checkColumn(int numberOfItemsPicked, int column) {
+        if (column < 0 || column > COLUMNS)
+            return false;
+        if(freeSpaces(column)<numberOfItemsPicked)
+            return false;
+        return true;
+    }
 }

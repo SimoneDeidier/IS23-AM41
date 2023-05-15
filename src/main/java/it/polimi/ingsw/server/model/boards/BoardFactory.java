@@ -168,5 +168,4 @@ public abstract class BoardFactory {
     public void resetBoard(){
         boardMatrix= new Item[ROWS][COLUMNS];
     }
-
 }
