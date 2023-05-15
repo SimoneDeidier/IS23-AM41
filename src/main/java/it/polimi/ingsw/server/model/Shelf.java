@@ -136,7 +136,22 @@ public class Shelf {
         return 0;
     }
 
+    public void setShelfPoints(){
+        try {
+            this.shelfPoints = this.calculateAdjacentItemsPoints();
+        }
+        catch (EmptyShelfException e) {
+            this.shelfPoints = 0;
+        }
+    }
 
+    public int getShelfPoints() {
+        this.setShelfPoints();
+        return this.shelfPoints;
+    }
 
+    public void setShelfItem(int r, int c, Item i) {
+        this.shelfMatrix[r][c] = i;
+    }
 
 }

@@ -71,7 +71,7 @@ public class Server {
         }
         System.out.println("Server socket was closed - server shutting down.");
         executor.shutdown();
-        System.out.println("All threads are joined - server shuttind down.");
+        System.out.println("All threads are joined - server shutting down.");
 
     }
 

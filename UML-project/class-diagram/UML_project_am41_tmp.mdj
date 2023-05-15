@@ -15592,7 +15592,7 @@
 											"top": 959,
 											"width": 271,
 											"height": 13,
-											"text": "+checkMove(move: Move): boolean",
+											"text": "+checkMove(body: Move): boolean",
 											"horizontalAlignment": 0
 										},
 										{
@@ -15609,7 +15609,7 @@
 											"top": 974,
 											"width": 271,
 											"height": 13,
-											"text": "+executeMove(move: Move): boolean",
+											"text": "+executeMove(body: Move): boolean",
 											"horizontalAlignment": 0
 										},
 										{
@@ -20325,7 +20325,7 @@
 											"_parent": {
 												"$ref": "AAAAAAGHQtedb/Py8i0="
 											},
-											"name": "move",
+											"name": "body",
 											"type": "Move"
 										},
 										{
@@ -20353,7 +20353,7 @@
 											"_parent": {
 												"$ref": "AAAAAAGHATMHborUgjc="
 											},
-											"name": "move",
+											"name": "body",
 											"type": "Move"
 										},
 										{

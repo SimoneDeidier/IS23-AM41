@@ -12,9 +12,11 @@ public class CommonFourRows extends CommonTargetCard {
             countSamePerRow=0;
             for (int j = 0; j < COLUMNS; j++) {
                 for (int k = 0; k < COLUMNS; k++) {
-                    if (j != k && shelf.getItemByCoordinates(i, j).getColor() == shelf.getItemByCoordinates(i, k).getColor()){
-                        countSamePerRow++;
-                        break;
+                    if(shelf.getItemByCoordinates(i, j).getColor() != null && shelf.getItemByCoordinates(i, k).getColor() != null) {
+                        if (j != k && shelf.getItemByCoordinates(i, j).getColor() == shelf.getItemByCoordinates(i, k).getColor()) {
+                            countSamePerRow++;
+                            break;
+                        }
                     }
                 }
             }
