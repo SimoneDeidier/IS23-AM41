@@ -16,7 +16,6 @@ public class ConnectionRMI extends Connection implements InterfaceClient, Serial
     private int PORT;
     private String IP;
     private InterfaceServer stub;
-    private ClientController controller;
 
     public ConnectionRMI(String ip, int port) {
         this.IP = ip;

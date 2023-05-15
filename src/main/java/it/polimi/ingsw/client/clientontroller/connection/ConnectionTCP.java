@@ -1,6 +1,8 @@
 package it.polimi.ingsw.client.clientontroller.connection;
 
 import com.google.gson.Gson;
+import it.polimi.ingsw.client.Client;
+import it.polimi.ingsw.client.clientontroller.ClientController;
 import it.polimi.ingsw.client.clientontroller.SerializeDeserialize;
 import it.polimi.ingsw.client.view.GraphicUserInterface;
 import it.polimi.ingsw.client.view.UserInterface;
@@ -12,12 +14,10 @@ import java.util.Scanner;
 public class ConnectionTCP extends Connection {
 
 
-    private final Gson gson = new Gson();
     private boolean closeConnection = false;
     private Socket socket;
     private PrintWriter socketOut;
     private Scanner socketIn;
-    private Scanner stdIn;
     private final SerializeDeserialize serializeDeserialize;
     private Thread userInterfaceThread = null;
 
@@ -27,7 +27,6 @@ public class ConnectionTCP extends Connection {
             socket = new Socket(ip, port);
             socketIn = new Scanner(socket.getInputStream());
             socketOut = new PrintWriter(socket.getOutputStream(), true);
-            stdIn = new Scanner(System.in);
         } catch (IOException e) {
             e.printStackTrace();
         }
