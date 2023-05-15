@@ -2,6 +2,8 @@ package it.polimi.ingsw.client.clientontroller.connection;
 
 import com.google.gson.Gson;
 import it.polimi.ingsw.client.clientontroller.SerializeDeserialize;
+import it.polimi.ingsw.client.view.GraphicUserInterface;
+import it.polimi.ingsw.client.view.UserInterface;
 
 import java.io.*;
 import java.net.Socket;
@@ -17,6 +19,7 @@ public class ConnectionTCP extends Connection {
     private Scanner socketIn;
     private Scanner stdIn;
     private final SerializeDeserialize serializeDeserialize;
+    private Thread userInterfaceThread = null;
 
 
     public ConnectionTCP(String ip, int port) {
@@ -42,9 +45,13 @@ public class ConnectionTCP extends Connection {
             }
         });
         socketReader.start();
-        // todo qui inizializza la UI
+        switch (uiType) {
+            case "gui" -> userInterfaceThread = new Thread(new GraphicUserInterface());
+            case "tui" -> {}
+        }
         try {
             socketReader.join();
+            userInterfaceThread.join();
         }
         catch (InterruptedException e) {
             e.printStackTrace();

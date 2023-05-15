@@ -39,5 +39,10 @@
       <artifactId>commons-io</artifactId>
       <version>2.11.0</version>
     </dependency>
+    <dependency>
+      <groupId>org.openjfx</groupId>
+      <artifactId>javafx</artifactId>
+      <version>19.0.2.1</version>
+    </dependency>
   </dependencies>
 </project>

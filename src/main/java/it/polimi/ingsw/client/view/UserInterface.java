@@ -1,13 +1,9 @@
 package it.polimi.ingsw.client.view;
 
-public abstract class UserInterface {
+public interface UserInterface {
 
-    public void start() {
+    void run();
 
-    }
-
-    public void askNickname() {
-
-    }
+    void askNickname();
 
 }
