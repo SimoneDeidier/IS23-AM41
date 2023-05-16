@@ -10,10 +10,10 @@ import javafx.stage.Stage;
 
 public class GraphicUserInterface extends Application implements Runnable, UserInterface {
 
-    private final ClientController controller;
+    private final ClientController clientController;
 
-    public GraphicUserInterface(ClientController controller) {
-        this.controller = controller;
+    public GraphicUserInterface(ClientController clientController) {
+        this.clientController = clientController;
     }
 
     @Override
