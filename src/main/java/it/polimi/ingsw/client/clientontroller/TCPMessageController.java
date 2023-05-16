@@ -1,5 +1,8 @@
 package it.polimi.ingsw.client.clientontroller;
 
+import it.polimi.ingsw.client.Client;
+import it.polimi.ingsw.client.clientontroller.controller.ClientController;
+import it.polimi.ingsw.client.clientontroller.controller.ClientControllerTCP;
 import it.polimi.ingsw.interfaces.TCPMessageControllerInterface;
 import it.polimi.ingsw.messages.Body;
 import it.polimi.ingsw.messages.TCPMessage;
@@ -7,11 +10,11 @@ import it.polimi.ingsw.messages.TCPMessage;
 public class TCPMessageController implements TCPMessageControllerInterface {
 
     private final SerializeDeserialize serializeDeserialize;
-    private final ClientController clientController;
+    private final ClientController controller;
 
     public TCPMessageController(SerializeDeserialize serializeDeserialize) {
         this.serializeDeserialize = serializeDeserialize;
-        this.clientController = new ClientController();
+        controller = new ClientControllerTCP(this);
     }
 
     @Override
@@ -65,6 +68,10 @@ public class TCPMessageController implements TCPMessageControllerInterface {
 
     public void closeConnection() {
         serializeDeserialize.closeConnection();
+    }
+
+    public void startUserInterface(String uiType) {
+        controller.startUserInterface(uiType);
     }
 
 }

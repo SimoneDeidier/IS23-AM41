@@ -2,7 +2,6 @@ package it.polimi.ingsw.client.clientontroller.connection;
 
 import it.polimi.ingsw.interfaces.InterfaceClient;
 import it.polimi.ingsw.interfaces.InterfaceServer;
-import it.polimi.ingsw.client.clientontroller.ClientController;
 import it.polimi.ingsw.server.model.PersonalTargetCard;
 import it.polimi.ingsw.server.model.Player;
 

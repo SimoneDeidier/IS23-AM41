@@ -1,5 +1,6 @@
 package it.polimi.ingsw.client.view;
 
+import it.polimi.ingsw.client.clientontroller.controller.ClientController;
 import it.polimi.ingsw.client.view.controllers.LoginScreenController;
 import it.polimi.ingsw.server.servercontroller.GameController;
 import javafx.application.Application;
@@ -9,7 +10,11 @@ import javafx.stage.Stage;
 
 public class GraphicUserInterface extends Application implements Runnable, UserInterface {
 
-    private GameController gameController;
+    private final ClientController controller;
+
+    public GraphicUserInterface(ClientController controller) {
+        this.controller = controller;
+    }
 
     @Override
     public void run() {
