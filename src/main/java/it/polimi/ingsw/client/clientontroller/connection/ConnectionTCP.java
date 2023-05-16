@@ -11,7 +11,7 @@ import java.io.*;
 import java.net.Socket;
 import java.util.Scanner;
 
-public class ConnectionTCP extends Connection {
+public class ConnectionTCP implements Connection {
 
 
     private boolean closeConnection = false;
@@ -19,6 +19,7 @@ public class ConnectionTCP extends Connection {
     private PrintWriter socketOut;
     private Scanner socketIn;
     private final SerializeDeserialize serializeDeserialize;
+    private UserInterface userInterface  = null;
     private Thread userInterfaceThread = null;
 
 
@@ -44,10 +45,14 @@ public class ConnectionTCP extends Connection {
             }
         });
         socketReader.start();
+        ClientController clientController = new ClientController();
+
         switch (uiType) {
-            case "gui" -> userInterfaceThread = new Thread(new GraphicUserInterface());
+            case "gui" -> userInterface = new GraphicUserInterface();
             case "tui" -> {}
         }
+        userInterfaceThread = new Thread((Runnable) userInterface);
+        userInterfaceThread.start();
         try {
             socketReader.join();
             userInterfaceThread.join();

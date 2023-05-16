@@ -12,7 +12,7 @@ import java.rmi.registry.LocateRegistry;
 import java.rmi.registry.Registry;
 import java.util.List;
 
-public class ConnectionRMI extends Connection implements InterfaceClient, Serializable {
+public class ConnectionRMI implements InterfaceClient, Serializable, Connection {
     private int PORT;
     private String IP;
     private InterfaceServer stub;

@@ -4,6 +4,4 @@ public interface UserInterface {
 
     void run();
 
-    void setNickname();
-
 }
