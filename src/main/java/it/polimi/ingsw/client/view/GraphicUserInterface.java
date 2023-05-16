@@ -7,8 +7,6 @@ import javafx.fxml.FXMLLoader;
 import javafx.scene.Scene;
 import javafx.stage.Stage;
 
-import java.io.IOException;
-
 public class GraphicUserInterface extends Application implements UserInterface {
 
     private static ClientController clientController;
@@ -43,8 +41,14 @@ public class GraphicUserInterface extends Application implements UserInterface {
         loginScreenController.getGameParameters();
     }
 
+    @Override
     public void sendNickname(String nickname) {
         clientController.sendNickname(nickname);
+    }
+
+    @Override
+    public void invalidNickname() {
+        loginScreenController.invalidNickname();
     }
 
 }

@@ -21,5 +21,15 @@ public class TextUserInterface implements UserInterface{
 
     }
 
+    @Override
+    public void sendNickname(String nickname) {
+
+    }
+
+    @Override
+    public void invalidNickname() {
+
+    }
+
 }
 

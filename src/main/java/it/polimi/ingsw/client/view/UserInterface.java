@@ -10,4 +10,8 @@ public interface UserInterface {
     void run();
     void setClientController(ClientController clientController);
     void getGameParameters();
+
+    void sendNickname(String nickname);
+
+    void invalidNickname();
 }

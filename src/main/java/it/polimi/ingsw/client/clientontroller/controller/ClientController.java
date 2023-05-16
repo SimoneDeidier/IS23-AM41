@@ -12,4 +12,5 @@ public interface ClientController {
     void sendNickname(String nickname);
     void getParameters();
 
+    void invalidNickname();
 }

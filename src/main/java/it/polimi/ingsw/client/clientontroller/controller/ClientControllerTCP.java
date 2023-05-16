@@ -6,8 +6,6 @@ import it.polimi.ingsw.client.view.TextUserInterface;
 import it.polimi.ingsw.client.view.UserInterface;
 import it.polimi.ingsw.messages.Body;
 
-import java.io.IOException;
-
 public class ClientControllerTCP implements ClientController {
 
     private final TCPMessageController tcpMessageController;
@@ -46,6 +44,11 @@ public class ClientControllerTCP implements ClientController {
     @Override
     public void getParameters() {
         userInterface.getGameParameters();
+    }
+
+    @Override
+    public void invalidNickname() {
+        userInterface.invalidNickname();
     }
 
 }

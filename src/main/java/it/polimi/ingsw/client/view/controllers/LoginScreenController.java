@@ -25,6 +25,8 @@ public class LoginScreenController {
     private ChoiceBox<Integer> commonsChoiceBox;
     @FXML
     private Button createLobbyBtn;
+    @FXML
+    private Text invalidNickText;
 
     private GraphicUserInterface gui = null;
     private List<Integer> players = Arrays.asList(2, 3, 4);
@@ -57,7 +59,12 @@ public class LoginScreenController {
     }
 
     public void sendParameters() {
-        System.out.println("SEND PARAMETERS");
+
+    }
+
+    public void invalidNickname() {
+        insertNickText.setVisible(false);
+        invalidNickText.setVisible(true);
     }
 
     public void setGui(GraphicUserInterface gui) {

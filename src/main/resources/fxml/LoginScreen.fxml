@@ -27,7 +27,7 @@
             <Image url="@../images/Title_2000x618px.png" />
          </image>
       </ImageView>
-      <Text fx:id="commonTargText" layoutX="390.0" layoutY="462.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Select number of players and common target cards!" visible="false" AnchorPane.leftAnchor="457.0" AnchorPane.rightAnchor="457.0" AnchorPane.topAnchor="389.0">
+      <Text fx:id="commonTargText" layoutX="390.0" layoutY="462.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Select number of players and common target cards:" visible="false" AnchorPane.leftAnchor="457.0" AnchorPane.rightAnchor="457.0" AnchorPane.topAnchor="389.0">
          <font>
             <Font size="17.0" />
          </font>
@@ -35,5 +35,10 @@
       <ChoiceBox fx:id="playersChoiceBox" disable="true" layoutX="488.0" layoutY="445.0" prefWidth="150.0" visible="false" AnchorPane.leftAnchor="419.0" AnchorPane.topAnchor="431.0" />
       <ChoiceBox fx:id="commonsChoiceBox" disable="true" layoutX="748.0" layoutY="562.0" prefWidth="150.0" visible="false" AnchorPane.rightAnchor="419.0" AnchorPane.topAnchor="431.0" />
       <Button fx:id="createLobbyBtn" disable="true" layoutX="596.0" layoutY="578.0" mnemonicParsing="false" onAction="#sendParameters" text="Create lobby!" visible="false" AnchorPane.leftAnchor="595.0" AnchorPane.rightAnchor="594.0" AnchorPane.topAnchor="515.0" />
+      <Text fx:id="invalidNickText" layoutX="262.0" layoutY="582.0" strokeType="OUTSIDE" strokeWidth="0.0" text="The username is already used, please insert another nickname:" visible="false" AnchorPane.leftAnchor="419.0" AnchorPane.rightAnchor="418.0" AnchorPane.topAnchor="389.0">
+         <font>
+            <Font size="17.0" />
+         </font>
+      </Text>
    </children>
 </AnchorPane>
