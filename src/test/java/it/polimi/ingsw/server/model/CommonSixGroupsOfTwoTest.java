@@ -14,7 +14,7 @@ import static org.junit.jupiter.api.Assertions.*;
 class CommonSixGroupsOfTwoTest {
 
     @Test
-    void checkSixGroupsOfTwo() throws EmptyItemListToInsert, NotEnoughSpaceInColumnException {
+    void checkSixGroupsOfTwo() throws NotEnoughSpaceInColumnException {
         CommonTargetCard commonSixGroupsOfTwo = new CommonSixGroupsOfTwo(2);
 
         // create a sample shelf with six groups of two
@@ -30,7 +30,7 @@ class CommonSixGroupsOfTwoTest {
 
     }
     @Test
-    void checkNoSixGroupsOfTwo() throws EmptyItemListToInsert, NotEnoughSpaceInColumnException {
+    void checkNoSixGroupsOfTwo() throws NotEnoughSpaceInColumnException {
 
         CommonTargetCard commonSixGroupsOfTwo = new CommonSixGroupsOfTwo(2);
 

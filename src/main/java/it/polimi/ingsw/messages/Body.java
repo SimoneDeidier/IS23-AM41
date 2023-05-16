@@ -17,7 +17,7 @@ public class Body {
     private String senderNickname;
     private String text;
     private PersonalTargetCard personalCard;
-    private List<Player> view;
+    private NewView newView;
 
     public String getPlayerNickname() {
         return playerNickname;
@@ -91,11 +91,11 @@ public class Body {
         this.personalCard = personalCard;
     }
 
-    public List<Player> getView() {
-        return view;
+    public NewView getNewView() {
+        return newView;
     }
 
-    public void setView(List<Player> view) {
-        this.view = view;
+    public void setNewView(NewView newView) {
+        this.newView = newView;
     }
 }

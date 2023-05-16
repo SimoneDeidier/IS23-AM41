@@ -179,9 +179,7 @@ public class Server implements InterfaceServer {
         }
     }
 
-    @Override
-    public void updateViewRMI() throws RemoteException {
-        NewView newView= controller.getNewView();
+    public void updateViewRMI(NewView newView) throws RemoteException {
         for(InterfaceClient cl: clientMapRMI.values()){
             cl.updateView(newView);
         }

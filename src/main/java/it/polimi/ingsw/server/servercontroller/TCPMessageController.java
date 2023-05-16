@@ -64,12 +64,24 @@ public class TCPMessageController implements TCPMessageControllerInterface {
                 }
             }
             case "Move" -> {
-                if(gameController.checkMove(message.getBody())) {
+                /*if(gameController.checkMove(message.getBody())) {
                     gameController.updateView();
                 }
                 else {
                     printTCPMessage("Incorrect Move", null);
+                }*/
+                try {
+                    gameController.executeMove(message.getBody());
+                    if(gameController.isGameOver()){
+                        gameController.gameOver();
+                    }
+                    else{
+                        gameController.updateView();
+                    }
+                } catch (InvalidMoveException e) {
+                    printTCPMessage("Incorrect Move", null);
                 }
+
             }
             case "Peer-to-Peer Msg" -> {
                 String sender = message.getBody().getSenderNickname();
