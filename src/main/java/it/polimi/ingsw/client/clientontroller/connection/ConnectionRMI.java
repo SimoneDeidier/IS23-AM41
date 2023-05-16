@@ -74,7 +74,7 @@ public class ConnectionRMI extends Connection implements InterfaceClient, Serial
                 gameStarted = true;
                 lock.notifyAll();
             }
-            PingThread pingThread = new PingThread(stub); //Starting the thread for pinging the server
+            PingThread pingThread = new PingThread(stub,this); //Starting the thread for pinging the server
             pingThread.start();
         }
         //And now we tell the controller to show the GUI/TUI and the client shouldn't need a loop, it's constantly waiting for the player's input
