@@ -2,7 +2,6 @@ package it.polimi.ingsw.server.model;
 
 import it.polimi.ingsw.server.model.commons.CommonTargetCard;
 import it.polimi.ingsw.server.model.commons.CommonTwoColumns;
-import it.polimi.ingsw.server.model.exceptions.EmptyItemListToInsert;
 import it.polimi.ingsw.server.model.exceptions.NotEnoughSpaceInColumnException;
 import it.polimi.ingsw.server.model.items.Item;
 import it.polimi.ingsw.server.model.items.ItemColor;

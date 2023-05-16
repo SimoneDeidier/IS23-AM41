@@ -5,16 +5,13 @@ import it.polimi.ingsw.client.PingThread;
 import it.polimi.ingsw.interfaces.InterfaceClient;
 import it.polimi.ingsw.interfaces.InterfaceServer;
 import it.polimi.ingsw.client.clientontroller.ClientController;
-import it.polimi.ingsw.server.NewView;
+import it.polimi.ingsw.messages.NewView;
 import it.polimi.ingsw.server.model.PersonalTargetCard;
-import it.polimi.ingsw.server.model.Player;
 
 import java.io.Serializable;
 import java.rmi.RemoteException;
 import java.rmi.registry.LocateRegistry;
 import java.rmi.registry.Registry;
-import java.util.List;
-import java.util.Scanner;
 
 public class ConnectionRMI extends Connection implements InterfaceClient, Serializable {
     private final int PORT;
