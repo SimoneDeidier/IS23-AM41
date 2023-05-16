@@ -6,11 +6,14 @@ import it.polimi.ingsw.client.view.TextUserInterface;
 import it.polimi.ingsw.client.view.UserInterface;
 import it.polimi.ingsw.messages.Body;
 
+import java.io.IOException;
+
 public class ClientControllerTCP implements ClientController {
 
     private final TCPMessageController tcpMessageController;
     private UserInterface userInterface = null;
     private Thread userInterfaceThread = null;
+    private String playerNickname;
 
     public ClientControllerTCP(TCPMessageController tcpMessageController) {
         this.tcpMessageController = tcpMessageController;
@@ -22,7 +25,6 @@ public class ClientControllerTCP implements ClientController {
             case "tui" ->  userInterface = new TextUserInterface();
         }
         userInterface.setClientController(this);
-        System.out.println(userInterface.getClientController());
         userInterfaceThread = new Thread(() -> userInterface.run());
         userInterfaceThread.start();
         try {
@@ -35,9 +37,15 @@ public class ClientControllerTCP implements ClientController {
 
     @Override
     public void sendNickname(String nickname) {
+        this.playerNickname = nickname;
         Body body = new Body();
         body.setPlayerNickname(nickname);
         tcpMessageController.printTCPMessage("Presentation", body);
+    }
+
+    @Override
+    public void getParameters() {
+        userInterface.getGameParameters();
     }
 
 }

@@ -22,7 +22,7 @@ public class TCPMessageController implements TCPMessageControllerInterface {
         String header = message.getHeader();
         switch (header) {
             case "Nickname Accepted" -> {
-                System.out.println("NICKNAME ACCEPTED");
+
             }
             case "Player Restored" -> {
 
@@ -34,7 +34,8 @@ public class TCPMessageController implements TCPMessageControllerInterface {
                 closeConnection();
             }
             case "Get Parameters" -> {
-
+                System.out.println("GET PARAMETERS");
+                controller.getParameters();
             }
             case "Your Target" -> {
 

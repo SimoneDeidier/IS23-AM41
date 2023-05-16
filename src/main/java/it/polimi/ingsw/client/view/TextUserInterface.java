@@ -12,12 +12,12 @@ public class TextUserInterface implements UserInterface{
     }
 
     @Override
-    public ClientController getClientController() {
-        return null;
+    public void setClientController(ClientController clientController) {
+
     }
 
     @Override
-    public void setClientController(ClientController clientController) {
+    public void getGameParameters() {
 
     }
 

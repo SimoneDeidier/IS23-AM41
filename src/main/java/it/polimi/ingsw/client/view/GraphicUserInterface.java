@@ -7,9 +7,14 @@ import javafx.fxml.FXMLLoader;
 import javafx.scene.Scene;
 import javafx.stage.Stage;
 
+import java.io.IOException;
+
 public class GraphicUserInterface extends Application implements UserInterface {
 
-    private ClientController clientController;
+    private static ClientController clientController;
+    private static Stage guiStage;
+    private static FXMLLoader loader;
+    private static LoginScreenController loginScreenController;
 
     @Override
     public void run() {
@@ -18,22 +23,24 @@ public class GraphicUserInterface extends Application implements UserInterface {
 
     @Override
     public void start(Stage stage) throws Exception {
-        System.out.println(clientController);
-        FXMLLoader loader = new FXMLLoader(ClassLoader.getSystemResource("fxml/LoginScreen.fxml"));
-        stage.setScene(new Scene(loader.load()));
-        LoginScreenController loginScreenController = loader.getController();
+        GraphicUserInterface.guiStage = stage;
+        loader = new FXMLLoader(ClassLoader.getSystemResource("fxml/LoginScreen.fxml"));
+        guiStage.setScene(new Scene(loader.load()));
+        loginScreenController = loader.getController();
         loginScreenController.setGui(this);
-        stage.show();
+        guiStage.setResizable(false);
+        guiStage.setTitle("Welcome to My Shelfie!");
+        guiStage.show();
     }
 
     @Override
     public void setClientController(ClientController clientController) {
-        System.out.println("METODO INVOCATO");
-        this.clientController = clientController;
+        GraphicUserInterface.clientController = clientController;
     }
 
-    public ClientController getClientController() {
-        return clientController;
+    @Override
+    public void getGameParameters() {
+        loginScreenController.getGameParameters();
     }
 
     public void sendNickname(String nickname) {
