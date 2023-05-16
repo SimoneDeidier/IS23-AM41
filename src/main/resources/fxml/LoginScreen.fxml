@@ -15,7 +15,7 @@
             <Image url="@../images/sfondo_parquet.jpg" />
          </image>
       </ImageView>
-      <TextField fx:id="nicknameTextField" layoutX="460.0" layoutY="489.0" prefHeight="24.0" prefWidth="382.0" AnchorPane.leftAnchor="449.0" AnchorPane.rightAnchor="449.0" AnchorPane.topAnchor="431.0" />
+      <TextField fx:id="nicknameTextField" layoutX="460.0" layoutY="489.0" prefHeight="24.0" prefWidth="382.0" promptText="Your nickname here..." AnchorPane.leftAnchor="449.0" AnchorPane.rightAnchor="449.0" AnchorPane.topAnchor="431.0" />
       <Text layoutX="637.0" layoutY="365.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Insert your nickname:" AnchorPane.leftAnchor="565.0" AnchorPane.rightAnchor="564.0" AnchorPane.topAnchor="389.0">
          <font>
             <Font size="17.0" />

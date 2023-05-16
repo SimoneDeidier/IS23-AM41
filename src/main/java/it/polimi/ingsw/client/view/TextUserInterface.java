@@ -4,15 +4,21 @@ import it.polimi.ingsw.client.clientontroller.controller.ClientController;
 
 public class TextUserInterface implements UserInterface{
 
-    private final ClientController controller;
-
-    public TextUserInterface(ClientController controller) {
-        this.controller = controller;
-    }
+    private ClientController clientController;
 
     @Override
     public void run() {
         System.out.println("STARTED CLI");
+    }
+
+    @Override
+    public ClientController getClientController() {
+        return null;
+    }
+
+    @Override
+    public void setClientController(ClientController clientController) {
+
     }
 
 }

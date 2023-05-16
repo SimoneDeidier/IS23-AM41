@@ -4,6 +4,7 @@ import it.polimi.ingsw.client.clientontroller.TCPMessageController;
 import it.polimi.ingsw.client.view.GraphicUserInterface;
 import it.polimi.ingsw.client.view.TextUserInterface;
 import it.polimi.ingsw.client.view.UserInterface;
+import it.polimi.ingsw.messages.Body;
 
 public class ClientControllerTCP implements ClientController {
 
@@ -17,10 +18,26 @@ public class ClientControllerTCP implements ClientController {
 
     public void startUserInterface(String uiType) {
         switch (uiType) {
-            case "gui" -> userInterface = new GraphicUserInterface(this);
-            case "tui" ->  userInterface = new TextUserInterface(this);
+            case "gui" -> userInterface = new GraphicUserInterface();
+            case "tui" ->  userInterface = new TextUserInterface();
         }
-        userInterfaceThread = new Thread((Runnable) userInterface);
+        userInterface.setClientController(this);
+        System.out.println(userInterface.getClientController());
+        userInterfaceThread = new Thread(() -> userInterface.run());
         userInterfaceThread.start();
+        try {
+            userInterfaceThread.join();
+        }
+        catch (InterruptedException e) {
+            e.printStackTrace();
+        }
     }
+
+    @Override
+    public void sendNickname(String nickname) {
+        Body body = new Body();
+        body.setPlayerNickname(nickname);
+        tcpMessageController.printTCPMessage("Presentation", body);
+    }
+
 }

@@ -27,6 +27,7 @@ public class TCPMessageController implements TCPMessageControllerInterface {
         switch (header) {
             case "Presentation" -> {
                 String nickname = message.getBody().getPlayerNickname();
+                System.out.println("NEW PRESENTATION MSG - " + nickname);
                 try {
                     switch(gameController.presentation(nickname)) {
                         case 1: { //joined a "new" game

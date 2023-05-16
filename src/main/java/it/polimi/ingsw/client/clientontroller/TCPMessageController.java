@@ -22,7 +22,7 @@ public class TCPMessageController implements TCPMessageControllerInterface {
         String header = message.getHeader();
         switch (header) {
             case "Nickname Accepted" -> {
-
+                System.out.println("NICKNAME ACCEPTED");
             }
             case "Player Restored" -> {
 

@@ -8,4 +8,6 @@ public interface ClientController {
 
     void startUserInterface(String uiType);
 
+    void sendNickname(String nickname);
+
 }
