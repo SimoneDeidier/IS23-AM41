@@ -16,7 +16,7 @@ import static org.junit.jupiter.api.Assertions.*;
 class CommonStairwayTest {
 
     @Test
-    void check() throws EmptyItemListToInsert, NotEnoughSpaceInColumnException {
+    void check() throws NotEnoughSpaceInColumnException {
         CommonTargetCard card  = new CommonStairway(2);
 
         Shelf case1 = new Shelf();

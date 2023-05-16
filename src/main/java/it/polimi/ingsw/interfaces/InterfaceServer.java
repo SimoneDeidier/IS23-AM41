@@ -12,8 +12,7 @@ public interface InterfaceServer extends Remote {
     void presentation(InterfaceClient cl, String nickname) throws RemoteException;
     boolean sendParameters(int maxPlayerNumber,boolean onlyOneCommonCard) throws RemoteException;
     void executeMove(Body move) throws RemoteException, InvalidMoveException;
-    void updateViewRMI() throws RemoteException;
-    public void clearRMI() throws RemoteException;
+    void clearRMI() throws RemoteException;
     void peerToPeerMsgHandler(String sender, String receiver, String text) throws RemoteException;
     void broadcastMsgHandler(String sender, String text) throws RemoteException;
 }

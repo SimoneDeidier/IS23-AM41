@@ -12,7 +12,7 @@ import java.util.Arrays;
 class CommonDiagonalTest {
 
     @Test
-    void checkLtoRDiag() throws EmptyItemListToInsert, NotEnoughSpaceInColumnException {
+    void checkLtoRDiag() throws NotEnoughSpaceInColumnException {
         CommonTargetCard CommonDiagonal = new CommonDiagonal(2);
 
         // create a sample shelf with a left-to-right diagonal
@@ -28,7 +28,7 @@ class CommonDiagonalTest {
         assert (CommonDiagonal.check(shelfA));
     }
     @Test
-    void checkUpLtoRDiag() throws EmptyItemListToInsert, NotEnoughSpaceInColumnException {
+    void checkUpLtoRDiag() throws NotEnoughSpaceInColumnException {
 
         CommonTargetCard CommonDiagonal = new CommonDiagonal(2);
 
@@ -46,7 +46,7 @@ class CommonDiagonalTest {
     }
 
     @Test
-    void checkRtoLDiag() throws EmptyItemListToInsert, NotEnoughSpaceInColumnException {
+    void checkRtoLDiag() throws NotEnoughSpaceInColumnException {
 
         CommonTargetCard CommonDiagonal = new CommonDiagonal(2);
 
@@ -64,7 +64,7 @@ class CommonDiagonalTest {
     }
 
     @Test
-    void checkUpRtoLDiag() throws EmptyItemListToInsert, NotEnoughSpaceInColumnException {
+    void checkUpRtoLDiag() throws NotEnoughSpaceInColumnException {
 
         CommonTargetCard CommonDiagonal = new CommonDiagonal(2);
 
@@ -82,7 +82,7 @@ class CommonDiagonalTest {
     }
 
     @Test
-    void checkNoDiag() throws EmptyItemListToInsert, NotEnoughSpaceInColumnException {
+    void checkNoDiag() throws NotEnoughSpaceInColumnException {
 
         CommonTargetCard CommonDiagonal = new CommonDiagonal(2);
 

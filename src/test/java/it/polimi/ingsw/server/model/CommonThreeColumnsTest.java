@@ -16,7 +16,7 @@ import static org.junit.jupiter.api.Assertions.*;
 class CommonThreeColumnsTest {
 
     @Test
-    void check() throws EmptyItemListToInsert, NotEnoughSpaceInColumnException {
+    void check() throws NotEnoughSpaceInColumnException {
 
         Shelf shelf = new Shelf();
         CommonTargetCard card  = new CommonThreeColumns(2);

@@ -78,6 +78,8 @@ public class ConnectionRMI extends Connection implements InterfaceClient, Serial
             pingThread.start();
         }
         //And now we tell the controller to show the GUI/TUI and the client shouldn't need a loop, it's constantly waiting for the player's input
+        //The controller will check if the user is the active player, and if he's the active he'll have two options: send message and make move
+        //Otherwise he's only able to send a message until a new updateView
     }
 
     @Override

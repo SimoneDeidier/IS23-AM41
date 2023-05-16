@@ -329,13 +329,13 @@ public class GameController {
     }
 
     public void updateView() throws RemoteException {
+        Body body = new Body();
+        NewView newView= getNewView();
+        body.setNewView(newView);
         for(String s : getNickToTCPMessageControllerMapping().keySet()) {
-            Body body = new Body();
-            // todo da cambiare qui
-            body.setView(playerList);
             getNickToTCPMessageControllerMapping().get(s).printTCPMessage("Update View", body);
         }
-        server.updateViewRMI();
+        server.updateViewRMI(newView);
     }
 
     public void peerToPeerMsg(String sender, String receiver, String text) throws InvalidNicknameException, RemoteException {
@@ -378,7 +378,7 @@ public class GameController {
 
     public void gameOver() throws RemoteException {
         NewView newView= getNewView();
-        //tells all tcp clients the game is over
+        //todo tells all tcp clients the game is over
         server.gameOverRMI(newView);
         prepareForNewGame();
     }
