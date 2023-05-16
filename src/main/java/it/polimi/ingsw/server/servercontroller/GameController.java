@@ -2,6 +2,7 @@ package it.polimi.ingsw.server.servercontroller;
 
 import it.polimi.ingsw.messages.Body;
 import it.polimi.ingsw.messages.TCPMessage;
+import it.polimi.ingsw.server.NewView;
 import it.polimi.ingsw.server.Server;
 import it.polimi.ingsw.server.model.*;
 import it.polimi.ingsw.server.model.boards.BoardFactory;
@@ -30,10 +31,12 @@ public class GameController {
     private Map<String, TCPMessageController> nickToTCPMessageControllerMapping = new ConcurrentHashMap<>(4);
     private final Server server;
     private Thread checkThread;
+    private boolean gameOver;
 
     public GameController(Server s) {
         this.state = new ServerInitState();
         this.server = s;
+        this.gameOver=false;
     }
 
     public static GameController getGameController(Server s) {
@@ -74,7 +77,7 @@ public class GameController {
         return true;
     }
 
-    public void executeMove(Body body) throws EmptyItemListToInsert {  //ok supporto a checkMove
+    public void executeMove(Body body) throws EmptyItemListToInsert {
         if (checkMove(body)) {
             List<Item> items = getListItems(body);
             try { //inutile qui simo, ti convincerò
@@ -97,12 +100,21 @@ public class GameController {
                 nextIndex=nextIndexCalc(nextIndex);
             if(nextIndex!=-1)
                 activePlayer=playerList.get(nextIndex);
-            else
-                activePlayer=null; //signals to the server the game is over!
+            else {
+                activePlayer = null; //signals to the server the game is over!
+                gameOver=true;
+            }
 
             //todo add salvataggio nel json
         }
+    }
 
+    public NewView getNewView(){
+        NewView newView=new NewView();
+        newView.setPlayerList(List.copyOf(getPlayerList()));
+        newView.setActivePlayer(new Player(getActivePlayer().getNickname()));
+        newView.setGameOver(newView.getActivePlayer() == null);
+        return newView;
     }
 
     public int nextIndexCalc(int currIndex){
@@ -115,7 +127,7 @@ public class GameController {
             return currIndex+1;
     }
 
-    public List<Item> getListItems(Body body) { //ok supporto a checkMove
+    public List<Item> getListItems(Body body) {
 
         List<Item> items = new ArrayList<>();
         for (int[] picks : body.getPositionsPicked()) {
@@ -125,7 +137,11 @@ public class GameController {
 
     }
 
-    public boolean checkBoardNeedForRefill() { //ok supporto a checkMove
+    public Player getActivePlayer() {
+        return activePlayer;
+    }
+
+    public boolean checkBoardNeedForRefill() {
 
         for (int i = 0; i < board.getBoardNumberOfRows(); i++) {
             for (int j = 0; j < board.getBoardNumberOfColumns(); j++) {
@@ -138,25 +154,29 @@ public class GameController {
 
     }
 
-    public void changeState(GameState state) {  //ok
+    public void changeState(GameState state) {
         if(state != this.state) {
             this.state = state;
         }
     }
 
-    public int getAvailableSlot() {  //ok
+    public boolean isGameOver() {
+        return gameOver;
+    }
+
+    public int getAvailableSlot() {
         return state.getAvailableSlot(maxPlayerNumber, playerList);
     }
 
-    public void addPlayer(Player player) { //ok
+    public void addPlayer(Player player) {
         state.addPlayer(player, playerList);
     }
 
-    public void setupGame(boolean onlyOneCommonCard) { //ok supporto a isGameReady
+    public void setupGame(boolean onlyOneCommonCard) {
         state.setupGame(maxPlayerNumber, commonTargetCardsList, board, onlyOneCommonCard,playerList,this);
     }
 
-    public boolean checkLastTurn() {  //ok supporto a checkMove
+    public boolean checkLastTurn() {
         for (Player p : playerList) {
             if (p.getShelf().isFull()) {
                 return true;
@@ -165,7 +185,7 @@ public class GameController {
         return false;
     }
 
-    public void prepareForNewGame() { //ok
+    public void prepareForNewGame() {
         playerList = new ArrayList<>();
         lastTurn = false;
         activePlayer = null;
@@ -187,7 +207,7 @@ public class GameController {
         player.setConnected(!player.isConnected());
     }
 
-    public boolean createLobby(int maxPlayerNumber, boolean onlyOneCommonCard) { //response to create lobby
+    public boolean createLobby(int maxPlayerNumber, boolean onlyOneCommonCard) {
         if (maxPlayerNumber <= 4 && maxPlayerNumber >= 2) {
             setupLobbyParameters(maxPlayerNumber, onlyOneCommonCard);
             return true;
@@ -205,7 +225,7 @@ public class GameController {
         return false;
     }
 
-    public synchronized int presentation(String nickname) throws FirstPlayerException, CancelGameException, GameStartException, FullLobbyException { //response to presentation
+    public synchronized int presentation(String nickname) throws FirstPlayerException, CancelGameException, GameStartException, FullLobbyException {
         int availableSlots = getAvailableSlot();
         if (availableSlots == -1) { //handling the first player
             if (checkSavedGame(nickname)) { //the first player is present in the saved game
@@ -326,6 +346,13 @@ public class GameController {
             nickToTCPMessageControllerMapping.get(s).printTCPMessage("New Msg", body);
         }
         server.broadcastMsg(sender, text);
+    }
+
+    public void gameOver() throws RemoteException {
+        NewView newView= getNewView();
+        //tells all tcp clients the game is over
+        server.gameOverRMI(newView);
+        prepareForNewGame();
     }
 
     // le funzioni di disconnessione dell'utente sono diverse tra tcp e rmi secondo me

@@ -169,19 +169,23 @@ public class Server implements InterfaceServer {
         return controller.createLobby(maxPlayerNumber,onlyOneCommonCard);
     }
 
-    public boolean executeMove(Body move) throws RemoteException {
-        if (controller.checkMove(move)) {
-            controller.updateView();
-            return true;
+    public void executeMove(Body move) throws RemoteException, InvalidMoveException {
+        if (!controller.checkMove(move)) {
+            throw new InvalidMoveException();
         }
-        return false;
+        if(controller.isGameOver()){
+            controller.gameOver();
+        }
+        else{
+            controller.updateView();
+        }
     }
 
     @Override
     public void updateViewRMI() throws RemoteException {
+        NewView newView= controller.getNewView();
         for(InterfaceClient cl: clientMapRMI.values()){
-            List<Player> list = List.copyOf(controller.getPlayerList());
-            cl.updateView(list);
+            cl.updateView(newView);
         }
     }
 
@@ -233,6 +237,13 @@ public class Server implements InterfaceServer {
     @Override
     public void clearRMI() throws RemoteException { //ping from client to server
         //it's empty, we need to check on the other side for RemoteExceptions
+    }
+
+    public void gameOverRMI(NewView newView) throws RemoteException{
+        for(Map.Entry<String,InterfaceClient> entry : clientMapRMI.entrySet()){
+            entry.getValue().showEndGame(newView);
+            clientMapRMI.remove(entry.getKey());
+        }
     }
 
 }

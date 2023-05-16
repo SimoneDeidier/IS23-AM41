@@ -5,6 +5,7 @@ import it.polimi.ingsw.client.PingThread;
 import it.polimi.ingsw.interfaces.InterfaceClient;
 import it.polimi.ingsw.interfaces.InterfaceServer;
 import it.polimi.ingsw.client.clientontroller.ClientController;
+import it.polimi.ingsw.server.NewView;
 import it.polimi.ingsw.server.model.PersonalTargetCard;
 import it.polimi.ingsw.server.model.Player;
 
@@ -70,7 +71,7 @@ public class ConnectionRMI extends Connection implements InterfaceClient, Serial
     }
 
     @Override
-    public void updateView(List<Player> playersList) throws RemoteException {
+    public void updateView(NewView newView) throws RemoteException {
         if(!gameStarted){ //on the first updateView it exits the waitingRoom
             synchronized (lock) {
                 gameStarted = true;
@@ -109,5 +110,10 @@ public class ConnectionRMI extends Connection implements InterfaceClient, Serial
     @Override
     public void receivePersonalTargetCard(PersonalTargetCard personalTargetCard) throws RemoteException {
         // todo
+    }
+
+    @Override
+    public void showEndGame(NewView newView) throws RemoteException {
+        //tell the controller to make the view show the end game screen
     }
 }
