@@ -1,17 +1,20 @@
 package it.polimi.ingsw.client;
 
+import it.polimi.ingsw.interfaces.InterfaceClient;
 import it.polimi.ingsw.interfaces.InterfaceServer;
 
 import java.rmi.RemoteException;
 
 public class PingThread extends Thread {
     private final InterfaceServer interfaceServer;
+    private InterfaceClient interfaceClient; //The client who's pinging the server
     private final long pingInterval;
     private int failedPings;
     private final int maxPingFailed;
 
-    public PingThread(InterfaceServer interfaceServer) {
+    public PingThread(InterfaceServer interfaceServer,InterfaceClient interfaceClient) {
         this.interfaceServer = interfaceServer;
+        this.interfaceClient=interfaceClient;
         this.pingInterval = 1000;
         this.maxPingFailed=5;
         this.failedPings=0;
@@ -27,12 +30,11 @@ public class PingThread extends Thread {
                 } catch (RemoteException e) {
                     failedPings++;
                     if(failedPings > maxPingFailed){
-                        //how do I stop the client saying the server is not responding?
-                        //Do i need to call a method on it?
+                        interfaceClient.disconnectUser(8);
                     }
                 }
-                } catch (InterruptedException e) {
-                // interrupted thread
+                } catch (InterruptedException | RemoteException e) {
+                // interrupted thread or the client is dead
             }
         }
     }
