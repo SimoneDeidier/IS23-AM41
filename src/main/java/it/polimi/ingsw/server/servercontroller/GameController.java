@@ -1,5 +1,9 @@
 package it.polimi.ingsw.server.servercontroller;
 
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
+import com.google.gson.JsonArray;
+import com.google.gson.JsonObject;
 import it.polimi.ingsw.messages.Body;
 import it.polimi.ingsw.messages.NewView;
 import it.polimi.ingsw.server.Server;
@@ -11,6 +15,9 @@ import it.polimi.ingsw.server.model.tokens.EndGameToken;
 import it.polimi.ingsw.server.servercontroller.controllerstates.*;
 import it.polimi.ingsw.server.servercontroller.exceptions.*;
 
+import java.io.FileReader;
+import java.io.FileWriter;
+import java.io.IOException;
 import java.rmi.RemoteException;
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
@@ -96,8 +103,14 @@ public class GameController {
                 activePlayer = null; //signals to the server the game is over!
                 gameOver=true;
             }
-
-            //todo add salvataggio nel json
+            //todo testing
+            //Save game in json file
+            Gson gson = new Gson();
+            try {
+                gson.toJson(this, new FileWriter("src/main/resources/jsons/OldGame.json"));
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
         }
         else throw new InvalidMoveException();
     }
@@ -215,6 +228,27 @@ public class GameController {
 
     public boolean checkSavedGame(String nickname) {
         //todo look into json and look if the nickname is present there
+
+        Gson gson = new Gson();
+
+
+        try {
+            JsonObject jsonObject = gson.fromJson(new FileReader("src/main/resources/jsons/OldGame.json"), JsonObject.class);
+            JsonArray playersList = jsonObject.getAsJsonArray("playerList");
+
+            for (int i=0; i < playersList.size(); i++){
+                JsonObject player = playersList.get(i).getAsJsonObject();
+                String name = player.get("nickname").getAsString();
+                if(name.equals(nickname)){
+                    return true;
+                }
+
+            }
+
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
         return false;
     }
 
