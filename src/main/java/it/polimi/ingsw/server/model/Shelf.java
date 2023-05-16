@@ -1,12 +1,10 @@
 package it.polimi.ingsw.server.model;
 
-import it.polimi.ingsw.server.model.exceptions.EmptyItemListToInsert;
 import it.polimi.ingsw.server.model.exceptions.EmptyShelfException;
 import it.polimi.ingsw.server.model.exceptions.NotEnoughSpaceInColumnException;
 import it.polimi.ingsw.server.model.items.Item;
 import it.polimi.ingsw.server.model.items.ItemColor;
 
-import java.io.Serializable;
 import java.util.List;
 
 public class Shelf {
@@ -106,10 +104,7 @@ public class Shelf {
         return true;
 
     }
-    public void insertItems(int column, List<Item> items) throws NotEnoughSpaceInColumnException, EmptyItemListToInsert {
-        if(items == null || items.size() == 0) {
-            throw new EmptyItemListToInsert();
-        }
+    public void insertItems(int column, List<Item> items) throws NotEnoughSpaceInColumnException {
         int freeSpace = 0;
 
         for (int i = 0; i < ROWS; i++) {

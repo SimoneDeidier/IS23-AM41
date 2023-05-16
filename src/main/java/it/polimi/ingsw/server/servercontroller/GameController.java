@@ -1,13 +1,11 @@
 package it.polimi.ingsw.server.servercontroller;
 
 import it.polimi.ingsw.messages.Body;
-import it.polimi.ingsw.messages.TCPMessage;
-import it.polimi.ingsw.server.NewView;
+import it.polimi.ingsw.messages.NewView;
 import it.polimi.ingsw.server.Server;
 import it.polimi.ingsw.server.model.*;
 import it.polimi.ingsw.server.model.boards.BoardFactory;
 import it.polimi.ingsw.server.model.commons.CommonTargetCard;
-import it.polimi.ingsw.server.model.exceptions.EmptyItemListToInsert;
 import it.polimi.ingsw.server.model.items.Item;
 import it.polimi.ingsw.server.model.tokens.EndGameToken;
 import it.polimi.ingsw.server.servercontroller.controllerstates.*;
@@ -68,16 +66,10 @@ public class GameController {
         if(!activePlayer.checkColumnChosen(body.getPositionsPicked().size(),body.getColumn())){
             return false; //o throw NotEnoughSpaceInColumnException
         }
-        try { //inutile qui simo, ti convincerò, c'è giusto prima il checkColumnChosen
-            executeMove(body);
-        }
-        catch (EmptyItemListToInsert e) {
-            return false;
-        }
         return true;
     }
 
-    public void executeMove(Body body) throws EmptyItemListToInsert {
+    public void executeMove(Body body) throws InvalidMoveException {
         if (checkMove(body)) {
             List<Item> items = getListItems(body);
             try { //inutile qui simo, ti convincerò
@@ -107,6 +99,7 @@ public class GameController {
 
             //todo add salvataggio nel json
         }
+        else throw new InvalidMoveException();
     }
 
     public NewView getNewView(){
@@ -304,6 +297,7 @@ public class GameController {
     public void updateView() throws RemoteException {
         for(String s : getNickToTCPMessageControllerMapping().keySet()) {
             Body body = new Body();
+            // todo da cambiare qui
             body.setView(playerList);
             getNickToTCPMessageControllerMapping().get(s).printTCPMessage("Update View", body);
         }

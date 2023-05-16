@@ -3,6 +3,7 @@ package it.polimi.ingsw.server;
 import it.polimi.ingsw.interfaces.InterfaceClient;
 import it.polimi.ingsw.interfaces.InterfaceServer;
 import it.polimi.ingsw.messages.Body;
+import it.polimi.ingsw.messages.NewView;
 import it.polimi.ingsw.server.model.Player;
 import it.polimi.ingsw.server.servercontroller.GameController;
 import it.polimi.ingsw.server.servercontroller.SocketManager;
@@ -16,7 +17,6 @@ import java.rmi.RemoteException;
 import java.rmi.registry.LocateRegistry;
 import java.rmi.registry.Registry;
 import java.rmi.server.UnicastRemoteObject;
-import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Scanner;
@@ -170,9 +170,7 @@ public class Server implements InterfaceServer {
     }
 
     public void executeMove(Body move) throws RemoteException, InvalidMoveException {
-        if (!controller.checkMove(move)) {
-            throw new InvalidMoveException();
-        }
+        controller.executeMove(move);
         if(controller.isGameOver()){
             controller.gameOver();
         }

@@ -1,12 +1,10 @@
 package it.polimi.ingsw.interfaces;
 
-import it.polimi.ingsw.server.NewView;
+import it.polimi.ingsw.messages.NewView;
 import it.polimi.ingsw.server.model.PersonalTargetCard;
-import it.polimi.ingsw.server.model.Player;
 
 import java.rmi.Remote;
 import java.rmi.RemoteException;
-import java.util.List;
 
 public interface InterfaceClient extends Remote {
     //What the server can call from the client
