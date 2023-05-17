@@ -11,34 +11,59 @@
 
 <AnchorPane prefHeight="720.0" prefWidth="1280.0" xmlns="http://javafx.com/javafx/19" xmlns:fx="http://javafx.com/fxml/1" fx:controller="it.polimi.ingsw.client.view.controllers.LoginScreenController">
    <children>
-      <ImageView fitHeight="720.0" fitWidth="1280.0" layoutX="477.0" layoutY="322.0" pickOnBounds="true" AnchorPane.leftAnchor="0.0" AnchorPane.topAnchor="0.0">
+      <ImageView fitHeight="720.0" fitWidth="1280.0" layoutX="477.0" layoutY="322.0" pickOnBounds="true" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
          <image>
             <Image url="@../images/sfondo_parquet.jpg" />
          </image>
       </ImageView>
-      <TextField fx:id="nicknameTextField" layoutX="460.0" layoutY="489.0" prefHeight="24.0" prefWidth="382.0" promptText="Your nickname here..." AnchorPane.leftAnchor="449.0" AnchorPane.rightAnchor="449.0" AnchorPane.topAnchor="431.0" />
-      <Text fx:id="insertNickText" layoutX="637.0" layoutY="365.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Insert your nickname:" AnchorPane.leftAnchor="565.0" AnchorPane.rightAnchor="564.0" AnchorPane.topAnchor="389.0">
-         <font>
-            <Font size="17.0" />
-         </font></Text>
-      <Button fx:id="connectBtn" layoutX="610.0" layoutY="515.0" mnemonicParsing="false" onAction="#setNickname" text="Connect!" AnchorPane.leftAnchor="601.0" AnchorPane.rightAnchor="602.0" AnchorPane.topAnchor="515.0" />
-      <ImageView fitHeight="281.0" fitWidth="1048.0" layoutX="130.0" layoutY="89.0" pickOnBounds="true" preserveRatio="true" AnchorPane.leftAnchor="185.0" AnchorPane.rightAnchor="185.0" AnchorPane.topAnchor="89.0">
+      <ImageView fitHeight="281.0" fitWidth="1048.0" layoutX="130.0" layoutY="89.0" pickOnBounds="true" preserveRatio="true" AnchorPane.leftAnchor="185.0" AnchorPane.topAnchor="89.0">
          <image>
             <Image url="@../images/Title_2000x618px.png" />
          </image>
       </ImageView>
-      <Text fx:id="commonTargText" layoutX="390.0" layoutY="462.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Select number of players and common target cards:" visible="false" AnchorPane.leftAnchor="457.0" AnchorPane.rightAnchor="457.0" AnchorPane.topAnchor="389.0">
-         <font>
-            <Font size="17.0" />
-         </font>
-      </Text>
-      <ChoiceBox fx:id="playersChoiceBox" disable="true" layoutX="488.0" layoutY="445.0" prefWidth="150.0" visible="false" AnchorPane.leftAnchor="419.0" AnchorPane.topAnchor="431.0" />
-      <ChoiceBox fx:id="commonsChoiceBox" disable="true" layoutX="748.0" layoutY="562.0" prefWidth="150.0" visible="false" AnchorPane.rightAnchor="419.0" AnchorPane.topAnchor="431.0" />
-      <Button fx:id="createLobbyBtn" disable="true" layoutX="596.0" layoutY="578.0" mnemonicParsing="false" onAction="#sendParameters" text="Create lobby!" visible="false" AnchorPane.leftAnchor="595.0" AnchorPane.rightAnchor="594.0" AnchorPane.topAnchor="515.0" />
-      <Text fx:id="invalidNickText" layoutX="262.0" layoutY="582.0" strokeType="OUTSIDE" strokeWidth="0.0" text="The username is already used, please insert another nickname:" visible="false" AnchorPane.leftAnchor="419.0" AnchorPane.rightAnchor="418.0" AnchorPane.topAnchor="389.0">
-         <font>
-            <Font size="17.0" />
-         </font>
-      </Text>
+      <AnchorPane fx:id="nicknameAnchorPane" layoutX="157.0" layoutY="388.0" prefHeight="200.0" prefWidth="200.0" AnchorPane.bottomAnchor="89.0" AnchorPane.leftAnchor="299.0" AnchorPane.rightAnchor="298.0" AnchorPane.topAnchor="389.0">
+         <children>
+            <Text fx:id="insertNickText" strokeType="OUTSIDE" strokeWidth="0.0" text="Insert your nickname!" AnchorPane.leftAnchor="265.0" AnchorPane.rightAnchor="266.0" AnchorPane.topAnchor="13.0">
+               <font>
+                  <Font size="17.0" />
+               </font>
+            </Text>
+            <TextField fx:id="nicknameTextField" prefHeight="24.0" prefWidth="382.0" promptText="Your nickname here..." AnchorPane.leftAnchor="149.0" AnchorPane.rightAnchor="149.0" AnchorPane.topAnchor="89.0" />
+            <Button mnemonicParsing="false" onAction="#setNickname" text="Connect!" AnchorPane.leftAnchor="307.0" AnchorPane.rightAnchor="307.0" AnchorPane.topAnchor="189.0" />
+            <Text fx:id="invalidNickText" strokeType="OUTSIDE" strokeWidth="0.0" text="The username is already used, please insert another nickname!" visible="false" AnchorPane.leftAnchor="119.0" AnchorPane.rightAnchor="119.0" AnchorPane.topAnchor="13.0">
+               <font>
+                  <Font size="17.0" />
+               </font>
+            </Text>
+            <Text fx:id="waitForLobbyText" strokeType="OUTSIDE" strokeWidth="0.0" text="Someone is trying to create a lobby, please retry in a few seconds!" visible="false" AnchorPane.leftAnchor="109.0" AnchorPane.rightAnchor="109.0" AnchorPane.topAnchor="13.0">
+               <font>
+                  <Font size="17.0" />
+               </font>
+            </Text>
+         </children>
+      </AnchorPane>
+      <AnchorPane fx:id="parametersAnchorPane" disable="true" prefHeight="200.0" prefWidth="200.0" visible="false" AnchorPane.bottomAnchor="89.0" AnchorPane.leftAnchor="299.0" AnchorPane.rightAnchor="299.0" AnchorPane.topAnchor="389.0">
+         <children>
+            <ChoiceBox fx:id="commonsChoiceBox" prefWidth="150.0" AnchorPane.rightAnchor="149.0" AnchorPane.topAnchor="89.0" />
+            <Text disable="true" strokeType="OUTSIDE" strokeWidth="0.0" text="Select number of players and common target cards!" AnchorPane.leftAnchor="158.0" AnchorPane.rightAnchor="158.0" AnchorPane.topAnchor="13.0">
+               <font>
+                  <Font size="17.0" />
+               </font>
+            </Text>
+            <ChoiceBox fx:id="playersChoiceBox" prefWidth="150.0" AnchorPane.leftAnchor="149.0" AnchorPane.topAnchor="89.0" />
+            <Button layoutX="76.0" layoutY="183.0" mnemonicParsing="false" onAction="#sendParameters" text="Create lobby!" AnchorPane.leftAnchor="295.0" AnchorPane.rightAnchor="296.0" AnchorPane.topAnchor="189.0" />
+            <Text strokeType="OUTSIDE" strokeWidth="0.0" text="Number of players:" AnchorPane.leftAnchor="171.0" AnchorPane.topAnchor="69.0" />
+            <Text strokeType="OUTSIDE" strokeWidth="0.0" text="Number of common cards:" AnchorPane.rightAnchor="151.0" AnchorPane.topAnchor="69.0" />
+         </children>
+      </AnchorPane>
+      <AnchorPane fx:id="waitAnchorPane" disable="true" prefHeight="200.0" prefWidth="200.0" visible="false" AnchorPane.bottomAnchor="89.0" AnchorPane.leftAnchor="299.0" AnchorPane.rightAnchor="298.0" AnchorPane.topAnchor="389.0">
+         <children>
+            <Text strokeType="OUTSIDE" strokeWidth="0.0" text="You are in a lobby! Please wait for the game start!" AnchorPane.leftAnchor="167.0" AnchorPane.rightAnchor="167.0" AnchorPane.topAnchor="89.0">
+               <font>
+                  <Font size="17.0" />
+               </font>
+            </Text>
+         </children>
+      </AnchorPane>
    </children>
 </AnchorPane>

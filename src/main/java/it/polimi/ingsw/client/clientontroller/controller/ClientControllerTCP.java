@@ -60,4 +60,19 @@ public class ClientControllerTCP implements ClientController {
         tcpMessageController.printTCPMessage("Create Lobby", body);
     }
 
+    @Override
+    public void nicknameAccepted() {
+        userInterface.nicknameAccepted();
+    }
+
+    @Override
+    public void lobbyCreated() {
+        userInterface.lobbyCreated();
+    }
+
+    @Override
+    public void waitForLobby() {
+        userInterface.waitForLobby();
+    }
+
 }

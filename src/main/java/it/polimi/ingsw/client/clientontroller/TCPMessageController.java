@@ -22,10 +22,10 @@ public class TCPMessageController implements TCPMessageControllerInterface {
         String header = message.getHeader();
         switch (header) {
             case "Nickname Accepted" -> {
-                System.err.println("NICKNAMNE ACCEPTED!");
+                controller.nicknameAccepted();
             }
             case "Wait for Lobby" -> {
-                System.err.println("IMPOSSIBLE TO ACCEPT THE NICKNAME, WAIT FOR A LOBBY CREATED!");
+                controller.waitForLobby();
             }
             case "Player Restored" -> {
 
@@ -40,13 +40,15 @@ public class TCPMessageController implements TCPMessageControllerInterface {
                 controller.getParameters();
             }
             case "Your Target" -> {
-
+                System.err.println("YOUR TARGET ARRIVATO");
+                controller.nicknameAccepted();
             }
             case "Update View" -> {
-
+                System.err.println("UPDATE VIEW ARRIVATO");
+                controller.nicknameAccepted();
             }
             case "Lobby Created" -> {
-                System.err.println("LOBBY CREATED!");
+                controller.lobbyCreated();
             }
             case "Wrong Parameters" -> {
 

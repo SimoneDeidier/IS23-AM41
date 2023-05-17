@@ -50,6 +50,7 @@ public class TCPMessageController implements TCPMessageControllerInterface {
                 catch (CancelGameException e) { //the game is being canceled because a restoring of a saved game failed
                     gameController.disconnectAllUsers();
                 } catch (GameStartException e) { //the game is starting because everyone is connected, updating everyone views
+                    gameController.putNickToSocketMapping(nickname, this);
                     gameController.startGame();
                     gameController.yourTarget();
                     gameController.updateView();
@@ -57,6 +58,7 @@ public class TCPMessageController implements TCPMessageControllerInterface {
                     printTCPMessage("Goodbye", null);
                     closeConnection();
                 } catch (FirstPlayerException e) { //you're the first player connecting for creating a new game, I need more parameters from you
+                    gameController.putNickToSocketMapping(nickname, this);
                     System.err.println("Sending a Get Parameters TCP Message");
                     printTCPMessage("Get Parameters", null);
                 }

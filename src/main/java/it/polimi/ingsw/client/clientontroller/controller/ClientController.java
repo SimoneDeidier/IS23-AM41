@@ -15,4 +15,10 @@ public interface ClientController {
     void invalidNickname();
 
     void sendParameters(int numPlayers, int numCommons);
+
+    void nicknameAccepted();
+
+    void lobbyCreated();
+
+    void waitForLobby();
 }

@@ -256,18 +256,21 @@ public class GameController {
     }
 
     public void startGame(){
+        System.err.println("START GAME");
         setupGame(onlyOneCommonCard);
+        System.err.println("IS ONE COMMON: " + onlyOneCommonCard);
         changeState(new RunningGameState());
+        System.err.println("STATE: " + state);
         checkThread = new Thread(() -> {
+            System.err.println("THREAD PING STARTED!");
             while(true) {
                 try {
                     Thread.sleep(1000);
                     // mando check a tutti i giocatori
-                    System.out.printf("Check");
+                   //System.out.printf("Check");
                 } catch (InterruptedException e) {
                     throw new RuntimeException(e);
                 }
-
             }
         });
         checkThread.start();
@@ -297,11 +300,15 @@ public class GameController {
     }
 
     public void yourTarget() throws RemoteException {
+        System.err.println("YOUR TARGET");
+        System.err.println("UTENTI TCP: " + getNickToTCPMessageControllerMapping().keySet());
         for(String s : getNickToTCPMessageControllerMapping().keySet()) {
             Body body = new Body();
+            System.err.println("PLAYER LIST: " + playerList);
             for(Player p : playerList) {
                 if(Objects.equals(p.getNickname(), s)) {
                     body.setPersonalCard(p.getPersonalTargetCard());
+                    System.err.println("MANDO A: " + p.getNickname());
                     break;
                 }
             }

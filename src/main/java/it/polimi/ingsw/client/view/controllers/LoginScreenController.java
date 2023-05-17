@@ -2,9 +2,11 @@ package it.polimi.ingsw.client.view.controllers;
 
 import it.polimi.ingsw.client.view.GraphicUserInterface;
 import javafx.fxml.FXML;
+import javafx.scene.Node;
 import javafx.scene.control.Button;
 import javafx.scene.control.ChoiceBox;
 import javafx.scene.control.TextField;
+import javafx.scene.layout.AnchorPane;
 import javafx.scene.text.Text;
 
 import java.util.*;
@@ -14,19 +16,19 @@ public class LoginScreenController {
     @FXML
     private TextField nicknameTextField;
     @FXML
-    private Text insertNickText;
-    @FXML
-    private Text commonTargText;
-    @FXML
-    private Button connectBtn;
-    @FXML
     private ChoiceBox<Integer> playersChoiceBox;
     @FXML
     private ChoiceBox<Integer> commonsChoiceBox;
     @FXML
-    private Button createLobbyBtn;
+    private AnchorPane nicknameAnchorPane;
     @FXML
-    private Text invalidNickText;
+    private AnchorPane parametersAnchorPane;
+    @FXML
+    private AnchorPane waitAnchorPane;
+    @FXML
+    private Text waitForLobbyText;
+    @FXML
+    private Text insertNickText;
 
     private GraphicUserInterface gui = null;
     private List<Integer> players = Arrays.asList(2, 3, 4);
@@ -42,20 +44,9 @@ public class LoginScreenController {
     }
 
     public void getGameParameters() {
-        insertNickText.setVisible(false);
-        nicknameTextField.setDisable(true);
-        nicknameTextField.setVisible(false);
-        connectBtn.setDisable(true);
-        connectBtn.setVisible(false);
-        commonTargText.setVisible(true);
-        playersChoiceBox.setDisable(false);
-        playersChoiceBox.setVisible(true);
+        changePane(nicknameAnchorPane, parametersAnchorPane);
         playersChoiceBox.getItems().addAll(players);
-        commonsChoiceBox.setDisable(false);
-        commonsChoiceBox.setVisible(true);
         commonsChoiceBox.getItems().addAll(commons);
-        createLobbyBtn.setDisable(false);
-        createLobbyBtn.setVisible(true);
     }
 
     public void sendParameters() {
@@ -67,12 +58,38 @@ public class LoginScreenController {
     }
 
     public void invalidNickname() {
+        for(Node n : nicknameAnchorPane.getChildren()) {
+            if(Objects.equals(n.getId(), "insertNickText")) {
+                n.setVisible(false);
+            }
+            else if(Objects.equals(n.getId(), "invalidNickText")) {
+                n.setVisible(true);
+            }
+        }
+    }
+
+    public void nicknameAccepted() {
+        changePane(nicknameAnchorPane, waitAnchorPane);
+    }
+
+    public void lobbyCreated() {
+        changePane(parametersAnchorPane, waitAnchorPane);
+    }
+
+    public void waitForLobby() {
         insertNickText.setVisible(false);
-        invalidNickText.setVisible(true);
+        waitForLobbyText.setVisible(true);
     }
 
     public void setGui(GraphicUserInterface gui) {
         this.gui = gui;
+    }
+
+    public void changePane(AnchorPane oldAP, AnchorPane newAP) {
+        oldAP.setDisable(true);
+        oldAP.setVisible(false);
+        newAP.setDisable(false);
+        newAP.setVisible(true);
     }
 
 }

@@ -56,4 +56,19 @@ public class GraphicUserInterface extends Application implements UserInterface {
          clientController.sendParameters(numPlayers, numCommons);
     }
 
+    @Override
+    public void nicknameAccepted() {
+        loginScreenController.nicknameAccepted();
+    }
+
+    @Override
+    public void lobbyCreated() {
+        loginScreenController.lobbyCreated();
+    }
+
+    @Override
+    public void waitForLobby() {
+        loginScreenController.waitForLobby();
+    }
+
 }

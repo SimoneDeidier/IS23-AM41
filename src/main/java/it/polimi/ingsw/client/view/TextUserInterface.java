@@ -36,5 +36,20 @@ public class TextUserInterface implements UserInterface{
 
     }
 
+    @Override
+    public void nicknameAccepted() {
+
+    }
+
+    @Override
+    public void lobbyCreated() {
+
+    }
+
+    @Override
+    public void waitForLobby() {
+
+    }
+
 }
 
