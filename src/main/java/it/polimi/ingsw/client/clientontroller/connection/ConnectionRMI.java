@@ -2,9 +2,9 @@ package it.polimi.ingsw.client.clientontroller.connection;
 
 import it.polimi.ingsw.client.GameLock;
 import it.polimi.ingsw.client.PingThread;
+import it.polimi.ingsw.client.clientontroller.controller.ClientController;
 import it.polimi.ingsw.interfaces.InterfaceClient;
 import it.polimi.ingsw.interfaces.InterfaceServer;
-import it.polimi.ingsw.client.clientontroller.ClientController;
 import it.polimi.ingsw.messages.NewView;
 import it.polimi.ingsw.server.model.PersonalTargetCard;
 
@@ -13,7 +13,7 @@ import java.rmi.RemoteException;
 import java.rmi.registry.LocateRegistry;
 import java.rmi.registry.Registry;
 
-public class ConnectionRMI extends Connection implements InterfaceClient, Serializable {
+public class ConnectionRMI implements InterfaceClient, Serializable, Connection {
     private final int PORT;
     private final String IP;
     private InterfaceServer stub;

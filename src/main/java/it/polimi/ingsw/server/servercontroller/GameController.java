@@ -15,6 +15,7 @@ import it.polimi.ingsw.server.model.tokens.EndGameToken;
 import it.polimi.ingsw.server.servercontroller.controllerstates.*;
 import it.polimi.ingsw.server.servercontroller.exceptions.*;
 
+import java.io.File;
 import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
@@ -227,23 +228,30 @@ public class GameController {
     }
 
     public boolean checkSavedGame(String nickname) {
-        //todo look into json and look if the nickname is present there
+        //todo forse non funziona, ritornava false ad exists, perchè il file è vuoto o non lo trova?
 
         Gson gson = new Gson();
-
+        File json = new File(Objects.requireNonNull(ClassLoader.getSystemResourceAsStream("jsons/OldGame.json")).toString());
 
         try {
-            JsonObject jsonObject = gson.fromJson(new FileReader("src/main/resources/jsons/OldGame.json"), JsonObject.class);
-            JsonArray playersList = jsonObject.getAsJsonArray("playerList");
+            if(json.exists()) {
+                JsonObject jsonObject = gson.fromJson(new FileReader(json), JsonObject.class);
+                JsonArray playersList = jsonObject.getAsJsonArray("playerList");
 
-            for (int i=0; i < playersList.size(); i++){
-                JsonObject player = playersList.get(i).getAsJsonObject();
-                String name = player.get("nickname").getAsString();
-                if(name.equals(nickname)){
-                    return true;
+                System.err.println("PLAYER LIST READED: " + playersList);
+                if(playersList != null && playersList.size() != 0) {
+                    for (int i = 0; i < playersList.size(); i++) {
+                        JsonObject player = playersList.get(i).getAsJsonObject();
+                        String name = player.get("nickname").getAsString();
+                        if (name.equals(nickname)) {
+                            return true;
+                        }
+
+                    }
                 }
-
             }
+            else System.err.println("JSON NOT FOUND");
+
 
         } catch (IOException e) {
             e.printStackTrace();
