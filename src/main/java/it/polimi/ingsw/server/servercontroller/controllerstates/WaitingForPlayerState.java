@@ -18,7 +18,10 @@ public class WaitingForPlayerState extends GameState {
 
     @Override
     public int getAvailableSlot(int maxPlayerNumber, List<Player> playerList) {
-        return maxPlayerNumber - playerList.size();
+        if(maxPlayerNumber == 0) {
+            return -2;
+        }
+        else return maxPlayerNumber - playerList.size();
     }
 
     @Override
@@ -124,7 +127,7 @@ public class WaitingForPlayerState extends GameState {
     }
 
     @Override
-    public int checkNicknameAvailability(String nickname,List<Player> playerList){
+    public int checkNicknameAvailability(String nickname, List<Player> playerList){
         for(Player player:playerList){
             if(player.getNickname().equals(nickname)){
                 return 0;

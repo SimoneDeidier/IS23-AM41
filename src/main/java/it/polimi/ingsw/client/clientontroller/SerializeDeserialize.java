@@ -33,4 +33,9 @@ public class SerializeDeserialize implements SerializeDeserializeInterface {
     public void closeConnection() {
         connectionTCP.closeConnection();
     }
+
+    public void startUserInterface(String uiType) {
+        tcpMessageController.startUserInterface(uiType);
+    }
+
 }

@@ -1,21 +1,18 @@
 package it.polimi.ingsw.client.clientontroller.connection;
 
-import com.google.gson.Gson;
 import it.polimi.ingsw.client.clientontroller.SerializeDeserialize;
 
 import java.io.*;
 import java.net.Socket;
 import java.util.Scanner;
 
-public class ConnectionTCP extends Connection {
+public class ConnectionTCP implements Connection {
 
 
-    private final Gson gson = new Gson();
     private boolean closeConnection = false;
     private Socket socket;
     private PrintWriter socketOut;
     private Scanner socketIn;
-    private Scanner stdIn;
     private final SerializeDeserialize serializeDeserialize;
 
 
@@ -24,7 +21,6 @@ public class ConnectionTCP extends Connection {
             socket = new Socket(ip, port);
             socketIn = new Scanner(socket.getInputStream());
             socketOut = new PrintWriter(socket.getOutputStream(), true);
-            stdIn = new Scanner(System.in);
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -42,7 +38,7 @@ public class ConnectionTCP extends Connection {
             }
         });
         socketReader.start();
-        // todo qui inizializza la UI
+        serializeDeserialize.startUserInterface(uiType);
         try {
             socketReader.join();
         }
