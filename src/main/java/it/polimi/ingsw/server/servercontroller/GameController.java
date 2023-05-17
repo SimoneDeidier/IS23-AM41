@@ -1,17 +1,23 @@
 package it.polimi.ingsw.server.servercontroller;
 
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
+import com.google.gson.JsonArray;
+import com.google.gson.JsonObject;
 import it.polimi.ingsw.messages.Body;
-import it.polimi.ingsw.messages.TCPMessage;
+import it.polimi.ingsw.messages.NewView;
 import it.polimi.ingsw.server.Server;
 import it.polimi.ingsw.server.model.*;
 import it.polimi.ingsw.server.model.boards.BoardFactory;
 import it.polimi.ingsw.server.model.commons.CommonTargetCard;
-import it.polimi.ingsw.server.model.exceptions.EmptyItemListToInsert;
 import it.polimi.ingsw.server.model.items.Item;
 import it.polimi.ingsw.server.model.tokens.EndGameToken;
 import it.polimi.ingsw.server.servercontroller.controllerstates.*;
 import it.polimi.ingsw.server.servercontroller.exceptions.*;
 
+import java.io.FileReader;
+import java.io.FileWriter;
+import java.io.IOException;
 import java.rmi.RemoteException;
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
@@ -30,10 +36,12 @@ public class GameController {
     private Map<String, TCPMessageController> nickToTCPMessageControllerMapping = new ConcurrentHashMap<>(4);
     private final Server server;
     private Thread checkThread;
+    private boolean gameOver;
 
     public GameController(Server s) {
         this.state = new ServerInitState();
         this.server = s;
+        this.gameOver=false;
     }
 
     public static GameController getGameController(Server s) {
@@ -56,27 +64,22 @@ public class GameController {
     }
 
     public boolean checkMove(Body body) {  //ok serve
-        //da rifare
-        if (!body.getPlayerNickname().equals(activePlayer.getNickname())) {
-            return false;
+        if (!body.getPlayerNickname().equals(activePlayer.getNickname())) { //forse questo non va bene?
+            return false; //o throw NotActivePlayer
         }
         if (!board.checkMove(body.getPositionsPicked())) {
-            return false;
+            return false; //o throw InvalidMove
         }
-        //tutti gli if per checkare
-        try {
-            executeMove(body);
-        }
-        catch (EmptyItemListToInsert e) {
-            return false;
+        if(!activePlayer.checkColumnChosen(body.getPositionsPicked().size(),body.getColumn())){
+            return false; //o throw NotEnoughSpaceInColumnException
         }
         return true;
     }
 
-    public void executeMove(Body body) throws EmptyItemListToInsert {  //ok supporto a checkMove
+    public void executeMove(Body body) throws InvalidMoveException {
         if (checkMove(body)) {
             List<Item> items = getListItems(body);
-            try {
+            try { //inutile qui simo, ti convincerò
                 activePlayer.getShelf().insertItems(body.getColumn(), items);
             } catch (Exception NotEnoughSpaceInColumnException) {
                 System.err.println("Not enough space in the column provided!");
@@ -96,12 +99,28 @@ public class GameController {
                 nextIndex=nextIndexCalc(nextIndex);
             if(nextIndex!=-1)
                 activePlayer=playerList.get(nextIndex);
-            else
-                activePlayer=null; //signals to the server the game is over!
-
-            //todo add salvataggio nel json
+            else {
+                activePlayer = null; //signals to the server the game is over!
+                gameOver=true;
+            }
+            //todo testing
+            //Save game in json file
+            Gson gson = new Gson();
+            try {
+                gson.toJson(this, new FileWriter("src/main/resources/jsons/OldGame.json"));
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
         }
+        else throw new InvalidMoveException();
+    }
 
+    public NewView getNewView(){
+        NewView newView=new NewView();
+        newView.setPlayerList(List.copyOf(getPlayerList()));
+        newView.setActivePlayer(new Player(getActivePlayer().getNickname()));
+        newView.setGameOver(newView.getActivePlayer() == null);
+        return newView;
     }
 
     public int nextIndexCalc(int currIndex){
@@ -114,7 +133,7 @@ public class GameController {
             return currIndex+1;
     }
 
-    public List<Item> getListItems(Body body) { //ok supporto a checkMove
+    public List<Item> getListItems(Body body) {
 
         List<Item> items = new ArrayList<>();
         for (int[] picks : body.getPositionsPicked()) {
@@ -124,7 +143,11 @@ public class GameController {
 
     }
 
-    public boolean checkBoardNeedForRefill() { //ok supporto a checkMove
+    public Player getActivePlayer() {
+        return activePlayer;
+    }
+
+    public boolean checkBoardNeedForRefill() {
 
         for (int i = 0; i < board.getBoardNumberOfRows(); i++) {
             for (int j = 0; j < board.getBoardNumberOfColumns(); j++) {
@@ -137,25 +160,29 @@ public class GameController {
 
     }
 
-    public void changeState(GameState state) {  //ok
+    public void changeState(GameState state) {
         if(state != this.state) {
             this.state = state;
         }
     }
 
-    public int getAvailableSlot() {  //ok
+    public boolean isGameOver() {
+        return gameOver;
+    }
+
+    public int getAvailableSlot() {
         return state.getAvailableSlot(maxPlayerNumber, playerList);
     }
 
-    public void addPlayer(Player player) { //ok
+    public void addPlayer(Player player) {
         state.addPlayer(player, playerList);
     }
 
-    public void setupGame(boolean onlyOneCommonCard) { //ok supporto a isGameReady
+    public void setupGame(boolean onlyOneCommonCard) {
         state.setupGame(maxPlayerNumber, commonTargetCardsList, board, onlyOneCommonCard,playerList,this);
     }
 
-    public boolean checkLastTurn() {  //ok supporto a checkMove
+    public boolean checkLastTurn() {
         for (Player p : playerList) {
             if (p.getShelf().isFull()) {
                 return true;
@@ -164,7 +191,7 @@ public class GameController {
         return false;
     }
 
-    public void prepareForNewGame() { //ok
+    public void prepareForNewGame() {
         playerList = new ArrayList<>();
         lastTurn = false;
         activePlayer = null;
@@ -186,7 +213,7 @@ public class GameController {
         player.setConnected(!player.isConnected());
     }
 
-    public boolean createLobby(int maxPlayerNumber, boolean onlyOneCommonCard) { //response to create lobby
+    public boolean createLobby(int maxPlayerNumber, boolean onlyOneCommonCard) {
         if (maxPlayerNumber <= 4 && maxPlayerNumber >= 2) {
             setupLobbyParameters(maxPlayerNumber, onlyOneCommonCard);
             return true;
@@ -201,6 +228,27 @@ public class GameController {
 
     public boolean checkSavedGame(String nickname) {
         //todo look into json and look if the nickname is present there
+
+        Gson gson = new Gson();
+
+
+        try {
+            JsonObject jsonObject = gson.fromJson(new FileReader("src/main/resources/jsons/OldGame.json"), JsonObject.class);
+            JsonArray playersList = jsonObject.getAsJsonArray("playerList");
+
+            for (int i=0; i < playersList.size(); i++){
+                JsonObject player = playersList.get(i).getAsJsonObject();
+                String name = player.get("nickname").getAsString();
+                if(name.equals(nickname)){
+                    return true;
+                }
+
+            }
+
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
         return false;
     }
 
@@ -276,21 +324,6 @@ public class GameController {
         checkThread.start();
     }
 
-    public void addInSocketUserMapping() {}
-
-    /* todo da spostare lato client!!!
-    public String checkMessageType(String message) throws IncorrectNicknameException {
-        String[] words= message.split(" ");
-        if(words[0].startsWith("@")){
-            for(Player player:playerList){
-                if(player.getNickname().equals(words[0].substring(1)))
-                    return player.getNickname();
-            }
-            throw new IncorrectNicknameException();
-        }
-        return null;
-    }*/
-
     public void disconnectAllUsers() throws RemoteException {
         for(String s : nickToTCPMessageControllerMapping.keySet()) {
             nickToTCPMessageControllerMapping.get(s).printTCPMessage("Goodbye", null);
@@ -318,12 +351,13 @@ public class GameController {
     }
 
     public void updateView() throws RemoteException {
+        Body body = new Body();
+        NewView newView= getNewView();
+        body.setNewView(newView);
         for(String s : getNickToTCPMessageControllerMapping().keySet()) {
-            Body body = new Body();
-            body.setView(playerList);
             getNickToTCPMessageControllerMapping().get(s).printTCPMessage("Update View", body);
         }
-        server.updateViewRMI();
+        server.updateViewRMI(newView);
     }
 
     public void peerToPeerMsg(String sender, String receiver, String text) throws InvalidNicknameException, RemoteException {
@@ -364,6 +398,13 @@ public class GameController {
         server.broadcastMsg(sender, text);
     }
 
+    public void gameOver() throws RemoteException {
+        NewView newView= getNewView();
+        //todo tells all tcp clients the game is over
+        server.gameOverRMI(newView);
+        prepareForNewGame();
+    }
+
     // le funzioni di disconnessione dell'utente sono diverse tra tcp e rmi secondo me
     // tanto un utemte tcp che decide di disconnettersi deve sicuro ricevere un messaggio tcp,
     // mentre uno rmi riceverà una chiamata a metodo rmi
@@ -384,12 +425,21 @@ public class GameController {
         }
     }
 
+    /* todo da spostare lato client!!!
+    public String checkMessageType(String message) throws IncorrectNicknameException {
+        String[] words= message.split(" ");
+        if(words[0].startsWith("@")){
+            for(Player player:playerList){
+                if(player.getNickname().equals(words[0].substring(1)))
+                    return player.getNickname();
+            }
+            throw new IncorrectNicknameException();
+        }
+        return null;
+    }*/
+
     public void disconnectUserRMI() {}  // todo da fare!!!
 
 }
 
-    //mancherebbero
-    // -sendMessageToAll(String message)
-    // -checkNicknameForMessage(String message,String nickname)
-    // -sendMessageToUser(String message,String nickname)
-    //O forse di queste solo check la fa controller, il resto il server?
+

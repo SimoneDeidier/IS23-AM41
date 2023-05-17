@@ -2,7 +2,6 @@ package it.polimi.ingsw.server.model;
 
 import it.polimi.ingsw.server.model.commons.CommonFourRows;
 import it.polimi.ingsw.server.model.commons.CommonTargetCard;
-import it.polimi.ingsw.server.model.exceptions.EmptyItemListToInsert;
 import it.polimi.ingsw.server.model.exceptions.NotEnoughSpaceInColumnException;
 import it.polimi.ingsw.server.model.items.Item;
 import it.polimi.ingsw.server.model.items.ItemColor;
@@ -15,7 +14,7 @@ import static org.junit.jupiter.api.Assertions.*;
 class CommonFourRowsTest {
 
     @Test
-    void checkFourRows() throws EmptyItemListToInsert, NotEnoughSpaceInColumnException {
+    void checkFourRows() throws NotEnoughSpaceInColumnException {
         CommonTargetCard commonFourRows = new CommonFourRows(2);
 
         // create a sample shelf with four rows of one, two or three different types
@@ -32,7 +31,7 @@ class CommonFourRowsTest {
     }
 
     @Test
-    void checkNoFourRows() throws EmptyItemListToInsert, NotEnoughSpaceInColumnException {
+    void checkNoFourRows() throws NotEnoughSpaceInColumnException {
         CommonTargetCard commonFourRows = new CommonFourRows(2);
 
         // create a sample shelf with less than four rows of one, two or three different types

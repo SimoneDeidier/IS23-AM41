@@ -116,4 +116,8 @@ public class Player {
     public PersonalTargetCard getPersonalTargetCard() {
         return personalTargetCard;
     }
+
+    public boolean checkColumnChosen(int numberOfItemsPicked, int column) {
+        return shelf.checkColumn(numberOfItemsPicked,column);
+    }
 }

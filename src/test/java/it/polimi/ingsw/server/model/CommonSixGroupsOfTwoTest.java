@@ -2,7 +2,6 @@ package it.polimi.ingsw.server.model;
 
 import it.polimi.ingsw.server.model.commons.CommonSixGroupsOfTwo;
 import it.polimi.ingsw.server.model.commons.CommonTargetCard;
-import it.polimi.ingsw.server.model.exceptions.EmptyItemListToInsert;
 import it.polimi.ingsw.server.model.exceptions.NotEnoughSpaceInColumnException;
 import it.polimi.ingsw.server.model.items.Item;
 import it.polimi.ingsw.server.model.items.ItemColor;
@@ -15,7 +14,7 @@ import static org.junit.jupiter.api.Assertions.*;
 class CommonSixGroupsOfTwoTest {
 
     @Test
-    void checkSixGroupsOfTwo() throws EmptyItemListToInsert, NotEnoughSpaceInColumnException {
+    void checkSixGroupsOfTwo() throws NotEnoughSpaceInColumnException {
         CommonTargetCard commonSixGroupsOfTwo = new CommonSixGroupsOfTwo(2);
 
         // create a sample shelf with six groups of two
@@ -31,7 +30,7 @@ class CommonSixGroupsOfTwoTest {
 
     }
     @Test
-    void checkNoSixGroupsOfTwo() throws EmptyItemListToInsert, NotEnoughSpaceInColumnException {
+    void checkNoSixGroupsOfTwo() throws NotEnoughSpaceInColumnException {
 
         CommonTargetCard commonSixGroupsOfTwo = new CommonSixGroupsOfTwo(2);
 

@@ -1,6 +1,7 @@
 package it.polimi.ingsw.interfaces;
 
 import it.polimi.ingsw.messages.Body;
+import it.polimi.ingsw.server.servercontroller.exceptions.InvalidMoveException;
 
 import java.rmi.Remote;
 import java.rmi.RemoteException;
@@ -10,8 +11,8 @@ public interface InterfaceServer extends Remote {
 
     void presentation(InterfaceClient cl, String nickname) throws RemoteException;
     boolean sendParameters(int maxPlayerNumber,boolean onlyOneCommonCard) throws RemoteException;
-    boolean executeMove(Body move) throws RemoteException;
-    // void sendMessage(InterfaceClient cl,String message) throws RemoteException;
-
-    void updateViewRMI() throws RemoteException;
+    void executeMove(Body move) throws RemoteException, InvalidMoveException;
+    void clearRMI() throws RemoteException;
+    void peerToPeerMsgHandler(String sender, String receiver, String text) throws RemoteException;
+    void broadcastMsgHandler(String sender, String text) throws RemoteException;
 }

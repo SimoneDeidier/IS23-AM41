@@ -1,6 +1,5 @@
 package it.polimi.ingsw.server.model;
 
-import it.polimi.ingsw.server.model.exceptions.EmptyItemListToInsert;
 import it.polimi.ingsw.server.model.exceptions.EmptyShelfException;
 import it.polimi.ingsw.server.model.exceptions.NotEnoughSpaceInColumnException;
 import it.polimi.ingsw.server.model.items.Item;
@@ -28,7 +27,7 @@ class ShelfTest {
     private final List<Item> emptyList = new ArrayList<>(3);
 
     @BeforeEach
-    void initialize() throws EmptyItemListToInsert, NotEnoughSpaceInColumnException {
+    void initialize() throws NotEnoughSpaceInColumnException {
         emptyShelf = new Shelf();
         random = new Random();
         itemList = new ArrayList<>(3);
@@ -91,7 +90,7 @@ class ShelfTest {
     }
 
     @RepeatedTest(5000)
-    void notFullEmptyShelf() throws EmptyItemListToInsert, NotEnoughSpaceInColumnException {
+    void notFullEmptyShelf() throws NotEnoughSpaceInColumnException {
         emptyShelf = new Shelf();
         int col = random.nextInt(COLUMNS);
         emptyShelf.insertItems(col, itemList);
@@ -104,25 +103,13 @@ class ShelfTest {
     }
 
     @RepeatedTest(5000)
-    void insertNullList() {
-        emptyShelf = new Shelf();
-        assertThrows(EmptyItemListToInsert.class, () -> emptyShelf.insertItems(random.nextInt(COLUMNS), null));
-    }
-
-    @RepeatedTest(5000)
-    void insertEmptyList() {
-        emptyShelf = new Shelf();
-        assertThrows(EmptyItemListToInsert.class, () -> emptyShelf.insertItems(random.nextInt(COLUMNS), emptyList));
-    }
-
-    @RepeatedTest(5000)
     void insertItemNotThrowsException() {
         emptyShelf = new Shelf();
         assertDoesNotThrow(() -> emptyShelf.insertItems(random.nextInt(COLUMNS), itemList));
     }
 
     @RepeatedTest(5000)
-    void itemExistsInShelfAfterInsertItem() throws EmptyItemListToInsert, NotEnoughSpaceInColumnException {
+    void itemExistsInShelfAfterInsertItem() throws NotEnoughSpaceInColumnException {
         emptyShelf = new Shelf();
         int col = random.nextInt(COLUMNS);
         emptyShelf.insertItems(col, itemList);

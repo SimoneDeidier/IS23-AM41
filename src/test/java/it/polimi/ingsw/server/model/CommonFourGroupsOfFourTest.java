@@ -2,7 +2,6 @@ package it.polimi.ingsw.server.model;
 
 import it.polimi.ingsw.server.model.commons.CommonFourGroupsOfFour;
 import it.polimi.ingsw.server.model.commons.CommonTargetCard;
-import it.polimi.ingsw.server.model.exceptions.EmptyItemListToInsert;
 import it.polimi.ingsw.server.model.exceptions.NotEnoughSpaceInColumnException;
 import it.polimi.ingsw.server.model.items.Item;
 import it.polimi.ingsw.server.model.items.ItemColor;
@@ -15,7 +14,7 @@ import static org.junit.jupiter.api.Assertions.*;
 class CommonFourGroupsOfFourTest {
 
     @Test
-    void checkFourGroupsOfFour() throws EmptyItemListToInsert, NotEnoughSpaceInColumnException {
+    void checkFourGroupsOfFour() throws NotEnoughSpaceInColumnException {
         CommonTargetCard commonFourGroupsOfFour = new CommonFourGroupsOfFour(2);
 
         // create a sample shelf with four groups of four
@@ -31,7 +30,7 @@ class CommonFourGroupsOfFourTest {
 
     }
     @Test
-    void checkNosFourGroupsOfFour() throws EmptyItemListToInsert, NotEnoughSpaceInColumnException {
+    void checkNosFourGroupsOfFour() throws NotEnoughSpaceInColumnException {
 
         CommonTargetCard commonFourGroupsOfFour = new CommonFourGroupsOfFour(2);
 

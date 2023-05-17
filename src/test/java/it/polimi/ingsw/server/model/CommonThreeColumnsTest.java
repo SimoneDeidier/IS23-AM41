@@ -2,7 +2,6 @@ package it.polimi.ingsw.server.model;
 
 import it.polimi.ingsw.server.model.commons.CommonTargetCard;
 import it.polimi.ingsw.server.model.commons.CommonThreeColumns;
-import it.polimi.ingsw.server.model.exceptions.EmptyItemListToInsert;
 import it.polimi.ingsw.server.model.exceptions.NotEnoughSpaceInColumnException;
 import it.polimi.ingsw.server.model.items.Item;
 import it.polimi.ingsw.server.model.items.ItemColor;
@@ -17,7 +16,7 @@ import static org.junit.jupiter.api.Assertions.*;
 class CommonThreeColumnsTest {
 
     @Test
-    void check() throws EmptyItemListToInsert, NotEnoughSpaceInColumnException {
+    void check() throws NotEnoughSpaceInColumnException {
 
         Shelf shelf = new Shelf();
         CommonTargetCard card  = new CommonThreeColumns(2);
