@@ -40,9 +40,14 @@ public class TCPMessageController implements TCPMessageControllerInterface {
                         }
                         case 0: {  // you're joining but I need another nickname
                             printTCPMessage("Invalid Nickname", null);
+                            System.err.println("SENDING AN Invalid Nickname MESSAGE");
                         }
                     }
-                } catch (CancelGameException e) { //the game is being canceled because a restoring of a saved game failed
+                }
+                catch (WaitForLobbyParametersException e) {
+                    printTCPMessage("Wait for Lobby", null);
+                }
+                catch (CancelGameException e) { //the game is being canceled because a restoring of a saved game failed
                     gameController.disconnectAllUsers();
                 } catch (GameStartException e) { //the game is starting because everyone is connected, updating everyone views
                     gameController.startGame();

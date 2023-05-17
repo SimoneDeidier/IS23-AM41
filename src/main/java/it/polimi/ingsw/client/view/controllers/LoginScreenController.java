@@ -59,7 +59,11 @@ public class LoginScreenController {
     }
 
     public void sendParameters() {
-
+        Integer numPlayers = playersChoiceBox.getSelectionModel().getSelectedItem();
+        Integer numCommons = commonsChoiceBox.getSelectionModel().getSelectedItem();
+        if(numPlayers != null && numCommons != null) {
+            gui.sendParameters(numPlayers, numCommons);
+        }
     }
 
     public void invalidNickname() {

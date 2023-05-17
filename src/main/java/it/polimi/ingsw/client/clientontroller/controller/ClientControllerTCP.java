@@ -51,4 +51,13 @@ public class ClientControllerTCP implements ClientController {
         userInterface.invalidNickname();
     }
 
+    @Override
+    public void sendParameters(int numPlayers, int numCommons) {
+        Body body = new Body();
+        body.setPlayerNickname(this.playerNickname);
+        body.setNumberOfPlayers(numPlayers);
+        body.setOnlyOneCommon(numCommons == 1);
+        tcpMessageController.printTCPMessage("Create Lobby", body);
+    }
+
 }

@@ -31,5 +31,10 @@ public class TextUserInterface implements UserInterface{
 
     }
 
+    @Override
+    public void sendParameters(int numPlayers, int numCommons) {
+
+    }
+
 }
 

@@ -51,4 +51,9 @@ public class GraphicUserInterface extends Application implements UserInterface {
         loginScreenController.invalidNickname();
     }
 
+    @Override
+    public void sendParameters(int numPlayers, int numCommons) {
+         clientController.sendParameters(numPlayers, numCommons);
+    }
+
 }

@@ -14,4 +14,6 @@ public interface UserInterface {
     void sendNickname(String nickname);
 
     void invalidNickname();
+
+    void sendParameters(int numPlayers, int numCommons);
 }

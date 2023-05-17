@@ -20,10 +20,10 @@ public class GameController {
 
     private static GameController instance;
     private List<Player> playerList = new ArrayList<>(4);
-    private int maxPlayerNumber;
-    private boolean lastTurn;
-    private boolean onlyOneCommonCard;
-    private Player activePlayer; //acts as a kind of turn
+    private int maxPlayerNumber = 0;
+    private boolean lastTurn = false;
+    private boolean onlyOneCommonCard = false;
+    private Player activePlayer = null; //acts as a kind of turn
     private BoardFactory board;
     private GameState state;
     private List<CommonTargetCard> commonTargetCardsList;
@@ -204,9 +204,10 @@ public class GameController {
         return false;
     }
 
-    public synchronized int presentation(String nickname) throws FirstPlayerException, CancelGameException, GameStartException, FullLobbyException { //response to presentation
+    public synchronized int presentation(String nickname) throws FirstPlayerException, CancelGameException, GameStartException, FullLobbyException, WaitForLobbyParametersException { //response to presentation
         int availableSlots = getAvailableSlot();
         if (availableSlots == -1) { //handling the first player
+            System.err.println("FIRST PLAYER");
             if (checkSavedGame(nickname)) { //the first player is present in the saved game
                 setupGame(onlyOneCommonCard);
                 changeState(new WaitingForSavedGameState());
@@ -216,22 +217,36 @@ public class GameController {
                     return 2;
                 }
             } else {
+                System.err.println("NO SAVED PLAYER");
                 changeState(new WaitingForPlayerState()); //the first player is new
+                System.err.println("UPDATED SERVER STATE");
+                System.err.println(state);
                 addPlayer(new Player(nickname));
+                System.err.println("ADDED PLAYER TO PLAYERLIST");
+                System.err.println(playerList);
                 throw new FirstPlayerException();
             }
-        } else if (availableSlots <= 0)  //No place for a new player
+        }
+        else if (availableSlots == -2) {
+            throw new WaitForLobbyParametersException();
+        }
+        else if (availableSlots == 0) {  //No place for a new player
+            System.err.println("FULL LOBBY!");
             throw new FullLobbyException();
+        }
 
         switch (checkNicknameAvailability(nickname)) {
             case -1 -> { //it wasn't possible to restore a saved game, goodbye to everyone
                 throw new CancelGameException();
             }
             case 0 -> {     //unavailable nickname
+                System.err.println("NICKNAME UNAVAILABLE");
                 return 0;
             }
             default -> {  //you're in! (case: 1)
+                System.err.println("NICKNAME OK");
                 addPlayer(new Player(nickname));
+                System.err.println("ADDED PLAYER");
                 if (isGameReady()) {
                     throw new GameStartException();
                 }

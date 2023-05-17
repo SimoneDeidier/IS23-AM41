@@ -24,6 +24,9 @@ public class TCPMessageController implements TCPMessageControllerInterface {
             case "Nickname Accepted" -> {
                 System.err.println("NICKNAMNE ACCEPTED!");
             }
+            case "Wait for Lobby" -> {
+                System.err.println("IMPOSSIBLE TO ACCEPT THE NICKNAME, WAIT FOR A LOBBY CREATED!");
+            }
             case "Player Restored" -> {
 
             }

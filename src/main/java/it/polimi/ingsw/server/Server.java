@@ -159,6 +159,8 @@ public class Server implements InterfaceServer {
             cl.disconnectUser(1);
         } catch (FirstPlayerException e) { //you're the first player connecting for creating a new game, I need more parameters from you
             cl.askParameters();
+        } catch (WaitForLobbyParametersException e) {
+            // todo da fare che manda il messaggio di asettare per mandare i parametri
         }
     }
 

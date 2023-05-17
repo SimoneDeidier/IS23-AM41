@@ -13,4 +13,6 @@ public interface ClientController {
     void getParameters();
 
     void invalidNickname();
+
+    void sendParameters(int numPlayers, int numCommons);
 }
