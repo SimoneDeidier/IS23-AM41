@@ -1,11 +1,15 @@
 package it.polimi.ingsw.client.view;
 
-import it.polimi.ingsw.client.clientontroller.controller.ClientController;
+import it.polimi.ingsw.client.clientcontroller.controller.ClientController;
+import it.polimi.ingsw.client.view.controllers.GameScreenController;
 import it.polimi.ingsw.client.view.controllers.LoginScreenController;
 import javafx.application.Application;
+import javafx.application.Platform;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Scene;
 import javafx.stage.Stage;
+
+import java.io.IOException;
 
 public class GraphicUserInterface extends Application implements UserInterface {
 
@@ -13,6 +17,7 @@ public class GraphicUserInterface extends Application implements UserInterface {
     private static Stage guiStage;
     private static FXMLLoader loader;
     private static LoginScreenController loginScreenController;
+    private static GameScreenController gameScreenController;
 
     @Override
     public void run() {
@@ -69,6 +74,26 @@ public class GraphicUserInterface extends Application implements UserInterface {
     @Override
     public void waitForLobby() {
         loginScreenController.waitForLobby();
+    }
+
+    @Override
+    public void loadGameScreen(int personalTargetCardNumber, String nickname, int personalNumber) {
+        Platform.runLater(() -> {
+            guiStage.close();
+            loader = new FXMLLoader(ClassLoader.getSystemResource("fxml/GameScreen.fxml"));
+            try {
+                guiStage.setScene(new Scene(loader.load()));
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+            gameScreenController = loader.getController();
+            gameScreenController.setGui(this);
+            gameScreenController.setPlayerText(nickname, 0);
+            gameScreenController.setPersonalTargetCard(personalNumber);
+            guiStage.setResizable(false);
+            guiStage.setTitle("My Shelfie - Gaming Phase");
+            guiStage.show();
+        });
     }
 
 }

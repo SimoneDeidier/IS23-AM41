@@ -1,7 +1,6 @@
 package it.polimi.ingsw.client.view;
 
-import it.polimi.ingsw.client.clientontroller.controller.ClientController;
-import it.polimi.ingsw.server.servercontroller.GameController;
+import it.polimi.ingsw.client.clientcontroller.controller.ClientController;
 
 import java.io.IOException;
 
@@ -22,4 +21,6 @@ public interface UserInterface {
     void lobbyCreated();
 
     void waitForLobby();
+
+    void loadGameScreen(int personalTargetCardNumber, String nickname, int personalNumber);
 }

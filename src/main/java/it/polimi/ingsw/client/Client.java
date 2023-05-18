@@ -1,8 +1,8 @@
 package it.polimi.ingsw.client;
 
-import it.polimi.ingsw.client.clientontroller.connection.Connection;
-import it.polimi.ingsw.client.clientontroller.connection.ConnectionRMI;
-import it.polimi.ingsw.client.clientontroller.connection.ConnectionTCP;
+import it.polimi.ingsw.client.clientcontroller.connection.Connection;
+import it.polimi.ingsw.client.clientcontroller.connection.ConnectionRMI;
+import it.polimi.ingsw.client.clientcontroller.connection.ConnectionTCP;
 
 import java.io.BufferedReader;
 import java.io.InputStream;

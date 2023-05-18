@@ -13,12 +13,12 @@
    <children>
       <ImageView fitHeight="720.0" fitWidth="1280.0" layoutX="477.0" layoutY="322.0" pickOnBounds="true" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
          <image>
-            <Image url="@../images/sfondo_parquet.jpg" />
+            <Image url="@../images/background.jpg" />
          </image>
       </ImageView>
       <ImageView fitHeight="281.0" fitWidth="1048.0" layoutX="130.0" layoutY="89.0" pickOnBounds="true" preserveRatio="true" AnchorPane.leftAnchor="185.0" AnchorPane.topAnchor="89.0">
          <image>
-            <Image url="@../images/Title_2000x618px.png" />
+            <Image url="@../images/title.png" />
          </image>
       </ImageView>
       <AnchorPane fx:id="nicknameAnchorPane" layoutX="157.0" layoutY="388.0" prefHeight="200.0" prefWidth="200.0" AnchorPane.bottomAnchor="89.0" AnchorPane.leftAnchor="299.0" AnchorPane.rightAnchor="298.0" AnchorPane.topAnchor="389.0">

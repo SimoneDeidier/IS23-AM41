@@ -1,10 +1,7 @@
 package it.polimi.ingsw.messages;
 
 import it.polimi.ingsw.server.model.PersonalTargetCard;
-import it.polimi.ingsw.server.model.Player;
-import it.polimi.ingsw.server.model.commons.CommonTargetCard;
 
-import java.net.Socket;
 import java.util.List;
 
 public class Body {
@@ -16,7 +13,7 @@ public class Body {
     private String receiverNickname;
     private String senderNickname;
     private String text;
-    private PersonalTargetCard personalCard;
+    private int personalCardNumber;
     private NewView newView;
 
     public String getPlayerNickname() {
@@ -83,12 +80,12 @@ public class Body {
         this.senderNickname = senderNickname;
     }
 
-    public PersonalTargetCard getPersonalCard() {
-        return personalCard;
+    public int getPersonalCardNumber() {
+        return personalCardNumber;
     }
 
-    public void setPersonalCard(PersonalTargetCard personalCard) {
-        this.personalCard = personalCard;
+    public void setPersonalCardNumber(int personalCardNumber) {
+        this.personalCardNumber = personalCardNumber;
     }
 
     public NewView getNewView() {
