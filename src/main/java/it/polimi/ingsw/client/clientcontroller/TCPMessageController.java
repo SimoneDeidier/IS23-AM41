@@ -47,22 +47,22 @@ public class TCPMessageController implements TCPMessageControllerInterface {
             }
             case "Update View" -> {
                 System.err.println("UPDATE VIEW ARRIVATO");
-                controller.nicknameAccepted();
+                // todo
             }
             case "Lobby Created" -> {
                 controller.lobbyCreated();
             }
             case "Wrong Parameters" -> {
-
+                // todo
             }
             case "Incorrect Move" -> {
-
+                // todo
             }
             case "Wrong Receiver" -> {
-
+                // todo
             }
             case "New Msg" -> {
-
+                controller.receiveMessage(message.getBody().getText(), message.getBody().getSenderNickname(), message.getBody().getLocalDateTime());
             }
         }
     }

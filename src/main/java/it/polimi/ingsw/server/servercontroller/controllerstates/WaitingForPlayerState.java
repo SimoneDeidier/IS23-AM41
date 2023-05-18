@@ -52,7 +52,7 @@ public class WaitingForPlayerState extends GameState {
         int personalCode= (random.nextInt(12));
         boolean isAlreadyPresent = false;
         for(Player playerInFor: playerList){
-            if(playerInFor.getPersonalTargetCard()!=null && playerInFor.getPersonalTargetCard().getWhichPersonal() == personalCode) {
+            if(playerInFor.getPersonalTargetCard()!=null && playerInFor.getPersonalTargetCard().getPersonaNumber() == personalCode) {
                 isAlreadyPresent = true;
                 break;
             }
@@ -61,7 +61,7 @@ public class WaitingForPlayerState extends GameState {
             isAlreadyPresent = false;
             personalCode = (random.nextInt(12));
             for (Player playerInFor : playerList) {
-                if (playerInFor.getPersonalTargetCard() != null && playerInFor.getPersonalTargetCard().getWhichPersonal() == personalCode) {
+                if (playerInFor.getPersonalTargetCard() != null && playerInFor.getPersonalTargetCard().getPersonaNumber() == personalCode) {
                     isAlreadyPresent = true;
                     break;
                 }

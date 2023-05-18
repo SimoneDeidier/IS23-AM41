@@ -6,8 +6,10 @@ import it.polimi.ingsw.client.view.TextUserInterface;
 import it.polimi.ingsw.client.view.UserInterface;
 import it.polimi.ingsw.messages.Body;
 
+import java.io.IOException;
 import java.io.Serializable;
 import java.rmi.RemoteException;
+import java.time.LocalDateTime;
 
 public class ClientControllerRMI implements ClientController, Serializable {
 
@@ -78,5 +80,25 @@ public class ClientControllerRMI implements ClientController, Serializable {
     @Override
     public void waitForLobby() {
         userInterface.waitForLobby();
+    }
+
+    @Override
+    public void setPersonalTargetCardNumber(int personalTargetCardNumber) {
+
+    }
+
+    @Override
+    public void loadGameScreen() throws IOException {
+
+    }
+
+    @Override
+    public void sendMessage(String message) {
+
+    }
+
+    @Override
+    public void receiveMessage(String message, String sender, String localDateTime) {
+
     }
 }

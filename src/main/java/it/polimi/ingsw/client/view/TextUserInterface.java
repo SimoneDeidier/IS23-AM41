@@ -3,6 +3,7 @@ package it.polimi.ingsw.client.view;
 import it.polimi.ingsw.client.clientcontroller.controller.ClientController;
 
 import java.io.IOException;
+import java.time.LocalDateTime;
 
 public class TextUserInterface implements UserInterface{
 
@@ -54,7 +55,17 @@ public class TextUserInterface implements UserInterface{
     }
 
     @Override
-    public void loadGameScreen(int personalTargetCardNumber, String nickname, int personalNumber) {
+    public void loadGameScreen(int personalTargetCardNumber, String nickname) {
+
+    }
+
+    @Override
+    public void sendMessage(String message) {
+
+    }
+
+    @Override
+    public void receiveMessage(String message, String sender, String localDateTime) {
 
     }
 

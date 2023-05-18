@@ -4,6 +4,7 @@ import it.polimi.ingsw.client.clientcontroller.controller.ClientController;
 import it.polimi.ingsw.server.servercontroller.GameController;
 
 import java.io.IOException;
+import java.time.LocalDateTime;
 
 public interface UserInterface {
 
@@ -23,5 +24,9 @@ public interface UserInterface {
 
     void waitForLobby();
 
-    void loadGameScreen(int personalTargetCardNumber, String nickname, int personalNumber);
+    void loadGameScreen(int personalTargetCardNumber, String nickname);
+
+    void sendMessage(String message);
+
+    void receiveMessage(String message, String sender, String localDateTime);
 }

@@ -2,6 +2,7 @@ package it.polimi.ingsw.messages;
 
 import it.polimi.ingsw.server.model.PersonalTargetCard;
 
+import java.time.LocalDateTime;
 import java.util.List;
 
 public class Body {
@@ -15,6 +16,7 @@ public class Body {
     private String text;
     private int personalCardNumber;
     private NewView newView;
+    private String localDateTime;
 
     public String getPlayerNickname() {
         return playerNickname;
@@ -94,5 +96,13 @@ public class Body {
 
     public void setNewView(NewView newView) {
         this.newView = newView;
+    }
+
+    public String getLocalDateTime() {
+        return localDateTime;
+    }
+
+    public void setLocalDateTime(String localDateTime) {
+        this.localDateTime = localDateTime;
     }
 }

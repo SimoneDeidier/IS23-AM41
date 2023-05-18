@@ -13,11 +13,13 @@ import it.polimi.ingsw.server.model.items.Item;
 import it.polimi.ingsw.server.model.tokens.EndGameToken;
 import it.polimi.ingsw.server.servercontroller.controllerstates.*;
 import it.polimi.ingsw.server.servercontroller.exceptions.*;
+import javafx.util.converter.LocalDateStringConverter;
 
 import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
 import java.rmi.RemoteException;
+import java.time.LocalDateTime;
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 
@@ -223,7 +225,7 @@ public class GameController {
     public boolean checkSavedGame(String nickname) {
         //todo da rifare
 
-        Gson gson = new Gson();
+        /*Gson gson = new Gson();
         File json = new File(Objects.requireNonNull(ClassLoader.getSystemResourceAsStream("json/OldGame.json")).toString());
 
         try {
@@ -248,7 +250,7 @@ public class GameController {
 
         } catch (IOException e) {
             e.printStackTrace();
-        }
+        } */
 
         return false;
     }
@@ -310,7 +312,7 @@ public class GameController {
         System.err.println("IS ONE COMMON: " + onlyOneCommonCard);
         changeState(new RunningGameState());
         System.err.println("STATE: " + state);
-        checkThread = new Thread(() -> {
+        /* checkThread = new Thread(() -> {
             System.err.println("THREAD PING STARTED!");
             while(true) {
                 try {
@@ -322,7 +324,7 @@ public class GameController {
                 }
             }
         });
-        checkThread.start();
+        checkThread.start(); */
     }
 
     public void disconnectAllUsers() throws RemoteException {
@@ -341,7 +343,7 @@ public class GameController {
             System.err.println("PLAYER LIST: " + playerList);
             for(Player p : playerList) {
                 if(Objects.equals(p.getNickname(), s)) {
-                    body.setPersonalCardNumber(p.getPersonalTargetCard().getWhichPersonal());
+                    body.setPersonalCardNumber(p.getPersonalTargetCard().getPersonaNumber());
                     System.err.println("MANDO A: " + p.getNickname());
                     break;
                 }
@@ -361,7 +363,7 @@ public class GameController {
         server.updateViewRMI(newView);
     }
 
-    public void peerToPeerMsg(String sender, String receiver, String text) throws InvalidNicknameException, RemoteException {
+    public void peerToPeerMsg(String sender, String receiver, String text, String localDateTime) throws InvalidNicknameException, RemoteException {
         if(!nickToTCPMessageControllerMapping.containsKey(receiver) && !server.checkReceiver(receiver)) {
             throw new InvalidNicknameException();
         }
@@ -371,6 +373,7 @@ public class GameController {
             Body body = new Body();
             body.setSenderNickname(sender);
             body.setText(text);
+            body.setLocalDateTime(localDateTime);
             nickToTCPMessageControllerMapping.get(receiver).printTCPMessage("New Msg", body);
         }
         else {
@@ -382,6 +385,7 @@ public class GameController {
             Body body = new Body();
             body.setSenderNickname(sender);
             body.setText(text);
+            body.setLocalDateTime(localDateTime);
             nickToTCPMessageControllerMapping.get(sender).printTCPMessage("New Msg", body);
         }
         else {
@@ -389,18 +393,19 @@ public class GameController {
         }
     }
 
-    public void broadcastMsg(String sender, String text) throws RemoteException {
+    public void broadcastMsg(String sender, String text, String localDateTime) throws RemoteException {
         for(String s : nickToTCPMessageControllerMapping.keySet()) {
             Body body = new Body();
             body.setSenderNickname(sender);
             body.setText(text);
+            body.setLocalDateTime(localDateTime);
             nickToTCPMessageControllerMapping.get(s).printTCPMessage("New Msg", body);
         }
         server.broadcastMsg(sender, text);
     }
 
     public void gameOver() throws RemoteException {
-        NewView newView= getNewView();
+        NewView newView = getNewView();
         //todo tells all tcp clients the game is over
         server.gameOverRMI(newView);
         prepareForNewGame();
@@ -432,18 +437,6 @@ public class GameController {
         // todo da finre
     }
 
-    /* todo da spostare lato client!!!
-    public String checkMessageType(String message) throws IncorrectNicknameException {
-        String[] words= message.split(" ");
-        if(words[0].startsWith("@")){
-            for(Player player:playerList){
-                if(player.getNickname().equals(words[0].substring(1)))
-                    return player.getNickname();
-            }
-            throw new IncorrectNicknameException();
-        }
-        return null;
-    }*/
 
     public void disconnectUserRMI() {}  // todo da fare!!!
 

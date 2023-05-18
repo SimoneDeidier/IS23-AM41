@@ -7,6 +7,7 @@ import it.polimi.ingsw.server.servercontroller.exceptions.*;
 
 import java.net.Socket;
 import java.rmi.RemoteException;
+import java.time.LocalDateTime;
 
 public class TCPMessageController implements TCPMessageControllerInterface {
 
@@ -53,7 +54,8 @@ public class TCPMessageController implements TCPMessageControllerInterface {
                     gameController.putNickToSocketMapping(nickname, this);
                     gameController.startGame();
                     gameController.yourTarget();
-                    gameController.updateView();
+                    // todo da implementare il new view
+                    // gameController.updateView();
                 } catch (FullLobbyException e) { //you can't connect right now, the lobby is full or a game is already playing on the server
                     printTCPMessage("Goodbye", null);
                     closeConnection();
@@ -74,12 +76,6 @@ public class TCPMessageController implements TCPMessageControllerInterface {
                 }
             }
             case "Move" -> {
-                /*if(gameController.checkMove(message.getBody())) {
-                    gameController.updateView();
-                }
-                else {
-                    printTCPMessage("Incorrect Move", null);
-                }*/
                 try {
                     gameController.executeMove(message.getBody());
                     if(gameController.isGameOver()){
@@ -97,8 +93,9 @@ public class TCPMessageController implements TCPMessageControllerInterface {
                 String sender = message.getBody().getSenderNickname();
                 String receiver = message.getBody().getReceiverNickname();
                 String text = message.getBody().getText();
+                String localDateTime = message.getBody().getLocalDateTime();
                 try {
-                    gameController.peerToPeerMsg(sender, receiver, text);
+                    gameController.peerToPeerMsg(sender, receiver, text, localDateTime);
                 }
                 catch (InvalidNicknameException e) {
                     printTCPMessage("Wrong Receiver", null);
@@ -107,7 +104,8 @@ public class TCPMessageController implements TCPMessageControllerInterface {
             case "Broadcast Msg" -> {
                 String sender = message.getBody().getSenderNickname();
                 String text = message.getBody().getText();
-                gameController.broadcastMsg(sender, text);
+                String localDateTime = message.getBody().getLocalDateTime();
+                gameController.broadcastMsg(sender, text, localDateTime);
             }
             case "Disconnect" -> {
                 gameController.disconnectUserTCP(this);

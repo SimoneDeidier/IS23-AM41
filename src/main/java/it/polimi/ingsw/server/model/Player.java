@@ -52,14 +52,11 @@ public class Player {
                 System.out.println("Player: " + nickname);
             }
             finally {
-                // bypass del check sulle common per far runnare i test.....
-                if(commonTargetCardList != null) {
-                    if (commonTargetCardList.get(0).check(shelf)) {
-                        scoringTokenList.add(commonTargetCardList.get(0).assignToken(this));
-                    }
-                    if (commonTargetCardList.size() == 2 && commonTargetCardList.get(1).check(shelf)) {
-                        scoringTokenList.add(commonTargetCardList.get(1).assignToken(this));
-                    }
+                if (commonTargetCardList.get(0).check(shelf)) {
+                    scoringTokenList.add(commonTargetCardList.get(0).assignToken(this));
+                }
+                if (commonTargetCardList.size() == 2 && commonTargetCardList.get(1).check(shelf)) {
+                    scoringTokenList.add(commonTargetCardList.get(1).assignToken(this));
                 }
                 for (Token token : scoringTokenList) {
                     if (token != null) {

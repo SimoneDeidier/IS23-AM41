@@ -9,8 +9,11 @@ import javafx.fxml.FXMLLoader;
 import javafx.scene.Scene;
 import javafx.stage.Stage;
 
+import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.Serializable;
+import java.net.URISyntaxException;
+import java.time.LocalDateTime;
 
 public class GraphicUserInterface extends Application implements UserInterface, Serializable {
 
@@ -78,10 +81,10 @@ public class GraphicUserInterface extends Application implements UserInterface, 
     }
 
     @Override
-    public void loadGameScreen(int personalTargetCardNumber, String nickname, int personalNumber) {
+    public void loadGameScreen(int personalTargetCardNumber, String nickname) {
         Platform.runLater(() -> {
             guiStage.close();
-            loader = new FXMLLoader(ClassLoader.getSystemResource("fxml/GameScreen.fxml"));
+            FXMLLoader loader = new FXMLLoader(ClassLoader.getSystemResource("fxml/GameScreen.fxml"));
             try {
                 guiStage.setScene(new Scene(loader.load()));
             } catch (IOException e) {
@@ -90,11 +93,25 @@ public class GraphicUserInterface extends Application implements UserInterface, 
             gameScreenController = loader.getController();
             gameScreenController.setGui(this);
             gameScreenController.setPlayerText(nickname, 0);
-            gameScreenController.setPersonalTargetCard(personalNumber);
+            try {
+                gameScreenController.setPersonalTargetCard(personalTargetCardNumber);
+            } catch (URISyntaxException | FileNotFoundException e) {
+                e.printStackTrace();
+            }
             guiStage.setResizable(false);
             guiStage.setTitle("My Shelfie - Gaming Phase");
             guiStage.show();
         });
+    }
+
+    @Override
+    public void sendMessage(String message) {
+        clientController.sendMessage(message);
+    }
+
+    @Override
+    public void receiveMessage(String message, String sender, String localDateTime) {
+        gameScreenController.addMessageInChat(message, sender, localDateTime);
     }
 
 }

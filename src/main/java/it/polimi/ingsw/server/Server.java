@@ -18,6 +18,7 @@ import java.rmi.RemoteException;
 import java.rmi.registry.LocateRegistry;
 import java.rmi.registry.Registry;
 import java.rmi.server.UnicastRemoteObject;
+import java.time.LocalDateTime;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Scanner;
@@ -217,9 +218,9 @@ public class Server implements InterfaceServer {
     }
 
     @Override
-    public void peerToPeerMsgHandler(String sender, String receiver, String text) throws RemoteException {
+    public void peerToPeerMsgHandler(String sender, String receiver, String text, String localDateTime) throws RemoteException {
         try {
-            controller.peerToPeerMsg(sender,receiver,text);
+            controller.peerToPeerMsg(sender,receiver,text, localDateTime);
         } catch (InvalidNicknameException e) {
             clientMapRMI.get(sender).wrongMessageWarning(text);
         }
@@ -230,8 +231,8 @@ public class Server implements InterfaceServer {
     }
 
     @Override
-    public void broadcastMsgHandler(String sender, String text) throws RemoteException {
-        controller.broadcastMsg(sender,text);
+    public void broadcastMsgHandler(String sender, String text, String localDateTime) throws RemoteException {
+        controller.broadcastMsg(sender,text, localDateTime);
     }
 
     public void broadcastMsg(String sender, String text) throws RemoteException {

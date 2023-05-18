@@ -5,6 +5,7 @@ import javafx.fxml.FXML;
 import javafx.scene.control.TextField;
 
 import java.io.IOException;
+import java.time.LocalDateTime;
 
 public interface ClientController {
 
@@ -20,4 +21,8 @@ public interface ClientController {
     void setPersonalTargetCardNumber(int personalTargetCardNumber);
 
     void loadGameScreen() throws IOException;
+
+    void sendMessage(String message);
+
+    void receiveMessage(String message, String sender, String localDateTime);
 }

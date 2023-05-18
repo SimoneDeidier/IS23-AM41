@@ -13,22 +13,22 @@ import java.net.URISyntaxException;
 import java.nio.charset.StandardCharsets;
 
 public class PersonalTargetCard {
-    int whichPersonal;
-    final int pinkX;
-    final int pinkY;
-    final int light_blueX;
-    final int light_blueY;
-    final int yellowX;
-    final int yellowY;
-    final int blueX;
-    final int blueY;
-    final int whiteX;
-    final int whiteY;
-    final int greenX;
-    final int greenY;
+    int personaNumber;
+    final int pinkRow;
+    final int pinkCol;
+    final int light_blueRow;
+    final int light_blueCol;
+    final int yellowRow;
+    final int yellowCol;
+    final int blueRow;
+    final int blueCol;
+    final int whiteRow;
+    final int whiteCol;
+    final int greenRow;
+    final int greenCol;
 
     public PersonalTargetCard(int personal) throws IOException, URISyntaxException {
-        whichPersonal =personal;
+        personaNumber = personal;
         Gson gson = new Gson();
         File jsonFile = new File(ClassLoader.getSystemResource("json/PersonalTargetCards.json").toURI());
         String jsonString = FileUtils.readFileToString(jsonFile, StandardCharsets.UTF_8);
@@ -37,23 +37,23 @@ public class PersonalTargetCard {
 
         JsonObject TargetCard = jsonArray.get(personal).getAsJsonObject();
 
-        pinkX = TargetCard.getAsJsonObject("pink").get("x").getAsInt();
-        pinkY = TargetCard.getAsJsonObject("pink").get("y").getAsInt();
+        pinkRow = TargetCard.getAsJsonObject("pink").get("row").getAsInt();
+        pinkCol = TargetCard.getAsJsonObject("pink").get("column").getAsInt();
 
-        light_blueX = TargetCard.getAsJsonObject("light_blue").get("x").getAsInt();
-        light_blueY = TargetCard.getAsJsonObject("light_blue").get("y").getAsInt();
+        light_blueRow = TargetCard.getAsJsonObject("light_blue").get("row").getAsInt();
+        light_blueCol = TargetCard.getAsJsonObject("light_blue").get("column").getAsInt();
 
-        yellowX = TargetCard.getAsJsonObject("yellow").get("x").getAsInt();
-        yellowY = TargetCard.getAsJsonObject("yellow").get("y").getAsInt();
+        yellowRow = TargetCard.getAsJsonObject("yellow").get("row").getAsInt();
+        yellowCol = TargetCard.getAsJsonObject("yellow").get("column").getAsInt();
 
-        blueX = TargetCard.getAsJsonObject("blue").get("x").getAsInt();
-        blueY = TargetCard.getAsJsonObject("blue").get("y").getAsInt();
+        blueRow = TargetCard.getAsJsonObject("blue").get("row").getAsInt();
+        blueCol = TargetCard.getAsJsonObject("blue").get("column").getAsInt();
 
-        whiteX = TargetCard.getAsJsonObject("white").get("x").getAsInt();
-        whiteY = TargetCard.getAsJsonObject("white").get("y").getAsInt();
+        whiteRow = TargetCard.getAsJsonObject("white").get("row").getAsInt();
+        whiteCol = TargetCard.getAsJsonObject("white").get("column").getAsInt();
 
-        greenX = TargetCard.getAsJsonObject("green").get("x").getAsInt();
-        greenY = TargetCard.getAsJsonObject("green").get("y").getAsInt();
+        greenRow = TargetCard.getAsJsonObject("green").get("row").getAsInt();
+        greenCol = TargetCard.getAsJsonObject("green").get("column").getAsInt();
     }
 
 
@@ -61,27 +61,27 @@ public class PersonalTargetCard {
         int correctCards = 0;
         Item item;
 
-        item = shelf.getItemByCoordinates(pinkX, pinkY);
+        item = shelf.getItemByCoordinates(pinkRow, pinkCol);
         if (item != null && item.getColor() == ItemColor.PINK)
             correctCards++;
 
-        item = shelf.getItemByCoordinates(light_blueX, light_blueY);
+        item = shelf.getItemByCoordinates(light_blueRow, light_blueCol);
         if (item != null && item.getColor() == ItemColor.LIGHT_BLUE)
             correctCards++;
 
-        item = shelf.getItemByCoordinates(yellowX, yellowY);
+        item = shelf.getItemByCoordinates(yellowRow, yellowCol);
         if (item != null && item.getColor() == ItemColor.YELLOW)
             correctCards++;
 
-        item = shelf.getItemByCoordinates(blueX, blueY);
+        item = shelf.getItemByCoordinates(blueRow, blueCol);
         if (item != null && item.getColor() == ItemColor.BLUE)
             correctCards++;
 
-        item = shelf.getItemByCoordinates(whiteX, whiteY);
+        item = shelf.getItemByCoordinates(whiteRow, whiteCol);
         if (item != null && item.getColor() == ItemColor.WHITE)
             correctCards++;
 
-        item = shelf.getItemByCoordinates(greenX, greenY);
+        item = shelf.getItemByCoordinates(greenRow, greenCol);
         if (item != null && item.getColor() == ItemColor.GREEN)
             correctCards++;
 
@@ -96,7 +96,9 @@ public class PersonalTargetCard {
         };
     }
 
-    public int getWhichPersonal() {
-        return whichPersonal;
+    public int getPersonaNumber() {
+        return personaNumber;
     }
 }
+
+//private class
