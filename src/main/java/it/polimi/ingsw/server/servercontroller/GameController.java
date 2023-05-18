@@ -119,6 +119,7 @@ public class GameController {
     public NewView getNewView(){
         NewView newView=new NewView();
         newView.setPlayerList(List.copyOf(getPlayerList()));
+        System.out.println(activePlayer);
         newView.setActivePlayer(new Player(getActivePlayer().getNickname()));
         newView.setGameOver(newView.getActivePlayer() == null);
         return newView;
@@ -312,11 +313,9 @@ public class GameController {
     }
 
     public void startGame(){
-        System.err.println("START GAME");
         setupGame(onlyOneCommonCard);
-        System.err.println("IS ONE COMMON: " + onlyOneCommonCard);
+        activePlayer=playerList.get(0);
         changeState(new RunningGameState());
-        System.err.println("STATE: " + state);
         checkThread = new Thread(() -> {
             System.err.println("THREAD PING STARTED!");
             while(true) {

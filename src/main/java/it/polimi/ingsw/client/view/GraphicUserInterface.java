@@ -39,7 +39,6 @@ public class GraphicUserInterface extends Application implements UserInterface, 
 
     @Override
     public void getGameParameters() {
-        System.out.println(loginScreenController);
         loginScreenController.getGameParameters();
     }
 

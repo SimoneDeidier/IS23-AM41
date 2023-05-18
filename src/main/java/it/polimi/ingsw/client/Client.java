@@ -8,6 +8,7 @@ import java.io.BufferedReader;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.nio.charset.StandardCharsets;
+import java.rmi.RemoteException;
 import java.util.Objects;
 import java.util.Scanner;
 
@@ -30,7 +31,13 @@ public class Client {
         }
         switch (connectionType) {
             case "tcp" -> connection = new ConnectionTCP(IP, TCP_PORT);
-            case "rmi" -> connection = new ConnectionRMI(IP, RMI_PORT);
+            case "rmi" -> {
+                try {
+                    connection = new ConnectionRMI(RMI_PORT,IP);
+                } catch (RemoteException e) {
+                    throw new RuntimeException(e);
+                }
+            }
             default -> System.err.println("Wrong parameter, restart client...");
         }
         if(!parseUiType(args)) {

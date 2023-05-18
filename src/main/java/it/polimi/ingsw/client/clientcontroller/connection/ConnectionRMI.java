@@ -7,14 +7,14 @@ import it.polimi.ingsw.client.clientcontroller.controller.ClientControllerRMI;
 import it.polimi.ingsw.interfaces.InterfaceClient;
 import it.polimi.ingsw.interfaces.InterfaceServer;
 import it.polimi.ingsw.messages.NewView;
-import it.polimi.ingsw.server.model.PersonalTargetCard;
 
 import java.io.Serializable;
 import java.rmi.RemoteException;
 import java.rmi.registry.LocateRegistry;
 import java.rmi.registry.Registry;
+import java.rmi.server.UnicastRemoteObject;
 
-public class ConnectionRMI implements InterfaceClient, Serializable, Connection {
+public class ConnectionRMI extends UnicastRemoteObject implements InterfaceClient, Serializable, Connection {
     private final int PORT;
     private final String IP;
     private InterfaceServer stub;
@@ -22,9 +22,10 @@ public class ConnectionRMI implements InterfaceClient, Serializable, Connection 
     boolean gameStarted=false;
     private final Object lock = new GameLock();
 
-    public ConnectionRMI(String ip, int port) {
-        this.IP = ip;
-        this.PORT = port;
+    public ConnectionRMI(int port,String IP) throws RemoteException {
+        super();
+        this.PORT=port;
+        this.IP=IP;
     }
 
     @Override
@@ -114,7 +115,7 @@ public class ConnectionRMI implements InterfaceClient, Serializable, Connection 
     }
 
     @Override
-    public void receivePersonalTargetCard(PersonalTargetCard personalTargetCard) throws RemoteException {
+    public void receivePersonalTargetCard(int whichPersonal) throws RemoteException {
         // todo
     }
 

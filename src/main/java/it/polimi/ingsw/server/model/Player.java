@@ -12,7 +12,7 @@ import java.net.URISyntaxException;
 import java.util.ArrayList;
 import java.util.List;
 
-public class Player {
+public class Player implements Serializable {
     private final String nickname;
     private boolean connected;
     private int playerScore;

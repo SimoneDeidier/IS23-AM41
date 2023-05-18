@@ -1,6 +1,5 @@
 package it.polimi.ingsw.server;
 
-import it.polimi.ingsw.client.clientcontroller.connection.ConnectionRMI;
 import it.polimi.ingsw.interfaces.InterfaceClient;
 import it.polimi.ingsw.interfaces.InterfaceServer;
 import it.polimi.ingsw.messages.Body;
@@ -207,7 +206,7 @@ public class Server implements InterfaceServer {
     public void sendPersonalTargetCardsRMI() throws RemoteException {
         for(Player p : controller.getPlayerList()) {
             if(clientMapRMI.containsKey(p.getNickname())) {
-                clientMapRMI.get(p.getNickname()).receivePersonalTargetCard(p.getPersonalTargetCard());
+                clientMapRMI.get(p.getNickname()).receivePersonalTargetCard(p.getPersonalTargetCard().getWhichPersonal());
             }
         }
     }

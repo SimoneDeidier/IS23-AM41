@@ -2,9 +2,10 @@ package it.polimi.ingsw.messages;
 
 import it.polimi.ingsw.server.model.Player;
 
+import java.io.Serializable;
 import java.util.List;
 
-public class NewView {
+public class NewView implements Serializable {
     private List<Player> playerList;
     private Player activePlayer;
     private boolean gameOver;
