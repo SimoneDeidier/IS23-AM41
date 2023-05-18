@@ -1,5 +1,7 @@
 package it.polimi.ingsw.server.model;
 
+import it.polimi.ingsw.server.model.commons.CommonTargetCard;
+import it.polimi.ingsw.server.model.commons.CommonTwoSquares;
 import junit.framework.TestCase;
 
 import java.lang.reflect.InvocationTargetException;
@@ -18,25 +20,25 @@ public class CommonTargetCardTest extends TestCase {
         Player p4 = new Player("Player4");
 
         //test1
-        p1.addScoringToken(card2players.assignToken(p1));
+        card2players.assignToken(p1);
         assertEquals(p1.getScoringToken(0).getValue(), 8);
-        p1.addScoringToken(card2players.assignToken(p1));
+        card2players.assignToken(p1);
         //test 2
-        p2.addScoringToken(card2players.assignToken(p2));
+        card2players.assignToken(p2);
         assertEquals(p2.getScoringToken(0).getValue(), 4);
         //test 3
-        p3.addScoringToken(card3players.assignToken(p3));
-        p1.addScoringToken(card3players.assignToken(p1));
+        card3players.assignToken(p3);
+        card3players.assignToken(p1);
         assertEquals(p3.getScoringToken(0).getValue(), 8);
         assertEquals(p1.getScoringToken(1).getValue(), 6);
-        p4.addScoringToken(card3players.assignToken(p4));
+        card3players.assignToken(p4);
         assertEquals(p4.getScoringToken(0).getValue(), 4);
         //test 4
-        p4.addScoringToken(card4players.assignToken(p4));
+        card4players.assignToken(p4);
         assertEquals(p4.getScoringToken(1).getValue(), 8);
-        p2.addScoringToken(card4players.assignToken(p2));
+        card4players.assignToken(p2);
         assertEquals(p2.getScoringToken(1).getValue(), 6);
-        p3.addScoringToken(card4players.assignToken(p3));
+        card4players.assignToken(p3);
         assertEquals(p3.getScoringToken(1).getValue(), 4);
 
 

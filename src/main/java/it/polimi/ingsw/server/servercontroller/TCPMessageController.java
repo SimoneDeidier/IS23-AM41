@@ -1,94 +1,130 @@
 package it.polimi.ingsw.server.servercontroller;
 
-import it.polimi.ingsw.server.model.Player;
+import it.polimi.ingsw.interfaces.TCPMessageControllerInterface;
+import it.polimi.ingsw.messages.Body;
+import it.polimi.ingsw.messages.TCPMessage;
+import it.polimi.ingsw.server.servercontroller.exceptions.*;
 
 import java.net.Socket;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Objects;
+import java.rmi.RemoteException;
+import java.time.LocalDateTime;
 
-public class TCPMessageController {
+public class TCPMessageController implements TCPMessageControllerInterface {
 
     private final GameController gameController;
-    private final SocketManager socketManager;
     private final Socket socket;
+    private final SerializeDeserialize serializeDeserialize;
 
-    public TCPMessageController(SocketManager socketManager) {
-        this.socketManager = socketManager;
+    public TCPMessageController(SocketManager socketManager, SerializeDeserialize serializeDeserialize) {
         this.socket = socketManager.getSocket();
-        this.gameController = GameController.getGameController(socket, this);
+        this.gameController = GameController.getGameController(null);
+        this.serializeDeserialize = serializeDeserialize;
     }
 
-    public List<TCPMessage> executeTCPMessage(TCPMessage message) {
+    @Override
+    public void readTCPMessage(TCPMessage message) throws RemoteException {
         String header = message.getHeader();
-        System.out.printf("New TCP message - header: " + header);
-        List<TCPMessage> list = new ArrayList<>();
+        System.err.println("New TCP message - header: " + header);
         switch (header) {
-            case "Helo" -> {
-                if(gameController.getAvailableSlot() == -1 || gameController.getAvailableSlot() > 0) {
-                    // primo giocatore o ci sono slot per altri giocatori
-                    list.add(new TCPMessage("Connected", null));
-                }
-                else {
-                    // la lobby è piena
-                    list.add(new TCPMessage("Goodbye", null));
-                }
-                return list;
-            }
             case "Presentation" -> {
-                if(gameController.getAvailableSlot() == -1) {
-                    // aggiunge questo giocatore
-                    // todo manca il check sul salvataggio
-                    Player player = new Player(message.getBody().getPlayerNickname());
-                    gameController.addPlayer(player);
-                    gameController.changeState(new WaitingForPlayerState());
-                    list.add(new TCPMessage("Get Parameters", null));
-                    return list;
-                }
-                else if(gameController.getAvailableSlot() > 0) {
-                    for(String s : gameController.getConnectedUsersNicks()) {
-                        if(Objects.equals(message.getBody().getPlayerNickname(), s)) {
-                            list.add(new TCPMessage("Invalid Nickname", null));
-                            return list;
+                String nickname = message.getBody().getPlayerNickname();
+                System.err.println("NEW PRESENTATION MSG - Nickname: " + nickname);
+                try {
+                    switch(gameController.presentation(nickname)) {
+                        case 1: { //joined a "new" game
+                            printTCPMessage("Nickname Accepted", null);
+                            System.err.println("Sending a Nickname Accepted TCP Message");
+                            gameController.putNickToSocketMapping(nickname, this);
+                        } case 2: { //joined a "restored" game
+                            printTCPMessage("Player Restored", null);
+                            gameController.putNickToSocketMapping(nickname, null);
+                        }
+                        case 0: {  // you're joining but I need another nickname
+                            printTCPMessage("Invalid Nickname", null);
+                            System.err.println("SENDING AN Invalid Nickname MESSAGE");
                         }
                     }
-                    // todo c'è da implementare tutta la logica dei salvataggi!!!
-                    list.add(new TCPMessage("Nickname Accepted", null));
-                    gameController.addPlayer(new Player(message.getBody().getPlayerNickname()));
-                    if(gameController.getAvailableSlot() == 0) {
-                        list.add(new TCPMessage("Game Start", null));
-                    }
-                    return list;
                 }
-                list.add(new TCPMessage("Goodbye", null));
-                return list;
+                catch (WaitForLobbyParametersException e) {
+                    printTCPMessage("Wait for Lobby", null);
+                }
+                catch (CancelGameException e) { //the game is being canceled because a restoring of a saved game failed
+                    gameController.disconnectAllUsers();
+                } catch (GameStartException e) { //the game is starting because everyone is connected, updating everyone views
+                    gameController.putNickToSocketMapping(nickname, this);
+                    gameController.startGame();
+                    gameController.yourTarget();
+                    // todo da implementare il new view
+                    // gameController.updateView();
+                } catch (FullLobbyException e) { //you can't connect right now, the lobby is full or a game is already playing on the server
+                    printTCPMessage("Goodbye", null);
+                    closeConnection();
+                } catch (FirstPlayerException e) { //you're the first player connecting for creating a new game, I need more parameters from you
+                    gameController.putNickToSocketMapping(nickname, this);
+                    System.err.println("Sending a Get Parameters TCP Message");
+                    printTCPMessage("Get Parameters", null);
+                }
             }
             case "Create Lobby" -> {
-                int players = message.getBody().getPlayers();
-                if(players < 2 || players > 4) {
-                    list.add(new TCPMessage("Wrong Parameters", null));
-                    return list;
+                int players = message.getBody().getNumberOfPlayers();
+                boolean isOnlyOneCommon =  message.getBody().isOnlyOneCommon();
+                if(gameController.createLobby(players, isOnlyOneCommon)) {
+                    printTCPMessage("Lobby Created", null);
                 }
                 else {
-                    gameController.setupGame(message.getBody().isTwoCommon());
-                    list.add(new TCPMessage("Lobby Created", null));
-                    return list;
+                    printTCPMessage("Wrong Parameters", null);
                 }
             }
-            case "Disconnect" -> {
-                socketManager.closeConnection();
-                list.add(new TCPMessage("Goodbye", null));
-                return list;
-            }
             case "Move" -> {
-                return null;
+                try {
+                    gameController.executeMove(message.getBody());
+                    if(gameController.isGameOver()){
+                        gameController.gameOver();
+                    }
+                    else{
+                        gameController.updateView();
+                    }
+                } catch (InvalidMoveException e) {
+                    printTCPMessage("Incorrect Move", null);
+                }
+
             }
-            case "Broadcast Message" -> {
-                // todo non so come fare i messaggi asincroni :(
+            case "Peer-to-Peer Msg" -> {
+                String sender = message.getBody().getSenderNickname();
+                String receiver = message.getBody().getReceiverNickname();
+                String text = message.getBody().getText();
+                String localDateTime = message.getBody().getLocalDateTime();
+                try {
+                    gameController.peerToPeerMsg(sender, receiver, text, localDateTime);
+                }
+                catch (InvalidNicknameException e) {
+                    printTCPMessage("Wrong Receiver", null);
+                }
+            }
+            case "Broadcast Msg" -> {
+                String sender = message.getBody().getSenderNickname();
+                String text = message.getBody().getText();
+                String localDateTime = message.getBody().getLocalDateTime();
+                gameController.broadcastMsg(sender, text, localDateTime);
+            }
+            case "Disconnect" -> {
+                gameController.disconnectUserTCP(this);
             }
         }
-        return null;
     }
-    
+
+    @Override
+    public void printTCPMessage(String header, Body body) {
+        TCPMessage newMsg = new TCPMessage(header, body);
+        serializeDeserialize.serialize(newMsg);
+    }
+
+    public Socket getSocket() {
+        return this.socket;
+    }
+
+    public void closeConnection() {
+        serializeDeserialize.closeConnection();
+    }
 
 }

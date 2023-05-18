@@ -1,6 +1,11 @@
 package it.polimi.ingsw.server.model;
 
 import static org.junit.jupiter.api.Assertions.*;
+
+import it.polimi.ingsw.server.model.boards.BoardFactory;
+import it.polimi.ingsw.server.model.boards.ThreePlayersBoard;
+import it.polimi.ingsw.server.model.exceptions.InvalidBoardPositionException;
+import it.polimi.ingsw.server.model.exceptions.NullItemPickedException;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
@@ -12,7 +17,7 @@ public class ThreePlayersBoardTest {
 
     @BeforeEach
     void initialize(){
-        board=ThreePlayersBoard.getThreePlayersBoard();
+        board= ThreePlayersBoard.getThreePlayersBoard();
         board.refillBoard();
     }
 

@@ -3,6 +3,8 @@ package it.polimi.ingsw.server.model;
 import com.google.gson.Gson;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
+import it.polimi.ingsw.server.model.items.Item;
+import it.polimi.ingsw.server.model.items.ItemColor;
 import org.apache.commons.io.FileUtils;
 
 import java.io.File;
@@ -11,68 +13,76 @@ import java.net.URISyntaxException;
 import java.nio.charset.StandardCharsets;
 
 public class PersonalTargetCard {
-
-    final int pinkX;
-    final int pinkY;
-    final int light_blueX;
-    final int light_blueY;
-    final int yellowX;
-    final int yellowY;
-    final int blueX;
-    final int blueY;
-    final int whiteX;
-    final int whiteY;
-    final int greenX;
-    final int greenY;
+    int personalNumber;
+    final int pinkRow;
+    final int pinkCol;
+    final int light_blueRow;
+    final int light_blueCol;
+    final int yellowRow;
+    final int yellowCol;
+    final int blueRow;
+    final int blueCol;
+    final int whiteRow;
+    final int whiteCol;
+    final int greenRow;
+    final int greenCol;
 
     public PersonalTargetCard(int personal) throws IOException, URISyntaxException {
+        personalNumber = personal;
         Gson gson = new Gson();
-        File jsonFile = new File(ClassLoader.getSystemResource("jsons/PersonalTargetCards.json").toURI());
+        File jsonFile = new File(ClassLoader.getSystemResource("json/PersonalTargetCards.json").toURI());
         String jsonString = FileUtils.readFileToString(jsonFile, StandardCharsets.UTF_8);
 
         JsonArray jsonArray = gson.fromJson(jsonString, JsonArray.class);
 
         JsonObject TargetCard = jsonArray.get(personal).getAsJsonObject();
 
-        pinkX = TargetCard.getAsJsonObject("pink").get("x").getAsInt();
-        pinkY = TargetCard.getAsJsonObject("pink").get("y").getAsInt();
+        pinkRow = TargetCard.getAsJsonObject("pink").get("row").getAsInt();
+        pinkCol = TargetCard.getAsJsonObject("pink").get("column").getAsInt();
 
-        light_blueX = TargetCard.getAsJsonObject("light_blue").get("x").getAsInt();
-        light_blueY = TargetCard.getAsJsonObject("light_blue").get("y").getAsInt();
+        light_blueRow = TargetCard.getAsJsonObject("light_blue").get("row").getAsInt();
+        light_blueCol = TargetCard.getAsJsonObject("light_blue").get("column").getAsInt();
 
-        yellowX = TargetCard.getAsJsonObject("yellow").get("x").getAsInt();
-        yellowY = TargetCard.getAsJsonObject("yellow").get("y").getAsInt();
+        yellowRow = TargetCard.getAsJsonObject("yellow").get("row").getAsInt();
+        yellowCol = TargetCard.getAsJsonObject("yellow").get("column").getAsInt();
 
-        blueX = TargetCard.getAsJsonObject("blue").get("x").getAsInt();
-        blueY = TargetCard.getAsJsonObject("blue").get("y").getAsInt();
+        blueRow = TargetCard.getAsJsonObject("blue").get("row").getAsInt();
+        blueCol = TargetCard.getAsJsonObject("blue").get("column").getAsInt();
 
-        whiteX = TargetCard.getAsJsonObject("white").get("x").getAsInt();
-        whiteY = TargetCard.getAsJsonObject("white").get("y").getAsInt();
+        whiteRow = TargetCard.getAsJsonObject("white").get("row").getAsInt();
+        whiteCol = TargetCard.getAsJsonObject("white").get("column").getAsInt();
 
-        greenX = TargetCard.getAsJsonObject("green").get("x").getAsInt();
-        greenY = TargetCard.getAsJsonObject("green").get("y").getAsInt();
+        greenRow = TargetCard.getAsJsonObject("green").get("row").getAsInt();
+        greenCol = TargetCard.getAsJsonObject("green").get("column").getAsInt();
     }
 
 
     public int calculatePoints(Shelf shelf) throws URISyntaxException, IOException {
         int correctCards = 0;
+        Item item;
 
-        if (shelf.getItemByCoordinates(pinkX, pinkY).getColor() == ItemColor.PINK)
+        item = shelf.getItemByCoordinates(pinkRow, pinkCol);
+        if (item != null && item.getColor() == ItemColor.PINK)
             correctCards++;
 
-        if (shelf.getItemByCoordinates(light_blueX, light_blueY).getColor() == ItemColor.LIGHT_BLUE)
+        item = shelf.getItemByCoordinates(light_blueRow, light_blueCol);
+        if (item != null && item.getColor() == ItemColor.LIGHT_BLUE)
             correctCards++;
 
-        if (shelf.getItemByCoordinates(yellowX, yellowY).getColor() == ItemColor.YELLOW)
+        item = shelf.getItemByCoordinates(yellowRow, yellowCol);
+        if (item != null && item.getColor() == ItemColor.YELLOW)
             correctCards++;
 
-        if (shelf.getItemByCoordinates(blueX, blueY).getColor() == ItemColor.BLUE)
+        item = shelf.getItemByCoordinates(blueRow, blueCol);
+        if (item != null && item.getColor() == ItemColor.BLUE)
             correctCards++;
 
-        if (shelf.getItemByCoordinates(whiteX, whiteY).getColor() == ItemColor.WHITE)
+        item = shelf.getItemByCoordinates(whiteRow, whiteCol);
+        if (item != null && item.getColor() == ItemColor.WHITE)
             correctCards++;
 
-        if (shelf.getItemByCoordinates(greenX, greenY).getColor() == ItemColor.GREEN)
+        item = shelf.getItemByCoordinates(greenRow, greenCol);
+        if (item != null && item.getColor() == ItemColor.GREEN)
             correctCards++;
 
         return switch (correctCards) {
@@ -86,4 +96,9 @@ public class PersonalTargetCard {
         };
     }
 
+    public int getPersonalNumber() {
+        return personalNumber;
+    }
 }
+
+//private class

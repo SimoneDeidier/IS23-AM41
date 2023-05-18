@@ -1,5 +1,10 @@
 package it.polimi.ingsw.server.model;
 
+import it.polimi.ingsw.server.model.commons.CommonStairway;
+import it.polimi.ingsw.server.model.commons.CommonTargetCard;
+import it.polimi.ingsw.server.model.exceptions.NotEnoughSpaceInColumnException;
+import it.polimi.ingsw.server.model.items.Item;
+import it.polimi.ingsw.server.model.items.ItemColor;
 import org.junit.jupiter.api.Test;
 
 import java.util.ArrayList;
@@ -11,7 +16,7 @@ import static org.junit.jupiter.api.Assertions.*;
 class CommonStairwayTest {
 
     @Test
-    void check() throws EmptyItemListToInsert, NotEnoughSpaceInColumnException {
+    void check() throws NotEnoughSpaceInColumnException {
         CommonTargetCard card  = new CommonStairway(2);
 
         Shelf case1 = new Shelf();

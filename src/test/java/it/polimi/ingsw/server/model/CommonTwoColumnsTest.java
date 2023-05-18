@@ -1,5 +1,10 @@
 package it.polimi.ingsw.server.model;
 
+import it.polimi.ingsw.server.model.commons.CommonTargetCard;
+import it.polimi.ingsw.server.model.commons.CommonTwoColumns;
+import it.polimi.ingsw.server.model.exceptions.NotEnoughSpaceInColumnException;
+import it.polimi.ingsw.server.model.items.Item;
+import it.polimi.ingsw.server.model.items.ItemColor;
 import org.junit.jupiter.api.Test;
 
 import java.util.Arrays;
@@ -9,7 +14,7 @@ import static org.junit.jupiter.api.Assertions.*;
 class CommonTwoColumnsTest {
 
     @Test
-    void checkTwoColumns() throws EmptyItemListToInsert, NotEnoughSpaceInColumnException {
+    void checkTwoColumns() throws NotEnoughSpaceInColumnException {
         CommonTargetCard commonTwoColumns = new CommonTwoColumns(2);
         //create a sample shelf with two columns of 6 different Colors of items
         Shelf shelfA = new Shelf();
@@ -23,7 +28,7 @@ class CommonTwoColumnsTest {
     }
 
     @Test
-    void checkNoTwoColumns() throws EmptyItemListToInsert, NotEnoughSpaceInColumnException {
+    void checkNoTwoColumns() throws NotEnoughSpaceInColumnException {
         CommonTargetCard commonTwoColumns = new CommonTwoColumns(2);
         //create a sample shelf with two columns of 6 different Colors of items
         Shelf shelfB = new Shelf();

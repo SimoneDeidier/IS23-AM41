@@ -1,5 +1,10 @@
 package it.polimi.ingsw.server.model;
 
+import it.polimi.ingsw.server.model.commons.CommonFourCorners;
+import it.polimi.ingsw.server.model.commons.CommonTargetCard;
+import it.polimi.ingsw.server.model.exceptions.NotEnoughSpaceInColumnException;
+import it.polimi.ingsw.server.model.items.Item;
+import it.polimi.ingsw.server.model.items.ItemColor;
 import org.junit.jupiter.api.Test;
 
 import java.util.Arrays;
@@ -9,7 +14,7 @@ import static org.junit.jupiter.api.Assertions.*;
 class CommonFourCornersTest {
 
     @Test
-    void checkFourCorners() throws EmptyItemListToInsert, NotEnoughSpaceInColumnException {
+    void checkFourCorners() throws NotEnoughSpaceInColumnException {
 
         CommonTargetCard commonFourCorners = new CommonFourCorners(2);
 
@@ -25,7 +30,7 @@ class CommonFourCornersTest {
         assertTrue(commonFourCorners.check(shelfA));
     }
     @Test
-    void checkNoFourCorners() throws EmptyItemListToInsert, NotEnoughSpaceInColumnException {
+    void checkNoFourCorners() throws NotEnoughSpaceInColumnException {
 
         CommonTargetCard commonFourCorners = new CommonFourCorners(2);
 

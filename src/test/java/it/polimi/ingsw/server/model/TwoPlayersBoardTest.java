@@ -1,11 +1,13 @@
 package it.polimi.ingsw.server.model;
 
 import static org.junit.jupiter.api.Assertions.*;
+
+import it.polimi.ingsw.server.model.boards.BoardFactory;
+import it.polimi.ingsw.server.model.boards.TwoPlayersBoard;
+import it.polimi.ingsw.server.model.exceptions.InvalidBoardPositionException;
+import it.polimi.ingsw.server.model.exceptions.NullItemPickedException;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-
-import java.util.ArrayList;
-import java.util.List;
 
 public class TwoPlayersBoardTest {
 
@@ -15,7 +17,7 @@ public class TwoPlayersBoardTest {
 
     @BeforeEach
     void initialize(){
-        board=TwoPlayersBoard.getTwoPlayersBoard();
+        board= TwoPlayersBoard.getTwoPlayersBoard();
         board.refillBoard();
     }
 

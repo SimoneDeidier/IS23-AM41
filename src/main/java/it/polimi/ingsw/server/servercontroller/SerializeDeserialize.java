@@ -1,28 +1,36 @@
 package it.polimi.ingsw.server.servercontroller;
 
 import com.google.gson.Gson;
+import it.polimi.ingsw.interfaces.SerializeDeserializeInterface;
+import it.polimi.ingsw.messages.TCPMessage;
+import it.polimi.ingsw.server.model.Player;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.rmi.RemoteException;
 
-public class SerializeDeserialize {
+public class SerializeDeserialize implements SerializeDeserializeInterface {
 
     private final TCPMessageController tcpMessageController;
     private final Gson gson = new Gson();
+    private final SocketManager socketManager;
 
     public SerializeDeserialize(SocketManager socketManager) {
-        tcpMessageController = new TCPMessageController(socketManager);
+        tcpMessageController = new TCPMessageController(socketManager, this);
+        this.socketManager = socketManager;
     }
 
-    public List<String> deserialize(String input) {
-
+    public void deserialize(String input) throws RemoteException {
         TCPMessage inputMsg = gson.fromJson(input, TCPMessage.class);
-        List<TCPMessage> tcpMessages = tcpMessageController.executeTCPMessage(inputMsg);
-        List<String> outMessages = new ArrayList<>();
-        for(TCPMessage msg : tcpMessages) {
-            outMessages.add(gson.toJson(msg));
-        }
-        return outMessages;
+        tcpMessageController.readTCPMessage(inputMsg);
+    }
+
+    public void serialize(TCPMessage message) {
+        String outMsg = gson.toJson(message);
+        socketManager.getSocketOutput().println(outMsg);
+        socketManager.getSocketOutput().flush();
+    }
+
+    public void closeConnection() {
+        socketManager.closeConnection();
     }
 
 }
