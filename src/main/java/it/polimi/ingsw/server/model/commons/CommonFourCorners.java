@@ -1,7 +1,7 @@
 package it.polimi.ingsw.server.model.commons;
 
-import it.polimi.ingsw.server.model.items.ItemColor;
 import it.polimi.ingsw.server.model.Shelf;
+import it.polimi.ingsw.server.model.items.ItemColor;
 
 public class CommonFourCorners extends CommonTargetCard {
     public CommonFourCorners(int maxPlayerNumber) {
@@ -9,11 +9,14 @@ public class CommonFourCorners extends CommonTargetCard {
     }
     @Override
     public boolean check(Shelf shelf) {
-
-        if( shelf.freeSpaces(0) == 0 && shelf.freeSpaces(COLUMNS - 1) == 0 ){
-            ItemColor type= shelf.getItemByCoordinates(0, 0).getColor();
+        ItemColor type = shelf.getItemByCoordinates(0, 0).getColor();
+        if(shelf.getItemByCoordinates(0, 0).getColor() != null &&
+                shelf.getItemByCoordinates(0, COLUMNS - 1).getColor() != null &&
+                shelf.getItemByCoordinates(ROWS - 1, COLUMNS - 1).getColor() != null &&
+                shelf.getItemByCoordinates(ROWS - 1, 0).getColor() != null){
             return type == shelf.getItemByCoordinates(0, COLUMNS - 1).getColor() && type == shelf.getItemByCoordinates(ROWS - 1, COLUMNS - 1).getColor() && type == shelf.getItemByCoordinates(ROWS - 1, 0).getColor();
+        } else {
+            return false;
         }
-        return false;
     }
 }
