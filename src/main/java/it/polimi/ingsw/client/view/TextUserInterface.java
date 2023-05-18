@@ -2,6 +2,8 @@ package it.polimi.ingsw.client.view;
 
 import it.polimi.ingsw.client.clientcontroller.controller.ClientController;
 
+import java.io.IOException;
+
 public class TextUserInterface implements UserInterface{
 
     private ClientController clientController;
@@ -48,6 +50,11 @@ public class TextUserInterface implements UserInterface{
 
     @Override
     public void waitForLobby() {
+
+    }
+
+    @Override
+    public void loadGameScreen(int personalTargetCardNumber, String nickname, int personalNumber) {
 
     }
 

@@ -5,6 +5,8 @@ import it.polimi.ingsw.client.clientcontroller.connection.ConnectionTCP;
 import it.polimi.ingsw.interfaces.SerializeDeserializeInterface;
 import it.polimi.ingsw.messages.TCPMessage;
 
+import java.io.IOException;
+
 public class SerializeDeserialize implements SerializeDeserializeInterface {
 
     private final ConnectionTCP connectionTCP;
@@ -17,7 +19,7 @@ public class SerializeDeserialize implements SerializeDeserializeInterface {
     }
 
     @Override
-    public void deserialize(String input) {
+    public void deserialize(String input) throws IOException {
         TCPMessage message = gson.fromJson(input, TCPMessage.class);
         tcpMessageController.readTCPMessage(message);
     }

@@ -6,6 +6,7 @@ import it.polimi.ingsw.client.view.TextUserInterface;
 import it.polimi.ingsw.client.view.UserInterface;
 import it.polimi.ingsw.messages.Body;
 
+import java.io.IOException;
 import java.io.Serializable;
 
 public class ClientControllerTCP implements ClientController {
@@ -13,6 +14,7 @@ public class ClientControllerTCP implements ClientController {
     private final TCPMessageController tcpMessageController;
     private UserInterface userInterface = null;
     private String playerNickname;
+    private int personalTargetCardNumber;
 
     public ClientControllerTCP(TCPMessageController tcpMessageController) {
         this.tcpMessageController = tcpMessageController;
@@ -28,6 +30,7 @@ public class ClientControllerTCP implements ClientController {
         userInterfaceThread.start();
         try {
             userInterfaceThread.join();
+            System.err.println("JOINED THE THREAD");
         }
         catch (InterruptedException e) {
             e.printStackTrace();
@@ -74,6 +77,17 @@ public class ClientControllerTCP implements ClientController {
     @Override
     public void waitForLobby() {
         userInterface.waitForLobby();
+    }
+
+    @Override
+    public void setPersonalTargetCardNumber(int personalTargetCardNumber) {
+        this.personalTargetCardNumber = personalTargetCardNumber;
+        System.err.println("PERSONAL SET: " + personalTargetCardNumber);
+    }
+
+    @Override
+    public void loadGameScreen() throws IOException {
+        userInterface.loadGameScreen(personalTargetCardNumber, playerNickname, personalTargetCardNumber);
     }
 
 }

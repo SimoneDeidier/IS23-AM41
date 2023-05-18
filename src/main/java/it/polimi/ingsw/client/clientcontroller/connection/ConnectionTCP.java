@@ -33,7 +33,11 @@ public class ConnectionTCP implements Connection {
             while(!closeConnection) {
                 String inMsg;
                 while ((inMsg = socketIn.nextLine()) != null) {
-                    serializeDeserialize.deserialize(inMsg);
+                    try {
+                        serializeDeserialize.deserialize(inMsg);
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                    }
                 }
             }
         });

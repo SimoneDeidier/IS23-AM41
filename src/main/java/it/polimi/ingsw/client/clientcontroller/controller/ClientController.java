@@ -16,4 +16,8 @@ public interface ClientController {
     void nicknameAccepted();
     void lobbyCreated();
     void waitForLobby();
+
+    void setPersonalTargetCardNumber(int personalTargetCardNumber);
+
+    void loadGameScreen() throws IOException;
 }

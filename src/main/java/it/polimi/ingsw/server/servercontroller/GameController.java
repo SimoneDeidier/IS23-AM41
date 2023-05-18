@@ -1,7 +1,6 @@
 package it.polimi.ingsw.server.servercontroller;
 
 import com.google.gson.Gson;
-import com.google.gson.GsonBuilder;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
 import it.polimi.ingsw.messages.Body;
@@ -17,7 +16,6 @@ import it.polimi.ingsw.server.servercontroller.exceptions.*;
 
 import java.io.File;
 import java.io.FileReader;
-import java.io.FileWriter;
 import java.io.IOException;
 import java.rmi.RemoteException;
 import java.util.*;
@@ -106,12 +104,7 @@ public class GameController {
             }
             //todo testing
             //Save game in json file
-            Gson gson = new Gson();
-            try {
-                gson.toJson(this, new FileWriter("src/main/resources/jsons/OldGame.json"));
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
+
         }
         else throw new InvalidMoveException();
     }
@@ -229,10 +222,10 @@ public class GameController {
     }
 
     public boolean checkSavedGame(String nickname) {
-        //todo forse non funziona, ritornava false ad exists, perchè il file è vuoto o non lo trova?
+        //todo da rifare
 
         Gson gson = new Gson();
-        File json = new File(Objects.requireNonNull(ClassLoader.getSystemResourceAsStream("jsons/OldGame.json")).toString());
+        File json = new File(Objects.requireNonNull(ClassLoader.getSystemResourceAsStream("json/OldGame.json")).toString());
 
         try {
             if(json.exists()) {
@@ -347,7 +340,7 @@ public class GameController {
             System.err.println("PLAYER LIST: " + playerList);
             for(Player p : playerList) {
                 if(Objects.equals(p.getNickname(), s)) {
-                    body.setPersonalCard(p.getPersonalTargetCard());
+                    body.setPersonalCardNumber(p.getPersonalTargetCard().getWhichPersonal());
                     System.err.println("MANDO A: " + p.getNickname());
                     break;
                 }
@@ -430,6 +423,12 @@ public class GameController {
                 return;
             }
         }
+    }
+
+    public void saveServerStatus() {
+        Gson gson = new Gson();
+        String serializedGameController = gson.toJson(this);
+        // todo da finre
     }
 
     /* todo da spostare lato client!!!

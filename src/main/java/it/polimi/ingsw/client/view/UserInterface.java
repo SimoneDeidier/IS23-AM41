@@ -22,4 +22,6 @@ public interface UserInterface {
     void lobbyCreated();
 
     void waitForLobby();
+
+    void loadGameScreen(int personalTargetCardNumber, String nickname, int personalNumber);
 }

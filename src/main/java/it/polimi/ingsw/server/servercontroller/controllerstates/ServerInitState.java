@@ -24,7 +24,7 @@ public class ServerInitState extends GameState {
         Gson gson = new Gson();
 
         try {
-            controller = gson.fromJson(new FileReader("src/main/resources/jsons/OldGame.json"), GameController.class);
+            controller = gson.fromJson(new FileReader("src/main/resources/json/OldGame.json"), GameController.class);
             for(Player player : controller.getPlayerList()){
                 player.setConnected(false);
             }

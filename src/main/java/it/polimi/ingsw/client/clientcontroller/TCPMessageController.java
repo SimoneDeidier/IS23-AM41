@@ -7,6 +7,8 @@ import it.polimi.ingsw.interfaces.TCPMessageControllerInterface;
 import it.polimi.ingsw.messages.Body;
 import it.polimi.ingsw.messages.TCPMessage;
 
+import java.io.IOException;
+
 public class TCPMessageController implements TCPMessageControllerInterface {
 
     private final SerializeDeserialize serializeDeserialize;
@@ -18,7 +20,7 @@ public class TCPMessageController implements TCPMessageControllerInterface {
     }
 
     @Override
-    public void readTCPMessage(TCPMessage message) {
+    public void readTCPMessage(TCPMessage message) throws IOException {
         String header = message.getHeader();
         switch (header) {
             case "Nickname Accepted" -> {
@@ -40,8 +42,8 @@ public class TCPMessageController implements TCPMessageControllerInterface {
                 controller.getParameters();
             }
             case "Your Target" -> {
-                System.err.println("YOUR TARGET ARRIVATO");
-                controller.nicknameAccepted();
+                controller.setPersonalTargetCardNumber(message.getBody().getPersonalCardNumber());
+                controller.loadGameScreen();
             }
             case "Update View" -> {
                 System.err.println("UPDATE VIEW ARRIVATO");
