@@ -207,7 +207,7 @@ public class Server implements InterfaceServer {
     public void sendPersonalTargetCardsRMI() throws RemoteException {
         for(Player p : controller.getPlayerList()) {
             if(clientMapRMI.containsKey(p.getNickname())) {
-                clientMapRMI.get(p.getNickname()).receivePersonalTargetCard(p.getPersonalTargetCard().getWhichPersonal());
+                clientMapRMI.get(p.getNickname()).receivePersonalTargetCard(p.getPersonalTargetCard().getPersonalNumber());
             }
         }
     }

@@ -13,7 +13,7 @@ import java.net.URISyntaxException;
 import java.nio.charset.StandardCharsets;
 
 public class PersonalTargetCard {
-    int personaNumber;
+    int personalNumber;
     final int pinkRow;
     final int pinkCol;
     final int light_blueRow;
@@ -28,7 +28,7 @@ public class PersonalTargetCard {
     final int greenCol;
 
     public PersonalTargetCard(int personal) throws IOException, URISyntaxException {
-        personaNumber = personal;
+        personalNumber = personal;
         Gson gson = new Gson();
         File jsonFile = new File(ClassLoader.getSystemResource("json/PersonalTargetCards.json").toURI());
         String jsonString = FileUtils.readFileToString(jsonFile, StandardCharsets.UTF_8);
@@ -96,8 +96,8 @@ public class PersonalTargetCard {
         };
     }
 
-    public int getPersonaNumber() {
-        return personaNumber;
+    public int getPersonalNumber() {
+        return personalNumber;
     }
 }
 

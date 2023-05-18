@@ -1,8 +1,6 @@
 package it.polimi.ingsw.server.servercontroller;
 
 import com.google.gson.Gson;
-import com.google.gson.JsonArray;
-import com.google.gson.JsonObject;
 import it.polimi.ingsw.messages.Body;
 import it.polimi.ingsw.messages.NewView;
 import it.polimi.ingsw.server.Server;
@@ -13,13 +11,8 @@ import it.polimi.ingsw.server.model.items.Item;
 import it.polimi.ingsw.server.model.tokens.EndGameToken;
 import it.polimi.ingsw.server.servercontroller.controllerstates.*;
 import it.polimi.ingsw.server.servercontroller.exceptions.*;
-import javafx.util.converter.LocalDateStringConverter;
 
-import java.io.File;
-import java.io.FileReader;
-import java.io.IOException;
 import java.rmi.RemoteException;
-import java.time.LocalDateTime;
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 
@@ -311,7 +304,7 @@ public class GameController {
         setupGame(onlyOneCommonCard);
         activePlayer=playerList.get(0);
         changeState(new RunningGameState());
-        checkThread = new Thread(() -> {
+        /*checkThread = new Thread(() -> {
             System.err.println("THREAD PING STARTED!");
             while(true) {
                 try {
@@ -323,7 +316,7 @@ public class GameController {
                 }
             }
         });
-        checkThread.start(); */
+        checkThread.start();*/
     }
 
     public void disconnectAllUsers() throws RemoteException {
@@ -342,7 +335,7 @@ public class GameController {
             System.err.println("PLAYER LIST: " + playerList);
             for(Player p : playerList) {
                 if(Objects.equals(p.getNickname(), s)) {
-                    body.setPersonalCardNumber(p.getPersonalTargetCard().getPersonaNumber());
+                    body.setPersonalCardNumber(p.getPersonalTargetCard().getPersonalNumber());
                     System.err.println("MANDO A: " + p.getNickname());
                     break;
                 }
