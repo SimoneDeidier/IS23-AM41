@@ -10,12 +10,12 @@ import javafx.scene.Scene;
 import javafx.stage.Stage;
 
 import java.io.IOException;
+import java.io.Serializable;
 
-public class GraphicUserInterface extends Application implements UserInterface {
+public class GraphicUserInterface extends Application implements UserInterface, Serializable {
 
     private static ClientController clientController;
     private static Stage guiStage;
-    private static FXMLLoader loader;
     private static LoginScreenController loginScreenController;
     private static GameScreenController gameScreenController;
 
@@ -27,7 +27,7 @@ public class GraphicUserInterface extends Application implements UserInterface {
     @Override
     public void start(Stage stage) throws Exception {
         GraphicUserInterface.guiStage = stage;
-        loader = new FXMLLoader(ClassLoader.getSystemResource("fxml/LoginScreen.fxml"));
+        FXMLLoader loader = new FXMLLoader(ClassLoader.getSystemResource("fxml/LoginScreen.fxml"));
         guiStage.setScene(new Scene(loader.load()));
         loginScreenController = loader.getController();
         loginScreenController.setGui(this);
@@ -43,6 +43,7 @@ public class GraphicUserInterface extends Application implements UserInterface {
 
     @Override
     public void getGameParameters() {
+        System.out.println(loginScreenController);
         loginScreenController.getGameParameters();
     }
 

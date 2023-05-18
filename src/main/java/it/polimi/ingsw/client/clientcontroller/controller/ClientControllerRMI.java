@@ -1,25 +1,26 @@
 package it.polimi.ingsw.client.clientcontroller.controller;
 
-import it.polimi.ingsw.client.clientcontroller.TCPMessageController;
+import it.polimi.ingsw.client.clientcontroller.connection.ConnectionRMI;
 import it.polimi.ingsw.client.view.GraphicUserInterface;
 import it.polimi.ingsw.client.view.TextUserInterface;
 import it.polimi.ingsw.client.view.UserInterface;
 import it.polimi.ingsw.messages.Body;
 
-import java.io.IOException;
 import java.io.Serializable;
+import java.rmi.RemoteException;
 
-public class ClientControllerTCP implements ClientController {
+public class ClientControllerRMI implements ClientController, Serializable {
 
-    private final TCPMessageController tcpMessageController;
+    private final ConnectionRMI connectionRMI;
     private UserInterface userInterface = null;
     private String playerNickname;
-    private int personalTargetCardNumber;
+    private int personalCardNumber;
 
-    public ClientControllerTCP(TCPMessageController tcpMessageController) {
-        this.tcpMessageController = tcpMessageController;
+    public ClientControllerRMI(ConnectionRMI connectionRMI) {
+        this.connectionRMI = connectionRMI;
     }
 
+    @Override
     public void startUserInterface(String uiType) {
         switch (uiType) {
             case "gui" -> userInterface = new GraphicUserInterface();
@@ -30,19 +31,19 @@ public class ClientControllerTCP implements ClientController {
         userInterfaceThread.start();
         try {
             userInterfaceThread.join();
-            System.err.println("JOINED THE THREAD");
-        }
-        catch (InterruptedException e) {
-            e.printStackTrace();
+        } catch (InterruptedException e) {
+            throw new RuntimeException(e);
         }
     }
 
     @Override
     public void sendNickname(String nickname) {
         this.playerNickname = nickname;
-        Body body = new Body();
-        body.setPlayerNickname(nickname);
-        tcpMessageController.printTCPMessage("Presentation", body);
+        try {
+            connectionRMI.presentation(nickname);
+        } catch (RemoteException e) {
+            throw new RuntimeException(e);
+        }
     }
 
     @Override
@@ -57,11 +58,11 @@ public class ClientControllerTCP implements ClientController {
 
     @Override
     public void sendParameters(int numPlayers, int numCommons) {
-        Body body = new Body();
-        body.setPlayerNickname(this.playerNickname);
-        body.setNumberOfPlayers(numPlayers);
-        body.setOnlyOneCommon(numCommons == 1);
-        tcpMessageController.printTCPMessage("Create Lobby", body);
+        try {
+            connectionRMI.sendParameters(numPlayers,numCommons==1);
+        } catch (RemoteException e) {
+            throw new RuntimeException(e);
+        }
     }
 
     @Override
@@ -78,16 +79,4 @@ public class ClientControllerTCP implements ClientController {
     public void waitForLobby() {
         userInterface.waitForLobby();
     }
-
-    @Override
-    public void setPersonalTargetCardNumber(int personalTargetCardNumber) {
-        this.personalTargetCardNumber = personalTargetCardNumber;
-        System.err.println("PERSONAL SET: " + personalTargetCardNumber);
-    }
-
-    @Override
-    public void loadGameScreen() throws IOException {
-        userInterface.loadGameScreen(personalTargetCardNumber, playerNickname, personalTargetCardNumber);
-    }
-
 }

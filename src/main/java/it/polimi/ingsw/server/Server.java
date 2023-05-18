@@ -1,5 +1,6 @@
 package it.polimi.ingsw.server;
 
+import it.polimi.ingsw.client.clientcontroller.connection.ConnectionRMI;
 import it.polimi.ingsw.interfaces.InterfaceClient;
 import it.polimi.ingsw.interfaces.InterfaceServer;
 import it.polimi.ingsw.messages.Body;
@@ -135,6 +136,8 @@ public class Server implements InterfaceServer {
 
     @Override
     public void presentation(InterfaceClient cl, String nickname) throws RemoteException {
+        System.err.println("CHIAMATO PRESENTATION");
+        System.err.println(cl);
         try {
             switch(controller.presentation(nickname)) {
                 case 1: { //joined a "new" game
@@ -159,16 +162,21 @@ public class Server implements InterfaceServer {
         } catch (FullLobbyException e) { //you can't connect right now, the lobby is full or a game is already playing on the server
             cl.disconnectUser(1);
         } catch (FirstPlayerException e) { //you're the first player connecting for creating a new game, I need more parameters from you
+            System.err.println("INVOCATA FIRST P EX");
             clientMapRMI.put(nickname,cl);
+            System.err.println(cl);
             cl.askParameters();
         } catch (WaitForLobbyParametersException e) {
-            // todo da fare che manda il messaggio di asettare per mandare i parametri
+            cl.waitForLobbyCreation();
         }
     }
 
     @Override
-    public boolean sendParameters(int maxPlayerNumber, boolean onlyOneCommonCard) throws RemoteException {
-        return controller.createLobby(maxPlayerNumber,onlyOneCommonCard);
+    public void sendParameters(InterfaceClient cl,int maxPlayerNumber, boolean onlyOneCommonCard) throws RemoteException {
+        if(controller.createLobby(maxPlayerNumber,onlyOneCommonCard))
+            cl.lobbyCreated();
+        else
+            cl.askParameters();
     }
 
     public void executeMove(Body move) throws RemoteException, InvalidMoveException {

@@ -14,7 +14,6 @@ import java.util.Scanner;
 public class Client {
 
     private static Connection connection;
-
     private final static String IP = "localhost";
     private final static int TCP_PORT = 8888;
     private final static int RMI_PORT = 1234;
