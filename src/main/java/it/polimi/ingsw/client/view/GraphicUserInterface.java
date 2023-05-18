@@ -1,17 +1,18 @@
 package it.polimi.ingsw.client.view;
 
-import it.polimi.ingsw.client.clientontroller.controller.ClientController;
+import it.polimi.ingsw.client.clientcontroller.controller.ClientController;
 import it.polimi.ingsw.client.view.controllers.LoginScreenController;
 import javafx.application.Application;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Scene;
 import javafx.stage.Stage;
 
-public class GraphicUserInterface extends Application implements UserInterface {
+import java.io.Serializable;
+
+public class GraphicUserInterface extends Application implements UserInterface, Serializable {
 
     private static ClientController clientController;
     private static Stage guiStage;
-    private static FXMLLoader loader;
     private static LoginScreenController loginScreenController;
 
     @Override
@@ -22,7 +23,7 @@ public class GraphicUserInterface extends Application implements UserInterface {
     @Override
     public void start(Stage stage) throws Exception {
         GraphicUserInterface.guiStage = stage;
-        loader = new FXMLLoader(ClassLoader.getSystemResource("fxml/LoginScreen.fxml"));
+        FXMLLoader loader = new FXMLLoader(ClassLoader.getSystemResource("fxml/LoginScreen.fxml"));
         guiStage.setScene(new Scene(loader.load()));
         loginScreenController = loader.getController();
         loginScreenController.setGui(this);
@@ -38,6 +39,7 @@ public class GraphicUserInterface extends Application implements UserInterface {
 
     @Override
     public void getGameParameters() {
+        System.out.println(loginScreenController);
         loginScreenController.getGameParameters();
     }
 

@@ -1,16 +1,17 @@
-package it.polimi.ingsw.client.clientontroller.controller;
+package it.polimi.ingsw.client.clientcontroller.controller;
 
-import it.polimi.ingsw.client.clientontroller.TCPMessageController;
+import it.polimi.ingsw.client.clientcontroller.TCPMessageController;
 import it.polimi.ingsw.client.view.GraphicUserInterface;
 import it.polimi.ingsw.client.view.TextUserInterface;
 import it.polimi.ingsw.client.view.UserInterface;
 import it.polimi.ingsw.messages.Body;
 
+import java.io.Serializable;
+
 public class ClientControllerTCP implements ClientController {
 
     private final TCPMessageController tcpMessageController;
     private UserInterface userInterface = null;
-    private Thread userInterfaceThread = null;
     private String playerNickname;
 
     public ClientControllerTCP(TCPMessageController tcpMessageController) {
@@ -23,7 +24,7 @@ public class ClientControllerTCP implements ClientController {
             case "tui" ->  userInterface = new TextUserInterface();
         }
         userInterface.setClientController(this);
-        userInterfaceThread = new Thread(() -> userInterface.run());
+        Thread userInterfaceThread = new Thread(() -> userInterface.run());
         userInterfaceThread.start();
         try {
             userInterfaceThread.join();

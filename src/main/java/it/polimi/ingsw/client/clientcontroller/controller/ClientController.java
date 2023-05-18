@@ -1,6 +1,6 @@
-package it.polimi.ingsw.client.clientontroller.controller;
+package it.polimi.ingsw.client.clientcontroller.controller;
 
-import it.polimi.ingsw.client.clientontroller.connection.Connection;
+import it.polimi.ingsw.client.clientcontroller.connection.Connection;
 import javafx.fxml.FXML;
 import javafx.scene.control.TextField;
 
@@ -11,14 +11,9 @@ public interface ClientController {
     void startUserInterface(String uiType);
     void sendNickname(String nickname);
     void getParameters();
-
     void invalidNickname();
-
     void sendParameters(int numPlayers, int numCommons);
-
     void nicknameAccepted();
-
     void lobbyCreated();
-
     void waitForLobby();
 }

@@ -1,6 +1,6 @@
-package it.polimi.ingsw.client.clientontroller.connection;
+package it.polimi.ingsw.client.clientcontroller.connection;
 
-import it.polimi.ingsw.client.clientontroller.SerializeDeserialize;
+import it.polimi.ingsw.client.clientcontroller.SerializeDeserialize;
 
 import java.io.*;
 import java.net.Socket;

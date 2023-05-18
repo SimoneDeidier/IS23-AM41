@@ -1,7 +1,7 @@
-package it.polimi.ingsw.client.clientontroller;
+package it.polimi.ingsw.client.clientcontroller;
 
 import com.google.gson.Gson;
-import it.polimi.ingsw.client.clientontroller.connection.ConnectionTCP;
+import it.polimi.ingsw.client.clientcontroller.connection.ConnectionTCP;
 import it.polimi.ingsw.interfaces.SerializeDeserializeInterface;
 import it.polimi.ingsw.messages.TCPMessage;
 

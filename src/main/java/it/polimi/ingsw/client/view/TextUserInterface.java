@@ -1,6 +1,6 @@
 package it.polimi.ingsw.client.view;
 
-import it.polimi.ingsw.client.clientontroller.controller.ClientController;
+import it.polimi.ingsw.client.clientcontroller.controller.ClientController;
 
 public class TextUserInterface implements UserInterface{
 

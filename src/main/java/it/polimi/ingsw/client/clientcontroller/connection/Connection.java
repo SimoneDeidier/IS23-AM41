@@ -1,4 +1,4 @@
-package it.polimi.ingsw.client.clientontroller.connection;
+package it.polimi.ingsw.client.clientcontroller.connection;
 
 public interface Connection {
 

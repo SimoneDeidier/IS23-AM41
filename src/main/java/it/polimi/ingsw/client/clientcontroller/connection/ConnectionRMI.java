@@ -1,8 +1,9 @@
-package it.polimi.ingsw.client.clientontroller.connection;
+package it.polimi.ingsw.client.clientcontroller.connection;
 
 import it.polimi.ingsw.client.GameLock;
 import it.polimi.ingsw.client.PingThread;
-import it.polimi.ingsw.client.clientontroller.controller.ClientController;
+import it.polimi.ingsw.client.clientcontroller.controller.ClientController;
+import it.polimi.ingsw.client.clientcontroller.controller.ClientControllerRMI;
 import it.polimi.ingsw.interfaces.InterfaceClient;
 import it.polimi.ingsw.interfaces.InterfaceServer;
 import it.polimi.ingsw.messages.NewView;
@@ -33,26 +34,30 @@ public class ConnectionRMI implements InterfaceClient, Serializable, Connection 
             Registry registry = LocateRegistry.getRegistry(IP, PORT);
             // Looking up the registry for the remote object
             stub = (InterfaceServer) registry.lookup("serverInterface");
-            stub.presentation(this,/*controller.askNickname(false)*/"Mario");
+            controller=new ClientControllerRMI(this);
+            controller.startUserInterface(uiType);
         }
         catch (Exception e) {
             e.printStackTrace();
         }
     }
 
+    public void presentation(String nickname) throws RemoteException {
+        stub.presentation(this, nickname);
+    }
+
     @Override
     public void askParameters() throws RemoteException {
-        //while(true){
-        //  if(stub.sendParameters(controller.askParameter(),controller.askParameter2())){
-        //      confirmConnection(false);
-        //      break;
-        //  }
-        //}
+        controller.getParameters();
+    }
+
+    public void sendParameters(int maxPlayerNumber,boolean onlyOneCommon) throws RemoteException{
+        stub.sendParameters(this,maxPlayerNumber,onlyOneCommon);
     }
 
     @Override
     public void askForNewNickname() throws RemoteException {
-        stub.presentation(this,/*controller.askNickname(true)*/null);
+        controller.invalidNickname();
     }
 
     public void waitForGameStart() {
@@ -92,7 +97,9 @@ public class ConnectionRMI implements InterfaceClient, Serializable, Connection 
     @Override
     public void confirmConnection(boolean bool) throws RemoteException {
         //todo
-        //tell the controller to show a confirmation the client has had access to the server, boolean false-> a new game, true-> a restored game
+        if(!bool)
+            controller.nicknameAccepted();
+        //manca caso in cui è player restored
         waitForGameStart();
     }
 
@@ -115,4 +122,15 @@ public class ConnectionRMI implements InterfaceClient, Serializable, Connection 
     public void showEndGame(NewView newView) throws RemoteException {
         //tell the controller to make the view show the end game screen
     }
+
+    @Override
+    public void lobbyCreated() throws RemoteException {
+        controller.lobbyCreated();
+    }
+
+    @Override
+    public void waitForLobbyCreation() throws RemoteException {
+        controller.waitForLobby();
+    }
+
 }

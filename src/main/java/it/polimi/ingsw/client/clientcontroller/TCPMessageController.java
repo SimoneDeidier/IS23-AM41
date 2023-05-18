@@ -1,8 +1,8 @@
-package it.polimi.ingsw.client.clientontroller;
+package it.polimi.ingsw.client.clientcontroller;
 
 import it.polimi.ingsw.client.Client;
-import it.polimi.ingsw.client.clientontroller.controller.ClientController;
-import it.polimi.ingsw.client.clientontroller.controller.ClientControllerTCP;
+import it.polimi.ingsw.client.clientcontroller.controller.ClientController;
+import it.polimi.ingsw.client.clientcontroller.controller.ClientControllerTCP;
 import it.polimi.ingsw.interfaces.TCPMessageControllerInterface;
 import it.polimi.ingsw.messages.Body;
 import it.polimi.ingsw.messages.TCPMessage;
