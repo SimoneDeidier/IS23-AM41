@@ -11,6 +11,7 @@ import it.polimi.ingsw.server.servercontroller.GameController;
 import java.io.IOException;
 import java.net.URISyntaxException;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.Random;
 
@@ -45,6 +46,9 @@ public class WaitingForPlayerState extends GameState {
                 throw new RuntimeException(e);
             }
         }
+        //We randomize the list of players
+        Collections.shuffle(playerList);
+
     }
 
     public PersonalTargetCard generateRandomPersonal(List<Player> playerList) throws IOException, URISyntaxException {

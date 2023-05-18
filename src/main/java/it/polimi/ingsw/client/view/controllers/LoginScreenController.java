@@ -44,7 +44,6 @@ public class LoginScreenController {
     }
 
     public void getGameParameters() {
-        System.err.println(">E qui il problerma");
         changePane(nicknameAnchorPane, parametersAnchorPane);
         playersChoiceBox.getItems().addAll(players);
         commonsChoiceBox.getItems().addAll(commons);
