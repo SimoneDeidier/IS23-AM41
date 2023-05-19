@@ -10,6 +10,7 @@ import javafx.scene.control.TextArea;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.AnchorPane;
+import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
 import javafx.scene.text.Text;
 import javafx.stage.Stage;
@@ -30,11 +31,11 @@ public class GameScreenController {
     @FXML
     private Text playerText;
     @FXML
-    private AnchorPane chatAnchorPane;
-    @FXML
     private TextArea chatMessageTextArea;
     @FXML
     private ImageView chatBackgroundImageView;
+    @FXML
+    private VBox chatVBox;
 
     public void setGui(GraphicUserInterface gui) {
         this.gui = gui;
@@ -77,20 +78,16 @@ public class GameScreenController {
     }
 
     public void addMessageInChat(String message, String sender, String localDateTime) {
-        String messageText = localDateTime + " - " + sender + ":\n" + message;
+        String messageText = localDateTime + "\n<b>" + sender + "</b>: " + message;
         Label newMsg = new Label(messageText);
+        newMsg.setMaxWidth(194.0);
         newMsg.setTextFill(Color.WHITE);
-        newMsg.setTranslateX(13);
-        newMsg.setTranslateY(chatMessageOffsetY);
-        // todo da sistemare il calcolo dell'offset
-        double newOffset = newMsg.getHeight() + 13.0;
-        chatMessageOffsetY += newOffset;
-        if(chatMessageOffsetY > 700.0) {
-
-            chatAnchorPane.setPrefHeight(chatAnchorPane.getHeight() + newOffset + 9.0);
-            chatBackgroundImageView.setFitHeight(chatBackgroundImageView.getFitHeight() + newOffset + 9.0);
-        }
-        Platform.runLater(() -> chatAnchorPane.getChildren().add(newMsg));
+        newMsg.setTranslateX(13.0);
+        newMsg.setTranslateY(31.0);
+        Platform.runLater(() -> {
+            chatVBox.getChildren().add(newMsg);
+            System.err.println(chatVBox.getHeight());
+        });
     }
 
 }

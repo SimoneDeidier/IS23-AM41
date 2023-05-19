@@ -362,6 +362,7 @@ public class GameController {
 
         // send the message to receiver
         if(nickToTCPMessageControllerMapping.containsKey(receiver)) {
+            System.err.println("Mando PTP MSG a " + receiver);
             Body body = new Body();
             body.setSenderNickname(sender);
             body.setText(text);
@@ -374,6 +375,7 @@ public class GameController {
 
         // send the message to the sender
         if(nickToTCPMessageControllerMapping.containsKey(sender)) {
+            System.err.println("Mando PTP MSG a " + sender);
             Body body = new Body();
             body.setSenderNickname(sender);
             body.setText(text);
@@ -387,6 +389,7 @@ public class GameController {
 
     public void broadcastMsg(String sender, String text, String localDateTime) throws RemoteException {
         for(String s : nickToTCPMessageControllerMapping.keySet()) {
+            System.err.println("MANDO BRD MSG A " + s);
             Body body = new Body();
             body.setSenderNickname(sender);
             body.setText(text);

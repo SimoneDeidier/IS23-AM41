@@ -31,15 +31,15 @@ public class TCPMessageController implements TCPMessageControllerInterface {
                 System.err.println("NEW PRESENTATION MSG - Nickname: " + nickname);
                 try {
                     switch(gameController.presentation(nickname)) {
-                        case 1: { //joined a "new" game
+                        case 1 -> { //joined a "new" game
                             printTCPMessage("Nickname Accepted", null);
                             System.err.println("Sending a Nickname Accepted TCP Message");
                             gameController.putNickToSocketMapping(nickname, this);
-                        } case 2: { //joined a "restored" game
+                        } case 2 -> { //joined a "restored" game
                             printTCPMessage("Player Restored", null);
                             gameController.putNickToSocketMapping(nickname, null);
                         }
-                        case 0: {  // you're joining but I need another nickname
+                        case 0 -> {  // you're joining but I need another nickname
                             printTCPMessage("Invalid Nickname", null);
                             System.err.println("SENDING AN Invalid Nickname MESSAGE");
                         }
@@ -106,6 +106,7 @@ public class TCPMessageController implements TCPMessageControllerInterface {
                 String text = message.getBody().getText();
                 String localDateTime = message.getBody().getLocalDateTime();
                 gameController.broadcastMsg(sender, text, localDateTime);
+                System.err.println("FINITO BROADCAST");
             }
             case "Disconnect" -> {
                 gameController.disconnectUserTCP(this);

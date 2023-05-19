@@ -9,6 +9,7 @@
 <?import javafx.scene.layout.ColumnConstraints?>
 <?import javafx.scene.layout.GridPane?>
 <?import javafx.scene.layout.RowConstraints?>
+<?import javafx.scene.layout.VBox?>
 <?import javafx.scene.text.Font?>
 <?import javafx.scene.text.Text?>
 
@@ -24,18 +25,10 @@
             <Font size="19.0" />
          </font>
       </Text>
-      <ScrollPane prefHeight="200.0" prefWidth="200.0" AnchorPane.bottomAnchor="69.0" AnchorPane.leftAnchor="1043.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
-        <content>
-          <AnchorPane fx:id="chatAnchorPane" minHeight="0.0" minWidth="0.0" prefHeight="720.0" prefWidth="220.0">
-               <children>
-                  <ImageView fx:id="chatBackgroundImageView" fitHeight="720.0" fitWidth="220.0" pickOnBounds="true" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
-                     <image>
-                        <Image url="@../images/chat_background.jpg" />
-                     </image>
-                  </ImageView>
-               </children>
-            </AnchorPane>
-        </content>
+      <ScrollPane hbarPolicy="NEVER" prefHeight="200.0" prefWidth="200.0" AnchorPane.bottomAnchor="69.0" AnchorPane.leftAnchor="1043.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+         <content>
+            <VBox fx:id="chatVBox" prefHeight="649.0" prefWidth="235.0" />
+         </content>
       </ScrollPane>
       <ImageView fitHeight="588.0" fitWidth="588.0" layoutX="177.0" layoutY="94.0" pickOnBounds="true" preserveRatio="true" AnchorPane.bottomAnchor="63.0" AnchorPane.leftAnchor="31.0" AnchorPane.rightAnchor="661.0" AnchorPane.topAnchor="69.0">
          <image>
