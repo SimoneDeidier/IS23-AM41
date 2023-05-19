@@ -54,7 +54,7 @@ public class TCPMessageController implements TCPMessageControllerInterface {
                     gameController.startGame();
                     gameController.yourTarget();
                     // todo da implementare il new view
-                    // gameController.updateView();
+                    gameController.updateView();
                 } catch (FullLobbyException e) { //you can't connect right now, the lobby is full or a game is already playing on the server
                     printTCPMessage("Goodbye", null);
                     closeConnection();

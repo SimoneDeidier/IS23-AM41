@@ -5,7 +5,9 @@ import it.polimi.ingsw.server.model.Player;
 import javafx.fxml.FXML;
 import javafx.scene.control.TextField;
 
+import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.net.URISyntaxException;
 import java.time.LocalDateTime;
 import java.util.List;
 
@@ -24,4 +26,6 @@ public interface ClientController {
     void loadGameScreen() throws IOException;
     void sendMessage(String message);
     void receiveMessage(String message, String sender, String localDateTime);
+
+    void updateView(List<Player> playerList) throws FileNotFoundException, URISyntaxException;
 }

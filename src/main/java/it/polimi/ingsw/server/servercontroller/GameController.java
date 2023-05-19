@@ -171,8 +171,6 @@ public class GameController {
     public void setupGame(boolean onlyOneCommonCard) {
         state.setupGame(maxPlayerNumber, commonTargetCardsList, board, onlyOneCommonCard,playerList,this);
         System.out.println(board);
-        System.out.println(playerList.get(0).getBoard());
-        System.out.println(playerList.get(1).getBoard());
     }
 
     public boolean checkLastTurn() {
@@ -351,6 +349,7 @@ public class GameController {
     public void updateView() throws RemoteException {
         Body body = new Body();
         NewView newView= getNewView();
+        newView.setPlayerList(playerList);
         body.setNewView(newView);
         for(String s : getNickToTCPMessageControllerMapping().keySet()) {
             getNickToTCPMessageControllerMapping().get(s).printTCPMessage("Update View", body);
