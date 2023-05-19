@@ -4,7 +4,7 @@ import it.polimi.ingsw.server.model.items.ItemsBag;
 
 import java.io.Serializable;
 
-public class ThreePlayersBoard extends BoardFactory implements Serializable {
+public class ThreePlayersBoard extends BoardFactory {
 
     private static BoardFactory instance;
 

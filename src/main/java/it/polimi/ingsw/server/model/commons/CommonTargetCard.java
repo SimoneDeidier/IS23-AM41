@@ -10,7 +10,7 @@ import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
 
-public abstract class CommonTargetCard {
+public abstract class CommonTargetCard implements Serializable {
 
 
     protected final static int ROWS = 6;

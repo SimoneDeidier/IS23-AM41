@@ -10,13 +10,14 @@ import java.io.IOException;
 import java.io.Serializable;
 import java.rmi.RemoteException;
 import java.time.LocalDateTime;
+import java.time.temporal.ChronoUnit;
 
 public class ClientControllerRMI implements ClientController, Serializable {
 
     private final ConnectionRMI connectionRMI;
     private UserInterface userInterface = null;
     private String playerNickname;
-    private int personalCardNumber;
+    private int personalTargetCardNumber;
 
     public ClientControllerRMI(ConnectionRMI connectionRMI) {
         this.connectionRMI = connectionRMI;
@@ -84,21 +85,34 @@ public class ClientControllerRMI implements ClientController, Serializable {
 
     @Override
     public void setPersonalTargetCardNumber(int personalTargetCardNumber) {
-
+        this.personalTargetCardNumber=personalTargetCardNumber;
     }
 
     @Override
     public void loadGameScreen() throws IOException {
-
+        userInterface.loadGameScreen(personalTargetCardNumber, playerNickname);
     }
 
     @Override
     public void sendMessage(String message) {
-
+        Body body = new Body();
+        body.setText(message);
+        body.setSenderNickname(playerNickname);
+        LocalDateTime time = LocalDateTime.now();
+        body.setLocalDateTime(time.truncatedTo(ChronoUnit.SECONDS).toString());
+        String[] words = message.split(" ");
+        if(words[0].startsWith("@")){
+            body.setReceiverNickname(words[0].substring(1));
+            connectionRMI.sendPrivateMessage(body);
+        }
+        else {
+            connectionRMI.sendBroadcastMessage(body);
+        }
     }
 
     @Override
     public void receiveMessage(String message, String sender, String localDateTime) {
-
+        userInterface.receiveMessage(message, sender, localDateTime);
     }
+
 }

@@ -5,7 +5,7 @@ import it.polimi.ingsw.server.model.items.ItemsBag;
 
 import java.io.Serializable;
 
-public class TwoPlayersBoard extends BoardFactory implements Serializable {
+public class TwoPlayersBoard extends BoardFactory {
 
     private final static int ROWS = 9;
     private final static int COLUMNS = 9;

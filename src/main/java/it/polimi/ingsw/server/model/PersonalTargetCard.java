@@ -9,10 +9,11 @@ import org.apache.commons.io.FileUtils;
 
 import java.io.File;
 import java.io.IOException;
+import java.io.Serializable;
 import java.net.URISyntaxException;
 import java.nio.charset.StandardCharsets;
 
-public class PersonalTargetCard {
+public class PersonalTargetCard implements Serializable {
     int personalNumber;
     final int pinkRow;
     final int pinkCol;

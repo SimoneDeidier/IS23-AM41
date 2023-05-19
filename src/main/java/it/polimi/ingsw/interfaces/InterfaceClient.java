@@ -12,7 +12,7 @@ public interface InterfaceClient extends Remote {
     void updateView(NewView newView) throws RemoteException;
     void disconnectUser(int whichMessageToShow) throws RemoteException;
     void confirmConnection(boolean bool) throws RemoteException;
-    void receiveMessage(String sender, String message) throws RemoteException;
+    void receiveMessage(String sender, String message, String localDateTime) throws RemoteException;
     void wrongMessageWarning(String message) throws RemoteException;
     void receivePersonalTargetCard(int whichPersonal) throws RemoteException;
     void showEndGame(NewView newView) throws RemoteException;
