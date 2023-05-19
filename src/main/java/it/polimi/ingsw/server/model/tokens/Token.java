@@ -4,7 +4,7 @@ import it.polimi.ingsw.server.model.Player;
 
 import java.io.Serializable;
 
-public abstract class Token {
+public abstract class Token implements Serializable {
     protected int value;
     protected Player owner = null;
 

@@ -17,7 +17,6 @@ import java.rmi.RemoteException;
 import java.rmi.registry.LocateRegistry;
 import java.rmi.registry.Registry;
 import java.rmi.server.UnicastRemoteObject;
-import java.time.LocalDateTime;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Scanner;
@@ -136,8 +135,6 @@ public class Server implements InterfaceServer {
 
     @Override
     public void presentation(InterfaceClient cl, String nickname) throws RemoteException {
-        System.err.println("CHIAMATO PRESENTATION");
-        System.err.println(cl);
         try {
             switch(controller.presentation(nickname)) {
                 case 1: { //joined a "new" game
@@ -162,9 +159,7 @@ public class Server implements InterfaceServer {
         } catch (FullLobbyException e) { //you can't connect right now, the lobby is full or a game is already playing on the server
             cl.disconnectUser(1);
         } catch (FirstPlayerException e) { //you're the first player connecting for creating a new game, I need more parameters from you
-            System.err.println("INVOCATA FIRST P EX");
             clientMapRMI.put(nickname,cl);
-            System.err.println(cl);
             cl.askParameters();
         } catch (WaitForLobbyParametersException e) {
             cl.waitForLobbyCreation();
@@ -225,8 +220,8 @@ public class Server implements InterfaceServer {
         }
     }
 
-    public void peerToPeerMsg(String sender, String receiver, String text) throws RemoteException {
-        clientMapRMI.get(receiver).receiveMessage(sender, text);
+    public void peerToPeerMsg(String sender, String receiver, String text, String localDateTime) throws RemoteException {
+        clientMapRMI.get(receiver).receiveMessage(sender, text, localDateTime);
     }
 
     @Override
@@ -234,9 +229,16 @@ public class Server implements InterfaceServer {
         controller.broadcastMsg(sender,text, localDateTime);
     }
 
-    public void broadcastMsg(String sender, String text) throws RemoteException {
+    @Override
+    public void disconnection(String nickname) throws RemoteException {
+        controller.changePlayerConnectionStatus(nickname);
+        clientMapRMI.get(nickname).disconnectUser(7/*boh*/);
+        clientMapRMI.remove(nickname);
+    }
+
+    public void broadcastMsg(String sender, String text,String localDateTime) throws RemoteException {
         for(InterfaceClient interfaceClient: clientMapRMI.values()) {
-            interfaceClient.receiveMessage(sender, text);
+            interfaceClient.receiveMessage(sender, text,localDateTime );
         }
     }
 

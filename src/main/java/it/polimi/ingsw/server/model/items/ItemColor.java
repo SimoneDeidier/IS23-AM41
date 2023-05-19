@@ -1,6 +1,8 @@
 package it.polimi.ingsw.server.model.items;
 
-public enum ItemColor {
+import java.io.Serializable;
+
+public enum ItemColor implements Serializable {
     LIGHT_BLUE,
     BLUE,
     GREEN,

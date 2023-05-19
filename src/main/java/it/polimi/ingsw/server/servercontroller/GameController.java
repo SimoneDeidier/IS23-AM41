@@ -199,8 +199,13 @@ public class GameController {
         return state.isGameReady(playerList, maxPlayerNumber);
     }
 
-    public void changePlayerConnectionStatus(Player player) {
-        player.setConnected(!player.isConnected());
+    public void changePlayerConnectionStatus(String nickname) {
+        for (Player player : playerList) {
+            if (player.getNickname().equals(nickname)) {
+                player.setConnected(!player.isConnected());
+                break;
+            }
+        }
     }
 
     public boolean createLobby(int maxPlayerNumber, boolean onlyOneCommonCard) {
@@ -252,7 +257,6 @@ public class GameController {
     public synchronized int presentation(String nickname) throws FirstPlayerException, CancelGameException, GameStartException, FullLobbyException, WaitForLobbyParametersException { //response to presentation
         int availableSlots = getAvailableSlot();
         if (availableSlots == -1) { //handling the first player
-            System.err.println("FIRST PLAYER");
             if (checkSavedGame(nickname)) { //the first player is present in the saved game
                 setupGame(onlyOneCommonCard);
                 changeState(new WaitingForSavedGameState());
@@ -262,12 +266,9 @@ public class GameController {
                     return 2;
                 }
             } else {
-                System.err.println("NO SAVED PLAYER");
                 changeState(new WaitingForPlayerState()); //the first player is new
-                System.err.println("UPDATED SERVER STATE");
                 System.err.println(state);
                 addPlayer(new Player(nickname));
-                System.err.println("ADDED PLAYER TO PLAYERLIST");
                 System.err.println(playerList);
                 throw new FirstPlayerException();
             }
@@ -281,9 +282,8 @@ public class GameController {
         }
 
         switch (checkNicknameAvailability(nickname)) {
-            case -1 -> { //it wasn't possible to restore a saved game, goodbye to everyone
-                throw new CancelGameException();
-            }
+            case -1 -> //it wasn't possible to restore a saved game, goodbye to everyone
+                    throw new CancelGameException();
             case 0 -> {     //unavailable nickname
                 System.err.println("NICKNAME UNAVAILABLE");
                 return 0;
@@ -369,7 +369,7 @@ public class GameController {
             nickToTCPMessageControllerMapping.get(receiver).printTCPMessage("New Msg", body);
         }
         else {
-            server.peerToPeerMsg(sender, receiver, text);
+            server.peerToPeerMsg(sender, receiver, text,localDateTime);
         }
 
         // send the message to the sender
@@ -381,7 +381,7 @@ public class GameController {
             nickToTCPMessageControllerMapping.get(sender).printTCPMessage("New Msg", body);
         }
         else {
-            server.peerToPeerMsg(sender, sender, text);
+            server.peerToPeerMsg(sender, sender, text,localDateTime);
         }
     }
 
@@ -393,7 +393,7 @@ public class GameController {
             body.setLocalDateTime(localDateTime);
             nickToTCPMessageControllerMapping.get(s).printTCPMessage("New Msg", body);
         }
-        server.broadcastMsg(sender, text);
+        server.broadcastMsg(sender, text,localDateTime);
     }
 
     public void gameOver() throws RemoteException {
@@ -403,10 +403,8 @@ public class GameController {
         prepareForNewGame();
     }
 
-    // le funzioni di disconnessione dell'utente sono diverse tra tcp e rmi secondo me
-    // tanto un utemte tcp che decide di disconnettersi deve sicuro ricevere un messaggio tcp,
-    // mentre uno rmi riceverà una chiamata a metodo rmi
-    public void disconnectUserTCP(TCPMessageController tcpMessageController) {
+
+    public void intentionalDisconnectionUserTCP(TCPMessageController tcpMessageController) {
         String nickname = null;
         for(String s : nickToTCPMessageControllerMapping.keySet()) {
             if(nickToTCPMessageControllerMapping.get(s) == tcpMessageController) {
@@ -426,11 +424,9 @@ public class GameController {
     public void saveServerStatus() {
         Gson gson = new Gson();
         String serializedGameController = gson.toJson(this);
-        // todo da finre
+        // todo da finire
     }
 
-
-    public void disconnectUserRMI() {}  // todo da fare!!!
 
 }
 

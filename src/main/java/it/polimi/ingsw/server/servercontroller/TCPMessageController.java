@@ -7,7 +7,6 @@ import it.polimi.ingsw.server.servercontroller.exceptions.*;
 
 import java.net.Socket;
 import java.rmi.RemoteException;
-import java.time.LocalDateTime;
 
 public class TCPMessageController implements TCPMessageControllerInterface {
 
@@ -108,7 +107,7 @@ public class TCPMessageController implements TCPMessageControllerInterface {
                 gameController.broadcastMsg(sender, text, localDateTime);
             }
             case "Disconnect" -> {
-                gameController.disconnectUserTCP(this);
+                gameController.intentionalDisconnectionUserTCP(this);
             }
         }
     }

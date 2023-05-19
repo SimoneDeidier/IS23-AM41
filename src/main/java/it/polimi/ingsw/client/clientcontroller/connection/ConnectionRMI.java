@@ -6,8 +6,10 @@ import it.polimi.ingsw.client.clientcontroller.controller.ClientController;
 import it.polimi.ingsw.client.clientcontroller.controller.ClientControllerRMI;
 import it.polimi.ingsw.interfaces.InterfaceClient;
 import it.polimi.ingsw.interfaces.InterfaceServer;
+import it.polimi.ingsw.messages.Body;
 import it.polimi.ingsw.messages.NewView;
 
+import java.io.IOException;
 import java.io.Serializable;
 import java.rmi.RemoteException;
 import java.rmi.registry.LocateRegistry;
@@ -61,31 +63,18 @@ public class ConnectionRMI extends UnicastRemoteObject implements InterfaceClien
         controller.invalidNickname();
     }
 
-    public void waitForGameStart() {
-        synchronized (lock) {
-            while (!gameStarted) {
-                try {
-                    lock.wait();
-                } catch (InterruptedException e) {
-                    e.printStackTrace();
-                }
-            }
-        }
-    }
-
     @Override
     public void updateView(NewView newView) throws RemoteException {
-        if(!gameStarted){ //on the first updateView it exits the waitingRoom
-            synchronized (lock) {
-                gameStarted = true;
-                lock.notifyAll();
-            }
+        if(!gameStarted){ //on the first updateView it starts the ping to the server
             PingThread pingThread = new PingThread(stub,this); //Starting the thread for pinging the server
             pingThread.start();
+            gameStarted=true;
         }
-        //And now we tell the controller to show the GUI/TUI and the client shouldn't need a loop, it's constantly waiting for the player's input
-        //The controller will check if the user is the active player, and if he's the active he'll have two options: send message and make move
-        //Otherwise he's only able to send a message until a new updateView
+        try {
+            controller.loadGameScreen();
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
     }
 
     @Override
@@ -101,12 +90,11 @@ public class ConnectionRMI extends UnicastRemoteObject implements InterfaceClien
         if(!bool)
             controller.nicknameAccepted();
         //manca caso in cui è player restored
-        waitForGameStart();
     }
 
     @Override
-    public void receiveMessage(String sender, String message) throws RemoteException {
-        //tell the controller to show the message in the view
+    public void receiveMessage(String sender, String message, String localDateTime) throws RemoteException {
+        controller.receiveMessage(message,sender,localDateTime);
     }
 
     @Override
@@ -116,7 +104,7 @@ public class ConnectionRMI extends UnicastRemoteObject implements InterfaceClien
 
     @Override
     public void receivePersonalTargetCard(int whichPersonal) throws RemoteException {
-        // todo
+        controller.setPersonalTargetCardNumber(whichPersonal);
     }
 
     @Override
@@ -134,4 +122,19 @@ public class ConnectionRMI extends UnicastRemoteObject implements InterfaceClien
         controller.waitForLobby();
     }
 
+    public void sendPrivateMessage(Body body) {
+        try {
+            stub.peerToPeerMsgHandler(body.getSenderNickname(),body.getReceiverNickname(), body.getText(), body.getLocalDateTime());
+        } catch (RemoteException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    public void sendBroadcastMessage(Body body) {
+        try {
+            stub.broadcastMsgHandler(body.getSenderNickname(), body.getText(), body.getLocalDateTime());
+        } catch (RemoteException e) {
+            throw new RuntimeException(e);
+        }
+    }
 }
