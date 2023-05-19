@@ -6,6 +6,7 @@ import it.polimi.ingsw.server.model.items.ItemColor;
 public class CommonFourCorners extends CommonTargetCard {
     public CommonFourCorners(int maxPlayerNumber) {
         super(maxPlayerNumber);
+        this.name="CommonFourCorners";
     }
     @Override
     public boolean check(Shelf shelf) {

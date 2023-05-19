@@ -9,6 +9,7 @@ public class CommonFourGroupsOfFour extends CommonTargetCard {
     private final static int NUMBER_OF_TILES_NEEDED_IN_GROUPS = 4;
     public CommonFourGroupsOfFour(int maxPlayerNumber) {
         super(maxPlayerNumber);
+        this.name="CommonFourGroupsOfFour";
     }
     @Override
     public boolean check(Shelf shelf) {

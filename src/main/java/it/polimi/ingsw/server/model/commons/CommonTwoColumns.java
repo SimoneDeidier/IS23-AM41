@@ -6,6 +6,7 @@ import it.polimi.ingsw.server.model.commons.CommonTargetCard;
 public class CommonTwoColumns extends CommonTargetCard {
     public CommonTwoColumns(int maxPlayerNumber) {
         super(maxPlayerNumber);
+        this.name="CommonThreeColumns";
     }
     @Override
     public boolean check(Shelf shelf) {

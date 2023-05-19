@@ -5,6 +5,7 @@ import it.polimi.ingsw.server.model.Shelf;
 public class CommonFourRows extends CommonTargetCard {
     public CommonFourRows(int maxPlayerNumber) {
         super(maxPlayerNumber);
+        this.name="CommonFourRows";
     }
 
     @Override

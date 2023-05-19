@@ -13,7 +13,7 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.Serializable;
 import java.net.URISyntaxException;
-import java.time.LocalDateTime;
+import java.util.List;
 
 public class GraphicUserInterface extends Application implements UserInterface, Serializable {
 
@@ -80,7 +80,7 @@ public class GraphicUserInterface extends Application implements UserInterface, 
     }
 
     @Override
-    public void loadGameScreen(int personalTargetCardNumber, String nickname) {
+    public void loadGameScreen(int personalTargetCardNumber, String nickname, List<String> commonTargetGoals) {
         Platform.runLater(() -> {
             guiStage.close();
             FXMLLoader loader = new FXMLLoader(ClassLoader.getSystemResource("fxml/GameScreen.fxml"));
@@ -96,6 +96,11 @@ public class GraphicUserInterface extends Application implements UserInterface, 
                 gameScreenController.setPersonalTargetCard(personalTargetCardNumber);
             } catch (URISyntaxException | FileNotFoundException e) {
                 e.printStackTrace();
+            }
+            try {
+                gameScreenController.setCommonTargetCard(commonTargetGoals);
+            } catch (URISyntaxException | FileNotFoundException e) {
+                throw new RuntimeException(e);
             }
             guiStage.setResizable(false);;
             guiStage.setTitle("My Shelfie - Gaming Phase");

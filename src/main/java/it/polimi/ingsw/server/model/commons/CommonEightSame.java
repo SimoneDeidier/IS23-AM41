@@ -8,6 +8,7 @@ public class CommonEightSame extends CommonTargetCard {
 
     public CommonEightSame(int maxPlayerNumber) {
         super(maxPlayerNumber);
+        this.name="CommonEightSame";
     }
     @Override
     public boolean check(Shelf shelf) {

@@ -8,6 +8,7 @@ public class CommonThreeColumns extends CommonTargetCard {
     private final static int NUMBER_OF_COLUMNS_FOR_CONDITION = 3;
     public CommonThreeColumns(int maxPlayerNumber) {
         super(maxPlayerNumber);
+        this.name="CommonThreeColumns";
     }
     @Override
     public boolean check(Shelf shelf) {
