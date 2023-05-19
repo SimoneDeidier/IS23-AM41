@@ -25,7 +25,7 @@
             <Font size="19.0" />
          </font>
       </Text>
-      <ScrollPane hbarPolicy="NEVER" prefHeight="200.0" prefWidth="200.0" AnchorPane.bottomAnchor="69.0" AnchorPane.leftAnchor="1043.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+      <ScrollPane fx:id="chatScrollPane" hbarPolicy="NEVER" prefHeight="200.0" prefWidth="200.0" AnchorPane.bottomAnchor="69.0" AnchorPane.leftAnchor="1043.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
          <content>
             <VBox fx:id="chatVBox" prefHeight="649.0" prefWidth="235.0" />
          </content>

@@ -8,8 +8,6 @@ import javafx.scene.Scene;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextArea;
 import javafx.scene.image.Image;
-import javafx.scene.image.ImageView;
-import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
 import javafx.scene.text.Text;
@@ -26,16 +24,17 @@ public class GameScreenController {
 
     private GraphicUserInterface gui;
     private Image personalGoalImage = null;
-    private double chatMessageOffsetY = 13.0;
 
     @FXML
     private Text playerText;
     @FXML
     private TextArea chatMessageTextArea;
     @FXML
-    private ImageView chatBackgroundImageView;
-    @FXML
     private VBox chatVBox;
+
+    public void initialize() {
+        chatVBox.setStyle("-fx-background-color: #442211;");
+    }
 
     public void setGui(GraphicUserInterface gui) {
         this.gui = gui;
@@ -78,12 +77,13 @@ public class GameScreenController {
     }
 
     public void addMessageInChat(String message, String sender, String localDateTime) {
-        String messageText = localDateTime + "\n<b>" + sender + "</b>: " + message;
+        String messageText = localDateTime + "\n" + sender + ": " + message;
         Label newMsg = new Label(messageText);
         newMsg.setMaxWidth(194.0);
         newMsg.setTextFill(Color.WHITE);
         newMsg.setTranslateX(13.0);
-        newMsg.setTranslateY(31.0);
+        newMsg.setTranslateY(13.0);
+        newMsg.wrapTextProperty().set(true);
         Platform.runLater(() -> {
             chatVBox.getChildren().add(newMsg);
             System.err.println(chatVBox.getHeight());

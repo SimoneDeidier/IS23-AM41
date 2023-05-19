@@ -97,7 +97,7 @@ public class GraphicUserInterface extends Application implements UserInterface, 
             } catch (URISyntaxException | FileNotFoundException e) {
                 e.printStackTrace();
             }
-            guiStage.setResizable(false);
+            guiStage.setResizable(false);;
             guiStage.setTitle("My Shelfie - Gaming Phase");
             guiStage.show();
         });
