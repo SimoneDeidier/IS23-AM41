@@ -117,4 +117,9 @@ public class Player implements Serializable {
     public boolean checkColumnChosen(int numberOfItemsPicked, int column) {
         return shelf.checkColumn(numberOfItemsPicked,column);
     }
+
+    public BoardFactory getBoard() {
+        return this.board;
+    }
+
 }

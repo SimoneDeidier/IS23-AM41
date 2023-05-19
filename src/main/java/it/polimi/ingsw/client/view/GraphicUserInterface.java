@@ -3,6 +3,8 @@ package it.polimi.ingsw.client.view;
 import it.polimi.ingsw.client.clientcontroller.controller.ClientController;
 import it.polimi.ingsw.client.view.controllers.GameScreenController;
 import it.polimi.ingsw.client.view.controllers.LoginScreenController;
+import it.polimi.ingsw.server.model.Player;
+import it.polimi.ingsw.server.model.items.Item;
 import javafx.application.Application;
 import javafx.application.Platform;
 import javafx.fxml.FXMLLoader;
@@ -13,7 +15,7 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.Serializable;
 import java.net.URISyntaxException;
-import java.time.LocalDateTime;
+import java.util.List;
 
 public class GraphicUserInterface extends Application implements UserInterface, Serializable {
 
@@ -111,6 +113,12 @@ public class GraphicUserInterface extends Application implements UserInterface, 
     @Override
     public void receiveMessage(String message, String sender, String localDateTime) {
         gameScreenController.addMessageInChat(message, sender, localDateTime);
+    }
+
+    @Override
+    public void updateView(List<Player> playerList) throws FileNotFoundException, URISyntaxException {
+        Item[][] boardMatrix = playerList.get(0).getBoard().getBoardMatrix();
+        gameScreenController.setBoardItems(boardMatrix);
     }
 
 }

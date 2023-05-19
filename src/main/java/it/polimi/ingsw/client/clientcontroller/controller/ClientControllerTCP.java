@@ -5,10 +5,14 @@ import it.polimi.ingsw.client.view.GraphicUserInterface;
 import it.polimi.ingsw.client.view.TextUserInterface;
 import it.polimi.ingsw.client.view.UserInterface;
 import it.polimi.ingsw.messages.Body;
+import it.polimi.ingsw.server.model.Player;
 
+import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.net.URISyntaxException;
 import java.time.LocalDateTime;
 import java.time.temporal.ChronoUnit;
+import java.util.List;
 
 public class ClientControllerTCP implements ClientController {
 
@@ -110,6 +114,11 @@ public class ClientControllerTCP implements ClientController {
     @Override
     public void receiveMessage(String message, String sender, String localDateTime) {
         userInterface.receiveMessage(message, sender, localDateTime);
+    }
+
+    @Override
+    public void updateView(List<Player> playerList) throws FileNotFoundException, URISyntaxException {
+        userInterface.updateView(playerList);
     }
 
 

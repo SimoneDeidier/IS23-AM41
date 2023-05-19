@@ -6,6 +6,7 @@ import it.polimi.ingsw.interfaces.SerializeDeserializeInterface;
 import it.polimi.ingsw.messages.TCPMessage;
 
 import java.io.IOException;
+import java.net.URISyntaxException;
 
 public class SerializeDeserialize implements SerializeDeserializeInterface {
 
@@ -19,7 +20,7 @@ public class SerializeDeserialize implements SerializeDeserializeInterface {
     }
 
     @Override
-    public void deserialize(String input) throws IOException {
+    public void deserialize(String input) throws IOException, URISyntaxException {
         System.err.println(input);
         TCPMessage message = gson.fromJson(input, TCPMessage.class);
         tcpMessageController.readTCPMessage(message);

@@ -4,6 +4,7 @@ import it.polimi.ingsw.client.clientcontroller.SerializeDeserialize;
 
 import java.io.*;
 import java.net.Socket;
+import java.net.URISyntaxException;
 import java.util.Scanner;
 
 public class ConnectionTCP implements Connection {
@@ -35,7 +36,7 @@ public class ConnectionTCP implements Connection {
                 while ((inMsg = socketIn.nextLine()) != null) {
                     try {
                         serializeDeserialize.deserialize(inMsg);
-                    } catch (IOException e) {
+                    } catch (IOException | URISyntaxException e) {
                         e.printStackTrace();
                     }
                 }

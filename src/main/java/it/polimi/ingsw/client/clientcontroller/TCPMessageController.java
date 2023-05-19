@@ -8,6 +8,7 @@ import it.polimi.ingsw.messages.Body;
 import it.polimi.ingsw.messages.TCPMessage;
 
 import java.io.IOException;
+import java.net.URISyntaxException;
 
 public class TCPMessageController implements TCPMessageControllerInterface {
 
@@ -20,7 +21,7 @@ public class TCPMessageController implements TCPMessageControllerInterface {
     }
 
     @Override
-    public void readTCPMessage(TCPMessage message) throws IOException {
+    public void readTCPMessage(TCPMessage message) throws IOException, URISyntaxException {
         String header = message.getHeader();
         switch (header) {
             case "Nickname Accepted" -> {
@@ -47,7 +48,7 @@ public class TCPMessageController implements TCPMessageControllerInterface {
             }
             case "Update View" -> {
                 System.err.println("UPDATE VIEW ARRIVATO");
-                // todo
+                controller.updateView(message.getBody().getNewView().getPlayerList());
             }
             case "Lobby Created" -> {
                 controller.lobbyCreated();
