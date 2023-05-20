@@ -7,11 +7,8 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.net.URISyntaxException;
 import java.time.LocalDateTime;
-<<<<<<< Updated upstream
 import java.util.List;
-=======
 import java.util.Scanner;
->>>>>>> Stashed changes
 
 public class TextUserInterface implements UserInterface{
 
