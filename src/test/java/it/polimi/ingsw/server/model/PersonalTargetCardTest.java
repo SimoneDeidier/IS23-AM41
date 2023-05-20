@@ -18,9 +18,9 @@ class PersonalTargetCardTest {
         PersonalTargetCard personal = new PersonalTargetCard(0);
         Shelf shelf = new Shelf();
 
-        shelf.insertItems(0, Arrays.asList(new Item(ItemColor.PINK), new Item(ItemColor.BLUE), new Item(ItemColor.GREEN), new Item(ItemColor.GREEN), new Item(ItemColor.PINK), new Item(ItemColor.BLUE)));
+        shelf.insertItems(0, Arrays.asList(new Item(ItemColor.GREEN), new Item(ItemColor.BLUE), new Item(ItemColor.GREEN), new Item(ItemColor.GREEN), new Item(ItemColor.PINK), new Item(ItemColor.PINK)));
         shelf.insertItems(1, Arrays.asList(new Item(ItemColor.BLUE), new Item(ItemColor.YELLOW), new Item(ItemColor.YELLOW), new Item(ItemColor.YELLOW), new Item(ItemColor.WHITE), new Item(ItemColor.WHITE)));
-        shelf.insertItems(2, Arrays.asList(new Item(ItemColor.BLUE), new Item(ItemColor.PINK), new Item(ItemColor.BLUE), new Item(ItemColor.GREEN), new Item(ItemColor.BLUE), new Item(ItemColor.LIGHT_BLUE)));
+        shelf.insertItems(2, Arrays.asList(new Item(ItemColor.LIGHT_BLUE), new Item(ItemColor.PINK), new Item(ItemColor.BLUE), new Item(ItemColor.GREEN), new Item(ItemColor.BLUE), new Item(ItemColor.BLUE)));
         shelf.insertItems(3, Arrays.asList(new Item(ItemColor.YELLOW), new Item(ItemColor.BLUE), new Item(ItemColor.WHITE), new Item(ItemColor.WHITE), new Item(ItemColor.LIGHT_BLUE), new Item(ItemColor.YELLOW)));
         shelf.insertItems(4, Arrays.asList(new Item(ItemColor.GREEN), new Item(ItemColor.GREEN), new Item(ItemColor.GREEN), new Item(ItemColor.LIGHT_BLUE), new Item(ItemColor.GREEN), new Item(ItemColor.GREEN)));
 
