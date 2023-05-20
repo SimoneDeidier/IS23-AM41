@@ -7,7 +7,7 @@ import it.polimi.ingsw.server.servercontroller.GameController;
 
 import java.util.List;
 
-public class RunningGameState extends GameState {
+public class RunningGameState implements GameState {
 
     //Nessuna funzione è utile qui -> Lo stato è inutile??
 
@@ -17,10 +17,6 @@ public class RunningGameState extends GameState {
         return 0;
     }
 
-    @Override
-    public void setupGame(int maxPlayerNumber, List<CommonTargetCard> commonList, BoardFactory board, boolean onlyOneCommon, List<Player> playerList, GameController controller) {
-        //Never will be called here
-    }
     @Override
     public boolean isGameReady(List<Player> playerList, int maxPlayerNumber){
         //Never will be called here
@@ -35,6 +31,26 @@ public class RunningGameState extends GameState {
     @Override
     public void addPlayer(Player player, List<Player> playerList) {
         //Never will be called here
+    }
+
+    @Override
+    public List<CommonTargetCard> setupCommonList(boolean isOnlyOneCommon, int maxPlayerNumber) {
+        return null;
+    }
+
+    @Override
+    public BoardFactory setupBoard(int maxPlayerNumber) {
+        return null;
+    }
+
+    @Override
+    public void boardNeedsRefill(BoardFactory boardFactory) {
+
+    }
+
+    @Override
+    public void setupPlayers(List<Player> playerList, List<CommonTargetCard> commonTargetCardList, BoardFactory board) {
+
     }
 }
 

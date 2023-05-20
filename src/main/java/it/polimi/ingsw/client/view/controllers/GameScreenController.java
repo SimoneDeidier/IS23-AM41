@@ -111,14 +111,12 @@ public class GameScreenController {
                 CommonGoalController commonGoalController = loader.getController();
                 if(onlyOneCommon) {
                     commonGoalController.setOnlyOneCommonView(firstCommonGoalImage);
-                    stage.setResizable(false);
-                    stage.setTitle("My Shelfie - The Common Goal!");
                 }
                 else{
-                    commonGoalController.setTwoCommonsView(firstCommonGoalImage,secondCommonGoalImage);
-                    stage.setResizable(false);
-                    stage.setTitle("My Shelfie - The Common Goals!");
+                    commonGoalController.setTwoCommonsView(firstCommonGoalImage, secondCommonGoalImage);
                 }
+                stage.setResizable(false);
+                stage.setTitle("My Shelfie - Common goals!");
                 stage.show();
             } catch (IOException e) {
                 throw new RuntimeException(e);

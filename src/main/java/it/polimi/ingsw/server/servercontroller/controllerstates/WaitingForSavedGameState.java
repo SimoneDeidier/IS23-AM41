@@ -7,7 +7,7 @@ import it.polimi.ingsw.server.servercontroller.GameController;
 
 import java.util.List;
 
-public class WaitingForSavedGameState extends GameState {
+public class WaitingForSavedGameState implements GameState {
 
     @Override
     public int getAvailableSlot(int maxPlayerNumber, List<Player> playerList) {
@@ -18,13 +18,6 @@ public class WaitingForSavedGameState extends GameState {
             }
         }
         return count;
-    }
-
-
-
-    @Override
-    public void setupGame(int maxPlayerNumber, List<CommonTargetCard> commonList, BoardFactory board, boolean onlyOneCommon, List<Player> playerList, GameController controller) {
-        //This does nothing, the saved game is resumed in the initState
     }
 
     @Override
@@ -54,5 +47,25 @@ public class WaitingForSavedGameState extends GameState {
                 play.setConnected(true);
             }
         }
+    }
+
+    @Override
+    public List<CommonTargetCard> setupCommonList(boolean isOnlyOneCommon, int maxPlayerNumber) {
+        return null;
+    }
+
+    @Override
+    public BoardFactory setupBoard(int maxPlayerNumber) {
+        return null;
+    }
+
+    @Override
+    public void boardNeedsRefill(BoardFactory boardFactory) {
+
+    }
+
+    @Override
+    public void setupPlayers(List<Player> playerList, List<CommonTargetCard> commonTargetCardList, BoardFactory board) {
+
     }
 }

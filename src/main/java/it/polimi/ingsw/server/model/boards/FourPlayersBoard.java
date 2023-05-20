@@ -6,8 +6,6 @@ import java.io.Serializable;
 
 public class FourPlayersBoard extends BoardFactory {
 
-    private static BoardFactory instance;
-
     private FourPlayersBoard() {
         this.itemsBag = ItemsBag.getItemsBag();
         itemsBag.resetItemsBag();

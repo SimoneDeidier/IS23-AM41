@@ -9,7 +9,6 @@ public class TwoPlayersBoard extends BoardFactory {
 
     private final static int ROWS = 9;
     private final static int COLUMNS = 9;
-    private static BoardFactory instance;
 
     private TwoPlayersBoard() {
         this.itemsBag = ItemsBag.getItemsBag();

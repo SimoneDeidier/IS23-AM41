@@ -15,7 +15,7 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Random;
 
-public class WaitingForPlayerState extends GameState {
+public class WaitingForPlayerState implements GameState {
 
     @Override
     public int getAvailableSlot(int maxPlayerNumber, List<Player> playerList) {
@@ -25,32 +25,6 @@ public class WaitingForPlayerState extends GameState {
         else return maxPlayerNumber - playerList.size();
     }
 
-    @Override
-    public void setupGame(int maxPlayerNumber, List<CommonTargetCard> commonList, BoardFactory board, boolean onlyOneCommonCard, List<Player> playerList, GameController controller) {
-
-        commonList = generateRandomCommonCards(onlyOneCommonCard,maxPlayerNumber);
-
-        switch (maxPlayerNumber) {
-            case 2 -> board = TwoPlayersBoard.getTwoPlayersBoard();
-            case 3 -> board = ThreePlayersBoard.getThreePlayersBoard();
-            case 4 -> board = FourPlayersBoard.getFourPlayersBoard();
-        }
-        System.out.println("IN WFPS: " + board);
-
-        for(Player player: playerList){
-            player.setBoard(board);
-            player.setShelf(new Shelf());
-            player.setCommonTargetCardList(commonList);
-            try {
-                player.setPersonalTargetCard(generateRandomPersonal(playerList));
-            } catch (IOException | URISyntaxException e) {
-                throw new RuntimeException(e);
-            }
-        }
-        //We randomize the list of players
-        Collections.shuffle(playerList);
-
-    }
 
     public PersonalTargetCard generateRandomPersonal(List<Player> playerList) throws IOException, URISyntaxException {
         Random random = new Random();
@@ -144,6 +118,49 @@ public class WaitingForPlayerState extends GameState {
     @Override
     public void addPlayer(Player player, List<Player> playerList) {
         playerList.add(player);
+    }
+
+    @Override
+    public List<CommonTargetCard> setupCommonList(boolean isOnlyOneCommon, int maxPlayerNumber) {
+        return generateRandomCommonCards(isOnlyOneCommon, maxPlayerNumber);
+    }
+
+    @Override
+    public BoardFactory setupBoard(int maxPlayerNumber) {
+        switch (maxPlayerNumber) {
+            case 2 -> {
+                return TwoPlayersBoard.getTwoPlayersBoard();
+            }
+            case 3 -> {
+                return ThreePlayersBoard.getThreePlayersBoard();
+            }
+            case 4 -> {
+                return FourPlayersBoard.getFourPlayersBoard();
+            }
+            default -> {
+                return null;
+            }
+        }
+    }
+
+    @Override
+    public void boardNeedsRefill(BoardFactory boardFactory) {
+        boardFactory.refillBoard();
+    }
+
+    @Override
+    public void setupPlayers(List<Player> playerList, List<CommonTargetCard> commonTargetCardList, BoardFactory board) {
+        for(Player player: playerList){
+            player.setBoard(board);
+            player.setShelf(new Shelf());
+            player.setCommonTargetCardList(commonTargetCardList);
+            try {
+                player.setPersonalTargetCard(generateRandomPersonal(playerList));
+            } catch (IOException | URISyntaxException e) {
+                throw new RuntimeException(e);
+            }
+        }
+        Collections.shuffle(playerList);
     }
 
     @Override

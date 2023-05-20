@@ -10,16 +10,16 @@ import java.io.FileReader;
 import java.io.IOException;
 import java.util.List;
 
-public class ServerInitState extends GameState {
+public class ServerInitState implements GameState {
 
     @Override
     public int getAvailableSlot(int maxPlayerNumber, List<Player> playerList) {
         return -1;
     }
 
+    /* todo da trasportare negli altri metodi
     @Override
     public void setupGame(int maxPlayerNumber, List<CommonTargetCard> commonList, BoardFactory board, boolean onlyOneCommon, List<Player> playerList, GameController controller) {
-        //todo testing
         //Reload saved game
         Gson gson = new Gson();
 
@@ -32,8 +32,7 @@ public class ServerInitState extends GameState {
         } catch (IOException e) {
             e.printStackTrace();
         }
-        //todo modifying other parameters???
-    }
+    }*/
     @Override
     public boolean isGameReady(List<Player> playerList, int maxPlayerNumber){
         //Never will be called here
@@ -48,5 +47,25 @@ public class ServerInitState extends GameState {
     @Override
     public void addPlayer(Player player, List<Player> playerList) {
         //Never will be called here
+    }
+
+    @Override
+    public List<CommonTargetCard> setupCommonList(boolean isOnlyOneCommon, int maxPlayerNumber) {
+        return null;
+    }
+
+    @Override
+    public BoardFactory setupBoard(int maxPlayerNumber) {
+        return null;
+    }
+
+    @Override
+    public void boardNeedsRefill(BoardFactory boardFactory) {
+
+    }
+
+    @Override
+    public void setupPlayers(List<Player> playerList, List<CommonTargetCard> commonTargetCardList, BoardFactory board) {
+
     }
 }

@@ -25,7 +25,7 @@ public class GameController {
     private boolean lastTurn = false;
     private boolean onlyOneCommonCard = false;
     private Player activePlayer = null; //acts as a kind of turn
-    private BoardFactory board;
+    private BoardFactory board = null;
     private GameState state;
     private List<CommonTargetCard> commonTargetCardsList;
     private Map<String, TCPMessageController> nickToTCPMessageControllerMapping = new ConcurrentHashMap<>(4);
@@ -169,8 +169,10 @@ public class GameController {
     }
 
     public void setupGame(boolean onlyOneCommonCard) {
-        state.setupGame(maxPlayerNumber, commonTargetCardsList, board, onlyOneCommonCard,playerList,this);
-        System.out.println(board);
+        this.commonTargetCardsList = state.setupCommonList(onlyOneCommonCard, maxPlayerNumber);
+        this.board = state.setupBoard(maxPlayerNumber);
+        state.boardNeedsRefill(this.board);
+        state.setupPlayers(playerList, commonTargetCardsList, board);
     }
 
     public boolean checkLastTurn() {

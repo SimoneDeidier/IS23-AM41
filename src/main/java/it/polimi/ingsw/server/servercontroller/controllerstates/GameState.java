@@ -7,12 +7,14 @@ import it.polimi.ingsw.server.servercontroller.GameController;
 
 import java.util.List;
 
-public abstract class GameState {
+public interface GameState {
 
-    public abstract int getAvailableSlot(int maxPlayerNumber, List<Player> playerList);
-
-    public abstract void setupGame(int maxPlayerNumber, List<CommonTargetCard> commonList, BoardFactory board, boolean firstGame, List<Player> playerList, GameController controller);
-    public abstract boolean isGameReady(List<Player> playerList,int maxPlayerNumber);
-    public abstract int checkNicknameAvailability(String nickname,List<Player> playerList);
-    public abstract void addPlayer(Player player,List<Player> playerList);
+    int getAvailableSlot(int maxPlayerNumber, List<Player> playerList);
+    boolean isGameReady(List<Player> playerList,int maxPlayerNumber);
+    int checkNicknameAvailability(String nickname,List<Player> playerList);
+    void addPlayer(Player player,List<Player> playerList);
+    List<CommonTargetCard> setupCommonList(boolean isOnlyOneCommon, int maxPlayerNumber);
+    BoardFactory setupBoard(int maxPlayerNumber);
+    void boardNeedsRefill(BoardFactory boardFactory);
+    void setupPlayers(List<Player> playerList, List<CommonTargetCard> commonTargetCardList, BoardFactory board);
 }
