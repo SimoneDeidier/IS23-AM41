@@ -35,6 +35,7 @@ public class WaitingForPlayerState extends GameState {
             case 3 -> board = ThreePlayersBoard.getThreePlayersBoard();
             case 4 -> board = FourPlayersBoard.getFourPlayersBoard();
         }
+        System.out.println("IN WFPS: " + board);
 
         for(Player player: playerList){
             player.setBoard(board);

@@ -168,4 +168,8 @@ public abstract class BoardFactory implements Serializable {
     public void resetBoard(){
         boardMatrix= new Item[ROWS][COLUMNS];
     }
+
+    public Item[][] getBoardMatrix() {
+        return boardMatrix;
+    }
 }
