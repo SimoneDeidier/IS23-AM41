@@ -32,6 +32,7 @@ public class ServerInitState extends GameState {
         } catch (IOException e) {
             e.printStackTrace();
         }
+        //todo modifying other parameters???
     }
     @Override
     public boolean isGameReady(List<Player> playerList, int maxPlayerNumber){

@@ -6,6 +6,7 @@ import it.polimi.ingsw.messages.NewView;
 import it.polimi.ingsw.server.Server;
 import it.polimi.ingsw.server.model.*;
 import it.polimi.ingsw.server.model.boards.BoardFactory;
+import it.polimi.ingsw.server.model.boards.FourPlayersBoard;
 import it.polimi.ingsw.server.model.commons.CommonTargetCard;
 import it.polimi.ingsw.server.model.items.Item;
 import it.polimi.ingsw.server.model.tokens.EndGameToken;
@@ -106,8 +107,7 @@ public class GameController {
 
     public NewView getNewView(){
         NewView newView=new NewView();
-        newView.setPlayerList(List.copyOf(getPlayerList()));
-        System.out.println(activePlayer);
+        newView.setPlayerList(playerList);
         newView.setActivePlayer(new Player(getActivePlayer().getNickname()));
         newView.setGameOver(newView.getActivePlayer() == null);
         return newView;

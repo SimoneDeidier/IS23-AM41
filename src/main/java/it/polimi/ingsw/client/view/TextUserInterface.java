@@ -59,7 +59,7 @@ public class TextUserInterface implements UserInterface{
     }
 
     @Override
-    public void loadGameScreen(int personalTargetCardNumber, String nickname) {
+    public void loadGameScreen(int personalTargetCardNumber, String nickname, List<String> commonTargetGoals) {
 
     }
 

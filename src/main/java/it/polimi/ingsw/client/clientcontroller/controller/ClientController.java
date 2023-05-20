@@ -22,6 +22,7 @@ public interface ClientController {
     void lobbyCreated();
     void waitForLobby();
     void setPersonalTargetCardNumber(int personalTargetCardNumber);
+    void setCommonGoalList(List<Player> playerList);
     void loadGameScreen() throws IOException;
     void sendMessage(String message);
     void receiveMessage(String message, String sender, String localDateTime);

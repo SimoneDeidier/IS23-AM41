@@ -20,6 +20,7 @@ public class ClientControllerTCP implements ClientController {
     private UserInterface userInterface = null;
     private String playerNickname;
     private int personalTargetCardNumber;
+    private List<String> commonGoalList;
 
     public ClientControllerTCP(TCPMessageController tcpMessageController) {
         this.tcpMessageController = tcpMessageController;
@@ -90,8 +91,13 @@ public class ClientControllerTCP implements ClientController {
     }
 
     @Override
+    public void setCommonGoalList(List<Player> playerList) {
+        //todo
+    }
+
+    @Override
     public void loadGameScreen() throws IOException {
-        userInterface.loadGameScreen(personalTargetCardNumber, playerNickname);
+        userInterface.loadGameScreen(personalTargetCardNumber, playerNickname,commonGoalList);
     }
 
     @Override

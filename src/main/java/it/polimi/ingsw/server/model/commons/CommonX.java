@@ -6,6 +6,7 @@ import it.polimi.ingsw.server.model.Shelf;
 public class CommonX extends CommonTargetCard {
     public CommonX(int maxPlayerNumber) {
         super(maxPlayerNumber);
+        this.name="CommonX";
     }
     @Override
     public boolean check(Shelf shelf) {

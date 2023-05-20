@@ -28,7 +28,7 @@ public interface UserInterface {
 
     void waitForLobby();
 
-    void loadGameScreen(int personalTargetCardNumber, String nickname);
+    void loadGameScreen(int personalTargetCardNumber, String nickname, List<String> commonTargetGoals);
 
     void sendMessage(String message);
 

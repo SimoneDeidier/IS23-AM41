@@ -9,6 +9,7 @@ public class CommonTwoSquares extends CommonTargetCard {
 
     public CommonTwoSquares(int maxPlayerNumber) {
         super(maxPlayerNumber);
+        this.name="CommonTwoSquares";
     }
     @Override
     public boolean check(Shelf shelf) {

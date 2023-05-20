@@ -17,6 +17,7 @@ public abstract class CommonTargetCard implements Serializable {
     protected final static int COLUMNS = 5;
     protected final static int COLORS = 6;
     protected List<ScoringToken> scoringTokensList;
+    protected String name;
 
     public CommonTargetCard(int numberOfPlayers){
 
@@ -52,7 +53,7 @@ public abstract class CommonTargetCard implements Serializable {
         return null;
     }
 
-
-
-
+    public String getName() {
+        return name;
+    }
 }

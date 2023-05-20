@@ -117,9 +117,11 @@ public class Player implements Serializable {
     public boolean checkColumnChosen(int numberOfItemsPicked, int column) {
         return shelf.checkColumn(numberOfItemsPicked,column);
     }
-
-    public BoardFactory getBoard() {
-        return this.board;
+    public List<CommonTargetCard> getCommonTargetCardList() {
+        return commonTargetCardList;
     }
 
+    public BoardFactory getBoard() {
+        return board;
+    }
 }

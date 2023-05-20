@@ -70,6 +70,7 @@ public class ConnectionRMI extends UnicastRemoteObject implements InterfaceClien
             pingThread.start();
             gameStarted=true;
         }
+        controller.setCommonGoalList(newView.getPlayerList());
         try {
             controller.loadGameScreen();
         } catch (IOException e) {

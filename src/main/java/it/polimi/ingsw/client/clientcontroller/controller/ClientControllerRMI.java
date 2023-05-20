@@ -14,6 +14,7 @@ import java.net.URISyntaxException;
 import java.rmi.RemoteException;
 import java.time.LocalDateTime;
 import java.time.temporal.ChronoUnit;
+import java.util.ArrayList;
 import java.util.List;
 
 public class ClientControllerRMI implements ClientController, Serializable {
@@ -22,6 +23,7 @@ public class ClientControllerRMI implements ClientController, Serializable {
     private UserInterface userInterface = null;
     private String playerNickname;
     private int personalTargetCardNumber;
+    private List<String> commonTargetGoal= new ArrayList<>();
 
     public ClientControllerRMI(ConnectionRMI connectionRMI) {
         this.connectionRMI = connectionRMI;
@@ -93,8 +95,15 @@ public class ClientControllerRMI implements ClientController, Serializable {
     }
 
     @Override
+    public void setCommonGoalList(List<Player> playerList) {
+        this.commonTargetGoal.add(playerList.get(0).getCommonTargetCardList().get(0).getName());
+        if(playerList.get(0).getCommonTargetCardList().size()==2)
+            this.commonTargetGoal.add(playerList.get(0).getCommonTargetCardList().get(1).getName());
+        }
+
+    @Override
     public void loadGameScreen() throws IOException {
-        userInterface.loadGameScreen(personalTargetCardNumber, playerNickname);
+        userInterface.loadGameScreen(personalTargetCardNumber, playerNickname,commonTargetGoal);
     }
 
     @Override

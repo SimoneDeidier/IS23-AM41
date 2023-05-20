@@ -22,7 +22,9 @@ import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.net.URISyntaxException;
+import java.util.List;
 import java.util.Random;
+
 
 
 public class GameScreenController {
@@ -33,6 +35,9 @@ public class GameScreenController {
 
     private GraphicUserInterface gui;
     private Image personalGoalImage = null;
+    private Image firstCommonGoalImage = null;
+    private Image secondCommonGoalImage = null;
+    private boolean onlyOneCommon;
 
     @FXML
     private Text playerText;
@@ -72,6 +77,48 @@ public class GameScreenController {
                 personalGoalController.setPersonalGoal(personalGoalImage);
                 stage.setResizable(false);
                 stage.setTitle("My Shelfie - Your Personal Goal!");
+                stage.show();
+            } catch (IOException e) {
+                throw new RuntimeException(e);
+            }
+        });
+    }
+
+    public void setCommonTargetCard(List<String> commonTargetCardName) throws URISyntaxException, FileNotFoundException {
+        if(commonTargetCardName.size()==1) {
+            onlyOneCommon=true;
+            File file = new File(ClassLoader.getSystemResource("images/commons/" + commonTargetCardName.get(0) + ".jpg").toURI());
+            FileInputStream fis = new FileInputStream(file);
+            this.firstCommonGoalImage = new Image(fis);
+        }
+        else{
+            onlyOneCommon=false;
+            File file = new File(ClassLoader.getSystemResource("images/commons/" + commonTargetCardName.get(0) + ".jpg").toURI());
+            FileInputStream fis = new FileInputStream(file);
+            this.firstCommonGoalImage = new Image(fis);
+            File file2 = new File(ClassLoader.getSystemResource("images/commons/" + commonTargetCardName.get(1) + ".jpg").toURI());
+            FileInputStream fis2 = new FileInputStream(file2);
+            this.secondCommonGoalImage = new Image(fis2);
+        }
+    }
+
+    public void showCommonTargetCard() {
+        Platform.runLater(() -> {
+            FXMLLoader loader = new FXMLLoader(ClassLoader.getSystemResource("fxml/CommonView.fxml"));
+            try {
+                Stage stage = new Stage();
+                stage.setScene(new Scene(loader.load()));
+                CommonGoalController commonGoalController = loader.getController();
+                if(onlyOneCommon) {
+                    commonGoalController.setOnlyOneCommonView(firstCommonGoalImage);
+                    stage.setResizable(false);
+                    stage.setTitle("My Shelfie - The Common Goal!");
+                }
+                else{
+                    commonGoalController.setTwoCommonsView(firstCommonGoalImage,secondCommonGoalImage);
+                    stage.setResizable(false);
+                    stage.setTitle("My Shelfie - The Common Goals!");
+                }
                 stage.show();
             } catch (IOException e) {
                 throw new RuntimeException(e);

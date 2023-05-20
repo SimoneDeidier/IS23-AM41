@@ -7,6 +7,7 @@ public class CommonTwoRows extends CommonTargetCard {
     private final static int MAX_OCCURENCE_PER_COLOR = 1;
     public CommonTwoRows(int maxPlayerNumber) {
         super(maxPlayerNumber);
+        this.name="CommonTwoRows";
     }
     @Override
     public boolean check(Shelf shelf) {

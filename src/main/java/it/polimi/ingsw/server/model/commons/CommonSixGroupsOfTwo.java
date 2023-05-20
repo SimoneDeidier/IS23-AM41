@@ -7,6 +7,7 @@ public class CommonSixGroupsOfTwo extends CommonTargetCard {
     private final static int NUMBER_OF_GROUPS_NEEDED = 6;
     public CommonSixGroupsOfTwo(int maxPlayerNumber) {
         super(maxPlayerNumber);
+        this.name="CommonSixGroupsOfTwo";
     }
     @Override
     public boolean check(Shelf shelf) {

@@ -6,6 +6,7 @@ public class CommonDiagonal extends CommonTargetCard {
 
     public CommonDiagonal(int maxPlayerNumber) {
         super(maxPlayerNumber);
+        this.name="CommonDiagonal";
     }
     @Override
     public boolean check(Shelf shelf) {
