@@ -3,8 +3,7 @@ package it.polimi.ingsw.client.view;
 import it.polimi.ingsw.client.clientcontroller.controller.ClientController;
 import it.polimi.ingsw.client.view.controllers.GameScreenController;
 import it.polimi.ingsw.client.view.controllers.LoginScreenController;
-import it.polimi.ingsw.server.model.Player;
-import it.polimi.ingsw.server.model.items.Item;
+import it.polimi.ingsw.messages.NewView;
 import javafx.application.Application;
 import javafx.application.Platform;
 import javafx.fxml.FXMLLoader;
@@ -93,7 +92,6 @@ public class GraphicUserInterface extends Application implements UserInterface, 
             }
             gameScreenController = loader.getController();
             gameScreenController.setGui(this);
-            gameScreenController.setPlayerText(nickname, 0);
             try {
                 gameScreenController.setPersonalTargetCard(personalTargetCardNumber);
             } catch (URISyntaxException | FileNotFoundException e) {
@@ -122,9 +120,17 @@ public class GraphicUserInterface extends Application implements UserInterface, 
     }
 
     @Override
-    public void updateView(List<Player> playerList) throws FileNotFoundException, URISyntaxException {
-        Item[][] boardMatrix = playerList.get(0).getBoard().getBoardMatrix();
-        gameScreenController.setBoardItems(boardMatrix);
+    public void updateView(NewView newView) throws FileNotFoundException, URISyntaxException {
+        String playerNickname = clientController.getPlayerNickname();
+        Platform.runLater(() -> {
+            try {
+                gameScreenController.setBoardItems(newView.getBoardItems());
+                gameScreenController.setPlayerText(playerNickname, newView.getNicknameToPointsMap().get(playerNickname));
+                gameScreenController.setOtherPlayersParameters(newView.getNicknameToShelfMap(), newView.getNicknameToPointsMap(), clientController.getPlayerNickname());
+            } catch (FileNotFoundException | URISyntaxException e) {
+                e.printStackTrace();
+            }
+        });
     }
 
 }

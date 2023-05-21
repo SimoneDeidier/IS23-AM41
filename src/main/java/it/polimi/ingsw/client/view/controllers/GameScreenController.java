@@ -21,9 +21,11 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.net.NetworkInterface;
 import java.net.URISyntaxException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 import java.util.Random;
 
 
@@ -33,11 +35,16 @@ public class GameScreenController {
     private final static double OFFSET = 13.0;
     private final static double MAX_CHAT_MSG = 194.0;
     private final static int BOARD_DIM = 9;
+    private final static double ITEM_DIM = 51.0;
+    private final static double ITEM_OFFSET_LEFT = 5.0;
 
     private GraphicUserInterface gui;
     private Image personalGoalImage = null;
     private List<Image> commonGoalImages = new ArrayList<>(2);
     private boolean onlyOneCommon;
+    private Map<String, Item[][]> nicknameToShelfMap;
+    private Map<String, Integer> nicknameToPointsMap;
+    private String playerNickname;
 
     @FXML
     private Text playerText;
@@ -119,6 +126,23 @@ public class GameScreenController {
         }
     }
 
+    public void showOtherPlayers() {
+        Platform.runLater(() -> {
+            FXMLLoader loader = new FXMLLoader(ClassLoader.getSystemResource("fxml/OtherPlayers.fxml"));
+            try {
+                Stage stage = new Stage();
+                stage.setScene(new Scene(loader.load()));
+                OtherPlayersController commonGoalController = loader.getController();
+                commonGoalController.setParameters(nicknameToShelfMap, nicknameToPointsMap, playerNickname);
+                stage.setResizable(false);
+                stage.setTitle("My Shelfie - Other players!");
+                stage.show();
+            } catch (IOException | URISyntaxException e) {
+                throw new RuntimeException(e);
+            }
+        });
+    }
+
     public void addMessageInChat(String message, String sender, String localDateTime) {
         String messageText = localDateTime + "\n" + sender + ": " + message;
         Label newMsg = new Label(messageText);
@@ -138,6 +162,9 @@ public class GameScreenController {
             for(int j = 0; j < BOARD_DIM; j++) {
                 if(board[i][j] != null) {
                     ImageView imgv = new ImageView(randomItemImageByColors(board[i][j].getColor()));
+                    imgv.setFitHeight(ITEM_DIM);
+                    imgv.setFitWidth(ITEM_DIM);
+                    imgv.setTranslateX(ITEM_OFFSET_LEFT);
                     boardGridPane.add(imgv, i , j);
                 }
             }
@@ -171,5 +198,12 @@ public class GameScreenController {
         FileInputStream fis = new FileInputStream(file);
         return new Image(fis);
     }
+
+    public void setOtherPlayersParameters(Map<String, Item[][]> nicknameToShelfMap, Map<String, Integer> nicknameToPointsMap, String playerNickname) {
+        this.nicknameToShelfMap = nicknameToShelfMap;
+        this.nicknameToPointsMap = nicknameToPointsMap;
+        this.playerNickname = playerNickname;
+    }
+
 
 }

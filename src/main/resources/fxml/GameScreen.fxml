@@ -69,7 +69,7 @@
             <Font size="15.0" />
          </font>
       </Button>
-      <Button layoutX="1110.0" layoutY="466.0" mnemonicParsing="false" text="Other Players" AnchorPane.bottomAnchor="13.0" AnchorPane.rightAnchor="243.0">
+      <Button layoutX="1110.0" layoutY="466.0" mnemonicParsing="false" onAction="#showOtherPlayers" text="Other Players" AnchorPane.bottomAnchor="13.0" AnchorPane.rightAnchor="243.0">
          <font>
             <Font size="15.0" />
          </font>

@@ -6,7 +6,6 @@ import it.polimi.ingsw.client.view.TextUserInterface;
 import it.polimi.ingsw.client.view.UserInterface;
 import it.polimi.ingsw.messages.Body;
 import it.polimi.ingsw.messages.NewView;
-import it.polimi.ingsw.server.model.Player;
 
 import java.io.FileNotFoundException;
 import java.io.IOException;
@@ -125,8 +124,11 @@ public class ClientControllerTCP implements ClientController {
 
     @Override
     public void updateView(NewView newView) throws FileNotFoundException, URISyntaxException {
-
+        userInterface.updateView(newView);
     }
 
-
+    @Override
+    public String getPlayerNickname() {
+        return playerNickname;
+    }
 }

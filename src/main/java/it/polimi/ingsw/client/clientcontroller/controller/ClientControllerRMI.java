@@ -131,4 +131,9 @@ public class ClientControllerRMI implements ClientController, Serializable {
 
     }
 
+    @Override
+    public String getPlayerNickname() {
+        return null;
+    }
+
 }

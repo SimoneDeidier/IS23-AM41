@@ -1,6 +1,7 @@
 package it.polimi.ingsw.client.view;
 
 import it.polimi.ingsw.client.clientcontroller.controller.ClientController;
+import it.polimi.ingsw.messages.NewView;
 import it.polimi.ingsw.server.model.Player;
 
 import java.io.FileNotFoundException;
@@ -77,7 +78,7 @@ public class TextUserInterface implements UserInterface{
     }
 
     @Override
-    public void updateView(List<Player> playerList) throws FileNotFoundException, URISyntaxException {
+    public void updateView(NewView newView) throws FileNotFoundException, URISyntaxException {
 
     }
 

@@ -1,6 +1,7 @@
 package it.polimi.ingsw.client.view;
 
 import it.polimi.ingsw.client.clientcontroller.controller.ClientController;
+import it.polimi.ingsw.messages.NewView;
 import it.polimi.ingsw.server.model.Player;
 import it.polimi.ingsw.server.servercontroller.GameController;
 
@@ -34,5 +35,5 @@ public interface UserInterface {
 
     void receiveMessage(String message, String sender, String localDateTime);
 
-    void updateView(List<Player> playerList) throws FileNotFoundException, URISyntaxException;
+    void updateView(NewView newView) throws FileNotFoundException, URISyntaxException;
 }

@@ -29,4 +29,6 @@ public interface ClientController {
     void receiveMessage(String message, String sender, String localDateTime);
 
     void updateView(NewView newView) throws FileNotFoundException, URISyntaxException;
+
+    String getPlayerNickname();
 }
