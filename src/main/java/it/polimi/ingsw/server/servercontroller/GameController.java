@@ -6,7 +6,6 @@ import it.polimi.ingsw.messages.NewView;
 import it.polimi.ingsw.server.Server;
 import it.polimi.ingsw.server.model.*;
 import it.polimi.ingsw.server.model.boards.BoardFactory;
-import it.polimi.ingsw.server.model.boards.FourPlayersBoard;
 import it.polimi.ingsw.server.model.commons.CommonTargetCard;
 import it.polimi.ingsw.server.model.items.Item;
 import it.polimi.ingsw.server.model.tokens.EndGameToken;
@@ -106,10 +105,15 @@ public class GameController {
     }
 
     public NewView getNewView(){
-        NewView newView=new NewView();
-        newView.setPlayerList(playerList);
-        newView.setActivePlayer(new Player(getActivePlayer().getNickname()));
-        newView.setGameOver(newView.getActivePlayer() == null);
+        NewView newView = new NewView();
+        newView.setActivePlayer(getActivePlayer().getNickname());
+        newView.setGameOver(gameOver);
+        newView.setBoardItems(board.getBoardMatrix());
+        newView.setBoardBitMask(board.getBitMask());
+        for(Player p : playerList) {
+            newView.getNicknameToPointsMap().put(p.getNickname(), p.getPlayerScore());
+            newView.getNicknameToShelfMap().put(p.getNickname(), p.getShelf().getShelfMatrix());
+        }
         return newView;
     }
 
@@ -343,6 +347,9 @@ public class GameController {
                     break;
                 }
             }
+            for(CommonTargetCard c : commonTargetCardsList) {
+                body.getCommonTargetCardsName().add(c.getName());
+            }
             getNickToTCPMessageControllerMapping().get(s).printTCPMessage("Your Target", body);
         }
         server.sendPersonalTargetCardsRMI();
@@ -350,8 +357,7 @@ public class GameController {
 
     public void updateView() throws RemoteException {
         Body body = new Body();
-        NewView newView= getNewView();
-        newView.setPlayerList(playerList);
+        NewView newView = getNewView();
         body.setNewView(newView);
         for(String s : getNickToTCPMessageControllerMapping().keySet()) {
             getNickToTCPMessageControllerMapping().get(s).printTCPMessage("Update View", body);

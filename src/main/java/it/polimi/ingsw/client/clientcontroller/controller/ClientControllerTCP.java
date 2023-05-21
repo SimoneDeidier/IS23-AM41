@@ -5,6 +5,7 @@ import it.polimi.ingsw.client.view.GraphicUserInterface;
 import it.polimi.ingsw.client.view.TextUserInterface;
 import it.polimi.ingsw.client.view.UserInterface;
 import it.polimi.ingsw.messages.Body;
+import it.polimi.ingsw.messages.NewView;
 import it.polimi.ingsw.server.model.Player;
 
 import java.io.FileNotFoundException;
@@ -20,7 +21,7 @@ public class ClientControllerTCP implements ClientController {
     private UserInterface userInterface = null;
     private String playerNickname;
     private int personalTargetCardNumber;
-    private List<String> commonGoalList;
+    private List<String> commonGoalNameList;
 
     public ClientControllerTCP(TCPMessageController tcpMessageController) {
         this.tcpMessageController = tcpMessageController;
@@ -91,13 +92,13 @@ public class ClientControllerTCP implements ClientController {
     }
 
     @Override
-    public void setCommonGoalList(List<Player> playerList) {
-        //todo
+    public void setCommonGoalList(List<String> commonGoalNameList) {
+        this.commonGoalNameList = commonGoalNameList;
     }
 
     @Override
     public void loadGameScreen() throws IOException {
-        userInterface.loadGameScreen(personalTargetCardNumber, playerNickname,commonGoalList);
+        userInterface.loadGameScreen(personalTargetCardNumber, playerNickname, commonGoalNameList);
     }
 
     @Override
@@ -123,8 +124,8 @@ public class ClientControllerTCP implements ClientController {
     }
 
     @Override
-    public void updateView(List<Player> playerList) throws FileNotFoundException, URISyntaxException {
-        userInterface.updateView(playerList);
+    public void updateView(NewView newView) throws FileNotFoundException, URISyntaxException {
+
     }
 
 

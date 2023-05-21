@@ -1,29 +1,25 @@
 package it.polimi.ingsw.messages;
 
-import it.polimi.ingsw.server.model.Player;
+import it.polimi.ingsw.server.model.items.Item;
 
 import java.io.Serializable;
-import java.util.List;
+import java.util.HashMap;
+import java.util.Map;
 
 public class NewView implements Serializable {
-    private List<Player> playerList;
-    private Player activePlayer;
+    private String activePlayerNickname;
     private boolean gameOver;
+    private Map<String, Item[][]> nicknameToShelfMap = new HashMap<>(4);
+    private Map<String, Integer> nicknameToPointsMap = new HashMap<>(4);
+    private Item[][] boardItems;
+    private boolean[][] boardBitMask;
 
-    public List<Player> getPlayerList() {
-        return playerList;
+    public String getActivePlayer() {
+        return activePlayerNickname;
     }
 
-    public void setPlayerList(List<Player> playerList) {
-        this.playerList = playerList;
-    }
-
-    public Player getActivePlayer() {
-        return activePlayer;
-    }
-
-    public void setActivePlayer(Player activePlayer) {
-        this.activePlayer = activePlayer;
+    public void setActivePlayer(String activePlayerNickname) {
+            this.activePlayerNickname = activePlayerNickname;
     }
 
     public boolean isGameOver() {
@@ -32,5 +28,37 @@ public class NewView implements Serializable {
 
     public void setGameOver(boolean gameOver) {
         this.gameOver = gameOver;
+    }
+
+    public Map<String, Item[][]> getNicknameToShelfMap() {
+        return nicknameToShelfMap;
+    }
+
+    public void setNicknameToShelfMap(Map<String, Item[][]> nicknameToShelfMap) {
+        this.nicknameToShelfMap = nicknameToShelfMap;
+    }
+
+    public Map<String, Integer> getNicknameToPointsMap() {
+        return nicknameToPointsMap;
+    }
+
+    public void setNicknameToPointsMap(Map<String, Integer> nicknameToPointsMap) {
+        this.nicknameToPointsMap = nicknameToPointsMap;
+    }
+
+    public Item[][] getBoardItems() {
+        return boardItems;
+    }
+
+    public void setBoardItems(Item[][] boardItems) {
+        this.boardItems = boardItems;
+    }
+
+    public boolean[][] getBoardBitMask() {
+        return boardBitMask;
+    }
+
+    public void setBoardBitMask(boolean[][] boardBitMask) {
+        this.boardBitMask = boardBitMask;
     }
 }

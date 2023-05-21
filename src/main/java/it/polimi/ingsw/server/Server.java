@@ -200,6 +200,7 @@ public class Server implements InterfaceServer {
     }
 
     public void sendPersonalTargetCardsRMI() throws RemoteException {
+        // todo da modificare aggiungere la lista di commons
         for(Player p : controller.getPlayerList()) {
             if(clientMapRMI.containsKey(p.getNickname())) {
                 clientMapRMI.get(p.getNickname()).receivePersonalTargetCard(p.getPersonalTargetCard().getPersonalNumber());

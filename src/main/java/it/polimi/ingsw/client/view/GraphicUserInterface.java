@@ -101,7 +101,8 @@ public class GraphicUserInterface extends Application implements UserInterface, 
             }
             try {
                 gameScreenController.setCommonTargetCard(commonTargetGoals);
-            } catch (URISyntaxException | FileNotFoundException e) {
+            }
+            catch (URISyntaxException | FileNotFoundException e) {
                 throw new RuntimeException(e);
             }
             guiStage.setResizable(false);;

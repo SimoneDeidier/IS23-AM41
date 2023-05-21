@@ -173,4 +173,8 @@ public abstract class BoardFactory implements Serializable {
     public Item[][] getBoardMatrix() {
         return boardMatrix;
     }
+
+    public boolean[][] getBitMask() {
+        return bitMask;
+    }
 }

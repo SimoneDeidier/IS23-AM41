@@ -3,6 +3,7 @@ package it.polimi.ingsw.messages;
 import it.polimi.ingsw.server.model.PersonalTargetCard;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
 
 public class Body {
@@ -17,6 +18,7 @@ public class Body {
     private int personalCardNumber;
     private NewView newView;
     private String localDateTime;
+    private List<String> commonTargetCardsName = new ArrayList<>(2);
 
     public String getPlayerNickname() {
         return playerNickname;
@@ -104,5 +106,13 @@ public class Body {
 
     public void setLocalDateTime(String localDateTime) {
         this.localDateTime = localDateTime;
+    }
+
+    public List<String> getCommonTargetCardsName() {
+        return commonTargetCardsName;
+    }
+
+    public void setCommonTargetCardsName(List<String> commonTargetCardsName) {
+        this.commonTargetCardsName = commonTargetCardsName;
     }
 }

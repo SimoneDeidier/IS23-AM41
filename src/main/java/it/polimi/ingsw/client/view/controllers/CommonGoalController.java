@@ -3,23 +3,29 @@ package it.polimi.ingsw.client.view.controllers;
 import javafx.fxml.FXML;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
+import javafx.scene.layout.AnchorPane;
+
+import java.util.List;
 
 public class CommonGoalController {
-    @FXML
-    private ImageView onlyOneCommonView;
-    @FXML
-    private ImageView firstCommonView;
-    @FXML
-    private ImageView secondCommonView;
 
-    public void setOnlyOneCommonView(Image commonGoal) {
-        onlyOneCommonView.setImage(commonGoal);
-        onlyOneCommonView.setVisible(true);
+    @FXML
+    private AnchorPane mainAnchorPane;
+
+    private static final double WIDTH_ONE = 333.0;
+    private static final double HEIGHT_ONE = 220.0;
+    private static final double OFFSET_X_ONE = 153.0;
+    private static final double OFFSET_Y_ONE = 69.0;
+
+    public void setCommons(boolean isOneCommon, List<Image> images) {
+        if(isOneCommon) {
+            ImageView imageView = new ImageView(images.get(0));
+            imageView.setFitWidth(WIDTH_ONE);
+            imageView.setFitHeight(HEIGHT_ONE);
+            imageView.setTranslateX(OFFSET_X_ONE);
+            imageView.setTranslateX(OFFSET_Y_ONE);
+            mainAnchorPane.getChildren().add(imageView);
+        }
     }
-    public void setTwoCommonsView(Image commonGoal,Image commonGoalTwo) {
-        firstCommonView.setImage(commonGoal);
-        firstCommonView.setVisible(true);
-        secondCommonView.setImage(commonGoalTwo);
-        secondCommonView.setVisible(true);
-    }
+
 }

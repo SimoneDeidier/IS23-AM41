@@ -164,4 +164,8 @@ public class Shelf implements Serializable {
             return false;
         return true;
     }
+
+    public Item[][] getShelfMatrix() {
+        return shelfMatrix;
+    }
 }

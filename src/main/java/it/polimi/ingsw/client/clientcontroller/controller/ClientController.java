@@ -1,6 +1,7 @@
 package it.polimi.ingsw.client.clientcontroller.controller;
 
 import it.polimi.ingsw.client.clientcontroller.connection.Connection;
+import it.polimi.ingsw.messages.NewView;
 import it.polimi.ingsw.server.model.Player;
 import javafx.fxml.FXML;
 import javafx.scene.control.TextField;
@@ -22,10 +23,10 @@ public interface ClientController {
     void lobbyCreated();
     void waitForLobby();
     void setPersonalTargetCardNumber(int personalTargetCardNumber);
-    void setCommonGoalList(List<Player> playerList);
+    void  setCommonGoalList(List<String> commonGoalsNameList);
     void loadGameScreen() throws IOException;
     void sendMessage(String message);
     void receiveMessage(String message, String sender, String localDateTime);
 
-    void updateView(List<Player> playerList) throws FileNotFoundException, URISyntaxException;
+    void updateView(NewView newView) throws FileNotFoundException, URISyntaxException;
 }

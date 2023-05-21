@@ -44,11 +44,12 @@ public class TCPMessageController implements TCPMessageControllerInterface {
             }
             case "Your Target" -> {
                 controller.setPersonalTargetCardNumber(message.getBody().getPersonalCardNumber());
+                controller.setCommonGoalList(message.getBody().getCommonTargetCardsName());
                 controller.loadGameScreen();
             }
             case "Update View" -> {
                 System.err.println("UPDATE VIEW ARRIVATO");
-                controller.updateView(message.getBody().getNewView().getPlayerList());
+                controller.updateView(message.getBody().getNewView());
             }
             case "Lobby Created" -> {
                 controller.lobbyCreated();
