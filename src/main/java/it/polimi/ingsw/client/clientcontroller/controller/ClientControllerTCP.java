@@ -36,7 +36,7 @@ public class ClientControllerTCP implements ClientController {
         userInterfaceThread.start();
         try {
             userInterfaceThread.join();
-            System.err.println("JOINED THE THREAD");
+            System.err.println("JOINED THE GUI THREAD");
         }
         catch (InterruptedException e) {
             e.printStackTrace();
@@ -130,5 +130,15 @@ public class ClientControllerTCP implements ClientController {
     @Override
     public String getPlayerNickname() {
         return playerNickname;
+    }
+
+    @Override
+    public void disconnect() {
+        tcpMessageController.printTCPMessage("Disconnect", null);
+    }
+
+    @Override
+    public void rejoinMatch() {
+        tcpMessageController.rejoinMatch();
     }
 }

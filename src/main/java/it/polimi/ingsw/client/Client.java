@@ -49,7 +49,7 @@ public class Client {
             case "gui" -> connection.startConnection("gui");
             default -> System.err.println("Wrong parameter, restart client...");
         }
-
+        System.err.println("CLOSING THE CLIENT...");
     }
 
     public static void drawLogo() {

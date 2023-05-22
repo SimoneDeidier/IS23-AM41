@@ -35,6 +35,7 @@ public class SocketManager implements Runnable {
             socketInput.close();
             socketOutput.close();
             socket.close();
+            System.out.println("Socket close correctly - port: " + socket.getPort() + ".");
         }
         catch (IOException e) {
             System.err.println(e.getMessage());

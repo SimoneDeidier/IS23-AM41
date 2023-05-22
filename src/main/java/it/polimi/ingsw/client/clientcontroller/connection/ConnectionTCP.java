@@ -16,8 +16,12 @@ public class ConnectionTCP implements Connection {
     private Scanner socketIn;
     private final SerializeDeserialize serializeDeserialize;
 
+    private String IP = null;
+    private int PORT = 0;
 
     public ConnectionTCP(String ip, int port) {
+        this.IP = ip;
+        this.PORT = port;
         try {
             socket = new Socket(ip, port);
             socketIn = new Scanner(socket.getInputStream());
@@ -33,7 +37,7 @@ public class ConnectionTCP implements Connection {
         Thread socketReader = new Thread(() -> {
             while(!closeConnection) {
                 String inMsg;
-                while ((inMsg = socketIn.nextLine()) != null) {
+                if ((inMsg = socketIn.nextLine()) != null) {
                     try {
                         serializeDeserialize.deserialize(inMsg);
                     } catch (IOException | URISyntaxException e) {
@@ -46,6 +50,7 @@ public class ConnectionTCP implements Connection {
         serializeDeserialize.startUserInterface(uiType);
         try {
             socketReader.join();
+            System.err.println("JOINED THE SOCKET THREAD");
         }
         catch (InterruptedException e) {
             e.printStackTrace();
@@ -66,6 +71,45 @@ public class ConnectionTCP implements Connection {
 
     public void closeConnection() {
         this.closeConnection = true;
+    }
+
+    public void rejoinMatch() {
+        try {
+            socket = new Socket(IP, PORT);
+            socketIn = new Scanner(socket.getInputStream());
+            socketOut = new PrintWriter(socket.getOutputStream(), true);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        Thread socketReader = new Thread(() -> {
+            while(!closeConnection) {
+                String inMsg;
+                if ((inMsg = socketIn.nextLine()) != null) {
+                    try {
+                        serializeDeserialize.deserialize(inMsg);
+                    } catch (IOException | URISyntaxException e) {
+                        e.printStackTrace();
+                    }
+                }
+            }
+        });
+        socketReader.start();
+        // serializeDeserialize.startUserInterface(uiType);
+        try {
+            socketReader.join();
+            System.err.println("JOINED THE SOCKET THREAD");
+        }
+        catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+        socketOut.close();
+        socketIn.close();
+        try {
+            socket.close();
+        }
+        catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 
 }

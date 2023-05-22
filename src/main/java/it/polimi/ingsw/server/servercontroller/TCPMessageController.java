@@ -104,6 +104,7 @@ public class TCPMessageController implements TCPMessageControllerInterface {
             }
             case "Disconnect" -> {
                 gameController.intentionalDisconnectionUserTCP(this);
+                serializeDeserialize.closeConnection();
             }
         }
     }

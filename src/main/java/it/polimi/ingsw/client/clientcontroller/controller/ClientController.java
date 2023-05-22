@@ -31,4 +31,8 @@ public interface ClientController {
     void updateView(NewView newView) throws FileNotFoundException, URISyntaxException;
 
     String getPlayerNickname();
+
+    void disconnect();
+
+    void rejoinMatch();
 }

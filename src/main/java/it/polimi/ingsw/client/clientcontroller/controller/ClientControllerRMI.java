@@ -136,4 +136,14 @@ public class ClientControllerRMI implements ClientController, Serializable {
         return playerNickname;
     }
 
+    @Override
+    public void disconnect() {
+
+    }
+
+    @Override
+    public void rejoinMatch() {
+
+    }
+
 }

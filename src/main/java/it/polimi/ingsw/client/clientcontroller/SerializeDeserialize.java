@@ -43,4 +43,8 @@ public class SerializeDeserialize implements SerializeDeserializeInterface {
         tcpMessageController.startUserInterface(uiType);
     }
 
+    public void rejoinMatch() {
+        connectionTCP.rejoinMatch();
+    }
+
 }

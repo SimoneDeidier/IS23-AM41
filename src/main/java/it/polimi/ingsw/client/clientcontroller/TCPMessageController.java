@@ -83,4 +83,8 @@ public class TCPMessageController implements TCPMessageControllerInterface {
         controller.startUserInterface(uiType);
     }
 
+    public void rejoinMatch() {
+        serializeDeserialize.rejoinMatch();
+    }
+
 }

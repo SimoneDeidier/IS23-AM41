@@ -36,4 +36,10 @@ public interface UserInterface {
     void receiveMessage(String message, String sender, String localDateTime);
 
     void updateView(NewView newView) throws FileNotFoundException, URISyntaxException;
+
+    void disconnect();
+
+    void rejoinMatch();
+
+    void close();
 }

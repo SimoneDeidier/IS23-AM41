@@ -29,6 +29,8 @@ public class LoginScreenController {
     private Text waitForLobbyText;
     @FXML
     private Text insertNickText;
+    @FXML
+    private AnchorPane rejoinAnchorPane;
 
     private GraphicUserInterface gui = null;
     private List<Integer> players = Arrays.asList(2, 3, 4);
@@ -79,6 +81,14 @@ public class LoginScreenController {
     public void waitForLobby() {
         insertNickText.setVisible(false);
         waitForLobbyText.setVisible(true);
+    }
+
+    public void rejoinMatch() {
+        gui.rejoinMatch();
+    }
+
+    public void rejoinScreen() {
+        changePane(nicknameAnchorPane, rejoinAnchorPane);
     }
 
     public void setGui(GraphicUserInterface gui) {

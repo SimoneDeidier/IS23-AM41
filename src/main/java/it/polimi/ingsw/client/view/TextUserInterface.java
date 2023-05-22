@@ -82,5 +82,20 @@ public class TextUserInterface implements UserInterface{
 
     }
 
+    @Override
+    public void disconnect() {
+
+    }
+
+    @Override
+    public void rejoinMatch() {
+
+    }
+
+    @Override
+    public void close() {
+
+    }
+
 }
 

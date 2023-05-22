@@ -3,12 +3,19 @@ package it.polimi.ingsw.client.view;
 import it.polimi.ingsw.client.clientcontroller.controller.ClientController;
 import it.polimi.ingsw.client.view.controllers.GameScreenController;
 import it.polimi.ingsw.client.view.controllers.LoginScreenController;
+import it.polimi.ingsw.client.view.controllers.MenuController;
 import it.polimi.ingsw.messages.NewView;
 import javafx.application.Application;
 import javafx.application.Platform;
+import javafx.event.EventHandler;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Scene;
+import javafx.scene.input.KeyCode;
+import javafx.scene.input.KeyCodeCombination;
+import javafx.scene.input.KeyCombination;
+import javafx.scene.input.KeyEvent;
 import javafx.stage.Stage;
+
 
 import java.io.FileNotFoundException;
 import java.io.IOException;
@@ -103,6 +110,29 @@ public class GraphicUserInterface extends Application implements UserInterface, 
             catch (URISyntaxException | FileNotFoundException e) {
                 throw new RuntimeException(e);
             }
+            guiStage.getScene().addEventFilter(KeyEvent.KEY_PRESSED, new EventHandler<>() {
+                final KeyCombination keyCombination = new KeyCodeCombination(KeyCode.ESCAPE);
+                @Override
+                public void handle(KeyEvent keyEvent) {
+                    if(keyCombination.match(keyEvent)) {
+                        Platform.runLater(() -> {
+                            FXMLLoader loader = new FXMLLoader(ClassLoader.getSystemResource("fxml/Menu.fxml"));
+                            Stage stage = new Stage();
+                            try {
+                                stage.setScene(new Scene(loader.load()));
+                            } catch (IOException e) {
+                                throw new RuntimeException(e);
+                            }
+                            MenuController menuController = loader.getController();
+                            menuController.setGui(getGui());
+                            menuController.setMenuStage(stage);
+                            stage.setResizable(false);
+                            stage.setTitle("My Shelfie - Main menu!");
+                            stage.show();
+                        });
+                    }
+                }
+            });
             guiStage.setResizable(false);;
             guiStage.setTitle("My Shelfie - Gaming Phase");
             guiStage.show();
@@ -131,6 +161,40 @@ public class GraphicUserInterface extends Application implements UserInterface, 
                 e.printStackTrace();
             }
         });
+    }
+
+    public GraphicUserInterface getGui() {
+        return this;
+    }
+
+    @Override
+    public void disconnect() {
+        clientController.disconnect();
+        Platform.runLater(() -> {
+            FXMLLoader loader = new FXMLLoader(ClassLoader.getSystemResource("fxml/LoginScreen.fxml"));
+            guiStage = new Stage();
+            try {
+                guiStage.setScene(new Scene(loader.load()));
+            } catch (IOException e) {
+                throw new RuntimeException(e);
+            }
+            LoginScreenController loginScreenController1 = loader.getController();
+            loginScreenController1.rejoinScreen();
+            guiStage.setResizable(false);
+            guiStage.setTitle("Welcome to My Shelfie!");
+            guiStage.show();
+        });
+    }
+
+    @Override
+    public void rejoinMatch() {
+        clientController.rejoinMatch();
+    }
+
+    @Override
+    public void close() {
+        clientController.disconnect();
+        guiStage.close();
     }
 
 }
