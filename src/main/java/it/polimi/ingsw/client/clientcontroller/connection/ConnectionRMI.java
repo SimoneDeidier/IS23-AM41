@@ -9,12 +9,15 @@ import it.polimi.ingsw.interfaces.InterfaceServer;
 import it.polimi.ingsw.messages.Body;
 import it.polimi.ingsw.messages.NewView;
 
+import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.Serializable;
+import java.net.URISyntaxException;
 import java.rmi.RemoteException;
 import java.rmi.registry.LocateRegistry;
 import java.rmi.registry.Registry;
 import java.rmi.server.UnicastRemoteObject;
+import java.util.List;
 
 public class ConnectionRMI extends UnicastRemoteObject implements InterfaceClient, Serializable, Connection {
     private final int PORT;
@@ -65,14 +68,14 @@ public class ConnectionRMI extends UnicastRemoteObject implements InterfaceClien
 
     @Override
     public void updateView(NewView newView) throws RemoteException {
-        if(!gameStarted){ //on the first updateView it starts the ping to the server
+        if(!gameStarted){ //on the first updateView it starts the ping to the server and loads the game screen
             PingThread pingThread = new PingThread(stub,this); //Starting the thread for pinging the server
             pingThread.start();
             gameStarted=true;
         }
         try {
-            controller.loadGameScreen();
-        } catch (IOException e) {
+            controller.updateView(newView);
+        } catch (FileNotFoundException | URISyntaxException e) {
             throw new RuntimeException(e);
         }
     }
@@ -89,7 +92,7 @@ public class ConnectionRMI extends UnicastRemoteObject implements InterfaceClien
         //todo
         if(!bool)
             controller.nicknameAccepted();
-        //manca caso in cui è player restored
+        //todo manca caso in cui è player restored
     }
 
     @Override
@@ -103,8 +106,14 @@ public class ConnectionRMI extends UnicastRemoteObject implements InterfaceClien
     }
 
     @Override
-    public void receivePersonalTargetCard(int whichPersonal) throws RemoteException {
+    public void receiveCards(int whichPersonal, List<String> commonTargetCardList) throws RemoteException {
         controller.setPersonalTargetCardNumber(whichPersonal);
+        controller.setCommonGoalList(commonTargetCardList);
+        try {
+            controller.loadGameScreen();
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
     }
 
     @Override

@@ -128,12 +128,12 @@ public class ClientControllerRMI implements ClientController, Serializable {
 
     @Override
     public void updateView(NewView newView) throws FileNotFoundException, URISyntaxException {
-
+        userInterface.updateView(newView);
     }
 
     @Override
     public String getPlayerNickname() {
-        return null;
+        return playerNickname;
     }
 
 }

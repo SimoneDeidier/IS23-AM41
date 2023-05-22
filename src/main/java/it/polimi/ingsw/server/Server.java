@@ -5,6 +5,7 @@ import it.polimi.ingsw.interfaces.InterfaceServer;
 import it.polimi.ingsw.messages.Body;
 import it.polimi.ingsw.messages.NewView;
 import it.polimi.ingsw.server.model.Player;
+import it.polimi.ingsw.server.model.commons.CommonTargetCard;
 import it.polimi.ingsw.server.servercontroller.GameController;
 import it.polimi.ingsw.server.servercontroller.SocketManager;
 import it.polimi.ingsw.server.servercontroller.exceptions.*;
@@ -17,6 +18,7 @@ import java.rmi.RemoteException;
 import java.rmi.registry.LocateRegistry;
 import java.rmi.registry.Registry;
 import java.rmi.server.UnicastRemoteObject;
+import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Scanner;
@@ -176,12 +178,7 @@ public class Server implements InterfaceServer {
 
     public void executeMove(Body move) throws RemoteException, InvalidMoveException {
         controller.executeMove(move);
-        if(controller.isGameOver()){
-            controller.gameOver();
-        }
-        else{
-            controller.updateView();
-        }
+        controller.updateView();
     }
 
     public void updateViewRMI(NewView newView) throws RemoteException {
@@ -199,11 +196,10 @@ public class Server implements InterfaceServer {
         }
     }
 
-    public void sendPersonalTargetCardsRMI() throws RemoteException {
-        // todo da modificare aggiungere la lista di commons
+    public void sendCardsRMI(List<String> commonTargetCardList) throws RemoteException {
         for(Player p : controller.getPlayerList()) {
             if(clientMapRMI.containsKey(p.getNickname())) {
-                clientMapRMI.get(p.getNickname()).receivePersonalTargetCard(p.getPersonalTargetCard().getPersonalNumber());
+                clientMapRMI.get(p.getNickname()).receiveCards(p.getPersonalTargetCard().getPersonalNumber(),commonTargetCardList);
             }
         }
     }
@@ -246,13 +242,6 @@ public class Server implements InterfaceServer {
     @Override
     public void clearRMI() throws RemoteException { //ping from client to server
         //it's empty, we need to check on the other side for RemoteExceptions
-    }
-
-    public void gameOverRMI(NewView newView) throws RemoteException{
-        for(Map.Entry<String,InterfaceClient> entry : clientMapRMI.entrySet()){
-            entry.getValue().showEndGame(newView);
-            clientMapRMI.remove(entry.getKey());
-        }
     }
 
 }

@@ -94,11 +94,11 @@ public class GameController {
             if(nextIndex!=-1)
                 activePlayer=playerList.get(nextIndex);
             else {
-                activePlayer = null; //signals to the server the game is over!
+                activePlayer = null;
                 gameOver=true;
             }
             //todo testing
-            //Save game in json file
+            //todo save game in json file
 
         }
         else throw new InvalidMoveException();
@@ -106,8 +106,13 @@ public class GameController {
 
     public NewView getNewView(){
         NewView newView = new NewView();
-        newView.setActivePlayer(getActivePlayer().getNickname());
-        newView.setGameOver(gameOver);
+        if (gameOver) {
+            newView.setGameOver(true);
+        }
+        else {
+            newView.setActivePlayer(getActivePlayer().getNickname());
+        }
+        newView.setGameOver(false);
         newView.setBoardItems(board.getBoardMatrix());
         newView.setBoardBitMask(board.getBitMask());
         for(Player p : playerList) {
@@ -128,7 +133,6 @@ public class GameController {
     }
 
     public List<Item> getListItems(Body body) {
-
         List<Item> items = new ArrayList<>();
         for (int[] picks : body.getPositionsPicked()) {
             items.add(board.getBoardMatrixElement(picks[0], picks[1]));
@@ -352,7 +356,11 @@ public class GameController {
             }
             getNickToTCPMessageControllerMapping().get(s).printTCPMessage("Your Target", body);
         }
-        server.sendPersonalTargetCardsRMI();
+        List<String> commonList=new ArrayList<>();
+        for(CommonTargetCard commonTargetCard: commonTargetCardsList){
+            commonList.add(commonTargetCard.getName());
+        }
+        server.sendCardsRMI(commonList);
     }
 
     public void updateView() throws RemoteException {
@@ -407,13 +415,6 @@ public class GameController {
             nickToTCPMessageControllerMapping.get(s).printTCPMessage("New Msg", body);
         }
         server.broadcastMsg(sender, text,localDateTime);
-    }
-
-    public void gameOver() throws RemoteException {
-        NewView newView = getNewView();
-        //todo tells all tcp clients the game is over
-        server.gameOverRMI(newView);
-        prepareForNewGame();
     }
 
 

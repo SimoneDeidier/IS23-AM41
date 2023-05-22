@@ -77,12 +77,7 @@ public class TCPMessageController implements TCPMessageControllerInterface {
             case "Move" -> {
                 try {
                     gameController.executeMove(message.getBody());
-                    if(gameController.isGameOver()){
-                        gameController.gameOver();
-                    }
-                    else{
-                        gameController.updateView();
-                    }
+                    gameController.updateView();
                 } catch (InvalidMoveException e) {
                     printTCPMessage("Incorrect Move", null);
                 }
