@@ -32,7 +32,7 @@ public class GameController {
     private Thread checkThread;
     private boolean gameOver;
 
-    public GameController(Server s) {
+    private GameController(Server s) {
         this.state = new ServerInitState();
         this.server = s;
         this.gameOver=false;
@@ -196,7 +196,6 @@ public class GameController {
         playerList = new ArrayList<>();
         lastTurn = false;
         activePlayer = null;
-        board.resetBoard();
         changeState(new ServerInitState());
         commonTargetCardsList = new ArrayList<>();
         nickToTCPMessageControllerMapping = new ConcurrentHashMap<>(4);
@@ -439,6 +438,14 @@ public class GameController {
         Gson gson = new Gson();
         String serializedGameController = gson.toJson(this);
         // todo da finire
+    }
+
+    public void setBoard(BoardFactory b){
+        this.board = b;
+    }
+
+    public void setActivePlayer(Player p){
+        this.activePlayer = p;
     }
 
 
