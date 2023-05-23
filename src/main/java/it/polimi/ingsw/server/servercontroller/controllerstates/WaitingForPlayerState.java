@@ -129,13 +129,13 @@ public class WaitingForPlayerState implements GameState {
     public BoardFactory setupBoard(int maxPlayerNumber) {
         switch (maxPlayerNumber) {
             case 2 -> {
-                return TwoPlayersBoard.getTwoPlayersBoard();
+                return new TwoPlayersBoard();
             }
             case 3 -> {
-                return ThreePlayersBoard.getThreePlayersBoard();
+                return new ThreePlayersBoard();
             }
             case 4 -> {
-                return FourPlayersBoard.getFourPlayersBoard();
+                return new FourPlayersBoard();
             }
             default -> {
                 return null;

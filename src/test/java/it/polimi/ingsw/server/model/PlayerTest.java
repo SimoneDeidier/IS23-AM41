@@ -30,7 +30,7 @@ class PlayerTest {
         player = new Player(PLAYER_NAME);
         player.setShelf(new Shelf());
         player.setConnected(true);
-        player.setBoard(TwoPlayersBoard.getTwoPlayersBoard());
+        player.setBoard(new TwoPlayersBoard());
         player.setEndGameToken(EndGameToken.getEndGameToken());
         ScoringToken tk = new ScoringToken(8);
         tk.setOwner(player);
