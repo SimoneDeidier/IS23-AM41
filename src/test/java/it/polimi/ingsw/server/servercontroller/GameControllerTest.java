@@ -86,7 +86,7 @@ class GameControllerTest {
         controller.setupGame(true);
         Player player1 = new Player("ingconti");
         Player player2 = new Player("margara");
-        BoardFactory board1 = TwoPlayersBoard.getTwoPlayersBoard();
+        BoardFactory board1 = new TwoPlayersBoard();
         controller.setBoard(board1);
 
 
@@ -143,7 +143,7 @@ class GameControllerTest {
 
     @Test
     void checkBoardNeedForRefill() {
-        BoardFactory board1 = TwoPlayersBoard.getTwoPlayersBoard();
+        BoardFactory board1 = new TwoPlayersBoard();
         controller.setBoard(board1);
 
 

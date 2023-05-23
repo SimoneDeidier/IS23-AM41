@@ -16,9 +16,11 @@ public class CommonSixGroupsOfTwo extends CommonTargetCard {
         for (int i = 0; i < ROWS; i++) {
             for (int j = 0; j < COLUMNS; j++) {
                 if (!visited[i][j]) {
-                    ItemColor value = shelf.getItemByCoordinates(i, j).getColor();
-                    if (dfs(shelf, visited, i, j, value) >= 2) {
-                        count++;
+                    if(shelf.getItemByCoordinates(i, j)!=null) {
+                        ItemColor value = shelf.getItemByCoordinates(i, j).getColor();
+                        if (dfs(shelf, visited, i, j, value) >= 2) {
+                            count++;
+                        }
                     }
                 }
             }
