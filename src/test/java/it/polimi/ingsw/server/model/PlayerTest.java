@@ -1,9 +1,7 @@
 package it.polimi.ingsw.server.model;
 
 import it.polimi.ingsw.server.model.boards.TwoPlayersBoard;
-import it.polimi.ingsw.server.model.commons.CommonDiagonal;
-import it.polimi.ingsw.server.model.commons.CommonTargetCard;
-import it.polimi.ingsw.server.model.commons.CommonTwoSquares;
+import it.polimi.ingsw.server.model.commons.*;
 import it.polimi.ingsw.server.model.tokens.EndGameToken;
 import it.polimi.ingsw.server.model.tokens.ScoringToken;
 import org.junit.jupiter.api.BeforeEach;
@@ -32,15 +30,13 @@ class PlayerTest {
         player.setConnected(true);
         player.setBoard(new TwoPlayersBoard());
         player.setEndGameToken(EndGameToken.getEndGameToken());
-        ScoringToken tk = new ScoringToken(8);
-        tk.setOwner(player);
-        System.out.println("VALUES OF TOKEN: " + tk.getValue());
-        System.out.println("OWNER: " + tk.getOwner().getNickname());
+        ScoringToken scoringToken = new ScoringToken(8);
+        scoringToken.setOwner(player);
+        player.addScoringToken(scoringToken);
         player.setPersonalTargetCard(new PersonalTargetCard(0));
-        List<CommonTargetCard> targetCards = new ArrayList<>(2);
-        targetCards.add(new CommonDiagonal(2));
-        targetCards.add(new CommonTwoSquares(2));
-        player.setCommonTargetCardList(targetCards);
+        List<CommonTargetCard> commonTargetList = new ArrayList<>();
+        commonTargetList.add(new CommonTwoColumns(2));
+        player.setCommonTargetCardList(commonTargetList);
     }
 
     @Test

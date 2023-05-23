@@ -4,6 +4,7 @@ import it.polimi.ingsw.server.model.boards.BoardFactory;
 import it.polimi.ingsw.server.model.commons.CommonTargetCard;
 import it.polimi.ingsw.server.model.exceptions.EmptyShelfException;
 import it.polimi.ingsw.server.model.tokens.EndGameToken;
+import it.polimi.ingsw.server.model.tokens.ScoringToken;
 import it.polimi.ingsw.server.model.tokens.Token;
 
 import java.io.IOException;
@@ -52,11 +53,10 @@ public class Player implements Serializable {
                 System.out.println("Player: " + nickname);
             }
             finally {
-                if (commonTargetCardList.get(0).check(shelf)) {
-                    scoringTokenList.add(commonTargetCardList.get(0).assignToken(this));
-                }
-                if (commonTargetCardList.size() == 2 && commonTargetCardList.get(1).check(shelf)) {
-                    scoringTokenList.add(commonTargetCardList.get(1).assignToken(this));
+                for(CommonTargetCard commonTargetCard:commonTargetCardList){
+                    if (commonTargetCard.check(shelf)) {
+                        scoringTokenList.add(commonTargetCard.assignToken(this));
+                    }
                 }
                 for (Token token : scoringTokenList) {
                     if (token != null) {

@@ -32,7 +32,7 @@ public class GameController {
     private Thread checkThread;
     private boolean gameOver;
 
-    public GameController(Server s) {
+    private GameController(Server s) {
         this.state = new ServerInitState();
         this.server = s;
         this.gameOver=false;
@@ -447,6 +447,17 @@ public class GameController {
         // todo da fare in RMI
     }
 
+    public void setBoard(BoardFactory b){
+        this.board = b;
+    }
+
+    public void setActivePlayer(Player p){
+        this.activePlayer = p;
+    }
+
+    public void setLastTurn(boolean bool){
+        this.lastTurn = bool;
+    }
 
 }
 

@@ -128,7 +128,7 @@ public class Shelf implements Serializable {
 
 
     public int freeSpaces(int col){
-        int res = 6;
+        int res = ROWS;
 
         for( int row = ROWS - 1 ; row >= 0; row-- ){
             if(shelfMatrix[row][col] == null){
