@@ -42,4 +42,8 @@ public interface UserInterface {
     void rejoinMatch();
 
     void close();
+
+    void rejoinedMatch();
+
+    void invalidPlayer();
 }

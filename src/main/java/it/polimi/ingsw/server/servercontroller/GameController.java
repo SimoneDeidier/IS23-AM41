@@ -436,6 +436,17 @@ public class GameController {
         // todo da finire
     }
 
+    public boolean checkReJoinRequest(String nickname) {
+        for(Player p : playerList) {
+            if(Objects.equals(p.getNickname(), nickname) && !p.isConnected()) {
+                p.setConnected(true);
+                return true;
+            }
+        }
+        return false;
+        // todo da fare in RMI
+    }
+
 
 }
 

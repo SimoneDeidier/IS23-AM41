@@ -97,5 +97,15 @@ public class TextUserInterface implements UserInterface{
 
     }
 
+    @Override
+    public void rejoinedMatch() {
+
+    }
+
+    @Override
+    public void invalidPlayer() {
+
+    }
+
 }
 

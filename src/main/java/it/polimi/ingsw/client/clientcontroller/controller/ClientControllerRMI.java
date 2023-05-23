@@ -146,4 +146,14 @@ public class ClientControllerRMI implements ClientController, Serializable {
 
     }
 
+    @Override
+    public void rejoinedMatch() {
+
+    }
+
+    @Override
+    public void invalidPlayer() {
+
+    }
+
 }

@@ -66,6 +66,13 @@ public class TCPMessageController implements TCPMessageControllerInterface {
             case "New Msg" -> {
                 controller.receiveMessage(message.getBody().getText(), message.getBody().getSenderNickname(), message.getBody().getLocalDateTime());
             }
+            case "Joined" -> {
+                controller.rejoinedMatch();
+            }
+            case "Invalid Player" -> {
+                controller.invalidPlayer();
+            }
+
         }
     }
 
@@ -85,6 +92,10 @@ public class TCPMessageController implements TCPMessageControllerInterface {
 
     public void rejoinMatch() {
         serializeDeserialize.rejoinMatch();
+    }
+
+    public String getPlayerNickname() {
+        return controller.getPlayerNickname();
     }
 
 }

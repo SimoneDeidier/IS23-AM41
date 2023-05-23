@@ -1,6 +1,7 @@
 package it.polimi.ingsw.client.view.controllers;
 
 import it.polimi.ingsw.client.view.GraphicUserInterface;
+import javafx.application.Platform;
 import javafx.fxml.FXML;
 import javafx.scene.Node;
 import javafx.scene.control.Button;
@@ -31,6 +32,10 @@ public class LoginScreenController {
     private Text insertNickText;
     @FXML
     private AnchorPane rejoinAnchorPane;
+    @FXML
+    private AnchorPane rejoinedAnchorPane;
+    @FXML
+    private AnchorPane impossibleEventAnchorPane;
 
     private GraphicUserInterface gui = null;
     private List<Integer> players = Arrays.asList(2, 3, 4);
@@ -91,15 +96,28 @@ public class LoginScreenController {
         changePane(nicknameAnchorPane, rejoinAnchorPane);
     }
 
+    public void rejoinedMatch() {
+        System.out.println("Changing panes...");
+        changePane(rejoinAnchorPane, rejoinedAnchorPane);
+    }
+
+    public void invalidPlayerNickname() {
+        changePane(rejoinAnchorPane, impossibleEventAnchorPane);
+    }
+
     public void setGui(GraphicUserInterface gui) {
         this.gui = gui;
     }
 
     public void changePane(AnchorPane oldAP, AnchorPane newAP) {
         oldAP.setDisable(true);
+        System.out.println("a");
         oldAP.setVisible(false);
+        System.out.println("b");
         newAP.setDisable(false);
+        System.out.println("c");
         newAP.setVisible(true);
+        System.out.println("d");
     }
 
 }

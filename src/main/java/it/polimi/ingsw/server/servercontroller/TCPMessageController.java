@@ -106,6 +106,12 @@ public class TCPMessageController implements TCPMessageControllerInterface {
                 gameController.intentionalDisconnectionUserTCP(this);
                 serializeDeserialize.closeConnection();
             }
+            case "Re-Join" -> {
+                if(gameController.checkReJoinRequest(message.getBody().getPlayerNickname())) {
+                    printTCPMessage("Joined", null);
+                }
+                else printTCPMessage("Invalid Player", null);
+            }
         }
     }
 

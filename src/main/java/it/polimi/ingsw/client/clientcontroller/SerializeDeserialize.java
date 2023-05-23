@@ -3,6 +3,7 @@ package it.polimi.ingsw.client.clientcontroller;
 import com.google.gson.Gson;
 import it.polimi.ingsw.client.clientcontroller.connection.ConnectionTCP;
 import it.polimi.ingsw.interfaces.SerializeDeserializeInterface;
+import it.polimi.ingsw.messages.Body;
 import it.polimi.ingsw.messages.TCPMessage;
 
 import java.io.IOException;
@@ -45,6 +46,12 @@ public class SerializeDeserialize implements SerializeDeserializeInterface {
 
     public void rejoinMatch() {
         connectionTCP.rejoinMatch();
+    }
+
+    public void sendRejoinMsg() {
+        Body body = new Body();
+        body.setPlayerNickname(tcpMessageController.getPlayerNickname());
+        tcpMessageController.printTCPMessage("Re-Join", body);
     }
 
 }
