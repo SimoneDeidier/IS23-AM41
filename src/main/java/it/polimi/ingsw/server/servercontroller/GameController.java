@@ -196,7 +196,6 @@ public class GameController {
         playerList = new ArrayList<>();
         lastTurn = false;
         activePlayer = null;
-        board.resetBoard();
         changeState(new ServerInitState());
         commonTargetCardsList = new ArrayList<>();
         nickToTCPMessageControllerMapping = new ConcurrentHashMap<>(4);
