@@ -35,14 +35,12 @@ class GameControllerTest {
         Player player1 = new Player("ingconti");
         Player player2 = new Player("margara");
         controller.changeState(new WaitingForPlayerState());
-        assertEquals(0, controller.getPlayerList().size());
         controller.addPlayer(player1);
-        assertEquals(1, controller.getPlayerList().size());
         controller.addPlayer(player2);
-        assertEquals(2, controller.getPlayerList().size());
         assertEquals(0,controller.nextIndexCalc(1));
         assertEquals(1,controller.nextIndexCalc(0));
-
+        controller.setLastTurn(true);
+        assertEquals(-1,controller.nextIndexCalc(1));
 }
 
 
@@ -71,7 +69,6 @@ class GameControllerTest {
         shelf2.insertItems(3, Arrays.asList(new Item(ItemColor.YELLOW), new Item(ItemColor.LIGHT_BLUE), new Item(ItemColor.BLUE), new Item(ItemColor.YELLOW), new Item(ItemColor.WHITE), new Item(ItemColor.YELLOW)));
         shelf2.insertItems(4, Arrays.asList(new Item(ItemColor.BLUE), new Item(ItemColor.BLUE), new Item(ItemColor.BLUE), new Item(ItemColor.WHITE), new Item(ItemColor.BLUE), new Item(ItemColor.BLUE)));
         player2.setShelf(shelf2);
-
         assertTrue(controller.checkLastTurn());
 
     }

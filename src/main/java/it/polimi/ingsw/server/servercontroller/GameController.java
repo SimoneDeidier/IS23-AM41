@@ -444,6 +444,9 @@ public class GameController {
         this.activePlayer = p;
     }
 
+    public void setLastTurn(boolean bool){
+        this.lastTurn = bool;
+    }
 
 }
 
