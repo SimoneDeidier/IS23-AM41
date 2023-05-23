@@ -68,6 +68,15 @@ public class ConnectionRMI extends UnicastRemoteObject implements InterfaceClien
 
     @Override
     public void updateView(NewView newView) throws RemoteException {
+        for(int i=0;i<9;i++){
+            for(int j=0;j<9;j++){
+                if(newView.getBoardItems()[i][j]!=null)
+                    System.out.printf(newView.getBoardItems()[i][j].toString() + " ");
+                else
+                    System.out.printf("null ");
+            }
+            System.out.println();
+        }
         if(!gameStarted){ //on the first updateView it starts the ping to the server and loads the game screen
             PingThread pingThread = new PingThread(stub,this); //Starting the thread for pinging the server
             pingThread.start();

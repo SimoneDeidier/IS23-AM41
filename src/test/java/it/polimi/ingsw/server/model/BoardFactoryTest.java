@@ -23,7 +23,7 @@ class BoardFactoryTest {
 
     @BeforeEach
     void initialize(){
-        board= TwoPlayersBoard.getTwoPlayersBoard(); //Could have been three or four, no changes for the tests
+        board= new TwoPlayersBoard(); //Could have been three or four, no changes for the tests
         board.refillBoard();
     }
 
@@ -160,23 +160,5 @@ class BoardFactoryTest {
         assert (!board.checkMove(itemsPicked));
     }
 
-    @Test
-    public void testResetBoard(){
-        board.resetBoard();
-        board.refillBoard();
-        board.resetBoard();
-        int count=0;
-        for(int i=0;i<COLUMNS;i++){
-
-            for(int j=0;j<ROWS;j++){
-
-                if(board.getBitMaskElement(i, j) && board.getBoardMatrixElement(i,j) != null)
-
-                    count ++;
-
-            }
-        }
-        assertEquals(ZERO,count);
-    }
 
 }

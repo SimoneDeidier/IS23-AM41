@@ -15,7 +15,6 @@ public abstract class BoardFactory implements Serializable {
     protected Item[][] boardMatrix= new Item[ROWS][COLUMNS];
     protected boolean[][] bitMask;
     protected ItemsBag itemsBag;
-    protected static BoardFactory instance = null;
 
 
     public boolean getBitMaskElement(int i,int j) {
@@ -164,10 +163,6 @@ public abstract class BoardFactory implements Serializable {
 
     public void setBoardMatrixElement(Item item,int i,int j){
         boardMatrix[i][j]=item;
-    }
-
-    public void resetBoard(){
-        boardMatrix= new Item[ROWS][COLUMNS];
     }
 
     public Item[][] getBoardMatrix() {

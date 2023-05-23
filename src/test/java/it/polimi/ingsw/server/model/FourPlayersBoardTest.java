@@ -18,7 +18,7 @@ public class FourPlayersBoardTest {
 
     @BeforeEach
     void initialize(){
-        board= FourPlayersBoard.getFourPlayersBoard();
+        board= new FourPlayersBoard();
         board.refillBoard();
     }
 
@@ -65,5 +65,7 @@ public class FourPlayersBoardTest {
     }
 
     @Test
-    public void testPickItemInInvalidPosition() throws InvalidBoardPositionException, NullItemPickedException { assertThrows(InvalidBoardPositionException.class,()->board.pickItem(1,1)); }
+    public void testPickItemInInvalidPosition() throws InvalidBoardPositionException, NullItemPickedException {
+        assertThrows(InvalidBoardPositionException.class,()->board.pickItem(1,1));
+    }
 }

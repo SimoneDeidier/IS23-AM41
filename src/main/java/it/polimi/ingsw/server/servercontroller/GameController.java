@@ -164,10 +164,6 @@ public class GameController {
         }
     }
 
-    public boolean isGameOver() {
-        return gameOver;
-    }
-
     public int getAvailableSlot() {
         return state.getAvailableSlot(maxPlayerNumber, playerList);
     }

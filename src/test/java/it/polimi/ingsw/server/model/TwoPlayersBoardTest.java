@@ -17,7 +17,7 @@ public class TwoPlayersBoardTest {
 
     @BeforeEach
     void initialize(){
-        board= TwoPlayersBoard.getTwoPlayersBoard();
+        board= new TwoPlayersBoard();
         board.refillBoard();
     }
 
@@ -38,8 +38,6 @@ public class TwoPlayersBoardTest {
             }
         }
         assertEquals(29,count);
-
-
     }
 
     @Test
@@ -63,13 +61,11 @@ public class TwoPlayersBoardTest {
     public void testPickNullItem() throws InvalidBoardPositionException, NullItemPickedException {
         board.pickItem(5,4);
         assertThrows(NullItemPickedException.class,()->board.pickItem(5,4));
-
     }
 
     @Test
     public void testPickItemInInvalidPosition() {
         assertThrows(InvalidBoardPositionException.class,()->board.pickItem(1,1));
-
     }
 
 }

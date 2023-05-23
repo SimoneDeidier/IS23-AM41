@@ -21,9 +21,9 @@ import java.util.List;
 import static org.junit.jupiter.api.Assertions.*;
 
 class GameControllerTest {
-    
+
     private GameController controller;
-    
+
     @BeforeEach
     void initialize(){
         controller = GameController.getGameController(new Server());

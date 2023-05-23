@@ -1,23 +1,23 @@
 package it.polimi.ingsw.server.model.boards;
 
+import it.polimi.ingsw.server.model.items.Item;
 import it.polimi.ingsw.server.model.items.ItemsBag;
 
 import java.io.Serializable;
 
 public class ThreePlayersBoard extends BoardFactory {
 
-    private ThreePlayersBoard() {
+    public ThreePlayersBoard() {
         this.itemsBag = ItemsBag.getItemsBag();
         itemsBag.resetItemsBag();
         itemsBag.setupBag();
         bitMask = createBitMask();
-    }
-
-    public static BoardFactory getThreePlayersBoard() {
-        if(instance == null) {
-            instance = new ThreePlayersBoard();
+        boardMatrix = new Item[ROWS][COLUMNS];
+        for(int i=0;i<ROWS;i++){
+            for(int j=0;j<COLUMNS;j++){
+                boardMatrix[i][j]=null;
+            }
         }
-        return instance;
     }
 
     @Override

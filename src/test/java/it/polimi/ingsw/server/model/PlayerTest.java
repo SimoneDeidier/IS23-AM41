@@ -1,6 +1,9 @@
 package it.polimi.ingsw.server.model;
 
 import it.polimi.ingsw.server.model.boards.TwoPlayersBoard;
+import it.polimi.ingsw.server.model.commons.CommonDiagonal;
+import it.polimi.ingsw.server.model.commons.CommonTargetCard;
+import it.polimi.ingsw.server.model.commons.CommonTwoSquares;
 import it.polimi.ingsw.server.model.tokens.EndGameToken;
 import it.polimi.ingsw.server.model.tokens.ScoringToken;
 import org.junit.jupiter.api.BeforeEach;
@@ -8,6 +11,8 @@ import org.junit.jupiter.api.Test;
 
 import java.io.IOException;
 import java.net.URISyntaxException;
+import java.util.ArrayList;
+import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -25,14 +30,17 @@ class PlayerTest {
         player = new Player(PLAYER_NAME);
         player.setShelf(new Shelf());
         player.setConnected(true);
-        player.setBoard(TwoPlayersBoard.getTwoPlayersBoard());
+        player.setBoard(new TwoPlayersBoard());
         player.setEndGameToken(EndGameToken.getEndGameToken());
         ScoringToken tk = new ScoringToken(8);
         tk.setOwner(player);
         System.out.println("VALUES OF TOKEN: " + tk.getValue());
         System.out.println("OWNER: " + tk.getOwner().getNickname());
         player.setPersonalTargetCard(new PersonalTargetCard(0));
-        player.setCommonTargetCardList(null);
+        List<CommonTargetCard> targetCards = new ArrayList<>(2);
+        targetCards.add(new CommonDiagonal(2));
+        targetCards.add(new CommonTwoSquares(2));
+        player.setCommonTargetCardList(targetCards);
     }
 
     @Test
