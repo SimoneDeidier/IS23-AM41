@@ -12,8 +12,7 @@ import java.rmi.RemoteException;
 import java.util.Objects;
 import java.util.Scanner;
 
-public class
-Client {
+public class Client {
 
     private static Connection connection;
     private final static String IP = "localhost";

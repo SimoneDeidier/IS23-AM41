@@ -1,33 +1,27 @@
 package it.polimi.ingsw.Save;
 
-import it.polimi.ingsw.server.model.PersonalTargetCard;
-import it.polimi.ingsw.server.model.Shelf;
+import it.polimi.ingsw.server.model.Player;
 import it.polimi.ingsw.server.model.boards.BoardFactory;
 import it.polimi.ingsw.server.model.commons.CommonTargetCard;
-import it.polimi.ingsw.server.model.items.Item;
 import it.polimi.ingsw.server.servercontroller.controllerstates.GameState;
 
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 public class Save {
-    private String activePlayerNickname;
+    private Player activePlayer;
     private boolean lastTurn;
     private boolean gameOver;
     private GameState state;
-    private Map<String, Shelf> nicknameToShelfMap = new HashMap<>(4);
-    private Map<String, Integer> nicknameToPointsMap = new HashMap<>(4);
-    private Map<String, PersonalTargetCard> nicknameToPersonalTargetCardMap = new HashMap<>(4);
+    private List<Player> playerList;
     private List<CommonTargetCard> commonTargetCardList;
     private BoardFactory board;
 
-    public String getActivePlayerNickname() {
-        return activePlayerNickname;
+    public Player getActivePlayer() {
+        return activePlayer;
     }
 
-    public void setActivePlayerNickname(String activePlayerNickname) {
-        this.activePlayerNickname = activePlayerNickname;
+    public void setActivePlayer(Player activePlayer) {
+        this.activePlayer = activePlayer;
     }
 
     public boolean isLastTurn() {
@@ -54,30 +48,6 @@ public class Save {
         this.state = state;
     }
 
-    public Map<String, Shelf> getNicknameToShelfMap() {
-        return nicknameToShelfMap;
-    }
-
-    public void setNicknameToShelfMap(Map<String, Shelf> nicknameToShelfMap) {
-        this.nicknameToShelfMap = nicknameToShelfMap;
-    }
-
-    public Map<String, Integer> getNicknameToPointsMap() {
-        return nicknameToPointsMap;
-    }
-
-    public void setNicknameToPointsMap(Map<String, Integer> nicknameToPointsMap) {
-        this.nicknameToPointsMap = nicknameToPointsMap;
-    }
-
-    public Map<String, PersonalTargetCard> getNicknameToPersonalTargetCardMap() {
-        return nicknameToPersonalTargetCardMap;
-    }
-
-    public void setNicknameToPersonalTargetCardMap(Map<String, PersonalTargetCard> nicknameToPersonalTargetCardMap) {
-        this.nicknameToPersonalTargetCardMap = nicknameToPersonalTargetCardMap;
-    }
-
     public List<CommonTargetCard> getCommonTargetCardList() {
         return commonTargetCardList;
     }
@@ -92,5 +62,13 @@ public class Save {
 
     public void setBoard(BoardFactory board) {
         this.board = board;
+    }
+
+    public List<Player> getPlayerList() {
+        return playerList;
+    }
+
+    public void setPlayerList(List<Player> playerList) {
+        this.playerList = playerList;
     }
 }

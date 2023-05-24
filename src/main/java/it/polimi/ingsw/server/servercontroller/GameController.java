@@ -1,6 +1,9 @@
 package it.polimi.ingsw.server.servercontroller;
 
 import com.google.gson.Gson;
+import com.google.gson.JsonArray;
+import com.google.gson.JsonElement;
+import com.google.gson.JsonObject;
 import it.polimi.ingsw.Save.Save;
 import it.polimi.ingsw.messages.Body;
 import it.polimi.ingsw.messages.NewView;
@@ -15,6 +18,8 @@ import it.polimi.ingsw.server.servercontroller.exceptions.*;
 
 import java.io.FileWriter;
 import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Paths;
 import java.rmi.RemoteException;
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
@@ -84,6 +89,7 @@ public class GameController {
             }
             System.err.println("INSERTED ITEMS");
             if (checkBoardNeedForRefill()) {
+                System.out.println("NEEEEEEDDD TO REFILLLLL");
                 board.refillBoard();
             }
             if (!lastTurn && checkLastTurn()) {
@@ -125,31 +131,19 @@ public class GameController {
             newView.getNicknameToPointsMap().put(p.getNickname(), p.getPlayerScore());
             newView.getNicknameToShelfMap().put(p.getNickname(), p.getShelf().getShelfMatrix());
         }
-        //Saving the newView, for saving the game state
         saveGameState();
         return newView;
     }
 
     public void saveGameState(){
         Save save=new Save();
-        save.setActivePlayerNickname(activePlayer.getNickname());
+        save.setActivePlayer(activePlayer);
         save.setLastTurn(lastTurn);
         save.setGameOver(gameOver);
         save.setState(state);
         save.setCommonTargetCardList(commonTargetCardsList);
         save.setBoard(board);
-        Map<String, Shelf> nicknameToShelfMap = new HashMap<>(4);
-        Map<String, Integer> nicknameToPointsMap = new HashMap<>(4);
-        Map<String, PersonalTargetCard> nicknameToPersonalTargetCardMap = new HashMap<>(4);
-        for(Player player:playerList){
-            nicknameToShelfMap.put(player.getNickname(), player.getShelf());
-            nicknameToPointsMap.put(player.getNickname(),player.getPlayerScore());
-            nicknameToPersonalTargetCardMap.put(player.getNickname(), player.getPersonalTargetCard());
-        }
-        save.setNicknameToShelfMap(nicknameToShelfMap);
-        save.setNicknameToPointsMap(nicknameToPointsMap);
-        save.setNicknameToPersonalTargetCardMap(nicknameToPersonalTargetCardMap);
-
+        save.setPlayerList(playerList);
         Gson gson= new Gson();
         try (FileWriter writer = new FileWriter("src/main/java/it/polimi/ingsw/Save/OldGame.json")) {
             gson.toJson(save, writer);
@@ -171,7 +165,8 @@ public class GameController {
     public List<Item> getListItems(Body body) {
         List<Item> items = new ArrayList<>();
         for (int[] picks : body.getPositionsPicked()) {
-            items.add(board.getBoardMatrixElement(picks[0], picks[1]));
+            items.add(new Item(board.getBoardMatrixElement(picks[0], picks[1]).getColor()));
+            board.setBoardMatrixElement(null,picks[0], picks[1]);
         }
         return items;
 
@@ -185,8 +180,9 @@ public class GameController {
 
         for (int i = 0; i < board.getBoardNumberOfRows(); i++) {
             for (int j = 0; j < board.getBoardNumberOfColumns(); j++) {
-                if (board.getBitMaskElement(i, j) && board.getBoardMatrixElement(i, j) != null && !board.itemHasAllFreeSide(i, j)) {
-                    return false; //There is at least one non-null element that has at least one other item on one of its side
+                if (board.getBitMaskElement(i, j) && board.getBoardMatrixElement(i, j) != null) {
+                    if(!board.itemHasAllFreeSide(i, j))
+                        return false; //There is at least one non-null element that has at least one other item on one of its side
                 }
             }
         }
@@ -264,35 +260,23 @@ public class GameController {
     }
 
     public boolean checkSavedGame(String nickname) {
-        //todo da rifare
-
-        /*Gson gson = new Gson();
-        File json = new File(Objects.requireNonNull(ClassLoader.getSystemResourceAsStream("json/OldGame.json")).toString());
-
-        try {
-            if(json.exists()) {
-                JsonObject jsonObject = gson.fromJson(new FileReader(json), JsonObject.class);
-                JsonArray playersList = jsonObject.getAsJsonArray("playerList");
-
-                System.err.println("PLAYER LIST READED: " + playersList);
-                if(playersList != null && playersList.size() != 0) {
-                    for (int i = 0; i < playersList.size(); i++) {
-                        JsonObject player = playersList.get(i).getAsJsonObject();
-                        String name = player.get("nickname").getAsString();
-                        if (name.equals(nickname)) {
-                            return true;
-                        }
-
+        //todo togliere il commento, funziona al 100%, c'è il commento solo per testare caso in cui non trova il nickname ma funziona!!
+        /*try {
+            String jsonContent = new String(Files.readAllBytes(Paths.get("src/main/java/it/polimi/ingsw/Save/OldGame.json")));
+            Gson gson = new Gson();
+            JsonObject jsonObject = gson.fromJson(jsonContent, JsonObject.class);
+            if (!jsonObject.get("gameOver").getAsBoolean()) {
+                JsonArray playerList = jsonObject.getAsJsonArray("playerList");
+                for (JsonElement jsonElement : playerList) {
+                    JsonObject playerObject = jsonElement.getAsJsonObject();
+                    if(playerObject.get("nickname").getAsString().equals(nickname)) {
+                        return true;
                     }
                 }
             }
-            else System.err.println("JSON NOT FOUND");
-
-
-        } catch (IOException e) {
-            e.printStackTrace();
-        } */
-
+        } catch(IOException e){
+            throw new RuntimeException(e);
+        }*/
         return false;
     }
 
@@ -403,6 +387,17 @@ public class GameController {
         for(String s : getNickToTCPMessageControllerMapping().keySet()) {
             getNickToTCPMessageControllerMapping().get(s).printTCPMessage("Update View", body);
         }
+        //todo eliminare sotto, era per test
+        for(int i=0;i<9;i++){
+            for(int j=0;j<9;j++){
+                if(newView.getBoardItems()[i][j]!=null)
+                    System.out.printf(newView.getBoardItems()[i][j].getColor() + " ");
+                else
+                    System.out.printf("null ");
+            }
+            System.out.println();
+        }
+        //todo eliminare sopra
         server.updateViewRMI(newView);
     }
 
@@ -491,6 +486,29 @@ public class GameController {
         this.lastTurn = bool;
     }
 
+    public void setPlayerList(List<Player> playerList) {
+        this.playerList = playerList;
+    }
+
+    public void setMaxPlayerNumber(int maxPlayerNumber) {
+        this.maxPlayerNumber = maxPlayerNumber;
+    }
+
+    public void setOnlyOneCommonCard(boolean onlyOneCommonCard) {
+        this.onlyOneCommonCard = onlyOneCommonCard;
+    }
+
+    public void setState(GameState state) {
+        this.state = state;
+    }
+
+    public void setCommonTargetCardsList(List<CommonTargetCard> commonTargetCardsList) {
+        this.commonTargetCardsList = commonTargetCardsList;
+    }
+
+    public void setGameOver(boolean gameOver) {
+        this.gameOver = gameOver;
+    }
 }
 
 

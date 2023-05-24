@@ -22,7 +22,9 @@ public abstract class BoardFactory implements Serializable {
     }
 
     public Item getBoardMatrixElement(int i,int j){
-        return boardMatrix[i][j];
+        if(i<ROWS && i>=0 && j<COLUMNS && j>=0)
+            return boardMatrix[i][j];
+        return null;
     }
 
     public int getBoardNumberOfRows(){

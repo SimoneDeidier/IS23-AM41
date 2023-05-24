@@ -1,15 +1,14 @@
 package it.polimi.ingsw.server.servercontroller.controllerstates;
 
 import com.google.gson.Gson;
-import com.google.gson.JsonObject;
+import it.polimi.ingsw.Save.Save;
 import it.polimi.ingsw.server.model.boards.BoardFactory;
 import it.polimi.ingsw.server.model.commons.CommonTargetCard;
 import it.polimi.ingsw.server.model.Player;
 import it.polimi.ingsw.server.servercontroller.GameController;
 
+import java.io.FileReader;
 import java.io.IOException;
-import java.nio.file.Files;
-import java.nio.file.Paths;
 import java.util.List;
 
 public class ServerInitState implements GameState {
@@ -50,14 +49,25 @@ public class ServerInitState implements GameState {
 
     @Override
     public void setupPlayers(List<Player> playerList, List<CommonTargetCard> commonTargetCardList, BoardFactory board, GameController controller) {
-        try {
-            String jsonContent = new String(Files.readAllBytes(Paths.get("src/main/java/it/polimi/ingsw/Save/OldGame.json")));
-            Gson gson = new Gson();
-            JsonObject jsonObject = gson.fromJson(jsonContent, JsonObject.class);
-            JsonObject nicknameToShelfMap = jsonObject.getAsJsonObject("nicknameToShelfMap");
-            
+        //todo QUESTA E' DA TESTARE
+        Gson gson=new Gson();
+        try (FileReader reader = new FileReader("src/main/java/it/polimi/ingsw/Save/OldGame.json")) {
+            Save save = gson.fromJson(reader, Save.class);
+            for(Player player: save.getPlayerList()){
+                player.setConnected(false);
+            }
+            controller.setPlayerList(save.getPlayerList());
+            controller.setMaxPlayerNumber(save.getPlayerList().size());
+            controller.setLastTurn(save.isLastTurn());
+            controller.setOnlyOneCommonCard(save.getCommonTargetCardList().size()==1);
+            controller.setActivePlayer(save.getActivePlayer());
+            controller.setBoard(save.getBoard());
+            controller.setState(save.getState());
+            controller.setCommonTargetCardsList(save.getCommonTargetCardList());
+            controller.setGameOver(save.isGameOver());
+
         } catch (IOException e) {
-            throw new RuntimeException(e);
+            e.printStackTrace();
         }
     }
 }

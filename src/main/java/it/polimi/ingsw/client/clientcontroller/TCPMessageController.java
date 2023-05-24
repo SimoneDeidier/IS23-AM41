@@ -49,6 +49,17 @@ public class TCPMessageController implements TCPMessageControllerInterface {
             }
             case "Update View" -> {
                 System.err.println("UPDATE VIEW ARRIVATO");
+                //todo eliminare sotto, era per test
+                for(int i=0;i<9;i++){
+                    for(int j=0;j<9;j++){
+                        if(message.getBody().getNewView().getBoardItems()[i][j]!=null)
+                            System.out.printf(message.getBody().getNewView().getBoardItems()[i][j].getColor() + " ");
+                        else
+                            System.out.printf("null ");
+                    }
+                    System.out.println();
+                }
+                //todo eliminare sopra
                 controller.updateView(message.getBody().getNewView());
             }
             case "Lobby Created" -> {
