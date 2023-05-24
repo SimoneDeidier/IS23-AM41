@@ -28,6 +28,7 @@ class GameControllerTest {
     void initialize(){
         controller = GameController.getGameController(new Server());
         controller.prepareForNewGame();
+        controller.setState(new WaitingForPlayerState());
     }
 
     @Test
@@ -80,13 +81,10 @@ class GameControllerTest {
     void checkMove() throws NotEnoughSpaceInColumnException {
         Body body = new Body();
         body.setPlayerNickname("margara");
-        controller.setupGame(true);
         Player player1 = new Player("ingconti");
         Player player2 = new Player("margara");
         BoardFactory board1 = new TwoPlayersBoard();
         controller.setBoard(board1);
-
-
         //check active player
         controller.addPlayer(player1);
         controller.addPlayer(player2);
@@ -94,7 +92,6 @@ class GameControllerTest {
         assertFalse(controller.checkMove(body));
         controller.setActivePlayer(player2);
         //assertTrue(controller.checkMove(body));
-
         //check board.checkMove
         board1.setBoardMatrixElement(new Item(ItemColor.YELLOW), 5, 3);
         board1.setBoardMatrixElement(new Item(ItemColor.YELLOW), 5, 4);
@@ -104,7 +101,6 @@ class GameControllerTest {
         int[] array2 = {5, 4};
         int[] array3 = {5, 5};
         int[] array4 = {6, 5};
-
         //items not in line
         List<int[]> positionsPicked2 = new ArrayList<>();
         positionsPicked2.add(array2);
@@ -113,7 +109,6 @@ class GameControllerTest {
         body.setPositionsPicked(positionsPicked2);
         player2.setShelf(new Shelf());
         assertFalse(controller.checkMove(body));
-
         //items in line
         List<int[]> positionsPicked = new ArrayList<>();
         positionsPicked.add(array1);
@@ -122,7 +117,6 @@ class GameControllerTest {
         body.setPositionsPicked(positionsPicked);
         player2.setShelf(new Shelf());
         assertTrue(controller.checkMove(body));
-
         //enough space in column
         body.setColumn(0);
         Shelf shelf = new Shelf();
@@ -132,7 +126,6 @@ class GameControllerTest {
         shelf.insertItems(0, itemList);
         player2.setShelf(shelf);
         assertTrue(controller.checkMove(body));
-
         //not enough space in column
         shelf.insertItems(0, itemList);
         assertFalse(controller.checkMove(body));
