@@ -139,5 +139,10 @@ public class TextUserInterface implements UserInterface{
         return 0;
     }
 
+    @Override
+    public void incorrectMove() {
+
+    }
+
 }
 

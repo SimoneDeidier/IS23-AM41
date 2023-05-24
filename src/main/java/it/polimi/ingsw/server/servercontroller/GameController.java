@@ -87,19 +87,24 @@ public class GameController {
             } catch (Exception NotEnoughSpaceInColumnException) {
                 System.err.println("Not enough space in the column provided!");
             }
+            System.err.println("POST INSERT");
             if (checkBoardNeedForRefill()) {
                 board.refillBoard();
             }
+            System.err.println("POST REFILL");
             if (!lastTurn && checkLastTurn()) {
                 activePlayer.setEndGameToken(EndGameToken.getEndGameToken());
                 lastTurn = true;
             }
+            System.err.println("POST CHECK LAST TURN");
             activePlayer.updateScore();
 
+            System.err.println("POST UPDATE SCORE");
             //Setting the next active player
             int nextIndex=nextIndexCalc(playerList.indexOf(activePlayer));
             while(nextIndex!=-1 && !playerList.get(nextIndex).isConnected())
                 nextIndex=nextIndexCalc(nextIndex);
+            System.err.println("POST NEXT INDEX CALC");
             if(nextIndex!=-1)
                 activePlayer=playerList.get(nextIndex);
             else {

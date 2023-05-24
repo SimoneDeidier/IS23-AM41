@@ -19,6 +19,7 @@ import javafx.scene.layout.GridPane;
 import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
 import javafx.scene.text.Text;
+import javafx.stage.Modality;
 import javafx.stage.Stage;
 
 import java.io.File;
@@ -314,6 +315,48 @@ public class GameScreenController {
 
     public int getSwapColIndex(Node n) {
         return GridPane.getColumnIndex(n);
+    }
+
+    public void clearBoard() {
+        boardGridPane.getChildren().clear();
+    }
+
+    public void setPersonalShelf(Item[][] shelf) throws FileNotFoundException, URISyntaxException {
+        for(int i = 0; i < SHELF_ROWS; i++) {
+            for(int j = 0; j < SHELF_COL; j++) {
+                if(shelf[i][j] != null) {
+                    for(Node n : shelfGridPane.getChildren()) {
+                        if(GridPane.getRowIndex(n) == i && GridPane.getColumnIndex(n) == j) {
+                            ImageView imgv = (ImageView) n;
+                            imgv.setImage(randomItemImageByColors(shelf[i][j].getColor()));
+                            imgv.setOpacity(1.0);
+                            break;
+                        }
+                    }
+                }
+            }
+        }
+    }
+
+    public void incorrectMove() {
+        for(Node n: boardGridPane.getChildren()) {
+            if(n.getOpacity() != 1.0) {
+                n.setOpacity(1.0);
+            }
+        }
+        Platform.runLater(() -> {
+            FXMLLoader loader = new FXMLLoader(ClassLoader.getSystemResource("fxml/IncorrectMove.fxml"));
+            Stage incorrectMoveStage = new Stage();
+            try {
+                incorrectMoveStage.setScene(new Scene(loader.load()));
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+            incorrectMoveStage.setTitle("INCORRECT MOVE!");
+            incorrectMoveStage.setResizable(false);
+            incorrectMoveStage.initModality(Modality.APPLICATION_MODAL);
+            incorrectMoveStage.showAndWait();
+        });
     }
 
 }
