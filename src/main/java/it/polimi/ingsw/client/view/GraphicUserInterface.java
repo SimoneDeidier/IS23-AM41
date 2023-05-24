@@ -112,6 +112,7 @@ public class GraphicUserInterface extends Application implements UserInterface, 
             }
             guiStage.getScene().addEventFilter(KeyEvent.KEY_PRESSED, new EventHandler<>() {
                 final KeyCombination keyCombination = new KeyCodeCombination(KeyCode.ESCAPE);
+
                 @Override
                 public void handle(KeyEvent keyEvent) {
                     if(keyCombination.match(keyEvent)) {
@@ -154,7 +155,7 @@ public class GraphicUserInterface extends Application implements UserInterface, 
         String playerNickname = clientController.getPlayerNickname();
         Platform.runLater(() -> {
             try {
-                gameScreenController.setBoardItems(newView.getBoardItems());
+                gameScreenController.setBoardItems(newView.getBoardItems(), newView.getBoardBitMask());
                 gameScreenController.setPlayerText(playerNickname, newView.getNicknameToPointsMap().get(playerNickname));
                 gameScreenController.setOtherPlayersParameters(newView.getNicknameToShelfMap(), newView.getNicknameToPointsMap(), clientController.getPlayerNickname());
             } catch (FileNotFoundException | URISyntaxException e) {
@@ -171,6 +172,7 @@ public class GraphicUserInterface extends Application implements UserInterface, 
     public void disconnect() {
         clientController.disconnect();
         Platform.runLater(() -> {
+            guiStage.close();
             FXMLLoader loader = new FXMLLoader(ClassLoader.getSystemResource("fxml/LoginScreen.fxml"));
             guiStage = new Stage();
             try {
@@ -178,8 +180,9 @@ public class GraphicUserInterface extends Application implements UserInterface, 
             } catch (IOException e) {
                 throw new RuntimeException(e);
             }
-            LoginScreenController loginScreenController1 = loader.getController();
-            loginScreenController1.rejoinScreen();
+            loginScreenController = loader.getController();
+            loginScreenController.setGui(this);
+            loginScreenController.rejoinScreen();
             guiStage.setResizable(false);
             guiStage.setTitle("Welcome to My Shelfie!");
             guiStage.show();
@@ -195,6 +198,35 @@ public class GraphicUserInterface extends Application implements UserInterface, 
     public void close() {
         clientController.disconnect();
         guiStage.close();
+    }
+
+    @Override
+    public void rejoinedMatch() {
+        System.out.println("Called rejoined in gui");
+        //loginScreenController.rejoinedMatch();
+        //Platform.runLater(() -> {
+            //System.err.println("IN PLATFORM RUNLATER");
+            guiStage.close();
+            System.err.println("CLOSED THE STAGE");
+            FXMLLoader loader = new FXMLLoader(ClassLoader.getSystemResource("fxml/LoginScreen.fxml"));
+            guiStage = new Stage();
+            try {
+                guiStage.setScene(new Scene(loader.load()));
+            } catch (IOException e) {
+                throw new RuntimeException(e);
+            }
+            loginScreenController = loader.getController();
+            loginScreenController.setGui(this);
+            loginScreenController.rejoinedMatch();
+            guiStage.setResizable(false);
+            guiStage.setTitle("Welcome to My Shelfie!");
+            guiStage.show();
+        //});
+    }
+
+    @Override
+    public void invalidPlayer() {
+        loginScreenController.invalidPlayerNickname();
     }
 
 }

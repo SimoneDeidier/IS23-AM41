@@ -141,4 +141,15 @@ public class ClientControllerTCP implements ClientController {
     public void rejoinMatch() {
         tcpMessageController.rejoinMatch();
     }
+
+    @Override
+    public void rejoinedMatch() {
+        System.out.println("Called rejoined in controller");
+        userInterface.rejoinedMatch();
+    }
+
+    @Override
+    public void invalidPlayer() {
+        userInterface.invalidPlayer();
+    }
 }

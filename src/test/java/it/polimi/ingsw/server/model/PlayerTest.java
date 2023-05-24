@@ -35,7 +35,7 @@ class PlayerTest {
         player.addScoringToken(scoringToken);
         player.setPersonalTargetCard(new PersonalTargetCard(0));
         List<CommonTargetCard> commonTargetList = new ArrayList<>();
-        commonTargetList.add(new CommonFourGroupsOfFour(2));
+        commonTargetList.add(new CommonTwoColumns(2));
         player.setCommonTargetCardList(commonTargetList);
     }
 

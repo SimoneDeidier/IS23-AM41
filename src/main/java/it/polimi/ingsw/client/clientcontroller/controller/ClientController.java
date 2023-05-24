@@ -35,4 +35,8 @@ public interface ClientController {
     void disconnect();
 
     void rejoinMatch();
+
+    void rejoinedMatch();
+
+    void invalidPlayer();
 }

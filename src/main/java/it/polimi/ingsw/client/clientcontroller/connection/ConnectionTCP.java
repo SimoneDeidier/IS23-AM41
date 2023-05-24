@@ -81,7 +81,9 @@ public class ConnectionTCP implements Connection {
         } catch (IOException e) {
             e.printStackTrace();
         }
+        this.closeConnection = false;
         Thread socketReader = new Thread(() -> {
+            System.err.println("STARTED NEW SOCKET THREAD");
             while(!closeConnection) {
                 String inMsg;
                 if ((inMsg = socketIn.nextLine()) != null) {
@@ -94,7 +96,7 @@ public class ConnectionTCP implements Connection {
             }
         });
         socketReader.start();
-        // serializeDeserialize.startUserInterface(uiType);
+        serializeDeserialize.sendRejoinMsg();
         try {
             socketReader.join();
             System.err.println("JOINED THE SOCKET THREAD");

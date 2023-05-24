@@ -4,13 +4,16 @@ import it.polimi.ingsw.client.view.GraphicUserInterface;
 import it.polimi.ingsw.server.model.items.Item;
 import it.polimi.ingsw.server.model.items.ItemColor;
 import javafx.application.Platform;
+import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
+import javafx.scene.Node;
 import javafx.scene.Scene;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextArea;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
+import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
@@ -21,7 +24,6 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
-import java.net.NetworkInterface;
 import java.net.URISyntaxException;
 import java.util.ArrayList;
 import java.util.List;
@@ -157,15 +159,23 @@ public class GameScreenController {
         });
     }
 
-    public void setBoardItems(Item[][] board) throws FileNotFoundException, URISyntaxException {
+    public void setBoardItems(Item[][] board, boolean[][] bitMask) throws FileNotFoundException, URISyntaxException {
         for(int i = 0; i < BOARD_DIM; i++) {
             for(int j = 0; j < BOARD_DIM; j++) {
-                if(board[i][j] != null) {
+                if(board[i][j] != null && bitMask[i][j]) {
                     ImageView imgv = new ImageView(randomItemImageByColors(board[i][j].getColor()));
                     imgv.setFitHeight(ITEM_DIM);
                     imgv.setFitWidth(ITEM_DIM);
                     imgv.setTranslateX(ITEM_OFFSET_LEFT);
-                    boardGridPane.add(imgv, i , j);
+                    imgv.setOnMouseClicked(new EventHandler<MouseEvent>() {
+                        @Override
+                        public void handle(MouseEvent mouseEvent) {
+                            for(Node n : boardGridPane.getChildren()) {
+                                if(n == this.)
+                            }
+                        }
+                    });
+                    boardGridPane.add(imgv, j , i);
                 }
             }
         }
