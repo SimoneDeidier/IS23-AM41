@@ -119,24 +119,25 @@ public abstract class BoardFactory implements Serializable {
 
     public boolean hasFreeSide(int i,int j){
         //Check up
-        if(getBoardMatrixElement(i-1,j)==null){
+        if(i>0 && getBoardMatrixElement(i-1,j)==null){
             return true;
         }
         //Check down
-        if(getBoardMatrixElement(i+1,j)==null){
+        if(i<ROWS && getBoardMatrixElement(i+1,j)==null){
             return true;
         }
         //Check left
-        if(getBoardMatrixElement(i,j-1)==null){
+        if(j>0 && getBoardMatrixElement(i,j-1)==null){
             return true;
         }
         //Check right
-        return getBoardMatrixElement(i, j + 1) == null;
+        return j<COLUMNS && getBoardMatrixElement(i, j + 1) == null;
 
     }
 
     public boolean itemHasAllFreeSide(int i,int j){
-        return (getBoardMatrixElement(i-1,j)==null && getBoardMatrixElement(i+1,j)==null && getBoardMatrixElement(i,j-1)==null && getBoardMatrixElement(i, j + 1) == null);
+        return i>0 && (getBoardMatrixElement(i-1,j)==null && i<ROWS && getBoardMatrixElement(i+1,j)==null
+                && j>0 && getBoardMatrixElement(i,j-1)==null && j<COLUMNS && getBoardMatrixElement(i, j + 1) == null);
     }
 
     public boolean checkInLine(List<int[]> list){
