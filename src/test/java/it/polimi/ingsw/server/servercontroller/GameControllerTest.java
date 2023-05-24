@@ -7,10 +7,14 @@ import it.polimi.ingsw.server.model.Shelf;
 import it.polimi.ingsw.server.model.boards.BoardFactory;
 import it.polimi.ingsw.server.model.boards.FourPlayersBoard;
 import it.polimi.ingsw.server.model.boards.TwoPlayersBoard;
+import it.polimi.ingsw.server.model.exceptions.EmptyShelfException;
 import it.polimi.ingsw.server.model.exceptions.NotEnoughSpaceInColumnException;
 import it.polimi.ingsw.server.model.items.Item;
 import it.polimi.ingsw.server.model.items.ItemColor;
+import it.polimi.ingsw.server.servercontroller.controllerstates.RunningGameState;
+import it.polimi.ingsw.server.servercontroller.controllerstates.ServerInitState;
 import it.polimi.ingsw.server.servercontroller.controllerstates.WaitingForPlayerState;
+import it.polimi.ingsw.server.servercontroller.controllerstates.WaitingForSavedGameState;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
@@ -24,6 +28,7 @@ class GameControllerTest {
 
     private GameController controller;
 
+
     @BeforeEach
     void initialize(){
         controller = GameController.getGameController(new Server());
@@ -32,9 +37,71 @@ class GameControllerTest {
     }
 
     @Test
+    void getAvailableSlot(){
+        //WaitingForPlayerState
+        assertEquals(-2, controller.getAvailableSlot());
+        controller.setupLobbyParameters(4, true);
+        assertEquals(4, controller.getAvailableSlot());
+        controller.addPlayer(new Player("player1"));
+        assertEquals(3, controller.getAvailableSlot());
+        controller.addPlayer(new Player("player2"));
+        assertEquals(2, controller.getAvailableSlot());
+        controller.addPlayer(new Player("player3"));
+        assertEquals(1, controller.getAvailableSlot());
+        controller.addPlayer(new Player("player4"));
+        assertEquals(0, controller.getAvailableSlot());
+        //ServerInitState
+        controller.setState(new ServerInitState());
+        assertEquals(-1, controller.getAvailableSlot());
+        //RunningGameState
+        controller.setState(new RunningGameState());
+        assertEquals(0, controller.getAvailableSlot());
+        //WaitingForSavedGameState
+        controller.setState(new WaitingForSavedGameState());
+        assertEquals(0, controller.getAvailableSlot());
+        controller.getPlayerList().get(0).setConnected(false);
+        assertEquals(1, controller.getAvailableSlot());
+        controller.getPlayerList().get(1).setConnected(false);
+        assertEquals(2, controller.getAvailableSlot());
+        controller.getPlayerList().get(2).setConnected(false);
+        assertEquals(3, controller.getAvailableSlot());
+        controller.getPlayerList().get(3).setConnected(false);
+        assertEquals(4, controller.getAvailableSlot());
+    }
+
+
+
+    @Test
+    void addPlayer(){
+        //WaintingForPlayerState
+        controller.addPlayer(new Player("player0"));
+        controller.addPlayer(new Player("player1"));
+        controller.addPlayer(new Player("player2"));
+        assertEquals(3, controller.getPlayerList().size());
+        assertEquals("player0", controller.getPlayerList().get(0).getNickname());
+        assertEquals("player1", controller.getPlayerList().get(1).getNickname());
+        assertEquals("player2", controller.getPlayerList().get(2).getNickname());
+        //WaitingForSavedGameState
+        controller.setState(new WaitingForSavedGameState());
+        controller.getPlayerList().get(0).setConnected(false);
+        controller.addPlayer(new Player("player0"));
+        controller.getPlayerList().get(2).setConnected(false);
+        assertFalse(controller.getPlayerList().get(2).isConnected());
+        controller.addPlayer(new Player("player2"));
+        for( int i = 0; i < 3; i++ ){
+            assertTrue(controller.getPlayerList().get(i).isConnected());
+        }
+        controller.getPlayerList().get(0).setConnected(false);
+        controller.addPlayer(new Player("player1"));
+        assertFalse(controller.getPlayerList().get(0).isConnected());
+    }
+
+
+
+    @Test
     void nextIndexCalc() throws NotEnoughSpaceInColumnException {
-        Player player1 = new Player("ingconti");
-        Player player2 = new Player("margara");
+        Player player1 = new Player("player1");
+        Player player2 = new Player("player2");
         controller.changeState(new WaitingForPlayerState());
         controller.addPlayer(player1);
         controller.addPlayer(player2);
@@ -47,9 +114,8 @@ class GameControllerTest {
 
     @Test
     void checkLastTurn() throws NotEnoughSpaceInColumnException {
-        Player player1 = new Player("ingconti");
-        Player player2 = new Player("margara");
-        controller.changeState(new WaitingForPlayerState());
+        Player player1 = new Player("player1");
+        Player player2 = new Player("player2");
         controller.addPlayer(player1);
         controller.addPlayer(player2);
         assertEquals(2, controller.getPlayerList().size());
@@ -80,9 +146,9 @@ class GameControllerTest {
     @Test
     void checkMove() throws NotEnoughSpaceInColumnException {
         Body body = new Body();
-        body.setPlayerNickname("margara");
-        Player player1 = new Player("ingconti");
-        Player player2 = new Player("margara");
+        body.setPlayerNickname("player2");
+        Player player1 = new Player("player1");
+        Player player2 = new Player("player2");
         BoardFactory board1 = new TwoPlayersBoard();
         controller.setBoard(board1);
         //check active player
@@ -91,7 +157,6 @@ class GameControllerTest {
         controller.setActivePlayer(player1);
         assertFalse(controller.checkMove(body));
         controller.setActivePlayer(player2);
-        //assertTrue(controller.checkMove(body));
         //check board.checkMove
         board1.setBoardMatrixElement(new Item(ItemColor.YELLOW), 5, 3);
         board1.setBoardMatrixElement(new Item(ItemColor.YELLOW), 5, 4);
