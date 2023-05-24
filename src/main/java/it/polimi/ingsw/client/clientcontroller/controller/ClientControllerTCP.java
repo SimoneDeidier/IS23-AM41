@@ -183,4 +183,9 @@ public class ClientControllerTCP implements ClientController {
         Collections.swap(positionPicked, col1, col2);
     }
 
+    @Override
+    public void incorrectMove() {
+        userInterface.incorrectMove();
+    }
+
 }

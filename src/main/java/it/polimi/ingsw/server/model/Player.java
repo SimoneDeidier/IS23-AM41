@@ -45,7 +45,9 @@ public class Player implements Serializable {
             if (endGameToken != null) {
                 playerScore += endGameToken.getValue();
             }
+            System.err.println("POST END GAME TK");
             playerScore += personalTargetCard.calculatePoints(shelf);
+            System.err.println("POST PERSONAL");
             try {
                 playerScore += shelf.calculateAdjacentItemsPoints();
             }
@@ -54,16 +56,19 @@ public class Player implements Serializable {
                 System.out.println("Player: " + nickname);
             }
             finally {
-                for(CommonTargetCard commonTargetCard:commonTargetCardList){
+                System.err.println("POST ADJACENT");
+                /*for(CommonTargetCard commonTargetCard:commonTargetCardList){
                     if (commonTargetCard.check(shelf)) {
                         scoringTokenList.add(commonTargetCard.assignToken(this));
                     }
-                }
+                }*/
+                System.err.println("POST COMMON");
                 for (Token token : scoringTokenList) {
                     if (token != null) {
                         playerScore += token.getValue();
                     }
                 }
+                System.err.println("POST UPDATE");
             }
         }
         catch (URISyntaxException | IOException e) {

@@ -178,4 +178,9 @@ public class ClientControllerRMI implements ClientController, Serializable {
 
     }
 
+    @Override
+    public void incorrectMove() {
+
+    }
+
 }
