@@ -118,8 +118,8 @@ public class GameController {
         }
         else {
             newView.setActivePlayer(getActivePlayer().getNickname());
+            newView.setGameOver(false);
         }
-        newView.setGameOver(false);
         newView.setBoardItems(board.getBoardMatrix());
         newView.setBoardBitMask(board.getBitMask());
         for(Player p : playerList) {
