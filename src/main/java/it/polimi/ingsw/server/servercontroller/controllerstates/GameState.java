@@ -16,5 +16,5 @@ public interface GameState {
     List<CommonTargetCard> setupCommonList(boolean isOnlyOneCommon, int maxPlayerNumber);
     BoardFactory setupBoard(int maxPlayerNumber);
     void boardNeedsRefill(BoardFactory boardFactory);
-    void setupPlayers(List<Player> playerList, List<CommonTargetCard> commonTargetCardList, BoardFactory board);
+    void setupPlayers(List<Player> playerList, List<CommonTargetCard> commonTargetCardList, BoardFactory board,GameController controller);
 }

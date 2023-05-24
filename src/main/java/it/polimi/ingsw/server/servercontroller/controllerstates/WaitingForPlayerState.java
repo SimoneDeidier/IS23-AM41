@@ -149,7 +149,7 @@ public class WaitingForPlayerState implements GameState {
     }
 
     @Override
-    public void setupPlayers(List<Player> playerList, List<CommonTargetCard> commonTargetCardList, BoardFactory board) {
+    public void setupPlayers(List<Player> playerList, List<CommonTargetCard> commonTargetCardList, BoardFactory board, GameController controller) {
         for(Player player: playerList){
             player.setBoard(board);
             player.setShelf(new Shelf());

@@ -49,7 +49,7 @@ public class RunningGameState implements GameState {
     }
 
     @Override
-    public void setupPlayers(List<Player> playerList, List<CommonTargetCard> commonTargetCardList, BoardFactory board) {
+    public void setupPlayers(List<Player> playerList, List<CommonTargetCard> commonTargetCardList, BoardFactory board, GameController controller) {
 
     }
 }

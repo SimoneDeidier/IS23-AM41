@@ -5,14 +5,14 @@ import it.polimi.ingsw.interfaces.InterfaceServer;
 
 import java.rmi.RemoteException;
 
-public class PingThread extends Thread {
+public class PingThreadClientRmiToServer extends Thread {
     private final InterfaceServer interfaceServer;
     private InterfaceClient interfaceClient; //The client who's pinging the server
     private final long pingInterval;
     private int failedPings;
     private final int maxPingFailed;
 
-    public PingThread(InterfaceServer interfaceServer,InterfaceClient interfaceClient) {
+    public PingThreadClientRmiToServer(InterfaceServer interfaceServer, InterfaceClient interfaceClient) {
         this.interfaceServer = interfaceServer;
         this.interfaceClient=interfaceClient;
         this.pingInterval = 1000;

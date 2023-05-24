@@ -171,7 +171,7 @@ public class GameScreenController {
                         @Override
                         public void handle(MouseEvent mouseEvent) {
                             for(Node n : boardGridPane.getChildren()) {
-                                if(n == this.)
+                                //if(n == this.)
                             }
                         }
                     });
