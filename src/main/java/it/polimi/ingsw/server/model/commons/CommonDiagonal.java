@@ -8,37 +8,74 @@ public class CommonDiagonal extends CommonTargetCard {
         super(maxPlayerNumber);
         this.name="CommonDiagonal";
     }
+
+
+
     @Override
     public boolean check(Shelf shelf) {
-        int unfound = 0;
-        for (int k = 0; k <= 1; k++){
-            int j = 0;
-            for(int i = k; i < k + COLUMNS - 1; i++) {
-                if (shelf.getItemByCoordinates(i, j) != null && shelf.getItemByCoordinates(i + 1, j + 1) != null && shelf.getItemByCoordinates(i, j).getColor() != shelf.getItemByCoordinates(i + 1, j + 1).getColor()) {
-                    unfound = 1;
-                    break;
-                }
-                j++;
-            }
-            if (unfound==0){
-                return true;
-            }
-            unfound = 0;
+        boolean first = true, second = true, third = true, fourth = true, check = true;
+        int[] columnSpaces = new int[COLUMNS];
+
+        for (int col = 0; col < COLUMNS; col++) {
+            columnSpaces[col] = shelf.freeSpaces(col);
         }
-        for (int k = 0; k <= 1; k++){
-            int j = 4;
-            for(int i = k; i < k + COLUMNS - 1; i++) {
-                if (shelf.getItemByCoordinates(i, j) != null && shelf.getItemByCoordinates(i + 1, j - 1) != null && shelf.getItemByCoordinates(i, j).getColor() != shelf.getItemByCoordinates(i + 1, j - 1).getColor()) {
-                    unfound = 1;
-                    break;
-                }
-                j--;
+        //check which of the four possible diagonals
+        for (int col = 0; col < COLUMNS; col++) {
+            if (columnSpaces[col] > col) {
+                first = false;
             }
-            if (unfound==0){
-                return true;
+            if (columnSpaces[col] > col + 1) {
+                second = false;
             }
-            unfound = 0;
+            if (columnSpaces[col] > COLUMNS - 1 - col) {
+                third = false;
+            }
+            if (columnSpaces[col] > COLUMNS - col) {
+                fourth = false;
+            }
         }
-        return false;
+
+        if (first) {
+            for (int i = 1; i < COLUMNS; i++) {
+                if (shelf.getItemByCoordinates(0, 0).getColor() != shelf.getItemByCoordinates(i, i).getColor())
+                    check = false;
+            }
+            if (check)
+                return true;
+            check = true;
+        }
+
+        if (second) {
+            for (int i = 1; i < COLUMNS; i++) {
+                if (shelf.getItemByCoordinates(1, 0).getColor() != shelf.getItemByCoordinates(i + 1, i).getColor())
+                    check = false;
+            }
+            if (check)
+                return true;
+            check = true;
+        }
+
+        if (third) {
+            for (int i = 1; i < COLUMNS; i++) {
+                if (shelf.getItemByCoordinates(COLUMNS - 1, 0).getColor() != shelf.getItemByCoordinates(COLUMNS - 1 - i, i).getColor())
+                    check = false;
+            }
+            if (check)
+                return true;
+            check = true;
+        }
+
+        if (fourth) {
+            for (int i = 1; i < COLUMNS; i++) {
+                if (shelf.getItemByCoordinates(COLUMNS - 1, 0).getColor() != shelf.getItemByCoordinates(COLUMNS - 1 - i, i).getColor())
+                    check = false;
+            }
+            if (check)
+                return true;
+        }
+
+        return  false;
     }
+
+
 }
