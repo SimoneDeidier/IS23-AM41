@@ -6,7 +6,7 @@ import it.polimi.ingsw.client.view.TextUserInterface;
 import it.polimi.ingsw.client.view.UserInterface;
 import it.polimi.ingsw.messages.Body;
 import it.polimi.ingsw.messages.NewView;
-import it.polimi.ingsw.server.model.items.Item;
+import javafx.scene.Node;
 
 import java.io.FileNotFoundException;
 import java.io.IOException;
@@ -14,6 +14,7 @@ import java.net.URISyntaxException;
 import java.time.LocalDateTime;
 import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 public class ClientControllerTCP implements ClientController {
@@ -23,7 +24,6 @@ public class ClientControllerTCP implements ClientController {
     private String playerNickname;
     private int personalTargetCardNumber;
     private List<String> commonGoalNameList;
-    private List<Item> pickedItemList = new ArrayList<>(3);
     private List<int[]> positionPicked = new ArrayList<>(3);
 
     public ClientControllerTCP(TCPMessageController tcpMessageController) {
@@ -158,18 +158,12 @@ public class ClientControllerTCP implements ClientController {
     }
 
     @Override
-    public int getPickedItemListSize() {
-        return pickedItemList.size();
-    }
-
-    @Override
-    public void insertInPickedItemList(Item i) {
-        pickedItemList.add(i);
-    }
-
-    @Override
     public void insertInPositionPicked(int[] el) {
         positionPicked.add(el);
+    }
+    @Override
+    public int getPositionPickedSize() {
+        return positionPicked.size();
     }
 
     @Override
@@ -180,7 +174,13 @@ public class ClientControllerTCP implements ClientController {
         body.setPlayerNickname(playerNickname);
         tcpMessageController.printTCPMessage("Move", body);
         positionPicked = new ArrayList<>(3);
-        pickedItemList = new ArrayList<>(3);
+    }
+
+    @Override
+    public void swapCols(List<Node> list) {
+        int col1 = userInterface.getSwapColIndex(list.get(0));
+        int col2 = userInterface.getSwapColIndex(list.get(1));
+        Collections.swap(positionPicked, col1, col2);
     }
 
 }

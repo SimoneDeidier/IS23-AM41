@@ -5,11 +5,11 @@ import it.polimi.ingsw.client.view.controllers.GameScreenController;
 import it.polimi.ingsw.client.view.controllers.LoginScreenController;
 import it.polimi.ingsw.client.view.controllers.MenuController;
 import it.polimi.ingsw.messages.NewView;
-import it.polimi.ingsw.server.model.items.Item;
 import javafx.application.Application;
 import javafx.application.Platform;
 import javafx.event.EventHandler;
 import javafx.fxml.FXMLLoader;
+import javafx.scene.Node;
 import javafx.scene.Scene;
 import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyCodeCombination;
@@ -240,16 +240,6 @@ public class GraphicUserInterface extends Application implements UserInterface, 
     }
 
     @Override
-    public int getItemPickedListSize() {
-        return clientController.getPickedItemListSize();
-    }
-
-    @Override
-    public void insertInPickedItemList(Item i) {
-        clientController.insertInPickedItemList(i);
-    }
-
-    @Override
     public boolean isYourTurn() {
         return isYourTurn;
     }
@@ -262,6 +252,20 @@ public class GraphicUserInterface extends Application implements UserInterface, 
     @Override
     public void insertInPositionPicked(int[] el) {
         clientController.insertInPositionPicked(el);
+    }
+    @Override
+    public int getPositionPickedSize() {
+        return clientController.getPositionPickedSize();
+    }
+
+    @Override
+    public void swapCols(List<Node> list) {
+        clientController.swapCols(list);
+    }
+
+    @Override
+    public int getSwapColIndex(Node n) {
+        return gameScreenController.getSwapColIndex(n);
     }
 
 }

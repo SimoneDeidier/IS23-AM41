@@ -4,6 +4,7 @@ import it.polimi.ingsw.client.view.GraphicUserInterface;
 import javafx.application.Platform;
 import javafx.fxml.FXML;
 import javafx.scene.Node;
+import javafx.scene.chart.Axis;
 import javafx.scene.control.Button;
 import javafx.scene.control.ChoiceBox;
 import javafx.scene.control.TextField;
@@ -40,11 +41,15 @@ public class LoginScreenController {
     private GraphicUserInterface gui = null;
     private List<Integer> players = Arrays.asList(2, 3, 4);
     private List<Integer> commons = Arrays.asList(1, 2);
+    private static final int MAX_NICKNAME = 20;
 
     public void setNickname() {
         if(gui != null) {
             String text = nicknameTextField.getText();
             if(text != null && !text.equals("")) {
+                if(text.length() > MAX_NICKNAME) {
+                    text = text.substring(0, MAX_NICKNAME);
+                }
                 gui.sendNickname(text);
             }
         }

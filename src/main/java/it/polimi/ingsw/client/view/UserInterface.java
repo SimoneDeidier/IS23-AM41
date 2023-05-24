@@ -5,6 +5,7 @@ import it.polimi.ingsw.messages.NewView;
 import it.polimi.ingsw.server.model.Player;
 import it.polimi.ingsw.server.model.items.Item;
 import it.polimi.ingsw.server.servercontroller.GameController;
+import javafx.scene.Node;
 
 import java.io.FileNotFoundException;
 import java.io.IOException;
@@ -48,13 +49,15 @@ public interface UserInterface {
 
     void invalidPlayer();
 
-    int getItemPickedListSize();
-
-    void insertInPickedItemList(Item i);
-
     boolean isYourTurn();
 
     void sendMove(int col);
 
     void insertInPositionPicked(int[] el);
+
+    int getPositionPickedSize();
+
+    void swapCols(List<Node> list);
+
+    int getSwapColIndex(Node n);
 }

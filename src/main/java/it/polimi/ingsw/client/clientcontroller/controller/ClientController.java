@@ -5,6 +5,7 @@ import it.polimi.ingsw.messages.NewView;
 import it.polimi.ingsw.server.model.Player;
 import it.polimi.ingsw.server.model.items.Item;
 import javafx.fxml.FXML;
+import javafx.scene.Node;
 import javafx.scene.control.TextField;
 
 import java.io.FileNotFoundException;
@@ -41,11 +42,11 @@ public interface ClientController {
 
     void invalidPlayer();
 
-    int getPickedItemListSize();
-
-    void insertInPickedItemList(Item i);
-
     void insertInPositionPicked(int[] el);
 
+    int getPositionPickedSize();
+
     void sendMove(int col);
+
+    void swapCols(List<Node> list);
 }

@@ -54,6 +54,7 @@ public class GameScreenController {
     private Map<String, Integer> nicknameToPointsMap;
     private String playerNickname;
     private Item[][] boardMatrx;
+    private List<Node> swapCols = new ArrayList<>(2);
 
     @FXML
     private Text playerText;
@@ -233,23 +234,31 @@ public class GameScreenController {
     }
 
     public void addInSelected(Node n) {
-        int col = gui.getItemPickedListSize();
+        int col = gui.getPositionPickedSize();
         if(col < 3 && gui.isYourTurn()) {
             ImageView selected = (ImageView) n;
             ImageView newImgv = new ImageView(selected.getImage());
+            selected.setOpacity(0.5);
             newImgv.setFitHeight(PICKED_IT_DIM);
             newImgv.setFitWidth(PICKED_IT_DIM);
             newImgv.setTranslateY(ITEM_OFFSET_LEFT);
+            newImgv.setOnMouseClicked(new EventHandler<MouseEvent>() {
+                @Override
+                public void handle(MouseEvent mouseEvent) {
+                    for(Node n : pickedItemsGridPane.getChildren()) {
+                        if(n == mouseEvent.getSource()) {
+                            swapPickedItems(n);
+                        }
+                    }
+                }
+            });
             pickedItemsGridPane.add(newImgv, col, 0);
             int pickedRow = GridPane.getRowIndex(n);
             int pickedCol = GridPane.getColumnIndex(n);
-            Item picked = new Item(boardMatrx[pickedRow][pickedCol].getColor());
-            gui.insertInPickedItemList(picked);
             int[] pickedPos = new int[2];
             pickedPos[0] = pickedRow;
             pickedPos[1] = pickedCol;
             gui.insertInPositionPicked(pickedPos);
-            boardGridPane.getChildren().remove(n);
         }
     }
 
@@ -268,7 +277,7 @@ public class GameScreenController {
                     @Override
                     public void handle(MouseEvent mouseEvent) {
                         for(Node n : shelfGridPane.getChildren()) {
-                            if(n == mouseEvent.getSource() && gui.isYourTurn() && gui.getItemPickedListSize() > 0 /*todo check spazio colonna*/) {
+                            if(n == mouseEvent.getSource() && gui.isYourTurn() && gui.getPositionPickedSize() > 0 /*todo check spazio colonna*/) {
                                 int col = GridPane.getColumnIndex(n);
                                 gui.sendMove(col);
                                 break;
@@ -285,6 +294,26 @@ public class GameScreenController {
     public void setYourTurnPane(boolean set) {
         turnAnchorPane.setVisible(set);
         turnAnchorPane.setDisable(!set);
+    }
+
+    public void swapPickedItems(Node n) {
+        if(swapCols.size() == 0) {
+            swapCols.add(n);
+        }
+        else {
+            swapCols.add(n);
+            ImageView firstImgv = (ImageView) swapCols.get(0);
+            ImageView secondImgv = (ImageView) swapCols.get(1);
+            Image tmpImage = firstImgv.getImage();
+            firstImgv.setImage(secondImgv.getImage());
+            secondImgv.setImage(tmpImage);
+            gui.swapCols(swapCols);
+            swapCols = new ArrayList<>(2);
+        }
+    }
+
+    public int getSwapColIndex(Node n) {
+        return GridPane.getColumnIndex(n);
     }
 
 }

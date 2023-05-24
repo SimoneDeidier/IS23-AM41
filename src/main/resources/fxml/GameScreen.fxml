@@ -20,11 +20,20 @@
             <Image url="@../images/background.jpg" />
          </image>
       </ImageView>
-      <Text fx:id="playerText" layoutX="74.0" layoutY="70.0" strokeType="OUTSIDE" strokeWidth="0.0" AnchorPane.leftAnchor="13.0" AnchorPane.topAnchor="13.0">
-         <font>
-            <Font size="19.0" />
-         </font>
-      </Text>
+      <AnchorPane prefHeight="0.0" prefWidth="416.0" style="-fx-border-color: black;" AnchorPane.leftAnchor="0.0" AnchorPane.topAnchor="0.0">
+         <children>
+            <ImageView fitHeight="41.0" fitWidth="442.0" pickOnBounds="true" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+               <image>
+                  <Image url="@../images/chat_background.jpg" />
+               </image>
+            </ImageView>
+            <Text fx:id="playerText" fill="WHITE" strokeType="OUTSIDE" strokeWidth="0.0" AnchorPane.bottomAnchor="9.0" AnchorPane.leftAnchor="13.0" AnchorPane.rightAnchor="13.0" AnchorPane.topAnchor="9.0">
+               <font>
+                  <Font size="19.0" />
+               </font>
+            </Text>
+         </children>
+      </AnchorPane>
       <ScrollPane fx:id="chatScrollPane" hbarPolicy="NEVER" prefHeight="200.0" prefWidth="200.0" AnchorPane.bottomAnchor="69.0" AnchorPane.leftAnchor="1043.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
          <content>
             <VBox fx:id="chatVBox" prefHeight="649.0" prefWidth="235.0" />
@@ -96,10 +105,18 @@
           <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
         </rowConstraints>
       </GridPane>
-      <Button layoutX="808.0" layoutY="46.0" mnemonicParsing="false" onAction="#sendInChat" text="^" AnchorPane.bottomAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="651.0">
+      <ImageView fitHeight="150.0" fitWidth="200.0" pickOnBounds="true" preserveRatio="true" />
+      <Button layoutX="808.0" layoutY="46.0" mnemonicParsing="false" onAction="#sendInChat" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="1241.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="651.0">
          <font>
             <Font size="21.0" />
          </font>
+         <graphic>
+            <ImageView fitHeight="13.0" fitWidth="13.0" pickOnBounds="true">
+               <image>
+                  <Image url="@../images/send.png" />
+               </image>
+            </ImageView>
+         </graphic>
       </Button>
       <TextArea fx:id="chatMessageTextArea" prefHeight="200.0" prefWidth="200.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="1043.0" AnchorPane.rightAnchor="41.0" AnchorPane.topAnchor="651.0" />
       <AnchorPane fx:id="pickedItemsAnchorPane" layoutX="649.0" layoutY="43.0" prefHeight="200.0" prefWidth="200.0" style="-fx-border-color: black;" AnchorPane.bottomAnchor="479.0" AnchorPane.leftAnchor="659.0" AnchorPane.rightAnchor="269.0" AnchorPane.topAnchor="89.0">
@@ -126,14 +143,14 @@
           <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
         </rowConstraints>
       </GridPane>
-      <AnchorPane fx:id="turnAnchorPane" disable="true" layoutX="785.0" layoutY="35.0" prefHeight="43.0" prefWidth="83.0" style="-fx-border-color: black;" visible="false" AnchorPane.leftAnchor="785.0" AnchorPane.topAnchor="27.0">
+      <AnchorPane fx:id="turnAnchorPane" disable="true" layoutX="785.0" layoutY="35.0" style="-fx-border-color: black;" visible="false" AnchorPane.leftAnchor="785.0" AnchorPane.topAnchor="27.0">
          <children>
-            <ImageView fitHeight="43.0" fitWidth="100.0" pickOnBounds="true" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+            <ImageView fitHeight="43.0" fitWidth="115.0" pickOnBounds="true" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
                <image>
                   <Image url="@../images/chat_background.jpg" />
                </image>
             </ImageView>
-            <Text fill="WHITE" strokeType="OUTSIDE" strokeWidth="0.0" text="It's your turn!" AnchorPane.bottomAnchor="9.0" AnchorPane.leftAnchor="9.0" AnchorPane.rightAnchor="9.0" AnchorPane.topAnchor="9.0">
+            <Text fill="WHITE" strokeType="OUTSIDE" strokeWidth="0.0" text="It's your turn!" AnchorPane.bottomAnchor="12.0" AnchorPane.leftAnchor="17.0" AnchorPane.rightAnchor="16.0" AnchorPane.topAnchor="13.0">
                <font>
                   <Font size="15.0" />
                </font>
