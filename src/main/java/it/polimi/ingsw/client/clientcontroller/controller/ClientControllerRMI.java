@@ -6,6 +6,7 @@ import it.polimi.ingsw.client.view.TextUserInterface;
 import it.polimi.ingsw.client.view.UserInterface;
 import it.polimi.ingsw.messages.Body;
 import it.polimi.ingsw.messages.NewView;
+import it.polimi.ingsw.server.model.items.Item;
 
 import java.io.FileNotFoundException;
 import java.io.IOException;
@@ -153,6 +154,26 @@ public class ClientControllerRMI implements ClientController, Serializable {
 
     @Override
     public void invalidPlayer() {
+
+    }
+
+    @Override
+    public int getPickedItemListSize() {
+        return 0;
+    }
+
+    @Override
+    public void insertInPickedItemList(Item i) {
+
+    }
+
+    @Override
+    public void insertInPositionPicked(int[] el) {
+
+    }
+
+    @Override
+    public void sendMove(int col) {
 
     }
 

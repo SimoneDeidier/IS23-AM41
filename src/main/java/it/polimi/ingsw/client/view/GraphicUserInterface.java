@@ -5,6 +5,7 @@ import it.polimi.ingsw.client.view.controllers.GameScreenController;
 import it.polimi.ingsw.client.view.controllers.LoginScreenController;
 import it.polimi.ingsw.client.view.controllers.MenuController;
 import it.polimi.ingsw.messages.NewView;
+import it.polimi.ingsw.server.model.items.Item;
 import javafx.application.Application;
 import javafx.application.Platform;
 import javafx.event.EventHandler;
@@ -22,6 +23,7 @@ import java.io.IOException;
 import java.io.Serializable;
 import java.net.URISyntaxException;
 import java.util.List;
+import java.util.Objects;
 
 public class GraphicUserInterface extends Application implements UserInterface, Serializable {
 
@@ -29,6 +31,7 @@ public class GraphicUserInterface extends Application implements UserInterface, 
     private static Stage guiStage;
     private static LoginScreenController loginScreenController;
     private static GameScreenController gameScreenController;
+    private boolean isYourTurn = false;
 
     @Override
     public void run() {
@@ -110,6 +113,11 @@ public class GraphicUserInterface extends Application implements UserInterface, 
             catch (URISyntaxException | FileNotFoundException e) {
                 throw new RuntimeException(e);
             }
+            try {
+                gameScreenController.setupPlayerShelf();
+            } catch (URISyntaxException | FileNotFoundException e) {
+                e.printStackTrace();
+            }
             guiStage.getScene().addEventFilter(KeyEvent.KEY_PRESSED, new EventHandler<>() {
                 final KeyCombination keyCombination = new KeyCodeCombination(KeyCode.ESCAPE);
 
@@ -153,6 +161,7 @@ public class GraphicUserInterface extends Application implements UserInterface, 
     @Override
     public void updateView(NewView newView) throws FileNotFoundException, URISyntaxException {
         String playerNickname = clientController.getPlayerNickname();
+        this.isYourTurn = Objects.equals(newView.getActivePlayer(), playerNickname);
         Platform.runLater(() -> {
             try {
                 gameScreenController.setBoardItems(newView.getBoardItems(), newView.getBoardBitMask());
@@ -227,6 +236,31 @@ public class GraphicUserInterface extends Application implements UserInterface, 
     @Override
     public void invalidPlayer() {
         loginScreenController.invalidPlayerNickname();
+    }
+
+    @Override
+    public int getItemPickedListSize() {
+        return clientController.getPickedItemListSize();
+    }
+
+    @Override
+    public void insertInPickedItemList(Item i) {
+        clientController.insertInPickedItemList(i);
+    }
+
+    @Override
+    public boolean isYourTurn() {
+        return isYourTurn;
+    }
+
+    @Override
+    public void sendMove(int col) {
+        clientController.sendMove(col);
+    }
+
+    @Override
+    public void insertInPositionPicked(int[] el) {
+        clientController.insertInPositionPicked(el);
     }
 
 }

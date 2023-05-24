@@ -3,6 +3,7 @@ package it.polimi.ingsw.client.view;
 import it.polimi.ingsw.client.clientcontroller.controller.ClientController;
 import it.polimi.ingsw.messages.NewView;
 import it.polimi.ingsw.server.model.Player;
+import it.polimi.ingsw.server.model.items.Item;
 import it.polimi.ingsw.server.servercontroller.GameController;
 
 import java.io.FileNotFoundException;
@@ -46,4 +47,14 @@ public interface UserInterface {
     void rejoinedMatch();
 
     void invalidPlayer();
+
+    int getItemPickedListSize();
+
+    void insertInPickedItemList(Item i);
+
+    boolean isYourTurn();
+
+    void sendMove(int col);
+
+    void insertInPositionPicked(int[] el);
 }

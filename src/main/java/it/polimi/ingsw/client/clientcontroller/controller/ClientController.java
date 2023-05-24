@@ -3,6 +3,7 @@ package it.polimi.ingsw.client.clientcontroller.controller;
 import it.polimi.ingsw.client.clientcontroller.connection.Connection;
 import it.polimi.ingsw.messages.NewView;
 import it.polimi.ingsw.server.model.Player;
+import it.polimi.ingsw.server.model.items.Item;
 import javafx.fxml.FXML;
 import javafx.scene.control.TextField;
 
@@ -39,4 +40,12 @@ public interface ClientController {
     void rejoinedMatch();
 
     void invalidPlayer();
+
+    int getPickedItemListSize();
+
+    void insertInPickedItemList(Item i);
+
+    void insertInPositionPicked(int[] el);
+
+    void sendMove(int col);
 }

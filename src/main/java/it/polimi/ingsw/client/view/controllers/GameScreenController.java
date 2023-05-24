@@ -39,6 +39,11 @@ public class GameScreenController {
     private final static int BOARD_DIM = 9;
     private final static double ITEM_DIM = 51.0;
     private final static double ITEM_OFFSET_LEFT = 5.0;
+    private final static double PICKED_IT_DIM = 61.0;
+    private final static int SHELF_ROWS = 6;
+    private final static int SHELF_COL = 5;
+    private final static double SHELF_ITEM_DIM = 43.0;
+    private final static double SHELF_ITEM_OFFSET = 11.0;
 
     private GraphicUserInterface gui;
     private Image personalGoalImage = null;
@@ -47,6 +52,7 @@ public class GameScreenController {
     private Map<String, Item[][]> nicknameToShelfMap;
     private Map<String, Integer> nicknameToPointsMap;
     private String playerNickname;
+    private Item[][] boardMatrx;
 
     @FXML
     private Text playerText;
@@ -56,6 +62,10 @@ public class GameScreenController {
     private VBox chatVBox;
     @FXML
     private GridPane boardGridPane;
+    @FXML
+    private GridPane pickedItemsGridPane;
+    @FXML
+    private GridPane shelfGridPane;
 
     public void initialize() {
         chatVBox.setStyle("-fx-background-color: #442211;");
@@ -160,6 +170,7 @@ public class GameScreenController {
     }
 
     public void setBoardItems(Item[][] board, boolean[][] bitMask) throws FileNotFoundException, URISyntaxException {
+        this.boardMatrx = board;
         for(int i = 0; i < BOARD_DIM; i++) {
             for(int j = 0; j < BOARD_DIM; j++) {
                 if(board[i][j] != null && bitMask[i][j]) {
@@ -171,7 +182,10 @@ public class GameScreenController {
                         @Override
                         public void handle(MouseEvent mouseEvent) {
                             for(Node n : boardGridPane.getChildren()) {
-                                if(n == this.)
+                                if(n == mouseEvent.getSource()) {
+                                    addInSelected(n);
+                                    break;
+                                }
                             }
                         }
                     });
@@ -215,5 +229,54 @@ public class GameScreenController {
         this.playerNickname = playerNickname;
     }
 
+    public void addInSelected(Node n) {
+        int col = gui.getItemPickedListSize();
+        if(col < 3 && gui.isYourTurn()) {
+            ImageView selected = (ImageView) n;
+            ImageView newImgv = new ImageView(selected.getImage());
+            newImgv.setFitHeight(PICKED_IT_DIM);
+            newImgv.setFitWidth(PICKED_IT_DIM);
+            newImgv.setTranslateY(ITEM_OFFSET_LEFT);
+            pickedItemsGridPane.add(newImgv, col, 0);
+            int pickedRow = GridPane.getRowIndex(n);
+            int pickedCol = GridPane.getColumnIndex(n);
+            Item picked = new Item(boardMatrx[pickedRow][pickedCol].getColor());
+            gui.insertInPickedItemList(picked);
+            int[] pickedPos = new int[2];
+            pickedPos[0] = pickedRow;
+            pickedPos[1] = pickedCol;
+            gui.insertInPositionPicked(pickedPos);
+            boardGridPane.getChildren().remove(n);
+        }
+    }
+
+    public void setupPlayerShelf() throws URISyntaxException, FileNotFoundException {
+        for(int i = 0; i < SHELF_ROWS; i++) {
+            for(int j = 0; j < SHELF_COL; j++) {
+                File file = new File(ClassLoader.getSystemResource("images/items/b0.png").toURI());
+                FileInputStream fis = new FileInputStream(file);
+                Image img = new Image(fis);
+                ImageView imgv = new ImageView(img);
+                imgv.setFitWidth(SHELF_ITEM_DIM);
+                imgv.setFitHeight(SHELF_ITEM_DIM);
+                imgv.setTranslateX(SHELF_ITEM_OFFSET);
+                imgv.setOpacity(0.0);
+                imgv.setOnMouseClicked(new EventHandler<MouseEvent>() {
+                    @Override
+                    public void handle(MouseEvent mouseEvent) {
+                        for(Node n : shelfGridPane.getChildren()) {
+                            if(n == mouseEvent.getSource() && gui.isYourTurn() && gui.getItemPickedListSize() > 0 /*todo check spazio colonna*/) {
+                                int col = GridPane.getColumnIndex(n);
+                                gui.sendMove(col);
+                                break;
+                            }
+                        }
+                        pickedItemsGridPane.getChildren().clear();
+                    }
+                });
+                shelfGridPane.add(imgv, j, i);
+            }
+        }
+    }
 
 }

@@ -71,6 +71,7 @@ public class GameController {
     }
 
     public void executeMove(Body body) throws InvalidMoveException {
+        System.err.println("CALLED EXECUTE MOVE");
         if (checkMove(body)) {
             List<Item> items = getListItems(body);
             try { //inutile qui simo, ti convincerò
@@ -78,25 +79,32 @@ public class GameController {
             } catch (Exception NotEnoughSpaceInColumnException) {
                 System.err.println("Not enough space in the column provided!");
             }
+            System.err.println("INSERTED ITEMS");
             if (checkBoardNeedForRefill()) {
                 board.refillBoard();
             }
-            if (!lastTurn & checkLastTurn()) {
+            System.err.println("POST REFILL");
+            if (!lastTurn && checkLastTurn()) {
                 activePlayer.setEndGameToken(EndGameToken.getEndGameToken());
                 lastTurn = true;
             }
+            System.err.println("POST LAST TURN CHECK");
             activePlayer.updateScore();
+            System.err.println("POST UPDATE SCORE");
 
             //Setting the next active player
             int nextIndex=nextIndexCalc(playerList.indexOf(activePlayer));
             while(nextIndex!=-1 && !playerList.get(nextIndex).isConnected())
                 nextIndex=nextIndexCalc(nextIndex);
+            System.err.println("POST NEXT INDEX CALC");
             if(nextIndex!=-1)
                 activePlayer=playerList.get(nextIndex);
             else {
                 activePlayer = null;
                 gameOver=true;
             }
+            System.err.println("POST ACTIVE PLAYER UPDATE");
+            System.err.println(activePlayer.getNickname());
             //todo testing
             //todo save game in json file
 
@@ -359,6 +367,7 @@ public class GameController {
     }
 
     public void updateView() throws RemoteException {
+        System.err.println("CALLED UPDATE VIEW");
         Body body = new Body();
         NewView newView = getNewView();
         body.setNewView(newView);
