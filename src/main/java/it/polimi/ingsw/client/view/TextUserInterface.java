@@ -3,6 +3,7 @@ package it.polimi.ingsw.client.view;
 import it.polimi.ingsw.client.clientcontroller.controller.ClientController;
 import it.polimi.ingsw.messages.NewView;
 import it.polimi.ingsw.server.model.Player;
+import it.polimi.ingsw.server.model.items.Item;
 
 import java.io.FileNotFoundException;
 import java.io.IOException;
@@ -104,6 +105,31 @@ public class TextUserInterface implements UserInterface{
 
     @Override
     public void invalidPlayer() {
+
+    }
+
+    @Override
+    public int getItemPickedListSize() {
+        return 0;
+    }
+
+    @Override
+    public void insertInPickedItemList(Item i) {
+
+    }
+
+    @Override
+    public boolean isYourTurn() {
+        return false;
+    }
+
+    @Override
+    public void sendMove(int col) {
+
+    }
+
+    @Override
+    public void insertInPositionPicked(int[] el) {
 
     }
 

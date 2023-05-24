@@ -28,6 +28,7 @@ public class Player implements Serializable {
         this.nickname = nickname;
         endGameToken = null;
         playerScore=0;
+        this.connected = true;
     }
 
     public String getNickname() {
