@@ -126,5 +126,19 @@
           <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
         </rowConstraints>
       </GridPane>
+      <AnchorPane fx:id="turnAnchorPane" disable="true" layoutX="785.0" layoutY="35.0" prefHeight="43.0" prefWidth="83.0" style="-fx-border-color: black;" visible="false" AnchorPane.leftAnchor="785.0" AnchorPane.topAnchor="27.0">
+         <children>
+            <ImageView fitHeight="43.0" fitWidth="100.0" pickOnBounds="true" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+               <image>
+                  <Image url="@../images/chat_background.jpg" />
+               </image>
+            </ImageView>
+            <Text fill="WHITE" strokeType="OUTSIDE" strokeWidth="0.0" text="It's your turn!" AnchorPane.bottomAnchor="9.0" AnchorPane.leftAnchor="9.0" AnchorPane.rightAnchor="9.0" AnchorPane.topAnchor="9.0">
+               <font>
+                  <Font size="15.0" />
+               </font>
+            </Text>
+         </children>
+      </AnchorPane>
    </children>
 </AnchorPane>

@@ -167,6 +167,7 @@ public class GraphicUserInterface extends Application implements UserInterface, 
                 gameScreenController.setBoardItems(newView.getBoardItems(), newView.getBoardBitMask());
                 gameScreenController.setPlayerText(playerNickname, newView.getNicknameToPointsMap().get(playerNickname));
                 gameScreenController.setOtherPlayersParameters(newView.getNicknameToShelfMap(), newView.getNicknameToPointsMap(), clientController.getPlayerNickname());
+                gameScreenController.setYourTurnPane(isYourTurn);
             } catch (FileNotFoundException | URISyntaxException e) {
                 e.printStackTrace();
             }

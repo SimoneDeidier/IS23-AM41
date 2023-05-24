@@ -14,6 +14,7 @@ import javafx.scene.control.TextArea;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.input.MouseEvent;
+import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
@@ -66,6 +67,8 @@ public class GameScreenController {
     private GridPane pickedItemsGridPane;
     @FXML
     private GridPane shelfGridPane;
+    @FXML
+    private AnchorPane turnAnchorPane;
 
     public void initialize() {
         chatVBox.setStyle("-fx-background-color: #442211;");
@@ -277,6 +280,11 @@ public class GameScreenController {
                 shelfGridPane.add(imgv, j, i);
             }
         }
+    }
+
+    public void setYourTurnPane(boolean set) {
+        turnAnchorPane.setVisible(set);
+        turnAnchorPane.setDisable(!set);
     }
 
 }
