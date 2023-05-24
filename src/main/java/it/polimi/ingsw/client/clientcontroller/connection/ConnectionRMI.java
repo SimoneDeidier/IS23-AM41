@@ -1,7 +1,6 @@
 package it.polimi.ingsw.client.clientcontroller.connection;
 
-import it.polimi.ingsw.client.GameLock;
-import it.polimi.ingsw.client.PingThread;
+import it.polimi.ingsw.client.PingThreadClientRmiToServer;
 import it.polimi.ingsw.client.clientcontroller.controller.ClientController;
 import it.polimi.ingsw.client.clientcontroller.controller.ClientControllerRMI;
 import it.polimi.ingsw.interfaces.InterfaceClient;
@@ -24,8 +23,6 @@ public class ConnectionRMI extends UnicastRemoteObject implements InterfaceClien
     private final String IP;
     private InterfaceServer stub;
     private ClientController controller;
-    boolean gameStarted=false;
-    private final Object lock = new GameLock();
 
     public ConnectionRMI(int port,String IP) throws RemoteException {
         super();
@@ -68,20 +65,6 @@ public class ConnectionRMI extends UnicastRemoteObject implements InterfaceClien
 
     @Override
     public void updateView(NewView newView) throws RemoteException {
-        for(int i=0;i<9;i++){
-            for(int j=0;j<9;j++){
-                if(newView.getBoardItems()[i][j]!=null)
-                    System.out.printf(newView.getBoardItems()[i][j].toString() + " ");
-                else
-                    System.out.printf("null ");
-            }
-            System.out.println();
-        }
-        if(!gameStarted){ //on the first updateView it starts the ping to the server and loads the game screen
-            PingThread pingThread = new PingThread(stub,this); //Starting the thread for pinging the server
-            pingThread.start();
-            gameStarted=true;
-        }
         try {
             controller.updateView(newView);
         } catch (FileNotFoundException | URISyntaxException e) {
@@ -98,9 +81,11 @@ public class ConnectionRMI extends UnicastRemoteObject implements InterfaceClien
 
     @Override
     public void confirmConnection(boolean bool) throws RemoteException {
-        //todo
-        if(!bool)
+        if(!bool) {
+            PingThreadClientRmiToServer pingThread = new PingThreadClientRmiToServer(stub,this); //Starting the thread for pinging the server
+            pingThread.start();
             controller.nicknameAccepted();
+        }
         //todo manca caso in cui è player restored
     }
 

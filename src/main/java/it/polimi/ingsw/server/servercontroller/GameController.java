@@ -1,6 +1,7 @@
 package it.polimi.ingsw.server.servercontroller;
 
 import com.google.gson.Gson;
+import it.polimi.ingsw.Save.Save;
 import it.polimi.ingsw.messages.Body;
 import it.polimi.ingsw.messages.NewView;
 import it.polimi.ingsw.server.Server;
@@ -12,6 +13,8 @@ import it.polimi.ingsw.server.model.tokens.EndGameToken;
 import it.polimi.ingsw.server.servercontroller.controllerstates.*;
 import it.polimi.ingsw.server.servercontroller.exceptions.*;
 
+import java.io.FileWriter;
+import java.io.IOException;
 import java.rmi.RemoteException;
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
@@ -59,13 +62,13 @@ public class GameController {
 
     public boolean checkMove(Body body) {  //ok serve
         if (!body.getPlayerNickname().equals(activePlayer.getNickname())) { //forse questo non va bene?
-            return false; //o throw NotActivePlayer
+            return false;
         }
         if (!board.checkMove(body.getPositionsPicked())) {
-            return false; //o throw InvalidMove
+            return false;
         }
         if(!activePlayer.checkColumnChosen(body.getPositionsPicked().size(),body.getColumn())){
-            return false; //o throw NotEnoughSpaceInColumnException
+            return false;
         }
         return true;
     }
@@ -83,7 +86,6 @@ public class GameController {
             if (checkBoardNeedForRefill()) {
                 board.refillBoard();
             }
-            System.err.println("POST REFILL");
             if (!lastTurn && checkLastTurn()) {
                 activePlayer.setEndGameToken(EndGameToken.getEndGameToken());
                 lastTurn = true;
@@ -103,10 +105,6 @@ public class GameController {
                 activePlayer = null;
                 gameOver=true;
             }
-            System.err.println("POST ACTIVE PLAYER UPDATE");
-            System.err.println(activePlayer.getNickname());
-            //todo testing
-            //todo save game in json file
 
         }
         else throw new InvalidMoveException();
@@ -127,7 +125,37 @@ public class GameController {
             newView.getNicknameToPointsMap().put(p.getNickname(), p.getPlayerScore());
             newView.getNicknameToShelfMap().put(p.getNickname(), p.getShelf().getShelfMatrix());
         }
+        //Saving the newView, for saving the game state
+        saveGameState();
         return newView;
+    }
+
+    public void saveGameState(){
+        Save save=new Save();
+        save.setActivePlayerNickname(activePlayer.getNickname());
+        save.setLastTurn(lastTurn);
+        save.setGameOver(gameOver);
+        save.setState(state);
+        save.setCommonTargetCardList(commonTargetCardsList);
+        save.setBoard(board);
+        Map<String, Shelf> nicknameToShelfMap = new HashMap<>(4);
+        Map<String, Integer> nicknameToPointsMap = new HashMap<>(4);
+        Map<String, PersonalTargetCard> nicknameToPersonalTargetCardMap = new HashMap<>(4);
+        for(Player player:playerList){
+            nicknameToShelfMap.put(player.getNickname(), player.getShelf());
+            nicknameToPointsMap.put(player.getNickname(),player.getPlayerScore());
+            nicknameToPersonalTargetCardMap.put(player.getNickname(), player.getPersonalTargetCard());
+        }
+        save.setNicknameToShelfMap(nicknameToShelfMap);
+        save.setNicknameToPointsMap(nicknameToPointsMap);
+        save.setNicknameToPersonalTargetCardMap(nicknameToPersonalTargetCardMap);
+
+        Gson gson= new Gson();
+        try (FileWriter writer = new FileWriter("src/main/java/it/polimi/ingsw/Save/OldGame.json")) {
+            gson.toJson(save, writer);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 
     public int nextIndexCalc(int currIndex){
@@ -184,7 +212,7 @@ public class GameController {
         this.commonTargetCardsList = state.setupCommonList(onlyOneCommonCard, maxPlayerNumber);
         this.board = state.setupBoard(maxPlayerNumber);
         state.boardNeedsRefill(this.board);
-        state.setupPlayers(playerList, commonTargetCardsList, board);
+        state.setupPlayers(playerList, commonTargetCardsList, board,this );
     }
 
     public boolean checkLastTurn() {
@@ -275,8 +303,10 @@ public class GameController {
                 setupGame(onlyOneCommonCard);
                 changeState(new WaitingForSavedGameState());
                 for (Player player : playerList) {
-                    if (player.getNickname().equals(nickname))
+                    if (player.getNickname().equals(nickname)) {
                         player.setConnected(true);
+                        //todo starts ping towards that user
+                    }
                     return 2;
                 }
             } else {
@@ -284,6 +314,7 @@ public class GameController {
                 System.err.println(state);
                 addPlayer(new Player(nickname));
                 System.err.println(playerList);
+                //todo Start ping towards first player
                 throw new FirstPlayerException();
             }
         }
@@ -291,7 +322,6 @@ public class GameController {
             throw new WaitForLobbyParametersException();
         }
         else if (availableSlots == 0) {  //No place for a new player
-            System.err.println("FULL LOBBY!");
             throw new FullLobbyException();
         }
 
@@ -299,13 +329,11 @@ public class GameController {
             case -1 -> //it wasn't possible to restore a saved game, goodbye to everyone
                     throw new CancelGameException();
             case 0 -> {     //unavailable nickname
-                System.err.println("NICKNAME UNAVAILABLE");
                 return 0;
             }
             default -> {  //you're in! (case: 1)
-                System.err.println("NICKNAME OK");
                 addPlayer(new Player(nickname));
-                System.err.println("ADDED PLAYER");
+                //todo starts ping towards that user
                 if (isGameReady()) {
                     throw new GameStartException();
                 }
@@ -318,6 +346,7 @@ public class GameController {
         setupGame(onlyOneCommonCard);
         activePlayer=playerList.get(0);
         changeState(new RunningGameState());
+        //todo da spostare in presentation
         /*checkThread = new Thread(() -> {
             System.err.println("THREAD PING STARTED!");
             while(true) {
@@ -437,12 +466,6 @@ public class GameController {
                 return;
             }
         }
-    }
-
-    public void saveServerStatus() {
-        Gson gson = new Gson();
-        String serializedGameController = gson.toJson(this);
-        // todo da finire
     }
 
     public boolean checkReJoinRequest(String nickname) {

@@ -22,6 +22,9 @@ public class CommonTwoColumns extends CommonTargetCard {
                 if(shelf.getItemByCoordinates(k,i)!= null && !differentItemsInColumn.contains(shelf.getItemByCoordinates(k,i).getColor())){
                     differentItemsInColumn.add(shelf.getItemByCoordinates(k,i).getColor());
                 }
+                else{
+                    break;
+                }
             }
             if(differentItemsInColumn.size()==6) {
                 columnFound++;
