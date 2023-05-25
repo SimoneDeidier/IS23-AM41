@@ -61,5 +61,7 @@ public interface UserInterface {
 
     int getSwapColIndex(Node n);
 
+    void swapCols(int col1, int col2);
+
     void incorrectMove();
 }

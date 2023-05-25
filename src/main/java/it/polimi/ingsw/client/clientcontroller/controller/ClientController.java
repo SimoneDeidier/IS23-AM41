@@ -50,5 +50,7 @@ public interface ClientController {
 
     void swapCols(List<Node> list);
 
+    void swapCols(int col1, int col2);
+
     void incorrectMove();
 }

@@ -41,7 +41,10 @@ public class TextUserInterface implements UserInterface{
 
     @Override
     public void invalidNickname() {
+        // cambi grafica dicendo di reinserire in nome
         System.out.println("The username is already used, please insert another nickname!");
+        // scanner sull'input
+        //sendNickname();
     }
 
     @Override
@@ -76,12 +79,35 @@ public class TextUserInterface implements UserInterface{
 
     @Override
     public void receiveMessage(String message, String sender, String localDateTime) {
-
+        // if Utente è sulla chat ->
+            // stampi a video il nuovo messaggio
+        // lo salvi nella lista
     }
 
     @Override
     public void updateView(NewView newView) throws FileNotFoundException, URISyntaxException {
-
+        // stampi su cli tutte le cose che arrivano
+        // scanner che aspetta un input
+        // giga switch con il comando che ha scelto
+            // se inserisce comandi sulla mossa ==> CHECK CHE è il suo turno
+        Scanner in = new Scanner(System.in);
+        String command = in.nextLine();
+        switch (command) {
+            case "/swap" -> {
+                System.out.println("Inserisci le colonne da swappare: ");
+                String colonne_da_swappare = scanner.nextLine();
+                // check
+                // trasformi la stringa in due int
+                int uno = 1;
+                int due = 3;
+                swapCols(uno, due);
+            }
+            case "/colonna" -> {
+                // stessa cosa chiedi la colonna
+                int colonna = 3;
+                sendMove(colonna);
+            }
+        }
     }
 
     @Override
@@ -106,42 +132,52 @@ public class TextUserInterface implements UserInterface{
 
     @Override
     public void invalidPlayer() {
-
+        // errore se un utente manda un messaggio personale ad un giocatore che non esiste
     }
 
     @Override
     public boolean isYourTurn() {
+        // stampa a video una scritta per dire che è il tuo turno
         return false;
     }
 
     @Override
     public void sendMove(int col) {
-
+        // passa al controller la colonna
+        // il controller in automatico manda la mossa
     }
 
     @Override
     public void insertInPositionPicked(int[] el) {
-
+        // passi al controller le coordinate di un elemento scleto
     }
 
     @Override
     public int getPositionPickedSize() {
+        // check se ha già scelto o meno
         return 0;
     }
 
     @Override
     public void swapCols(List<Node> list) {
-
+        // NO CLI
     }
 
     @Override
     public int getSwapColIndex(Node n) {
+        // NO CLI
         return 0;
     }
 
     @Override
-    public void incorrectMove() {
+    public void swapCols(int col1, int col2) {
+        clientController.swapCols(col1, col2);
+    }
 
+    @Override
+    public void incorrectMove() {
+        // avvisi di mossa scorretta
+        // stampa la board non modificata
     }
 
 }
