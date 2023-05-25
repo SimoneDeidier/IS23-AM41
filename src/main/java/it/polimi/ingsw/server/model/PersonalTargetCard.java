@@ -101,5 +101,3 @@ public class PersonalTargetCard implements Serializable {
         return personalNumber;
     }
 }
-
-//private class

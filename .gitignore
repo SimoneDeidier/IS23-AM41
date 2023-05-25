@@ -23,3 +23,6 @@ Thumbs.db
 *.log
 *.lock
 *.tmp
+
+# Ignore save files
+src/main/java/it/polimi/ingsw/Save/OldGame.json

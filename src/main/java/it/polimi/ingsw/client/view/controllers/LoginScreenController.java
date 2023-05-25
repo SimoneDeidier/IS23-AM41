@@ -116,13 +116,9 @@ public class LoginScreenController {
 
     public void changePane(AnchorPane oldAP, AnchorPane newAP) {
         oldAP.setDisable(true);
-        System.out.println("a");
         oldAP.setVisible(false);
-        System.out.println("b");
         newAP.setDisable(false);
-        System.out.println("c");
         newAP.setVisible(true);
-        System.out.println("d");
     }
 
 }

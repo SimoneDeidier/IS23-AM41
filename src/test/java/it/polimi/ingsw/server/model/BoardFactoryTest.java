@@ -160,5 +160,16 @@ class BoardFactoryTest {
         assert (!board.checkMove(itemsPicked));
     }
 
+    @Test
+    public void testGetBoardMatrix(){
+        board.setBoardMatrixElement(new Item(ItemColor.GREEN),1,2);
+        assertEquals(board.getBoardMatrix()[1][2],board.getBoardMatrixElement(1,2));
+    }
+
+    @Test
+    public void testGetBitmask(){
+        assertEquals(board.getBitMask()[1][2],board.getBitMaskElement(1,2));
+    }
+
 
 }

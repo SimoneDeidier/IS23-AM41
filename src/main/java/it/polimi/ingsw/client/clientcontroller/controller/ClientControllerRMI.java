@@ -178,4 +178,14 @@ public class ClientControllerRMI implements ClientController, Serializable {
 
     }
 
+    @Override
+    public void swapCols(int col1, int col2) {
+
+    }
+
+    @Override
+    public void incorrectMove() {
+
+    }
+
 }

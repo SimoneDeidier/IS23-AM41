@@ -14,7 +14,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 class PersonalTargetCardTest {
 
     @Test
-    void TestCalculatePoints() throws NotEnoughSpaceInColumnException, IOException, URISyntaxException {
+    void testCalculatePoints() throws NotEnoughSpaceInColumnException, IOException, URISyntaxException {
         PersonalTargetCard personal = new PersonalTargetCard(0);
         Shelf shelf = new Shelf();
 
@@ -33,5 +33,16 @@ class PersonalTargetCardTest {
         }
 
         assertEquals(12, personal.calculatePoints(shelf));
+    }
+
+    @Test
+    void testGetPersonalNumber(){
+        try {
+            PersonalTargetCard personalTargetCard=new PersonalTargetCard(0);
+            assertEquals(0,personalTargetCard.getPersonalNumber());
+        } catch (IOException | URISyntaxException e) {
+            throw new RuntimeException(e);
+        }
+
     }
 }

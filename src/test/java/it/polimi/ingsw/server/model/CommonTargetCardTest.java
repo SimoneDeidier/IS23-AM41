@@ -1,8 +1,10 @@
 package it.polimi.ingsw.server.model;
 
+import it.polimi.ingsw.server.model.commons.CommonDiagonal;
 import it.polimi.ingsw.server.model.commons.CommonTargetCard;
 import it.polimi.ingsw.server.model.commons.CommonTwoSquares;
 import junit.framework.TestCase;
+import org.junit.jupiter.api.Test;
 
 import java.lang.reflect.InvocationTargetException;
 
@@ -40,10 +42,11 @@ public class CommonTargetCardTest extends TestCase {
         assertEquals(p2.getScoringToken(1).getValue(), 6);
         p3.addScoringToken(card4players.assignToken(p3));
         assertEquals(p3.getScoringToken(1).getValue(), 4);
+    }
 
-
-
-
-        //assertDoesNotThrow(InvocationTargetException.class,()->CommonTargetCard.getRandomCommon(2));
+    @Test
+    public void testGetName(){
+        CommonTargetCard commonTargetCard=new CommonDiagonal(2);
+        assertEquals("CommonDiagonal",commonTargetCard.getName());
     }
 }

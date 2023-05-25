@@ -164,10 +164,12 @@ public class GraphicUserInterface extends Application implements UserInterface, 
         this.isYourTurn = Objects.equals(newView.getActivePlayer(), playerNickname);
         Platform.runLater(() -> {
             try {
+                gameScreenController.clearBoard();
                 gameScreenController.setBoardItems(newView.getBoardItems(), newView.getBoardBitMask());
                 gameScreenController.setPlayerText(playerNickname, newView.getNicknameToPointsMap().get(playerNickname));
+                gameScreenController.setPersonalShelf(newView.getNicknameToShelfMap().get(clientController.getPlayerNickname()));
                 gameScreenController.setOtherPlayersParameters(newView.getNicknameToShelfMap(), newView.getNicknameToPointsMap(), clientController.getPlayerNickname());
-                gameScreenController.setYourTurnPane(isYourTurn);
+                gameScreenController.setYourTurnPane(this.isYourTurn);
             } catch (FileNotFoundException | URISyntaxException e) {
                 e.printStackTrace();
             }
@@ -266,6 +268,16 @@ public class GraphicUserInterface extends Application implements UserInterface, 
     @Override
     public int getSwapColIndex(Node n) {
         return gameScreenController.getSwapColIndex(n);
+    }
+
+    @Override
+    public void swapCols(int col1, int col2) {
+        // NO IN GUI
+    }
+
+    @Override
+    public void incorrectMove() {
+        gameScreenController.incorrectMove();
     }
 
 }

@@ -89,19 +89,24 @@ public class GameController {
             } catch (Exception NotEnoughSpaceInColumnException) {
                 System.err.println("Not enough space in the column provided!");
             }
+            System.err.println("POST INSERT");
             if (checkBoardNeedForRefill()) {
                 board.refillBoard();
             }
+            System.err.println("POST REFILL");
             if (!lastTurn && checkLastTurn()) {
                 activePlayer.setEndGameToken(EndGameToken.getEndGameToken());
                 lastTurn = true;
             }
+            System.err.println("POST CHECK LAST TURN");
             activePlayer.updateScore();
 
+            System.err.println("POST UPDATE SCORE");
             //Setting the next active player
             int nextIndex=nextIndexCalc(playerList.indexOf(activePlayer));
             while(nextIndex!=-1 && !playerList.get(nextIndex).isConnected())
                 nextIndex=nextIndexCalc(nextIndex);
+            System.err.println("POST NEXT INDEX CALC");
             if(nextIndex!=-1)
                 activePlayer=playerList.get(nextIndex);
             else {
@@ -120,8 +125,8 @@ public class GameController {
         }
         else {
             newView.setActivePlayer(getActivePlayer().getNickname());
+            newView.setGameOver(false);
         }
-        newView.setGameOver(false);
         newView.setBoardItems(board.getBoardMatrix());
         newView.setBoardBitMask(board.getBitMask());
         for(Player p : playerList) {
@@ -179,7 +184,7 @@ public class GameController {
             for (int j = 0; j < board.getBoardNumberOfColumns(); j++) {
                 if (board.getBitMaskElement(i, j) && board.getBoardMatrixElement(i, j) != null) {
                     if(!board.itemHasAllFreeSide(i, j))
-                        return false; //There is at least one non-null element that has at least one other item on one of its side
+                        return false; //There is at least one non-null element that has at least one item on one of its side
                 }
             }
         }

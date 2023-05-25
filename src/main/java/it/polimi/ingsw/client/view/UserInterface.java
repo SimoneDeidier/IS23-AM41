@@ -60,4 +60,8 @@ public interface UserInterface {
     void swapCols(List<Node> list);
 
     int getSwapColIndex(Node n);
+
+    void swapCols(int col1, int col2);
+
+    void incorrectMove();
 }
