@@ -71,6 +71,8 @@ public class GameScreenController {
     private GridPane shelfGridPane;
     @FXML
     private AnchorPane turnAnchorPane;
+    @FXML
+    private ImageView chairImageView;
 
     public void initialize() {
         chatVBox.setStyle("-fx-background-color: #442211;");
@@ -374,5 +376,10 @@ public class GameScreenController {
             wrongReceiverStage.showAndWait();
         });
     }
+
+    public void setChair() {
+
+    }
+
 
 }

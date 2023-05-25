@@ -157,5 +157,10 @@
             </Text>
          </children>
       </AnchorPane>
+      <ImageView fx:id="chairImageView" disable="true" fitHeight="53.0" fitWidth="50.0" pickOnBounds="true" preserveRatio="true" visible="false" AnchorPane.leftAnchor="451.0" AnchorPane.topAnchor="9.0">
+         <image>
+            <Image url="@../images/chair.png" />
+         </image>
+      </ImageView>
    </children>
 </AnchorPane>
