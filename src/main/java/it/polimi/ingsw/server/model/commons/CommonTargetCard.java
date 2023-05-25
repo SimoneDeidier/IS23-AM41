@@ -43,10 +43,10 @@ public abstract class CommonTargetCard implements Serializable {
     public ScoringToken assignToken(Player player){
         for(ScoringToken token: scoringTokensList){
             if(token.isTakeable()){
-                token.setOwner(player);
+                token.setTakenBy(player.getNickname());
                 return token;
             }
-            else if(token.getOwner().equals(player)){
+            else if(token.getTakenBy().equals(player.getNickname())){
                 break;
             }
         }
@@ -55,5 +55,13 @@ public abstract class CommonTargetCard implements Serializable {
 
     public String getName() {
         return name;
+    }
+
+    public List<ScoringToken> getScoringTokensList() {
+        return scoringTokensList;
+    }
+
+    public void setScoringTokensList(List<ScoringToken> scoringTokensList) {
+        this.scoringTokensList = scoringTokensList;
     }
 }

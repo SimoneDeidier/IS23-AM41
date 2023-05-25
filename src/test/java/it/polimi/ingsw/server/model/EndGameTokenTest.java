@@ -10,7 +10,7 @@ class EndGameTokenTest {
     @Test
     void testResetEndGameToken() {
         EndGameToken endGameToken= EndGameToken.getEndGameToken();
-        endGameToken.setOwner(new Player("Marco"));
+        endGameToken.setTakenBy("Marco");
         assertFalse(endGameToken.isTakeable());
         endGameToken.resetEndGameToken();
         assertTrue(endGameToken.isTakeable());
