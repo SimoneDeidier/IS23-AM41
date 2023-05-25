@@ -1,7 +1,11 @@
 package it.polimi.ingsw.server.model;
 
+import it.polimi.ingsw.server.model.boards.FourPlayersBoard;
 import it.polimi.ingsw.server.model.boards.TwoPlayersBoard;
 import it.polimi.ingsw.server.model.commons.*;
+import it.polimi.ingsw.server.model.exceptions.NotEnoughSpaceInColumnException;
+import it.polimi.ingsw.server.model.items.Item;
+import it.polimi.ingsw.server.model.items.ItemColor;
 import it.polimi.ingsw.server.model.tokens.EndGameToken;
 import it.polimi.ingsw.server.model.tokens.ScoringToken;
 import org.junit.jupiter.api.BeforeEach;
@@ -55,9 +59,79 @@ class PlayerTest {
         player.updateScore();
         assertEquals(9, player.getPlayerScore());
     }
-
     @Test
     void isConnected() {
         assertTrue(player.isConnected());
     }
+
+    @Test
+    void addScoringToken(){
+        ScoringToken scoringToken = new ScoringToken(8);
+        Player player1 = new Player("player1");
+        player1.addScoringToken(scoringToken);
+        assertEquals(scoringToken, player1.getScoringToken(0));
+    }
+
+
+    @Test
+    void checkColumnChosen() throws NotEnoughSpaceInColumnException {
+        Shelf shelf = new Shelf();
+        List<Item> list = new ArrayList<>();
+        list.add(new Item(ItemColor.YELLOW));
+        list.add(new Item(ItemColor.YELLOW));
+        list.add(new Item(ItemColor.YELLOW));
+        list.add(new Item(ItemColor.YELLOW));
+        shelf.insertItems(0, list);
+        player.setShelf(shelf);
+        assertFalse(player.checkColumnChosen(3, 0));
+        assertTrue(player.checkColumnChosen(3, 1));
+    }
+
+    @Test
+    void setPersonalTargetCard() throws IOException, URISyntaxException {
+        PersonalTargetCard personalTargetCard = new PersonalTargetCard(0);
+        player.setPersonalTargetCard(personalTargetCard);
+        assertEquals(personalTargetCard, player.getPersonalTargetCard());
+    }
+    @Test
+    void getPersonalTargetCard() throws IOException, URISyntaxException {
+        PersonalTargetCard personalTargetCard = new PersonalTargetCard(0);
+        player.setPersonalTargetCard(personalTargetCard);
+        assertEquals(personalTargetCard, player.getPersonalTargetCard());
+    }
+
+
+    @Test
+    void setCommonTargetCardList(){
+        List<CommonTargetCard> list = new ArrayList<>();
+        CommonTargetCard commonTargetCard0 = new CommonDiagonal(4);
+        list.add(commonTargetCard0);
+        CommonTargetCard commonTargetCard1 = new CommonDiagonal(4);
+        list.add(commonTargetCard1);
+        player.setCommonTargetCardList(list);
+        assertEquals(commonTargetCard0, player.getCommonTargetCardList().get(0));
+        assertEquals(commonTargetCard1, player.getCommonTargetCardList().get(1));
+    }
+    @Test
+    void getCommonTargetCardList(){
+        List<CommonTargetCard> list = new ArrayList<>();
+        CommonTargetCard commonTargetCard0 = new CommonDiagonal(4);
+        list.add(commonTargetCard0);
+        CommonTargetCard commonTargetCard1 = new CommonDiagonal(4);
+        list.add(commonTargetCard1);
+        player.setCommonTargetCardList(list);
+        assertEquals(commonTargetCard0, player.getCommonTargetCardList().get(0));
+        assertEquals(commonTargetCard1, player.getCommonTargetCardList().get(1));
+    }
+
+
+    @Test
+    void getBoard(){
+        TwoPlayersBoard board = new TwoPlayersBoard();
+        player.setBoard(board);
+        assertEquals(board, player.getBoard() );
+
+    }
+
+
 }

@@ -33,8 +33,10 @@ public class GameController {
     private boolean lastTurn = false;
     private boolean onlyOneCommonCard = false;
     private Player activePlayer = null; //acts as a kind of turn
+
     private BoardFactory board;
     private GameState state;
+
     private List<CommonTargetCard> commonTargetCardsList;
     private Map<String, TCPMessageController> nickToTCPMessageControllerMapping = new ConcurrentHashMap<>(4);
     private final Server server;
@@ -538,6 +540,9 @@ public class GameController {
         this.gameOver = gameOver;
     }
 
+    public List<CommonTargetCard> getCommonTargetCardsList() {
+        return commonTargetCardsList;
+    }
     public BoardFactory getBoard() {
         return board;
     }

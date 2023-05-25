@@ -31,14 +31,16 @@ class GameControllerTest {
 
 
     @BeforeEach
-    void initialize(){
+    void initialize() {
         controller = GameController.getGameController(new Server());
         controller.prepareForNewGame();
         controller.setState(new WaitingForPlayerState());
+        controller.setupLobbyParameters(0, true);
     }
 
+
     @Test
-    void getAvailableSlot(){
+    void getAvailableSlot() {
         //WaitingForPlayerState
         assertEquals(-2, controller.getAvailableSlot());
         controller.setupLobbyParameters(4, true);
@@ -71,9 +73,79 @@ class GameControllerTest {
     }
 
 
+    @Test
+    void isGameReady() {
+        //WaitingForPlayerState
+        controller.setupLobbyParameters(3, true);
+        assertFalse(controller.isGameReady());
+        controller.addPlayer(new Player("player0"));
+        assertFalse(controller.isGameReady());
+        controller.addPlayer(new Player("player1"));
+        assertFalse(controller.isGameReady());
+        controller.addPlayer(new Player("player2"));
+        assertTrue(controller.isGameReady());
+        //WaitingForSavedGameState
+        controller.setState(new WaitingForSavedGameState());
+        for (int i = 0; i < 3; i++)
+            controller.getPlayerList().get(i).setConnected(false);
+        assertFalse(controller.isGameReady());
+        for (int i = 0; i < 3; i++)
+            controller.getPlayerList().get(i).setConnected(true);
+        assertTrue(controller.isGameReady());
+    }
 
     @Test
-    void addPlayer(){
+    void checkNicknameAvailability() {
+        //WaitingForPlayerState
+        assertEquals(1, controller.checkNicknameAvailability("player1"));
+        controller.addPlayer(new Player("player0"));
+        assertEquals(1, controller.checkNicknameAvailability("player1"));
+        controller.addPlayer(new Player("player1"));
+        assertEquals(0, controller.checkNicknameAvailability("player1"));
+        //WaitingForSavedGameState
+        controller.setState(new WaitingForSavedGameState());
+        controller.getPlayerList().get(0).setConnected(false);
+        assertEquals(1, controller.checkNicknameAvailability("player0"));
+        assertEquals(-1, controller.checkNicknameAvailability("player1"));
+        assertEquals(-1, controller.checkNicknameAvailability("player2"));
+        //ServerInitState
+        controller.setState(new ServerInitState());
+        assertEquals(0, controller.checkNicknameAvailability("player0"));
+        assertEquals(0, controller.checkNicknameAvailability("player1"));
+        assertEquals(0, controller.checkNicknameAvailability("player2"));
+        //RunningGameState
+        controller.setState(new ServerInitState());
+        assertEquals(0, controller.checkNicknameAvailability("player0"));
+        assertEquals(0, controller.checkNicknameAvailability("player1"));
+        assertEquals(0, controller.checkNicknameAvailability("player2"));
+    }
+
+
+    @Test
+    void getListItems() {
+        Body body = new Body();
+        List<int[]> list = new ArrayList<int[]>();
+        int[] p = new int[2];
+        p[0] = 5;
+        p[1] = 5;
+        list.add(p);
+        int[] p2 = new int[2];
+        p2[0] = 6;
+        p2[1] = 6;
+        list.add(p2);
+        body.setPositionsPicked(list);
+        BoardFactory board = new TwoPlayersBoard();
+        board.setBoardMatrixElement(new Item(ItemColor.YELLOW), 5, 5);
+        board.setBoardMatrixElement(new Item(ItemColor.YELLOW), 6, 6);
+        controller.setBoard(board);
+        ItemColor itColor = controller.getListItems(body).get(0).getColor();
+        assertEquals(ItemColor.YELLOW, itColor);
+        assertNull(board.getBoardMatrixElement(5, 5));
+    }
+
+
+    @Test
+    void addPlayer() {
         //WaintingForPlayerState
         controller.addPlayer(new Player("player0"));
         controller.addPlayer(new Player("player1"));
@@ -89,14 +161,13 @@ class GameControllerTest {
         controller.getPlayerList().get(2).setConnected(false);
         assertFalse(controller.getPlayerList().get(2).isConnected());
         controller.addPlayer(new Player("player2"));
-        for( int i = 0; i < 3; i++ ){
+        for (int i = 0; i < 3; i++) {
             assertTrue(controller.getPlayerList().get(i).isConnected());
         }
         controller.getPlayerList().get(0).setConnected(false);
         controller.addPlayer(new Player("player1"));
         assertFalse(controller.getPlayerList().get(0).isConnected());
     }
-
 
 
     @Test
@@ -106,11 +177,11 @@ class GameControllerTest {
         controller.changeState(new WaitingForPlayerState());
         controller.addPlayer(player1);
         controller.addPlayer(player2);
-        assertEquals(0,controller.nextIndexCalc(1));
-        assertEquals(1,controller.nextIndexCalc(0));
+        assertEquals(0, controller.nextIndexCalc(1));
+        assertEquals(1, controller.nextIndexCalc(0));
         controller.setLastTurn(true);
-        assertEquals(-1,controller.nextIndexCalc(1));
-}
+        assertEquals(-1, controller.nextIndexCalc(1));
+    }
 
 
     @Test
@@ -140,6 +211,7 @@ class GameControllerTest {
         assertTrue(controller.checkLastTurn());
 
     }
+
     @Test
     void checkMove() throws NotEnoughSpaceInColumnException {
         Body body = new Body();
@@ -208,8 +280,6 @@ class GameControllerTest {
         assertTrue(controller.checkBoardNeedForRefill());
         board1.setBoardMatrixElement(new Item(ItemColor.YELLOW), 4, 7);
         assertTrue(controller.checkBoardNeedForRefill());
-
-
         //item in medias res
         board1.setBoardMatrixElement(new Item(ItemColor.YELLOW), 5, 5);
         assertTrue(controller.checkBoardNeedForRefill());
@@ -221,13 +291,39 @@ class GameControllerTest {
     @Test
     void testPresentation() throws FullLobbyException, WaitForLobbyParametersException, GameStartException, CancelGameException, FirstPlayerException {
         controller.setState(new ServerInitState());
-        assertThrows(FirstPlayerException.class,()->controller.presentation("DHSahDusahuiH"));
-        assertThrows(WaitForLobbyParametersException.class,()->controller.presentation("Marco"));
+        assertThrows(FirstPlayerException.class, () -> controller.presentation("DHSahDusahuiH"));
+        assertThrows(WaitForLobbyParametersException.class, () -> controller.presentation("Marco"));
         controller.setState(new WaitingForPlayerState());
         controller.setMaxPlayerNumber(3);
-        assertEquals(1,controller.presentation("Marco"));
-        assertEquals(0,controller.presentation("Marco"));
-        assertThrows(GameStartException.class,()->controller.presentation("Davide"));
-        assertThrows(FullLobbyException.class,()-> controller.presentation("Mirko"));
+        assertEquals(1, controller.presentation("Marco"));
+        assertEquals(0, controller.presentation("Marco"));
+        assertThrows(GameStartException.class, () -> controller.presentation("Davide"));
+        assertThrows(FullLobbyException.class, () -> controller.presentation("Mirko"));
+    }
+
+    @Test
+    void setupGame() {
+        Player player0 = new Player("player0");
+        Player player1 = new Player("player1");
+        Player player2 = new Player("player2");
+        Player player3 = new Player("player3");
+        controller.addPlayer(player0);
+        controller.addPlayer(player1);
+        controller.addPlayer(player2);
+        controller.addPlayer(player3);
+
+        controller.setupLobbyParameters(4, false);
+        controller.setupGame(false);
+        //check setupCommonTargetList
+        assertEquals(2, controller.getCommonTargetCardsList().size());
+        assertNotSame(controller.getCommonTargetCardsList().get(0), controller.getCommonTargetCardsList().get(1));
+        //check setupBoard
+        assertInstanceOf(FourPlayersBoard.class, controller.getBoard());
+        //check refill
+        assertFalse(controller.checkBoardNeedForRefill());
+        //check setupPlayers
+        assertEquals(controller.getBoard(), player0.getBoard());
+        assertInstanceOf(Shelf.class, player1.getShelf());
+        assertEquals(player2.getCommonTargetCardList(), controller.getCommonTargetCardsList());
     }
 }
