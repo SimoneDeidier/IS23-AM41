@@ -31,7 +31,7 @@ public class TCPMessageController implements TCPMessageControllerInterface {
                 controller.waitForLobby();
             }
             case "Player Restored" -> {
-
+                // todo
             }
             case "Invalid Nickname" -> {
                 controller.invalidNickname();
@@ -55,13 +55,13 @@ public class TCPMessageController implements TCPMessageControllerInterface {
                 controller.lobbyCreated();
             }
             case "Wrong Parameters" -> {
-                // todo
+                controller.wrongParameters();
             }
             case "Incorrect Move" -> {
                 controller.incorrectMove();
             }
             case "Wrong Receiver" -> {
-                // todo
+                controller.wrongReceiver();
             }
             case "New Msg" -> {
                 controller.receiveMessage(message.getBody().getText(), message.getBody().getSenderNickname(), message.getBody().getLocalDateTime());

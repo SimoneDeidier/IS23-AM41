@@ -53,4 +53,8 @@ public interface ClientController {
     void swapCols(int col1, int col2);
 
     void incorrectMove();
+
+    void wrongReceiver();
+
+    void wrongParameters();
 }

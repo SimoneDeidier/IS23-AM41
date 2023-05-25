@@ -1,10 +1,7 @@
 package it.polimi.ingsw.server.servercontroller;
 
 import com.google.gson.Gson;
-import com.google.gson.JsonArray;
-import com.google.gson.JsonElement;
-import com.google.gson.JsonObject;
-import it.polimi.ingsw.Save.Save;
+import it.polimi.ingsw.save.Save;
 import it.polimi.ingsw.messages.Body;
 import it.polimi.ingsw.messages.NewView;
 import it.polimi.ingsw.server.Server;
@@ -18,8 +15,6 @@ import it.polimi.ingsw.server.servercontroller.exceptions.*;
 
 import java.io.FileWriter;
 import java.io.IOException;
-import java.nio.file.Files;
-import java.nio.file.Paths;
 import java.rmi.RemoteException;
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
@@ -145,7 +140,7 @@ public class GameController {
         save.setBoard(board);
         save.setPlayerList(playerList);
         Gson gson= new Gson();
-        try (FileWriter writer = new FileWriter("src/main/java/it/polimi/ingsw/Save/OldGame.json")) {
+        try (FileWriter writer = new FileWriter("src/main/java/it/polimi/ingsw/save/OldGame.json")) {
             gson.toJson(save, writer);
         } catch (IOException e) {
             e.printStackTrace();
@@ -262,7 +257,7 @@ public class GameController {
     public boolean checkSavedGame(String nickname) {
         //todo togliere il commento, funziona al 100%, c'è il commento solo per testare caso in cui non trova il nickname ma funziona!!
         /*try {
-            String jsonContent = new String(Files.readAllBytes(Paths.get("src/main/java/it/polimi/ingsw/Save/OldGame.json")));
+            String jsonContent = new String(Files.readAllBytes(Paths.get("src/main/java/it/polimi/ingsw/save/OldGame.json")));
             Gson gson = new Gson();
             JsonObject jsonObject = gson.fromJson(jsonContent, JsonObject.class);
             if (!jsonObject.get("gameOver").getAsBoolean()) {
@@ -388,17 +383,6 @@ public class GameController {
         for(String s : getNickToTCPMessageControllerMapping().keySet()) {
             getNickToTCPMessageControllerMapping().get(s).printTCPMessage("Update View", body);
         }
-        //todo eliminare sotto, era per test
-        for(int i=0;i<9;i++){
-            for(int j=0;j<9;j++){
-                if(newView.getBoardItems()[i][j]!=null)
-                    System.out.printf(newView.getBoardItems()[i][j].getColor() + " ");
-                else
-                    System.out.printf("null ");
-            }
-            System.out.println();
-        }
-        //todo eliminare sopra
         server.updateViewRMI(newView);
     }
 

@@ -121,7 +121,7 @@ public class TextUserInterface implements UserInterface{
     }
 
     @Override
-    public void close() {
+    public void exit() {
 
     }
 
@@ -178,6 +178,16 @@ public class TextUserInterface implements UserInterface{
     public void incorrectMove() {
         // avvisi di mossa scorretta
         // stampa la board non modificata
+    }
+
+    @Override
+    public void wrongReceiver() {
+        // show the user that has inserted a wrong nickname to send a personal message
+    }
+
+    @Override
+    public void wrongParameters() {
+        // show the user has inserted wrong parameters of the lobby (es.: players > 4 o commons > 2)
     }
 
 }

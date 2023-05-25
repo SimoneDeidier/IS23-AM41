@@ -1,6 +1,7 @@
 package it.polimi.ingsw.client.view;
 
 import it.polimi.ingsw.client.clientcontroller.controller.ClientController;
+import it.polimi.ingsw.client.view.controllers.EndGameScreenController;
 import it.polimi.ingsw.client.view.controllers.GameScreenController;
 import it.polimi.ingsw.client.view.controllers.LoginScreenController;
 import it.polimi.ingsw.client.view.controllers.MenuController;
@@ -164,13 +165,26 @@ public class GraphicUserInterface extends Application implements UserInterface, 
         this.isYourTurn = Objects.equals(newView.getActivePlayer(), playerNickname);
         Platform.runLater(() -> {
             try {
-                gameScreenController.clearBoard();
-                gameScreenController.setBoardItems(newView.getBoardItems(), newView.getBoardBitMask());
-                gameScreenController.setPlayerText(playerNickname, newView.getNicknameToPointsMap().get(playerNickname));
-                gameScreenController.setPersonalShelf(newView.getNicknameToShelfMap().get(clientController.getPlayerNickname()));
-                gameScreenController.setOtherPlayersParameters(newView.getNicknameToShelfMap(), newView.getNicknameToPointsMap(), clientController.getPlayerNickname());
-                gameScreenController.setYourTurnPane(this.isYourTurn);
-            } catch (FileNotFoundException | URISyntaxException e) {
+                if(!newView.isGameOver()) {
+                    gameScreenController.clearBoard();
+                    gameScreenController.setBoardItems(newView.getBoardItems(), newView.getBoardBitMask());
+                    gameScreenController.setPlayerText(playerNickname, newView.getNicknameToPointsMap().get(playerNickname));
+                    gameScreenController.setPersonalShelf(newView.getNicknameToShelfMap().get(clientController.getPlayerNickname()));
+                    gameScreenController.setOtherPlayersParameters(newView.getNicknameToShelfMap(), newView.getNicknameToPointsMap(), clientController.getPlayerNickname());
+                    gameScreenController.setYourTurnPane(this.isYourTurn);
+                }
+                else {
+                    guiStage.close();
+                    FXMLLoader loader = new FXMLLoader(ClassLoader.getSystemResource("fxml/EndGameScreen.fxml"));
+                    guiStage.setScene(new Scene(loader.load()));
+                    EndGameScreenController endGameScreenController = loader.getController();
+                    endGameScreenController.setGui(this);
+                    endGameScreenController.setParameters(newView);
+                    guiStage.setTitle("My Shelfie - End game!");
+                    guiStage.setResizable(false);
+                    guiStage.show();
+                }
+            } catch (URISyntaxException | IOException e) {
                 e.printStackTrace();
             }
         });
@@ -207,7 +221,7 @@ public class GraphicUserInterface extends Application implements UserInterface, 
     }
 
     @Override
-    public void close() {
+    public void exit() {
         clientController.disconnect();
         guiStage.close();
     }
@@ -215,25 +229,7 @@ public class GraphicUserInterface extends Application implements UserInterface, 
     @Override
     public void rejoinedMatch() {
         System.out.println("Called rejoined in gui");
-        //loginScreenController.rejoinedMatch();
-        //Platform.runLater(() -> {
-            //System.err.println("IN PLATFORM RUNLATER");
-            guiStage.close();
-            System.err.println("CLOSED THE STAGE");
-            FXMLLoader loader = new FXMLLoader(ClassLoader.getSystemResource("fxml/LoginScreen.fxml"));
-            guiStage = new Stage();
-            try {
-                guiStage.setScene(new Scene(loader.load()));
-            } catch (IOException e) {
-                throw new RuntimeException(e);
-            }
-            loginScreenController = loader.getController();
-            loginScreenController.setGui(this);
-            loginScreenController.rejoinedMatch();
-            guiStage.setResizable(false);
-            guiStage.setTitle("Welcome to My Shelfie!");
-            guiStage.show();
-        //});
+        // loginScreenController.rejoinedMatch();
     }
 
     @Override
@@ -278,6 +274,16 @@ public class GraphicUserInterface extends Application implements UserInterface, 
     @Override
     public void incorrectMove() {
         gameScreenController.incorrectMove();
+    }
+
+    @Override
+    public void wrongReceiver() {
+        gameScreenController.wrongReceiver();
+    }
+
+    @Override
+    public void wrongParameters() {
+        loginScreenController.wrongParameters();
     }
 
 }

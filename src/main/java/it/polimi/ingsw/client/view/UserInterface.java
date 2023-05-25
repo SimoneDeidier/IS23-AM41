@@ -43,7 +43,7 @@ public interface UserInterface {
 
     void rejoinMatch();
 
-    void close();
+    void exit();
 
     void rejoinedMatch();
 
@@ -64,4 +64,8 @@ public interface UserInterface {
     void swapCols(int col1, int col2);
 
     void incorrectMove();
+
+    void wrongReceiver();
+
+    void wrongParameters();
 }

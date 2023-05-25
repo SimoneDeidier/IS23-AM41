@@ -1,7 +1,7 @@
 package it.polimi.ingsw.server.servercontroller.controllerstates;
 
 import com.google.gson.Gson;
-import it.polimi.ingsw.Save.Save;
+import it.polimi.ingsw.save.Save;
 import it.polimi.ingsw.server.model.boards.BoardFactory;
 import it.polimi.ingsw.server.model.commons.CommonTargetCard;
 import it.polimi.ingsw.server.model.Player;
@@ -51,7 +51,7 @@ public class ServerInitState implements GameState {
     public void setupPlayers(List<Player> playerList, List<CommonTargetCard> commonTargetCardList, BoardFactory board, GameController controller) {
         //todo QUESTA E' DA TESTARE
         Gson gson=new Gson();
-        try (FileReader reader = new FileReader("src/main/java/it/polimi/ingsw/Save/OldGame.json")) {
+        try (FileReader reader = new FileReader("src/main/java/it/polimi/ingsw/save/OldGame.json")) {
             Save save = gson.fromJson(reader, Save.class);
             for(Player player: save.getPlayerList()){
                 player.setConnected(false);

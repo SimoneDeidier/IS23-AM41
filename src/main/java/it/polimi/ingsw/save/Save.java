@@ -1,4 +1,4 @@
-package it.polimi.ingsw.Save;
+package it.polimi.ingsw.save;
 
 import it.polimi.ingsw.server.model.Player;
 import it.polimi.ingsw.server.model.boards.BoardFactory;

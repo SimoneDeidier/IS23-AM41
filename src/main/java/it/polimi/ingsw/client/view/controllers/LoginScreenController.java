@@ -3,14 +3,19 @@ package it.polimi.ingsw.client.view.controllers;
 import it.polimi.ingsw.client.view.GraphicUserInterface;
 import javafx.application.Platform;
 import javafx.fxml.FXML;
+import javafx.fxml.FXMLLoader;
 import javafx.scene.Node;
+import javafx.scene.Scene;
 import javafx.scene.chart.Axis;
 import javafx.scene.control.Button;
 import javafx.scene.control.ChoiceBox;
 import javafx.scene.control.TextField;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.text.Text;
+import javafx.stage.Modality;
+import javafx.stage.Stage;
 
+import java.io.IOException;
 import java.util.*;
 
 public class LoginScreenController {
@@ -119,6 +124,22 @@ public class LoginScreenController {
         oldAP.setVisible(false);
         newAP.setDisable(false);
         newAP.setVisible(true);
+    }
+
+    public void wrongParameters() {
+        Platform.runLater(() -> {
+            FXMLLoader loader = new FXMLLoader(ClassLoader.getSystemResource("fxml/WrongParameters.fxml"));
+            Stage wrongParametersStage = new Stage();
+            try {
+                wrongParametersStage.setScene(new Scene(loader.load()));
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+            wrongParametersStage.setTitle("WRONG PARAMETERS!");
+            wrongParametersStage.setResizable(false);
+            wrongParametersStage.initModality(Modality.APPLICATION_MODAL);
+            wrongParametersStage.showAndWait();
+        });
     }
 
 }
