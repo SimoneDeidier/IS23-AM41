@@ -31,7 +31,6 @@ class PlayerTest {
         player.setBoard(new TwoPlayersBoard());
         player.setEndGameToken(EndGameToken.getEndGameToken());
         ScoringToken scoringToken = new ScoringToken(8);
-        scoringToken.setOwner(player);
         player.addScoringToken(scoringToken);
         player.setPersonalTargetCard(new PersonalTargetCard(0));
         List<CommonTargetCard> commonTargetList = new ArrayList<>();

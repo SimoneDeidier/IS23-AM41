@@ -14,7 +14,7 @@ public class Shelf implements Serializable {
     private final static int COLUMNS = 5;
 
     private int shelfPoints;
-    private final Item[][] shelfMatrix;
+    private Item[][] shelfMatrix;
 
     public Shelf() {
         shelfMatrix = new Item[ROWS][COLUMNS];
@@ -167,5 +167,9 @@ public class Shelf implements Serializable {
 
     public Item[][] getShelfMatrix() {
         return shelfMatrix;
+    }
+
+    public void setShelfMatrix(Item[][] shelfMatrix){
+        this.shelfMatrix=shelfMatrix;
     }
 }

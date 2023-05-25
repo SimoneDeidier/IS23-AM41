@@ -13,6 +13,7 @@ import it.polimi.ingsw.server.model.boards.BoardFactory;
 import it.polimi.ingsw.server.model.commons.CommonTargetCard;
 import it.polimi.ingsw.server.model.items.Item;
 import it.polimi.ingsw.server.model.tokens.EndGameToken;
+import it.polimi.ingsw.server.model.tokens.ScoringToken;
 import it.polimi.ingsw.server.servercontroller.controllerstates.*;
 import it.polimi.ingsw.server.servercontroller.exceptions.*;
 
@@ -137,13 +138,37 @@ public class GameController {
 
     public void saveGameState(){
         Save save=new Save();
-        save.setActivePlayer(activePlayer);
+        if(activePlayer!=null)
+            save.setActivePlayerNickname(activePlayer.getNickname());
+        Map<String, Item[][]> nicknameToShelfMap = new HashMap<>(4);
+        Map<String, Integer> nicknameToPointsMap = new HashMap<>(4);
+        Map<String, List<ScoringToken>> nicknameToScoringTokensMap = new HashMap<>(4);
+        Map<String, PersonalTargetCard> nicknameToPersonalTargetCard=new HashMap<>(4);
+        for(Player player:playerList){
+            nicknameToShelfMap.put(player.getNickname(), player.getShelf().getShelfMatrix());
+            nicknameToPointsMap.put(player.getNickname(),player.getPlayerScore());
+            nicknameToScoringTokensMap.put(player.getNickname(), player.getScoringTokenList());
+            nicknameToPersonalTargetCard.put(player.getNickname(), player.getPersonalTargetCard());
+            if(player.hasEndGameToken())
+                save.setEndGameTokenAssignedToWhom(player.getNickname());
+        }
+        save.setNicknameToShelfMap(nicknameToShelfMap);
+        save.setNicknameToPointsMap(nicknameToPointsMap);
+        save.setNicknameToScoringTokensMap(nicknameToScoringTokensMap);
+        save.setNicknameToPersonalTargetCard(nicknameToPersonalTargetCard);
         save.setLastTurn(lastTurn);
         save.setGameOver(gameOver);
-        save.setState(state);
-        save.setCommonTargetCardList(commonTargetCardsList);
-        save.setBoard(board);
-        save.setPlayerList(playerList);
+        Map<String,List<ScoringToken>> commonTargetCardMap=new HashMap<>(4);;
+        for(CommonTargetCard commonTargetCard:commonTargetCardsList){
+            commonTargetCardMap.put(commonTargetCard.getName(),commonTargetCard.getScoringTokensList());
+        }
+        save.setCommonTargetCardMap(commonTargetCardMap);
+        save.setBoardItems(board.getBoardMatrix());
+        save.setBoardBitMask(board.getBitMask());
+        save.setMaxPlayerPlayer(maxPlayerNumber);
+
+
+
         Gson gson= new Gson();
         try (FileWriter writer = new FileWriter("src/main/java/it/polimi/ingsw/Save/OldGame.json")) {
             gson.toJson(save, writer);
@@ -224,6 +249,7 @@ public class GameController {
         playerList = new ArrayList<>();
         lastTurn = false;
         activePlayer = null;
+        maxPlayerNumber=0;
         changeState(new ServerInitState());
         commonTargetCardsList = new ArrayList<>();
         nickToTCPMessageControllerMapping = new ConcurrentHashMap<>(4);
@@ -266,10 +292,9 @@ public class GameController {
             Gson gson = new Gson();
             JsonObject jsonObject = gson.fromJson(jsonContent, JsonObject.class);
             if (!jsonObject.get("gameOver").getAsBoolean()) {
-                JsonArray playerList = jsonObject.getAsJsonArray("playerList");
-                for (JsonElement jsonElement : playerList) {
-                    JsonObject playerObject = jsonElement.getAsJsonObject();
-                    if(playerObject.get("nickname").getAsString().equals(nickname)) {
+                JsonObject nicknameToShelfMap = jsonObject.getAsJsonObject("nicknameToShelfMap");
+                for (String nicknamesInJson : nicknameToShelfMap.keySet()) {
+                    if(nicknamesInJson.equals(nickname)) {
                         return true;
                     }
                 }
@@ -284,7 +309,9 @@ public class GameController {
         int availableSlots = getAvailableSlot();
         if (availableSlots == -1) { //handling the first player
             if (checkSavedGame(nickname)) { //the first player is present in the saved game
+                System.out.println("Ha funzionato, forza napoli");
                 setupGame(onlyOneCommonCard);
+                System.out.println("Ha funzionato, forza napoli");
                 changeState(new WaitingForSavedGameState());
                 for (Player player : playerList) {
                     if (player.getNickname().equals(nickname)) {
@@ -292,8 +319,8 @@ public class GameController {
                         //todo starts ping towards that user
                     }
                     //todo aggiungere giocatore alla lista di player tcp o rmi?
-                    return 2;
                 }
+                return 2;
             } else {
                 changeState(new WaitingForPlayerState()); //the first player is new
                 System.err.println(state);
@@ -509,6 +536,10 @@ public class GameController {
 
     public void setGameOver(boolean gameOver) {
         this.gameOver = gameOver;
+    }
+
+    public BoardFactory getBoard() {
+        return board;
     }
 }
 

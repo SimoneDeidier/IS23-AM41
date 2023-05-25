@@ -15,6 +15,7 @@ import it.polimi.ingsw.server.servercontroller.controllerstates.RunningGameState
 import it.polimi.ingsw.server.servercontroller.controllerstates.ServerInitState;
 import it.polimi.ingsw.server.servercontroller.controllerstates.WaitingForPlayerState;
 import it.polimi.ingsw.server.servercontroller.controllerstates.WaitingForSavedGameState;
+import it.polimi.ingsw.server.servercontroller.exceptions.*;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
@@ -139,10 +140,6 @@ class GameControllerTest {
         assertTrue(controller.checkLastTurn());
 
     }
-
-
-
-
     @Test
     void checkMove() throws NotEnoughSpaceInColumnException {
         Body body = new Body();
@@ -219,5 +216,18 @@ class GameControllerTest {
         board1.setBoardMatrixElement(new Item(ItemColor.YELLOW), 5, 6);
         assertFalse(controller.checkBoardNeedForRefill());
 
+    }
+
+    @Test
+    void testPresentation() throws FullLobbyException, WaitForLobbyParametersException, GameStartException, CancelGameException, FirstPlayerException {
+        controller.setState(new ServerInitState());
+        assertThrows(FirstPlayerException.class,()->controller.presentation("DHSahDusahuiH"));
+        assertThrows(WaitForLobbyParametersException.class,()->controller.presentation("Marco"));
+        controller.setState(new WaitingForPlayerState());
+        controller.setMaxPlayerNumber(3);
+        assertEquals(1,controller.presentation("Marco"));
+        assertEquals(0,controller.presentation("Marco"));
+        assertThrows(GameStartException.class,()->controller.presentation("Davide"));
+        assertThrows(FullLobbyException.class,()-> controller.presentation("Mirko"));
     }
 }

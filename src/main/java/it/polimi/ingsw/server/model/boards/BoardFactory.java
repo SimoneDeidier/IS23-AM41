@@ -175,4 +175,12 @@ public abstract class BoardFactory implements Serializable {
     public boolean[][] getBitMask() {
         return bitMask;
     }
+
+    public void setBoardMatrix(Item[][] boardMatrix) {
+        this.boardMatrix = boardMatrix;
+    }
+
+    public void setBitMask(boolean[][] bitMask) {
+        this.bitMask = bitMask;
+    }
 }

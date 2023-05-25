@@ -171,5 +171,18 @@ class BoardFactoryTest {
         assertEquals(board.getBitMask()[1][2],board.getBitMaskElement(1,2));
     }
 
+    @Test
+    public void testSetBitMask(){
+        boolean[][] bitMask = new boolean[ROWS][COLUMNS];
+        board.setBitMask(bitMask);
+        assertEquals(board.getBitMask(),bitMask);
+    }
+
+    @Test
+    public void testSetBoardMatrix(){
+        Item[][] boardMatrix=new Item[ROWS][COLUMNS];
+        board.setBoardMatrix(boardMatrix);
+        assertEquals(board.getBoardMatrix(),boardMatrix);
+    }
 
 }

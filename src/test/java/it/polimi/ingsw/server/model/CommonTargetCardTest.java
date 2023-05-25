@@ -3,10 +3,14 @@ package it.polimi.ingsw.server.model;
 import it.polimi.ingsw.server.model.commons.CommonDiagonal;
 import it.polimi.ingsw.server.model.commons.CommonTargetCard;
 import it.polimi.ingsw.server.model.commons.CommonTwoSquares;
+import it.polimi.ingsw.server.model.commons.CommonX;
+import it.polimi.ingsw.server.model.tokens.ScoringToken;
 import junit.framework.TestCase;
 import org.junit.jupiter.api.Test;
 
 import java.lang.reflect.InvocationTargetException;
+import java.util.ArrayList;
+import java.util.List;
 
 public class CommonTargetCardTest extends TestCase {
 
@@ -48,5 +52,16 @@ public class CommonTargetCardTest extends TestCase {
     public void testGetName(){
         CommonTargetCard commonTargetCard=new CommonDiagonal(2);
         assertEquals("CommonDiagonal",commonTargetCard.getName());
+    }
+
+    @Test
+    public void testGetAndSetScoringTokenList(){
+        CommonTargetCard commonTargetCard=new CommonX(2);
+        List<ScoringToken> scoringTokenList=new ArrayList<>();
+        scoringTokenList.add(new ScoringToken(8));
+        scoringTokenList.add(new ScoringToken(4));
+        commonTargetCard.setScoringTokensList(scoringTokenList);
+        assertEquals(scoringTokenList,commonTargetCard.getScoringTokensList());
+
     }
 }

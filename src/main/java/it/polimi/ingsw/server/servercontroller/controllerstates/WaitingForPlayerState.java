@@ -9,6 +9,7 @@ import it.polimi.ingsw.server.model.commons.*;
 import it.polimi.ingsw.server.servercontroller.GameController;
 
 import java.io.IOException;
+import java.io.Serializable;
 import java.net.URISyntaxException;
 import java.util.ArrayList;
 import java.util.Collections;

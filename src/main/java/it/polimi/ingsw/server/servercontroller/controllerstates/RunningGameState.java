@@ -5,6 +5,7 @@ import it.polimi.ingsw.server.model.commons.CommonTargetCard;
 import it.polimi.ingsw.server.model.Player;
 import it.polimi.ingsw.server.servercontroller.GameController;
 
+import java.io.Serializable;
 import java.util.List;
 
 public class RunningGameState implements GameState {
