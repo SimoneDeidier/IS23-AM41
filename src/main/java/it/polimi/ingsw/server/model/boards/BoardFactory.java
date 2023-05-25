@@ -158,7 +158,17 @@ public abstract class BoardFactory implements Serializable {
             if(y1 == (y2 + 1) && (y3==y2-1 || y3==y1+1) && x1==x2 && x2==x3){
                 return true;
             }
-            return y1 == (y2 - 1) && (y3 == y2 + 1 || y3 == y1 - 1) && x1 == x2 && x2 == x3;
+            if(y1 == (y2 - 1) && (y3 == y2 + 1 || y3 == y1 - 1) && x1 == x2 && x2 == x3)
+                return true;
+            if(x1==x2+2 &&  x1==x3+1 && y1==y2 && y2==y3)
+                return true;
+            if(x1== (x2-2) && x1==x3-1 && y1==y2 && y2==y3)
+                return true;
+            if(y1 == (y2+2) && y1 == y3+1 && x1==x2 && x2==x3)
+                return true;
+            if(y1 == y2-2 && y1 == y3-1 && x1==x2 && x2==x3)
+                return true;
+            return false;
         }
         return true; //case where list.size==1
 

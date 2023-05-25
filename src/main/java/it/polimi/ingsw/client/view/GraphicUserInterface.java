@@ -166,7 +166,11 @@ public class GraphicUserInterface extends Application implements UserInterface, 
         Platform.runLater(() -> {
             try {
                 if(!newView.isGameOver()) {
-                    gameScreenController.setChair(newView.get);
+                    //todo gameScreenController.setChair(newView.get);
+                    //Non so simo, c'era un get a metà qui
+                    //todo
+                    //todo
+                    //todo metto i todo così li vedi
                     gameScreenController.clearBoard();
                     gameScreenController.setBoardItems(newView.getBoardItems(), newView.getBoardBitMask());
                     gameScreenController.setPlayerText(playerNickname, newView.getNicknameToPointsMap().get(playerNickname));

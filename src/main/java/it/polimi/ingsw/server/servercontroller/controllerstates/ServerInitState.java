@@ -1,7 +1,7 @@
 package it.polimi.ingsw.server.servercontroller.controllerstates;
 
 import com.google.gson.Gson;
-import it.polimi.ingsw.Save.Save;
+import it.polimi.ingsw.save.Save;
 import it.polimi.ingsw.server.model.Shelf;
 import it.polimi.ingsw.server.model.boards.BoardFactory;
 import it.polimi.ingsw.server.model.boards.FourPlayersBoard;
