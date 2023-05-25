@@ -17,6 +17,6 @@ public interface InterfaceClient extends Remote {
     void wrongMessageWarning(String message) throws RemoteException;
     void receiveCards(int whichPersonal, List<String> commonTargetCardList) throws RemoteException;
     void showEndGame(NewView newView) throws RemoteException;
-    void lobbyCreated() throws RemoteException;
+    void lobbyCreated(boolean typeOfGame) throws RemoteException;
     void waitForLobbyCreation() throws RemoteException;
 }

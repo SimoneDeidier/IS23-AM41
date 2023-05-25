@@ -5,7 +5,6 @@ import it.polimi.ingsw.interfaces.InterfaceServer;
 import it.polimi.ingsw.messages.Body;
 import it.polimi.ingsw.messages.NewView;
 import it.polimi.ingsw.server.model.Player;
-import it.polimi.ingsw.server.model.commons.CommonTargetCard;
 import it.polimi.ingsw.server.servercontroller.GameController;
 import it.polimi.ingsw.server.servercontroller.SocketManager;
 import it.polimi.ingsw.server.servercontroller.exceptions.*;
@@ -142,12 +141,17 @@ public class Server implements InterfaceServer {
                 case 1: { //joined a "new" game
                     clientMapRMI.put(nickname,cl);
                     cl.confirmConnection(false);
-                } case 2: { //joined a "restored" game
+                }
+                case 3: { //joining a restored game
                     clientMapRMI.put(nickname,cl);
                     cl.confirmConnection(true);
                 }
                 case 0: {  // you're joining but I need another nickname
                     cl.askForNewNickname();
+                }
+                case 2:{ //first player joining a "restored" game
+                    clientMapRMI.put(nickname,cl);
+                    cl.lobbyCreated(false);
                 }
             }
         } catch (CancelGameException e) { //the game is being canceled because a restoring of a saved game failed
@@ -171,7 +175,7 @@ public class Server implements InterfaceServer {
     @Override
     public void sendParameters(InterfaceClient cl,int maxPlayerNumber, boolean onlyOneCommonCard) throws RemoteException {
         if(controller.createLobby(maxPlayerNumber,onlyOneCommonCard))
-            cl.lobbyCreated();
+            cl.lobbyCreated(true);
         else
             cl.askParameters();
     }

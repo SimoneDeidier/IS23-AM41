@@ -311,9 +311,7 @@ public class GameController {
         int availableSlots = getAvailableSlot();
         if (availableSlots == -1) { //handling the first player
             if (checkSavedGame(nickname)) { //the first player is present in the saved game
-                System.out.println("Ha funzionato, forza napoli");
                 setupGame(onlyOneCommonCard);
-                System.out.println("Ha funzionato, forza napoli");
                 changeState(new WaitingForSavedGameState());
                 for (Player player : playerList) {
                     if (player.getNickname().equals(nickname)) {
@@ -325,7 +323,6 @@ public class GameController {
                 return 2;
             } else {
                 changeState(new WaitingForPlayerState()); //the first player is new
-                System.err.println(state);
                 addPlayer(new Player(nickname));
                 System.err.println(playerList);
                 //todo Start ping towards first player
@@ -351,7 +348,9 @@ public class GameController {
                 if (isGameReady()) {
                     throw new GameStartException();
                 }
-                return 1;
+                if(state.getClass().equals(WaitingForPlayerState.class))
+                    return 1;
+                return 3; //We are in waitingForSavedGameState
             }
         }
     }

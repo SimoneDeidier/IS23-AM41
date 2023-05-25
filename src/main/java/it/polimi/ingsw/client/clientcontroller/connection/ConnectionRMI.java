@@ -116,8 +116,11 @@ public class ConnectionRMI extends UnicastRemoteObject implements InterfaceClien
     }
 
     @Override
-    public void lobbyCreated() throws RemoteException {
-        controller.lobbyCreated();
+    public void lobbyCreated(boolean typeOfGame) throws RemoteException {
+        if(typeOfGame)
+            controller.lobbyCreated();
+        //else
+            //todo case where a lobby is restored
     }
 
     @Override

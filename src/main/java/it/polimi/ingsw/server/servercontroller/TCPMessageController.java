@@ -34,13 +34,17 @@ public class TCPMessageController implements TCPMessageControllerInterface {
                             printTCPMessage("Nickname Accepted", null);
                             System.err.println("Sending a Nickname Accepted TCP Message");
                             gameController.putNickToSocketMapping(nickname, this);
-                        } case 2 -> { //joined a "restored" game
+                        } case 3 -> { //joined a "restored" game
                             printTCPMessage("Player Restored", null);
                             gameController.putNickToSocketMapping(nickname, null);
                         }
                         case 0 -> {  // you're joining but I need another nickname
                             printTCPMessage("Invalid Nickname", null);
                             System.err.println("SENDING AN Invalid Nickname MESSAGE");
+                        }
+                        case 2 ->{
+                            gameController.putNickToSocketMapping(nickname, this);
+                            printTCPMessage("Lobby Restored",null);
                         }
                     }
                 }
