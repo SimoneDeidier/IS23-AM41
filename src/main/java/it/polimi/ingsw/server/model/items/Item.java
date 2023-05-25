@@ -1,6 +1,8 @@
 package it.polimi.ingsw.server.model.items;
 
-public class Item {
+import java.io.Serializable;
+
+public class Item implements Serializable {
     private final ItemColor color;
 
     public Item(ItemColor color) {

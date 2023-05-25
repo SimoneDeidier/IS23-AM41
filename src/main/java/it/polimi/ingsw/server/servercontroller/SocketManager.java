@@ -28,11 +28,14 @@ public class SocketManager implements Runnable {
             socketOutput = new PrintWriter(socket.getOutputStream());
             while(!closeConnection) {
                 String inMsg = socketInput.nextLine();
-                serializeDeserialize.deserialize(inMsg);
+                if(inMsg != null) {
+                    serializeDeserialize.deserialize(inMsg);
+                }
             }
             socketInput.close();
             socketOutput.close();
             socket.close();
+            System.out.println("Socket close correctly - port: " + socket.getPort() + ".");
         }
         catch (IOException e) {
             System.err.println(e.getMessage());

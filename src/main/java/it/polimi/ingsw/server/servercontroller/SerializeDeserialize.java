@@ -19,12 +19,14 @@ public class SerializeDeserialize implements SerializeDeserializeInterface {
     }
 
     public void deserialize(String input) throws RemoteException {
+        System.err.println(input);
         TCPMessage inputMsg = gson.fromJson(input, TCPMessage.class);
         tcpMessageController.readTCPMessage(inputMsg);
     }
 
     public void serialize(TCPMessage message) {
         String outMsg = gson.toJson(message);
+        System.err.println(outMsg);
         socketManager.getSocketOutput().println(outMsg);
         socketManager.getSocketOutput().flush();
     }

@@ -1,6 +1,7 @@
 package it.polimi.ingsw.server.servercontroller;
 
 import com.google.gson.Gson;
+import it.polimi.ingsw.save.Save;
 import it.polimi.ingsw.messages.Body;
 import it.polimi.ingsw.messages.NewView;
 import it.polimi.ingsw.server.Server;
@@ -9,9 +10,12 @@ import it.polimi.ingsw.server.model.boards.BoardFactory;
 import it.polimi.ingsw.server.model.commons.CommonTargetCard;
 import it.polimi.ingsw.server.model.items.Item;
 import it.polimi.ingsw.server.model.tokens.EndGameToken;
+import it.polimi.ingsw.server.model.tokens.ScoringToken;
 import it.polimi.ingsw.server.servercontroller.controllerstates.*;
 import it.polimi.ingsw.server.servercontroller.exceptions.*;
 
+import java.io.FileWriter;
+import java.io.IOException;
 import java.rmi.RemoteException;
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
@@ -24,15 +28,17 @@ public class GameController {
     private boolean lastTurn = false;
     private boolean onlyOneCommonCard = false;
     private Player activePlayer = null; //acts as a kind of turn
+
     private BoardFactory board;
     private GameState state;
+
     private List<CommonTargetCard> commonTargetCardsList;
     private Map<String, TCPMessageController> nickToTCPMessageControllerMapping = new ConcurrentHashMap<>(4);
     private final Server server;
     private Thread checkThread;
     private boolean gameOver;
 
-    public GameController(Server s) {
+    private GameController(Server s) {
         this.state = new ServerInitState();
         this.server = s;
         this.gameOver=false;
@@ -59,18 +65,19 @@ public class GameController {
 
     public boolean checkMove(Body body) {  //ok serve
         if (!body.getPlayerNickname().equals(activePlayer.getNickname())) { //forse questo non va bene?
-            return false; //o throw NotActivePlayer
+            return false;
         }
         if (!board.checkMove(body.getPositionsPicked())) {
-            return false; //o throw InvalidMove
+            return false;
         }
         if(!activePlayer.checkColumnChosen(body.getPositionsPicked().size(),body.getColumn())){
-            return false; //o throw NotEnoughSpaceInColumnException
+            return false;
         }
         return true;
     }
 
     public void executeMove(Body body) throws InvalidMoveException {
+        System.err.println("CALLED EXECUTE MOVE");
         if (checkMove(body)) {
             List<Item> items = getListItems(body);
             try { //inutile qui simo, ti convincerò
@@ -78,39 +85,94 @@ public class GameController {
             } catch (Exception NotEnoughSpaceInColumnException) {
                 System.err.println("Not enough space in the column provided!");
             }
+            System.err.println("POST INSERT");
             if (checkBoardNeedForRefill()) {
                 board.refillBoard();
             }
-            if (!lastTurn & checkLastTurn()) {
+            System.err.println("POST REFILL");
+            if (!lastTurn && checkLastTurn()) {
                 activePlayer.setEndGameToken(EndGameToken.getEndGameToken());
                 lastTurn = true;
             }
+            System.err.println("POST CHECK LAST TURN");
             activePlayer.updateScore();
 
+            System.err.println("POST UPDATE SCORE");
             //Setting the next active player
             int nextIndex=nextIndexCalc(playerList.indexOf(activePlayer));
             while(nextIndex!=-1 && !playerList.get(nextIndex).isConnected())
                 nextIndex=nextIndexCalc(nextIndex);
+            System.err.println("POST NEXT INDEX CALC");
             if(nextIndex!=-1)
                 activePlayer=playerList.get(nextIndex);
             else {
-                activePlayer = null; //signals to the server the game is over!
+                activePlayer = null;
                 gameOver=true;
             }
-            //todo testing
-            //Save game in json file
 
         }
         else throw new InvalidMoveException();
     }
 
     public NewView getNewView(){
-        NewView newView=new NewView();
-        newView.setPlayerList(List.copyOf(getPlayerList()));
-        System.out.println(activePlayer);
-        newView.setActivePlayer(new Player(getActivePlayer().getNickname()));
-        newView.setGameOver(newView.getActivePlayer() == null);
+        NewView newView = new NewView();
+        if (gameOver) {
+            newView.setGameOver(true);
+        }
+        else {
+            newView.setActivePlayer(getActivePlayer().getNickname());
+            newView.setGameOver(false);
+        }
+        newView.setBoardItems(board.getBoardMatrix());
+        newView.setBoardBitMask(board.getBitMask());
+        for(Player p : playerList) {
+            newView.getPlayerList().add(p.getNickname());
+            newView.getNicknameToPointsMap().put(p.getNickname(), p.getPlayerScore());
+            newView.getNicknameToShelfMap().put(p.getNickname(), p.getShelf().getShelfMatrix());
+        }
+        saveGameState();
         return newView;
+    }
+
+    public void saveGameState(){
+        Save save=new Save();
+        if(activePlayer!=null)
+            save.setActivePlayerNickname(activePlayer.getNickname());
+        Map<String, Item[][]> nicknameToShelfMap = new LinkedHashMap<>(4);
+        Map<String, Integer> nicknameToPointsMap = new LinkedHashMap<>(4);
+        Map<String, List<ScoringToken>> nicknameToScoringTokensMap = new LinkedHashMap<>(4);
+        Map<String, PersonalTargetCard> nicknameToPersonalTargetCard=new LinkedHashMap<>(4);
+        for(Player player:playerList){
+            nicknameToShelfMap.put(player.getNickname(), player.getShelf().getShelfMatrix());
+            nicknameToPointsMap.put(player.getNickname(),player.getPlayerScore());
+            nicknameToScoringTokensMap.put(player.getNickname(), player.getScoringTokenList());
+            nicknameToPersonalTargetCard.put(player.getNickname(), player.getPersonalTargetCard());
+            if(player.hasEndGameToken())
+                save.setEndGameTokenAssignedToWhom(player.getNickname());
+        }
+        save.setNicknameToShelfMap(nicknameToShelfMap);
+        save.setNicknameToPointsMap(nicknameToPointsMap);
+        save.setNicknameToScoringTokensMap(nicknameToScoringTokensMap);
+        save.setNicknameToPersonalTargetCard(nicknameToPersonalTargetCard);
+        save.setLastTurn(lastTurn);
+        save.setGameOver(gameOver);
+        Map<String,List<ScoringToken>> commonTargetCardMap=new LinkedHashMap<>(4);;
+        for(CommonTargetCard commonTargetCard:commonTargetCardsList){
+            commonTargetCardMap.put(commonTargetCard.getName(),commonTargetCard.getScoringTokensList());
+        }
+        save.setCommonTargetCardMap(commonTargetCardMap);
+        save.setBoardItems(board.getBoardMatrix());
+        save.setBoardBitMask(board.getBitMask());
+        save.setMaxPlayerPlayer(maxPlayerNumber);
+
+
+
+        Gson gson= new Gson();
+        try (FileWriter writer = new FileWriter("src/main/java/it/polimi/ingsw/save/OldGame.json")) {
+            gson.toJson(save, writer);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 
     public int nextIndexCalc(int currIndex){
@@ -124,10 +186,10 @@ public class GameController {
     }
 
     public List<Item> getListItems(Body body) {
-
         List<Item> items = new ArrayList<>();
         for (int[] picks : body.getPositionsPicked()) {
-            items.add(board.getBoardMatrixElement(picks[0], picks[1]));
+            items.add(new Item(board.getBoardMatrixElement(picks[0], picks[1]).getColor()));
+            board.setBoardMatrixElement(null,picks[0], picks[1]);
         }
         return items;
 
@@ -141,8 +203,9 @@ public class GameController {
 
         for (int i = 0; i < board.getBoardNumberOfRows(); i++) {
             for (int j = 0; j < board.getBoardNumberOfColumns(); j++) {
-                if (board.getBitMaskElement(i, j) && board.getBoardMatrixElement(i, j) != null && !board.itemHasAllFreeSide(i, j)) {
-                    return false; //There is at least one non-null element that has at least one other item on one of its side
+                if (board.getBitMaskElement(i, j) && board.getBoardMatrixElement(i, j) != null) {
+                    if(!board.itemHasAllFreeSide(i, j))
+                        return false; //There is at least one non-null element that has at least one item on one of its side
                 }
             }
         }
@@ -156,10 +219,6 @@ public class GameController {
         }
     }
 
-    public boolean isGameOver() {
-        return gameOver;
-    }
-
     public int getAvailableSlot() {
         return state.getAvailableSlot(maxPlayerNumber, playerList);
     }
@@ -169,7 +228,10 @@ public class GameController {
     }
 
     public void setupGame(boolean onlyOneCommonCard) {
-        state.setupGame(maxPlayerNumber, commonTargetCardsList, board, onlyOneCommonCard,playerList,this);
+        this.commonTargetCardsList = state.setupCommonList(onlyOneCommonCard, maxPlayerNumber);
+        this.board = state.setupBoard(maxPlayerNumber);
+        state.boardNeedsRefill(this.board);
+        state.setupPlayers(playerList, commonTargetCardsList, board,this );
     }
 
     public boolean checkLastTurn() {
@@ -185,7 +247,7 @@ public class GameController {
         playerList = new ArrayList<>();
         lastTurn = false;
         activePlayer = null;
-        board.resetBoard();
+        maxPlayerNumber=0;
         changeState(new ServerInitState());
         commonTargetCardsList = new ArrayList<>();
         nickToTCPMessageControllerMapping = new ConcurrentHashMap<>(4);
@@ -199,8 +261,13 @@ public class GameController {
         return state.isGameReady(playerList, maxPlayerNumber);
     }
 
-    public void changePlayerConnectionStatus(Player player) {
-        player.setConnected(!player.isConnected());
+    public void changePlayerConnectionStatus(String nickname) {
+        for (Player player : playerList) {
+            if (player.getNickname().equals(nickname)) {
+                player.setConnected(!player.isConnected());
+                break;
+            }
+        }
     }
 
     public boolean createLobby(int maxPlayerNumber, boolean onlyOneCommonCard) {
@@ -217,58 +284,44 @@ public class GameController {
     }
 
     public boolean checkSavedGame(String nickname) {
-        //todo da rifare
-
-        /*Gson gson = new Gson();
-        File json = new File(Objects.requireNonNull(ClassLoader.getSystemResourceAsStream("json/OldGame.json")).toString());
-
-        try {
-            if(json.exists()) {
-                JsonObject jsonObject = gson.fromJson(new FileReader(json), JsonObject.class);
-                JsonArray playersList = jsonObject.getAsJsonArray("playerList");
-
-                System.err.println("PLAYER LIST READED: " + playersList);
-                if(playersList != null && playersList.size() != 0) {
-                    for (int i = 0; i < playersList.size(); i++) {
-                        JsonObject player = playersList.get(i).getAsJsonObject();
-                        String name = player.get("nickname").getAsString();
-                        if (name.equals(nickname)) {
-                            return true;
-                        }
-
+        //todo togliere il commento, funziona al 100%, c'è il commento solo per testare caso in cui non trova il nickname ma funziona!!
+        /*try {
+            String jsonContent = new String(Files.readAllBytes(Paths.get("src/main/java/it/polimi/ingsw/save/OldGame.json")));
+            Gson gson = new Gson();
+            JsonObject jsonObject = gson.fromJson(jsonContent, JsonObject.class);
+            if (!jsonObject.get("gameOver").getAsBoolean()) {
+                JsonObject nicknameToShelfMap = jsonObject.getAsJsonObject("nicknameToShelfMap");
+                for (String nicknamesInJson : nicknameToShelfMap.keySet()) {
+                    if(nicknamesInJson.equals(nickname)) {
+                        return true;
                     }
                 }
             }
-            else System.err.println("JSON NOT FOUND");
-
-
-        } catch (IOException e) {
-            e.printStackTrace();
-        } */
-
+        } catch(IOException e){
+            throw new RuntimeException(e);
+        }*/
         return false;
     }
 
     public synchronized int presentation(String nickname) throws FirstPlayerException, CancelGameException, GameStartException, FullLobbyException, WaitForLobbyParametersException { //response to presentation
         int availableSlots = getAvailableSlot();
         if (availableSlots == -1) { //handling the first player
-            System.err.println("FIRST PLAYER");
             if (checkSavedGame(nickname)) { //the first player is present in the saved game
                 setupGame(onlyOneCommonCard);
                 changeState(new WaitingForSavedGameState());
                 for (Player player : playerList) {
-                    if (player.getNickname().equals(nickname))
+                    if (player.getNickname().equals(nickname)) {
                         player.setConnected(true);
-                    return 2;
+                        //todo starts ping towards that user
+                    }
+                    //todo aggiungere giocatore alla lista di player tcp o rmi?
                 }
+                return 2;
             } else {
-                System.err.println("NO SAVED PLAYER");
                 changeState(new WaitingForPlayerState()); //the first player is new
-                System.err.println("UPDATED SERVER STATE");
-                System.err.println(state);
                 addPlayer(new Player(nickname));
-                System.err.println("ADDED PLAYER TO PLAYERLIST");
                 System.err.println(playerList);
+                //todo Start ping towards first player
                 throw new FirstPlayerException();
             }
         }
@@ -276,26 +329,24 @@ public class GameController {
             throw new WaitForLobbyParametersException();
         }
         else if (availableSlots == 0) {  //No place for a new player
-            System.err.println("FULL LOBBY!");
             throw new FullLobbyException();
         }
 
         switch (checkNicknameAvailability(nickname)) {
-            case -1 -> { //it wasn't possible to restore a saved game, goodbye to everyone
-                throw new CancelGameException();
-            }
+            case -1 -> //it wasn't possible to restore a saved game, goodbye to everyone
+                    throw new CancelGameException();
             case 0 -> {     //unavailable nickname
-                System.err.println("NICKNAME UNAVAILABLE");
                 return 0;
             }
             default -> {  //you're in! (case: 1)
-                System.err.println("NICKNAME OK");
                 addPlayer(new Player(nickname));
-                System.err.println("ADDED PLAYER");
+                //todo starts ping towards that user
                 if (isGameReady()) {
                     throw new GameStartException();
                 }
-                return 1;
+                if(state.getClass().equals(WaitingForPlayerState.class))
+                    return 1;
+                return 3; //We are in waitingForSavedGameState
             }
         }
     }
@@ -304,6 +355,7 @@ public class GameController {
         setupGame(onlyOneCommonCard);
         activePlayer=playerList.get(0);
         changeState(new RunningGameState());
+        //todo da spostare in presentation
         /*checkThread = new Thread(() -> {
             System.err.println("THREAD PING STARTED!");
             while(true) {
@@ -340,14 +392,22 @@ public class GameController {
                     break;
                 }
             }
+            for(CommonTargetCard c : commonTargetCardsList) {
+                body.getCommonTargetCardsName().add(c.getName());
+            }
             getNickToTCPMessageControllerMapping().get(s).printTCPMessage("Your Target", body);
         }
-        server.sendPersonalTargetCardsRMI();
+        List<String> commonList=new ArrayList<>();
+        for(CommonTargetCard commonTargetCard: commonTargetCardsList){
+            commonList.add(commonTargetCard.getName());
+        }
+        server.sendCardsRMI(commonList);
     }
 
     public void updateView() throws RemoteException {
+        System.err.println("CALLED UPDATE VIEW");
         Body body = new Body();
-        NewView newView= getNewView();
+        NewView newView = getNewView();
         body.setNewView(newView);
         for(String s : getNickToTCPMessageControllerMapping().keySet()) {
             getNickToTCPMessageControllerMapping().get(s).printTCPMessage("Update View", body);
@@ -362,6 +422,7 @@ public class GameController {
 
         // send the message to receiver
         if(nickToTCPMessageControllerMapping.containsKey(receiver)) {
+            System.err.println("Mando PTP MSG a " + receiver);
             Body body = new Body();
             body.setSenderNickname(sender);
             body.setText(text);
@@ -369,11 +430,12 @@ public class GameController {
             nickToTCPMessageControllerMapping.get(receiver).printTCPMessage("New Msg", body);
         }
         else {
-            server.peerToPeerMsg(sender, receiver, text);
+            server.peerToPeerMsg(sender, receiver, text,localDateTime);
         }
 
         // send the message to the sender
         if(nickToTCPMessageControllerMapping.containsKey(sender)) {
+            System.err.println("Mando PTP MSG a " + sender);
             Body body = new Body();
             body.setSenderNickname(sender);
             body.setText(text);
@@ -381,32 +443,24 @@ public class GameController {
             nickToTCPMessageControllerMapping.get(sender).printTCPMessage("New Msg", body);
         }
         else {
-            server.peerToPeerMsg(sender, sender, text);
+            server.peerToPeerMsg(sender, sender, text,localDateTime);
         }
     }
 
     public void broadcastMsg(String sender, String text, String localDateTime) throws RemoteException {
         for(String s : nickToTCPMessageControllerMapping.keySet()) {
+            System.err.println("MANDO BRD MSG A " + s);
             Body body = new Body();
             body.setSenderNickname(sender);
             body.setText(text);
             body.setLocalDateTime(localDateTime);
             nickToTCPMessageControllerMapping.get(s).printTCPMessage("New Msg", body);
         }
-        server.broadcastMsg(sender, text);
+        server.broadcastMsg(sender, text,localDateTime);
     }
 
-    public void gameOver() throws RemoteException {
-        NewView newView = getNewView();
-        //todo tells all tcp clients the game is over
-        server.gameOverRMI(newView);
-        prepareForNewGame();
-    }
 
-    // le funzioni di disconnessione dell'utente sono diverse tra tcp e rmi secondo me
-    // tanto un utemte tcp che decide di disconnettersi deve sicuro ricevere un messaggio tcp,
-    // mentre uno rmi riceverà una chiamata a metodo rmi
-    public void disconnectUserTCP(TCPMessageController tcpMessageController) {
+    public void intentionalDisconnectionUserTCP(TCPMessageController tcpMessageController) {
         String nickname = null;
         for(String s : nickToTCPMessageControllerMapping.keySet()) {
             if(nickToTCPMessageControllerMapping.get(s) == tcpMessageController) {
@@ -423,15 +477,59 @@ public class GameController {
         }
     }
 
-    public void saveServerStatus() {
-        Gson gson = new Gson();
-        String serializedGameController = gson.toJson(this);
-        // todo da finre
+    public boolean checkReJoinRequest(String nickname) {
+        for(Player p : playerList) {
+            if(Objects.equals(p.getNickname(), nickname) && !p.isConnected()) {
+                p.setConnected(true);
+                return true;
+            }
+        }
+        return false;
+        // todo da fare in RMI
     }
 
+    public void setBoard(BoardFactory b){
+        this.board = b;
+    }
 
-    public void disconnectUserRMI() {}  // todo da fare!!!
+    public void setActivePlayer(Player p){
+        this.activePlayer = p;
+    }
 
+    public void setLastTurn(boolean bool){
+        this.lastTurn = bool;
+    }
+
+    public void setPlayerList(List<Player> playerList) {
+        this.playerList = playerList;
+    }
+
+    public void setMaxPlayerNumber(int maxPlayerNumber) {
+        this.maxPlayerNumber = maxPlayerNumber;
+    }
+
+    public void setOnlyOneCommonCard(boolean onlyOneCommonCard) {
+        this.onlyOneCommonCard = onlyOneCommonCard;
+    }
+
+    public void setState(GameState state) {
+        this.state = state;
+    }
+
+    public void setCommonTargetCardsList(List<CommonTargetCard> commonTargetCardsList) {
+        this.commonTargetCardsList = commonTargetCardsList;
+    }
+
+    public void setGameOver(boolean gameOver) {
+        this.gameOver = gameOver;
+    }
+
+    public List<CommonTargetCard> getCommonTargetCardsList() {
+        return commonTargetCardsList;
+    }
+    public BoardFactory getBoard() {
+        return board;
+    }
 }
 
 

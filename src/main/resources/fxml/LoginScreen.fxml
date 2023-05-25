@@ -42,7 +42,7 @@
             </Text>
          </children>
       </AnchorPane>
-      <AnchorPane fx:id="parametersAnchorPane" disable="true" prefHeight="200.0" prefWidth="200.0" visible="false" AnchorPane.bottomAnchor="89.0" AnchorPane.leftAnchor="299.0" AnchorPane.rightAnchor="299.0" AnchorPane.topAnchor="389.0">
+      <AnchorPane fx:id="parametersAnchorPane" disable="true" prefHeight="200.0" prefWidth="200.0" visible="false" AnchorPane.bottomAnchor="89.0" AnchorPane.leftAnchor="299.0" AnchorPane.rightAnchor="298.0" AnchorPane.topAnchor="389.0">
          <children>
             <ChoiceBox fx:id="commonsChoiceBox" prefWidth="150.0" AnchorPane.rightAnchor="149.0" AnchorPane.topAnchor="89.0" />
             <Text disable="true" strokeType="OUTSIDE" strokeWidth="0.0" text="Select number of players and common target cards!" AnchorPane.leftAnchor="158.0" AnchorPane.rightAnchor="158.0" AnchorPane.topAnchor="13.0">
@@ -59,6 +59,43 @@
       <AnchorPane fx:id="waitAnchorPane" disable="true" prefHeight="200.0" prefWidth="200.0" visible="false" AnchorPane.bottomAnchor="89.0" AnchorPane.leftAnchor="299.0" AnchorPane.rightAnchor="298.0" AnchorPane.topAnchor="389.0">
          <children>
             <Text strokeType="OUTSIDE" strokeWidth="0.0" text="You are in a lobby! Please wait for the game start!" AnchorPane.leftAnchor="167.0" AnchorPane.rightAnchor="167.0" AnchorPane.topAnchor="89.0">
+               <font>
+                  <Font size="17.0" />
+               </font>
+            </Text>
+         </children>
+      </AnchorPane>
+      <AnchorPane fx:id="rejoinAnchorPane" disable="true" prefHeight="200.0" prefWidth="200.0" visible="false" AnchorPane.bottomAnchor="89.0" AnchorPane.leftAnchor="299.0" AnchorPane.rightAnchor="298.0" AnchorPane.topAnchor="389.0">
+         <children>
+            <Text strokeType="OUTSIDE" strokeWidth="0.0" text="You are currently disconnected from the match!" AnchorPane.leftAnchor="173.0" AnchorPane.rightAnchor="173.0" AnchorPane.topAnchor="89.0">
+               <font>
+                  <Font size="17.0" />
+               </font>
+            </Text>
+            <Button mnemonicParsing="false" onAction="#rejoinMatch" text="Rejoin" AnchorPane.leftAnchor="317.0" AnchorPane.rightAnchor="315.0" AnchorPane.topAnchor="189.0" />
+         </children>
+      </AnchorPane>
+      <AnchorPane fx:id="rejoinedAnchorPane" disable="true" layoutX="140.0" layoutY="354.0" prefHeight="200.0" prefWidth="200.0" visible="false" AnchorPane.bottomAnchor="89.0" AnchorPane.leftAnchor="299.0" AnchorPane.rightAnchor="298.0" AnchorPane.topAnchor="389.0">
+         <children>
+            <Text strokeType="OUTSIDE" strokeWidth="0.0" text="You have been rejoined to a lobby! Please wait for the game!" AnchorPane.leftAnchor="129.0" AnchorPane.rightAnchor="129.0" AnchorPane.topAnchor="13.0">
+               <font>
+                  <Font size="17.0" />
+               </font>
+            </Text>
+         </children>
+      </AnchorPane>
+      <AnchorPane fx:id="playerRestoredAnchorPane" disable="true" prefHeight="200.0" prefWidth="200.0" visible="false" AnchorPane.bottomAnchor="89.0" AnchorPane.leftAnchor="299.0" AnchorPane.rightAnchor="298.0" AnchorPane.topAnchor="389.0">
+         <children>
+            <Text strokeType="OUTSIDE" strokeWidth="0.0" text="Your player is restored! Please wait for the game start!" AnchorPane.leftAnchor="151.0" AnchorPane.rightAnchor="152.0" AnchorPane.topAnchor="89.0">
+               <font>
+                  <Font size="17.0" />
+               </font>
+            </Text>
+         </children>
+      </AnchorPane>
+      <AnchorPane fx:id="impossibleEventAnchorPane" disable="true" layoutX="22.0" layoutY="330.0" prefHeight="200.0" prefWidth="200.0" visible="false" AnchorPane.bottomAnchor="89.0" AnchorPane.leftAnchor="299.0" AnchorPane.rightAnchor="298.0" AnchorPane.topAnchor="389.0">
+         <children>
+            <Text layoutX="121.0" layoutY="70.0" strokeType="OUTSIDE" strokeWidth="0.0" text="IMPOSSIBLE EVENT!" AnchorPane.leftAnchor="265.0" AnchorPane.rightAnchor="265.0" AnchorPane.topAnchor="13.0">
                <font>
                   <Font size="17.0" />
                </font>

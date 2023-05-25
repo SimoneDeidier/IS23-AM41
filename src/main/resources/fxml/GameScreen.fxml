@@ -9,6 +9,7 @@
 <?import javafx.scene.layout.ColumnConstraints?>
 <?import javafx.scene.layout.GridPane?>
 <?import javafx.scene.layout.RowConstraints?>
+<?import javafx.scene.layout.VBox?>
 <?import javafx.scene.text.Font?>
 <?import javafx.scene.text.Text?>
 
@@ -19,30 +20,31 @@
             <Image url="@../images/background.jpg" />
          </image>
       </ImageView>
-      <Text fx:id="playerText" layoutX="74.0" layoutY="70.0" strokeType="OUTSIDE" strokeWidth="0.0" AnchorPane.leftAnchor="13.0" AnchorPane.topAnchor="13.0">
-         <font>
-            <Font size="19.0" />
-         </font>
-      </Text>
-      <ScrollPane prefHeight="200.0" prefWidth="200.0" AnchorPane.bottomAnchor="69.0" AnchorPane.leftAnchor="1043.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
-        <content>
-          <AnchorPane fx:id="chatAnchorPane" minHeight="0.0" minWidth="0.0" prefHeight="720.0" prefWidth="220.0">
-               <children>
-                  <ImageView fx:id="chatBackgroundImageView" fitHeight="720.0" fitWidth="220.0" pickOnBounds="true" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
-                     <image>
-                        <Image url="@../images/chat_background.jpg" />
-                     </image>
-                  </ImageView>
-               </children>
-            </AnchorPane>
-        </content>
+      <AnchorPane prefHeight="0.0" prefWidth="416.0" style="-fx-border-color: black;" AnchorPane.leftAnchor="0.0" AnchorPane.topAnchor="0.0">
+         <children>
+            <ImageView fitHeight="41.0" fitWidth="442.0" pickOnBounds="true" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+               <image>
+                  <Image url="@../images/chat_background.jpg" />
+               </image>
+            </ImageView>
+            <Text fx:id="playerText" fill="WHITE" strokeType="OUTSIDE" strokeWidth="0.0" AnchorPane.bottomAnchor="9.0" AnchorPane.leftAnchor="13.0" AnchorPane.rightAnchor="13.0" AnchorPane.topAnchor="9.0">
+               <font>
+                  <Font size="19.0" />
+               </font>
+            </Text>
+         </children>
+      </AnchorPane>
+      <ScrollPane fx:id="chatScrollPane" hbarPolicy="NEVER" prefHeight="200.0" prefWidth="200.0" AnchorPane.bottomAnchor="69.0" AnchorPane.leftAnchor="1043.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+         <content>
+            <VBox fx:id="chatVBox" prefHeight="649.0" prefWidth="235.0" />
+         </content>
       </ScrollPane>
       <ImageView fitHeight="588.0" fitWidth="588.0" layoutX="177.0" layoutY="94.0" pickOnBounds="true" preserveRatio="true" AnchorPane.bottomAnchor="63.0" AnchorPane.leftAnchor="31.0" AnchorPane.rightAnchor="661.0" AnchorPane.topAnchor="69.0">
          <image>
             <Image url="@../images/board.png" />
          </image>
       </ImageView>
-      <GridPane layoutX="55.0" layoutY="95.0" prefHeight="542.0" prefWidth="539.0" AnchorPane.bottomAnchor="91.0" AnchorPane.leftAnchor="54.0" AnchorPane.rightAnchor="698.0" AnchorPane.topAnchor="94.0">
+      <GridPane fx:id="boardGridPane" layoutX="55.0" layoutY="92.0" prefHeight="539.0" prefWidth="532.0" AnchorPane.bottomAnchor="89.0" AnchorPane.leftAnchor="55.0" AnchorPane.rightAnchor="691.0" AnchorPane.topAnchor="93.0">
         <columnConstraints>
             <ColumnConstraints hgrow="SOMETIMES" maxWidth="133.96450805664062" minWidth="10.0" prefWidth="130.17010498046875" />
             <ColumnConstraints hgrow="SOMETIMES" maxWidth="133.96450805664062" minWidth="10.0" prefWidth="130.17010498046875" />
@@ -71,22 +73,22 @@
             <Font size="15.0" />
          </font>
       </Button>
-      <Button layoutX="1110.0" layoutY="226.0" mnemonicParsing="false" text="Common Goals" AnchorPane.bottomAnchor="13.0" AnchorPane.rightAnchor="363.0">
+      <Button layoutX="1110.0" layoutY="226.0" mnemonicParsing="false" onAction="#showCommonTargetCard" text="Common Goals" AnchorPane.bottomAnchor="13.0" AnchorPane.rightAnchor="363.0">
          <font>
             <Font size="15.0" />
          </font>
       </Button>
-      <Button layoutX="1110.0" layoutY="466.0" mnemonicParsing="false" text="Other Players" AnchorPane.bottomAnchor="13.0" AnchorPane.rightAnchor="243.0">
+      <Button layoutX="1110.0" layoutY="466.0" mnemonicParsing="false" onAction="#showOtherPlayers" text="Other Players" AnchorPane.bottomAnchor="13.0" AnchorPane.rightAnchor="243.0">
          <font>
             <Font size="15.0" />
          </font>
       </Button>
       <ImageView fitHeight="401.0" fitWidth="396.0" layoutX="648.0" layoutY="190.0" pickOnBounds="true" preserveRatio="true" AnchorPane.bottomAnchor="69.0" AnchorPane.rightAnchor="249.0">
          <image>
-            <Image url="@../images/shelf.png" />
+            <Image url="@../images/shelf1.png" />
          </image>
       </ImageView>
-      <GridPane layoutX="684.0" layoutY="172.0" prefHeight="326.0" prefWidth="315.0" AnchorPane.bottomAnchor="121.0" AnchorPane.leftAnchor="683.0">
+      <GridPane fx:id="shelfGridPane" layoutX="687.0" layoutY="278.0" prefHeight="330.0" prefWidth="318.0" AnchorPane.bottomAnchor="112.0" AnchorPane.leftAnchor="677.0" AnchorPane.rightAnchor="287.0" AnchorPane.topAnchor="278.0">
         <columnConstraints>
             <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
             <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
@@ -101,14 +103,64 @@
             <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
             <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
           <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
-            <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
         </rowConstraints>
       </GridPane>
-      <Button layoutX="808.0" layoutY="46.0" mnemonicParsing="false" onAction="#sendInChat" text="^" AnchorPane.bottomAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="651.0">
+      <ImageView fitHeight="150.0" fitWidth="200.0" pickOnBounds="true" preserveRatio="true" />
+      <Button layoutX="808.0" layoutY="46.0" mnemonicParsing="false" onAction="#sendInChat" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="1241.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="651.0">
          <font>
             <Font size="21.0" />
          </font>
+         <graphic>
+            <ImageView fitHeight="13.0" fitWidth="13.0" pickOnBounds="true">
+               <image>
+                  <Image url="@../images/send.png" />
+               </image>
+            </ImageView>
+         </graphic>
       </Button>
       <TextArea fx:id="chatMessageTextArea" prefHeight="200.0" prefWidth="200.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="1043.0" AnchorPane.rightAnchor="41.0" AnchorPane.topAnchor="651.0" />
+      <AnchorPane fx:id="pickedItemsAnchorPane" layoutX="649.0" layoutY="43.0" prefHeight="200.0" prefWidth="200.0" style="-fx-border-color: black;" AnchorPane.bottomAnchor="479.0" AnchorPane.leftAnchor="659.0" AnchorPane.rightAnchor="269.0" AnchorPane.topAnchor="89.0">
+         <children>
+            <ImageView fitHeight="150.0" fitWidth="352.0" pickOnBounds="true" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+               <image>
+                  <Image url="@../images/chat_background.jpg" />
+               </image>
+            </ImageView>
+            <Text fill="WHITE" layoutX="31.0" layoutY="48.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Picked items:" AnchorPane.leftAnchor="135.0" AnchorPane.topAnchor="13.0">
+               <font>
+                  <Font size="15.0" />
+               </font>
+            </Text>
+         </children>
+      </AnchorPane>
+      <GridPane fx:id="pickedItemsGridPane" maxWidth="213.0" prefHeight="69.0" AnchorPane.leftAnchor="729.0" AnchorPane.topAnchor="143.0">
+        <columnConstraints>
+            <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
+          <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
+          <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
+        </columnConstraints>
+        <rowConstraints>
+          <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+        </rowConstraints>
+      </GridPane>
+      <AnchorPane fx:id="turnAnchorPane" disable="true" layoutX="785.0" layoutY="35.0" style="-fx-border-color: black;" visible="false" AnchorPane.leftAnchor="785.0" AnchorPane.topAnchor="27.0">
+         <children>
+            <ImageView fitHeight="43.0" fitWidth="115.0" pickOnBounds="true" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+               <image>
+                  <Image url="@../images/chat_background.jpg" />
+               </image>
+            </ImageView>
+            <Text fill="WHITE" strokeType="OUTSIDE" strokeWidth="0.0" text="It's your turn!" AnchorPane.bottomAnchor="12.0" AnchorPane.leftAnchor="17.0" AnchorPane.rightAnchor="16.0" AnchorPane.topAnchor="13.0">
+               <font>
+                  <Font size="15.0" />
+               </font>
+            </Text>
+         </children>
+      </AnchorPane>
+      <ImageView fx:id="chairImageView" disable="true" fitHeight="53.0" fitWidth="50.0" pickOnBounds="true" preserveRatio="true" visible="false" AnchorPane.leftAnchor="451.0" AnchorPane.topAnchor="9.0">
+         <image>
+            <Image url="@../images/chair.png" />
+         </image>
+      </ImageView>
    </children>
 </AnchorPane>

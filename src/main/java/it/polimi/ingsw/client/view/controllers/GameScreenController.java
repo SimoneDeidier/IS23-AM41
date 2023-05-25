@@ -1,17 +1,25 @@
 package it.polimi.ingsw.client.view.controllers;
 
 import it.polimi.ingsw.client.view.GraphicUserInterface;
+import it.polimi.ingsw.server.model.items.Item;
+import it.polimi.ingsw.server.model.items.ItemColor;
 import javafx.application.Platform;
+import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
+import javafx.scene.Node;
 import javafx.scene.Scene;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextArea;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
+import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.AnchorPane;
+import javafx.scene.layout.GridPane;
+import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
 import javafx.scene.text.Text;
+import javafx.stage.Modality;
 import javafx.stage.Stage;
 
 import java.io.File;
@@ -19,22 +27,56 @@ import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.net.URISyntaxException;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
+import java.util.Random;
+
 
 
 public class GameScreenController {
 
+    private final static double OFFSET = 13.0;
+    private final static double MAX_CHAT_MSG = 194.0;
+    private final static int BOARD_DIM = 9;
+    private final static double ITEM_DIM = 51.0;
+    private final static double ITEM_OFFSET_LEFT = 5.0;
+    private final static double PICKED_IT_DIM = 61.0;
+    private final static int SHELF_ROWS = 6;
+    private final static int SHELF_COL = 5;
+    private final static double SHELF_ITEM_DIM = 41.0;
+    private final static double SHELF_ITEM_OFFSET = 10.1;
+
     private GraphicUserInterface gui;
     private Image personalGoalImage = null;
-    private double chatMessageOffsetY = 13.0;
+    private List<Image> commonGoalImages = new ArrayList<>(2);
+    private boolean onlyOneCommon;
+    private Map<String, Item[][]> nicknameToShelfMap;
+    private Map<String, Integer> nicknameToPointsMap;
+    private String playerNickname;
+    private Item[][] boardMatrx;
+    private List<Node> swapCols = new ArrayList<>(2);
 
     @FXML
     private Text playerText;
     @FXML
-    private AnchorPane chatAnchorPane;
-    @FXML
     private TextArea chatMessageTextArea;
     @FXML
-    private ImageView chatBackgroundImageView;
+    private VBox chatVBox;
+    @FXML
+    private GridPane boardGridPane;
+    @FXML
+    private GridPane pickedItemsGridPane;
+    @FXML
+    private GridPane shelfGridPane;
+    @FXML
+    private AnchorPane turnAnchorPane;
+    @FXML
+    private ImageView chairImageView;
+
+    public void initialize() {
+        chatVBox.setStyle("-fx-background-color: #442211;");
+    }
 
     public void setGui(GraphicUserInterface gui) {
         this.gui = gui;
@@ -68,6 +110,33 @@ public class GameScreenController {
         });
     }
 
+    public void setCommonTargetCard(List<String> commonTargetCardName) throws URISyntaxException, FileNotFoundException {
+
+        for(String name : commonTargetCardName) {
+            File file = new File(ClassLoader.getSystemResource("images/commons/" + name + ".jpg").toURI());
+            FileInputStream fis = new FileInputStream(file);
+            this.commonGoalImages.add(new Image(fis));
+        }
+        this.onlyOneCommon = this.commonGoalImages.size() == 1;
+    }
+
+    public void showCommonTargetCard() {
+        Platform.runLater(() -> {
+            FXMLLoader loader = new FXMLLoader(ClassLoader.getSystemResource("fxml/CommonView.fxml"));
+            try {
+                Stage stage = new Stage();
+                stage.setScene(new Scene(loader.load()));
+                CommonGoalController commonGoalController = loader.getController();
+                commonGoalController.setCommons(onlyOneCommon, commonGoalImages);
+                stage.setResizable(false);
+                stage.setTitle("My Shelfie - Common goals!");
+                stage.show();
+            } catch (IOException e) {
+                throw new RuntimeException(e);
+            }
+        });
+    }
+
     public void sendInChat() {
         String message = chatMessageTextArea.getText();
         if(message != null && !message.equals("")) {
@@ -76,21 +145,274 @@ public class GameScreenController {
         }
     }
 
-    public void addMessageInChat(String message, String sender, String localDateTime) {
-        String messageText = localDateTime + " - " + sender + ":\n" + message;
-        Label newMsg = new Label(messageText);
-        newMsg.setTextFill(Color.WHITE);
-        newMsg.setTranslateX(13);
-        newMsg.setTranslateY(chatMessageOffsetY);
-        // todo da sistemare il calcolo dell'offset
-        double newOffset = newMsg.getHeight() + 13.0;
-        chatMessageOffsetY += newOffset;
-        if(chatMessageOffsetY > 700.0) {
+    public void showOtherPlayers() {
+        Platform.runLater(() -> {
+            FXMLLoader loader = new FXMLLoader(ClassLoader.getSystemResource("fxml/OtherPlayers.fxml"));
+            try {
+                Stage stage = new Stage();
+                stage.setScene(new Scene(loader.load()));
+                OtherPlayersController otherPlayersController = loader.getController();
+                otherPlayersController.setGsc(this);
+                otherPlayersController.setParameters(nicknameToShelfMap, nicknameToPointsMap, playerNickname);
+                stage.setResizable(false);
+                stage.setTitle("My Shelfie - Other players!");
+                stage.show();
+            } catch (IOException | URISyntaxException e) {
+                throw new RuntimeException(e);
+            }
+        });
+    }
 
-            chatAnchorPane.setPrefHeight(chatAnchorPane.getHeight() + newOffset + 9.0);
-            chatBackgroundImageView.setFitHeight(chatBackgroundImageView.getFitHeight() + newOffset + 9.0);
+    public void addMessageInChat(String message, String sender, String localDateTime) {
+        String messageText = localDateTime + "\n" + sender + ": " + message;
+        Label newMsg = new Label(messageText);
+        newMsg.setMaxWidth(MAX_CHAT_MSG);
+        newMsg.setTextFill(Color.WHITE);
+        newMsg.setTranslateX(OFFSET);
+        newMsg.setTranslateY(OFFSET);
+        newMsg.wrapTextProperty().set(true);
+        Platform.runLater(() -> {
+            chatVBox.getChildren().add(newMsg);
+        });
+    }
+
+    public void setBoardItems(Item[][] board, boolean[][] bitMask) throws FileNotFoundException, URISyntaxException {
+        this.boardMatrx = board;
+        for(int i = 0; i < BOARD_DIM; i++) {
+            for(int j = 0; j < BOARD_DIM; j++) {
+                if(board[i][j] != null && bitMask[i][j]) {
+                    ImageView imgv = new ImageView(randomItemImageByColors(board[i][j].getColor()));
+                    imgv.setFitHeight(ITEM_DIM);
+                    imgv.setFitWidth(ITEM_DIM);
+                    imgv.setTranslateX(ITEM_OFFSET_LEFT);
+                    imgv.setOnMouseClicked(new EventHandler<MouseEvent>() {
+                        @Override
+                        public void handle(MouseEvent mouseEvent) {
+                            for(Node n : boardGridPane.getChildren()) {
+                                if(n == mouseEvent.getSource()) {
+                                    if(n.getOpacity() == 1.0) {
+                                        addInSelected(n);
+                                    }
+                                    else {
+                                        removeFromSelected(n);
+                                    }
+                                    break;
+                                }
+                            }
+                        }
+                    });
+                    boardGridPane.add(imgv, j , i);
+                }
+            }
         }
-        Platform.runLater(() -> chatAnchorPane.getChildren().add(newMsg));
+    }
+
+    public Image randomItemImageByColors(ItemColor color) throws URISyntaxException, FileNotFoundException {
+        Random random = new Random();
+        int rand = random.nextInt(3);
+        File file = null;
+        switch (color) {
+            case BLUE -> {
+                file = new File(ClassLoader.getSystemResource("images/items/b" + rand + ".png").toURI());
+            }
+            case GREEN -> {
+                file = new File(ClassLoader.getSystemResource("images/items/g" + rand + ".png").toURI());
+            }
+            case YELLOW -> {
+                file = new File(ClassLoader.getSystemResource("images/items/y" + rand + ".png").toURI());
+            }
+            case WHITE -> {
+                file = new File(ClassLoader.getSystemResource("images/items/w" + rand + ".png").toURI());
+            }
+            case PINK -> {
+                file = new File(ClassLoader.getSystemResource("images/items/p" + rand + ".png").toURI());
+            }
+            case LIGHT_BLUE -> {
+                file = new File(ClassLoader.getSystemResource("images/items/lb" + rand + ".png").toURI());
+            }
+        }
+        FileInputStream fis = new FileInputStream(file);
+        return new Image(fis);
+    }
+
+    public void setOtherPlayersParameters(Map<String, Item[][]> nicknameToShelfMap, Map<String, Integer> nicknameToPointsMap, String playerNickname) {
+        this.nicknameToShelfMap = nicknameToShelfMap;
+        this.nicknameToPointsMap = nicknameToPointsMap;
+        this.playerNickname = playerNickname;
+    }
+
+    public void addInSelected(Node n) {
+        int col = gui.getPositionPickedSize();
+        if(col < 3 && gui.isYourTurn() && n.getOpacity() == 1.0) {
+            ImageView selected = (ImageView) n;
+            ImageView newImgv = new ImageView(selected.getImage());
+            selected.setOpacity(0.5);
+            newImgv.setFitHeight(PICKED_IT_DIM);
+            newImgv.setFitWidth(PICKED_IT_DIM);
+            newImgv.setTranslateY(ITEM_OFFSET_LEFT);
+            newImgv.setOnMouseClicked(new EventHandler<MouseEvent>() {
+                @Override
+                public void handle(MouseEvent mouseEvent) {
+                    for(Node n : pickedItemsGridPane.getChildren()) {
+                        if(n == mouseEvent.getSource()) {
+                            swapPickedItems(n);
+                        }
+                    }
+                }
+            });
+            pickedItemsGridPane.add(newImgv, col, 0);
+            int pickedRow = GridPane.getRowIndex(n);
+            int pickedCol = GridPane.getColumnIndex(n);
+            int[] pickedPos = new int[2];
+            pickedPos[0] = pickedRow;
+            pickedPos[1] = pickedCol;
+            gui.insertInPositionPicked(pickedPos);
+        }
+    }
+
+    public void removeFromSelected(Node n) {
+        for(Node node : pickedItemsGridPane.getChildren()) {
+            ImageView imgv1 = (ImageView) n;
+            ImageView imgv2 = (ImageView) node;
+            if(imgv1.getImage() == imgv2.getImage()) {
+                imgv2.setImage(null);
+                int col = GridPane.getColumnIndex(node);
+                gui.removeInPositionPicked(col);
+            }
+        }
+        for(Node node : pickedItemsGridPane.getChildren()) {
+            ImageView imgv1 = (ImageView) node;
+            if(imgv1.getImage() == null) {
+                for(Node node1 : pickedItemsGridPane.getChildren()) {
+                    ImageView imgv2 = (ImageView) node1;
+                    if(imgv2.getImage() != null && (GridPane.getColumnIndex(imgv1) == (GridPane.getColumnIndex(imgv2) - 1))) {
+                        imgv1.setImage(imgv2.getImage());
+                        imgv2.setImage(null);
+                        break;
+                    }
+                }
+            }
+        }
+        n.setOpacity(1.0);
+    }
+
+    public void setupPlayerShelf() throws URISyntaxException, FileNotFoundException {
+        for(int i = 0; i < SHELF_ROWS; i++) {
+            for(int j = 0; j < SHELF_COL; j++) {
+                File file = new File(ClassLoader.getSystemResource("images/items/b0.png").toURI());
+                FileInputStream fis = new FileInputStream(file);
+                Image img = new Image(fis);
+                ImageView imgv = new ImageView(img);
+                imgv.setFitWidth(SHELF_ITEM_DIM);
+                imgv.setFitHeight(SHELF_ITEM_DIM);
+                imgv.setTranslateX(SHELF_ITEM_OFFSET);
+                imgv.setOpacity(0.0);
+                imgv.setOnMouseClicked(new EventHandler<MouseEvent>() {
+                    @Override
+                    public void handle(MouseEvent mouseEvent) {
+                        for(Node n : shelfGridPane.getChildren()) {
+                            int col = GridPane.getColumnIndex(n);
+                            if(n == mouseEvent.getSource()) {
+                                if(gui.isYourTurn() && gui.getPositionPickedSize() > 0 && gui.columnHasEnoughSpace(col)) {
+                                    gui.sendMove(col);
+                                    pickedItemsGridPane.getChildren().clear();
+                                }
+                                break;
+                            }
+                        }
+                    }
+                });
+                shelfGridPane.add(imgv, j, i);
+            }
+        }
+    }
+
+    public void setYourTurnPane(boolean set) {
+        turnAnchorPane.setVisible(set);
+        turnAnchorPane.setDisable(!set);
+    }
+
+    public void swapPickedItems(Node n) {
+        if(swapCols.size() == 0) {
+            swapCols.add(n);
+        }
+        else {
+            swapCols.add(n);
+            ImageView firstImgv = (ImageView) swapCols.get(0);
+            ImageView secondImgv = (ImageView) swapCols.get(1);
+            Image tmpImage = firstImgv.getImage();
+            firstImgv.setImage(secondImgv.getImage());
+            secondImgv.setImage(tmpImage);
+            gui.swapCols(swapCols);
+            swapCols = new ArrayList<>(2);
+        }
+    }
+
+    public int getSwapColIndex(Node n) {
+        return GridPane.getColumnIndex(n);
+    }
+
+    public void clearBoard() {
+        boardGridPane.getChildren().clear();
+    }
+
+    public void setPersonalShelf(Item[][] shelf) throws FileNotFoundException, URISyntaxException {
+        for(int i = 0; i < SHELF_ROWS; i++) {
+            for(int j = 0; j < SHELF_COL; j++) {
+                if(shelf[i][j] != null) {
+                    for(Node n : shelfGridPane.getChildren()) {
+                        if(GridPane.getRowIndex(n) == i && GridPane.getColumnIndex(n) == j) {
+                            ImageView imgv = (ImageView) n;
+                            imgv.setImage(randomItemImageByColors(shelf[i][j].getColor()));
+                            imgv.setOpacity(1.0);
+                            break;
+                        }
+                    }
+                }
+            }
+        }
+    }
+
+    public void incorrectMove() {
+        for(Node n: boardGridPane.getChildren()) {
+            if(n.getOpacity() != 1.0) {
+                n.setOpacity(1.0);
+            }
+        }
+        Platform.runLater(() -> {
+            FXMLLoader loader = new FXMLLoader(ClassLoader.getSystemResource("fxml/IncorrectMove.fxml"));
+            Stage incorrectMoveStage = new Stage();
+            try {
+                incorrectMoveStage.setScene(new Scene(loader.load()));
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+            incorrectMoveStage.setTitle("INCORRECT MOVE!");
+            incorrectMoveStage.setResizable(false);
+            incorrectMoveStage.initModality(Modality.APPLICATION_MODAL);
+            incorrectMoveStage.showAndWait();
+        });
+    }
+
+    public void wrongReceiver() {
+        Platform.runLater(() -> {
+            FXMLLoader loader = new FXMLLoader(ClassLoader.getSystemResource("fxml/WrongReceiver.fxml"));
+            Stage wrongReceiverStage = new Stage();
+            try {
+                wrongReceiverStage.setScene(new Scene(loader.load()));
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+            wrongReceiverStage.setTitle("WRONG RECEIVER!");
+            wrongReceiverStage.setResizable(false);
+            wrongReceiverStage.initModality(Modality.APPLICATION_MODAL);
+            wrongReceiverStage.showAndWait();
+        });
+    }
+
+    public void setChair() {
+        chairImageView.setDisable(false);
+        chairImageView.setVisible(true);
     }
 
 }

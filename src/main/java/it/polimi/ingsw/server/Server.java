@@ -17,7 +17,7 @@ import java.rmi.RemoteException;
 import java.rmi.registry.LocateRegistry;
 import java.rmi.registry.Registry;
 import java.rmi.server.UnicastRemoteObject;
-import java.time.LocalDateTime;
+import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Scanner;
@@ -136,19 +136,22 @@ public class Server implements InterfaceServer {
 
     @Override
     public void presentation(InterfaceClient cl, String nickname) throws RemoteException {
-        System.err.println("CHIAMATO PRESENTATION");
-        System.err.println(cl);
         try {
             switch(controller.presentation(nickname)) {
                 case 1: { //joined a "new" game
                     clientMapRMI.put(nickname,cl);
                     cl.confirmConnection(false);
-                } case 2: { //joined a "restored" game
+                }
+                case 3: { //joining a restored game
                     clientMapRMI.put(nickname,cl);
                     cl.confirmConnection(true);
                 }
                 case 0: {  // you're joining but I need another nickname
                     cl.askForNewNickname();
+                }
+                case 2:{ //first player joining a "restored" game
+                    clientMapRMI.put(nickname,cl);
+                    cl.lobbyCreated(false);
                 }
             }
         } catch (CancelGameException e) { //the game is being canceled because a restoring of a saved game failed
@@ -162,9 +165,7 @@ public class Server implements InterfaceServer {
         } catch (FullLobbyException e) { //you can't connect right now, the lobby is full or a game is already playing on the server
             cl.disconnectUser(1);
         } catch (FirstPlayerException e) { //you're the first player connecting for creating a new game, I need more parameters from you
-            System.err.println("INVOCATA FIRST P EX");
             clientMapRMI.put(nickname,cl);
-            System.err.println(cl);
             cl.askParameters();
         } catch (WaitForLobbyParametersException e) {
             cl.waitForLobbyCreation();
@@ -174,19 +175,14 @@ public class Server implements InterfaceServer {
     @Override
     public void sendParameters(InterfaceClient cl,int maxPlayerNumber, boolean onlyOneCommonCard) throws RemoteException {
         if(controller.createLobby(maxPlayerNumber,onlyOneCommonCard))
-            cl.lobbyCreated();
+            cl.lobbyCreated(true);
         else
             cl.askParameters();
     }
 
     public void executeMove(Body move) throws RemoteException, InvalidMoveException {
         controller.executeMove(move);
-        if(controller.isGameOver()){
-            controller.gameOver();
-        }
-        else{
-            controller.updateView();
-        }
+        controller.updateView();
     }
 
     public void updateViewRMI(NewView newView) throws RemoteException {
@@ -204,10 +200,10 @@ public class Server implements InterfaceServer {
         }
     }
 
-    public void sendPersonalTargetCardsRMI() throws RemoteException {
+    public void sendCardsRMI(List<String> commonTargetCardList) throws RemoteException {
         for(Player p : controller.getPlayerList()) {
             if(clientMapRMI.containsKey(p.getNickname())) {
-                clientMapRMI.get(p.getNickname()).receivePersonalTargetCard(p.getPersonalTargetCard().getPersonalNumber());
+                clientMapRMI.get(p.getNickname()).receiveCards(p.getPersonalTargetCard().getPersonalNumber(),commonTargetCardList);
             }
         }
     }
@@ -225,8 +221,8 @@ public class Server implements InterfaceServer {
         }
     }
 
-    public void peerToPeerMsg(String sender, String receiver, String text) throws RemoteException {
-        clientMapRMI.get(receiver).receiveMessage(sender, text);
+    public void peerToPeerMsg(String sender, String receiver, String text, String localDateTime) throws RemoteException {
+        clientMapRMI.get(receiver).receiveMessage(sender, text, localDateTime);
     }
 
     @Override
@@ -234,22 +230,22 @@ public class Server implements InterfaceServer {
         controller.broadcastMsg(sender,text, localDateTime);
     }
 
-    public void broadcastMsg(String sender, String text) throws RemoteException {
+    @Override
+    public void disconnection(String nickname) throws RemoteException {
+        controller.changePlayerConnectionStatus(nickname);
+        clientMapRMI.get(nickname).disconnectUser(7/*boh*/);
+        clientMapRMI.remove(nickname);
+    }
+
+    public void broadcastMsg(String sender, String text,String localDateTime) throws RemoteException {
         for(InterfaceClient interfaceClient: clientMapRMI.values()) {
-            interfaceClient.receiveMessage(sender, text);
+            interfaceClient.receiveMessage(sender, text,localDateTime );
         }
     }
 
     @Override
     public void clearRMI() throws RemoteException { //ping from client to server
         //it's empty, we need to check on the other side for RemoteExceptions
-    }
-
-    public void gameOverRMI(NewView newView) throws RemoteException{
-        for(Map.Entry<String,InterfaceClient> entry : clientMapRMI.entrySet()){
-            entry.getValue().showEndGame(newView);
-            clientMapRMI.remove(entry.getKey());
-        }
     }
 
 }

@@ -2,32 +2,36 @@ package it.polimi.ingsw.server.model.commons;
 
 import it.polimi.ingsw.server.model.Shelf;
 import it.polimi.ingsw.server.model.commons.CommonTargetCard;
+import it.polimi.ingsw.server.model.items.ItemColor;
+
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
 
 public class CommonTwoColumns extends CommonTargetCard {
     public CommonTwoColumns(int maxPlayerNumber) {
         super(maxPlayerNumber);
+        this.name="CommonTwoColumns";
     }
     @Override
     public boolean check(Shelf shelf) {
-        int countAcceptableColumns = COLUMNS;
-        int columnAcceptable;
-        for (int j = 0; j < COLUMNS; j++) {
-            columnAcceptable = 1;
-            for (int i = 0; i < (ROWS-1); i++) {
-                for (int k = i+1; k < ROWS; k++) {
-                    if(shelf.getItemByCoordinates(i, j).getColor() != null && shelf.getItemByCoordinates(k, j).getColor() != null) {
-                        if (shelf.getItemByCoordinates(i, j).getColor() == shelf.getItemByCoordinates(k, j).getColor() && i != k) {
-                            columnAcceptable = 0;
-                            break;
-                        }
-                    }
+        int columnFound=0;
+        for(int i=0;i<COLUMNS;i++){
+            List<ItemColor> differentItemsInColumn=new ArrayList<>();
+            for(int k=0;k<ROWS;k++){
+                if(shelf.getItemByCoordinates(k,i)!= null && !differentItemsInColumn.contains(shelf.getItemByCoordinates(k,i).getColor())){
+                    differentItemsInColumn.add(shelf.getItemByCoordinates(k,i).getColor());
                 }
-                if (columnAcceptable == 0){
-                    countAcceptableColumns--;
+                else{
                     break;
                 }
             }
+            if(differentItemsInColumn.size()==6) {
+                columnFound++;
+                if(columnFound==2)
+                    return true;
+            }
         }
-        return countAcceptableColumns >= 2;
+        return false;
     }
 }

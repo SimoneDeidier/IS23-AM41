@@ -8,7 +8,7 @@ import it.polimi.ingsw.server.model.exceptions.NullItemPickedException;
 import java.io.Serializable;
 import java.util.List;
 
-public abstract class BoardFactory {
+public abstract class BoardFactory implements Serializable {
 
     protected final static int ROWS = 9;
     protected final static int COLUMNS = 9;
@@ -22,7 +22,9 @@ public abstract class BoardFactory {
     }
 
     public Item getBoardMatrixElement(int i,int j){
-        return boardMatrix[i][j];
+        if(i<ROWS && i>=0 && j<COLUMNS && j>=0)
+            return boardMatrix[i][j];
+        return null;
     }
 
     public int getBoardNumberOfRows(){
@@ -41,9 +43,9 @@ public abstract class BoardFactory {
                         boardMatrix[i][j] = itemsBag.pickItem();
                     }
                 }
-                else{
+                else {
                     boardMatrix[i][j]=null;
-                    }
+                }
             }
         }
     }
@@ -117,24 +119,25 @@ public abstract class BoardFactory {
 
     public boolean hasFreeSide(int i,int j){
         //Check up
-        if(getBoardMatrixElement(i-1,j)==null){
+        if(i>0 && getBoardMatrixElement(i-1,j)==null){
             return true;
         }
         //Check down
-        if(getBoardMatrixElement(i+1,j)==null){
+        if(i<ROWS && getBoardMatrixElement(i+1,j)==null){
             return true;
         }
         //Check left
-        if(getBoardMatrixElement(i,j-1)==null){
+        if(j>0 && getBoardMatrixElement(i,j-1)==null){
             return true;
         }
         //Check right
-        return getBoardMatrixElement(i, j + 1) == null;
+        return j<COLUMNS && getBoardMatrixElement(i, j + 1) == null;
 
     }
 
     public boolean itemHasAllFreeSide(int i,int j){
-        return (getBoardMatrixElement(i-1,j)==null && getBoardMatrixElement(i+1,j)==null && getBoardMatrixElement(i,j-1)==null && getBoardMatrixElement(i, j + 1) == null);
+        return i>0 && (getBoardMatrixElement(i-1,j)==null && i<ROWS && getBoardMatrixElement(i+1,j)==null
+                && j>0 && getBoardMatrixElement(i,j-1)==null && j<COLUMNS && getBoardMatrixElement(i, j + 1) == null);
     }
 
     public boolean checkInLine(List<int[]> list){
@@ -155,7 +158,17 @@ public abstract class BoardFactory {
             if(y1 == (y2 + 1) && (y3==y2-1 || y3==y1+1) && x1==x2 && x2==x3){
                 return true;
             }
-            return y1 == (y2 - 1) && (y3 == y2 + 1 || y3 == y1 - 1) && x1 == x2 && x2 == x3;
+            if(y1 == (y2 - 1) && (y3 == y2 + 1 || y3 == y1 - 1) && x1 == x2 && x2 == x3)
+                return true;
+            if(x1==x2+2 &&  x1==x3+1 && y1==y2 && y2==y3)
+                return true;
+            if(x1== (x2-2) && x1==x3-1 && y1==y2 && y2==y3)
+                return true;
+            if(y1 == (y2+2) && y1 == y3+1 && x1==x2 && x2==x3)
+                return true;
+            if(y1 == y2-2 && y1 == y3-1 && x1==x2 && x2==x3)
+                return true;
+            return false;
         }
         return true; //case where list.size==1
 
@@ -165,7 +178,19 @@ public abstract class BoardFactory {
         boardMatrix[i][j]=item;
     }
 
-    public void resetBoard(){
-        boardMatrix= new Item[ROWS][COLUMNS];
+    public Item[][] getBoardMatrix() {
+        return boardMatrix;
+    }
+
+    public boolean[][] getBitMask() {
+        return bitMask;
+    }
+
+    public void setBoardMatrix(Item[][] boardMatrix) {
+        this.boardMatrix = boardMatrix;
+    }
+
+    public void setBitMask(boolean[][] bitMask) {
+        this.bitMask = bitMask;
     }
 }

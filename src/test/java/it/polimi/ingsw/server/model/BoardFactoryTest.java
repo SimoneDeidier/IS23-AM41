@@ -23,7 +23,7 @@ class BoardFactoryTest {
 
     @BeforeEach
     void initialize(){
-        board= TwoPlayersBoard.getTwoPlayersBoard(); //Could have been three or four, no changes for the tests
+        board= new TwoPlayersBoard(); //Could have been three or four, no changes for the tests
         board.refillBoard();
     }
 
@@ -161,22 +161,28 @@ class BoardFactoryTest {
     }
 
     @Test
-    public void testResetBoard(){
-        board.resetBoard();
-        board.refillBoard();
-        board.resetBoard();
-        int count=0;
-        for(int i=0;i<COLUMNS;i++){
+    public void testGetBoardMatrix(){
+        board.setBoardMatrixElement(new Item(ItemColor.GREEN),1,2);
+        assertEquals(board.getBoardMatrix()[1][2],board.getBoardMatrixElement(1,2));
+    }
 
-            for(int j=0;j<ROWS;j++){
+    @Test
+    public void testGetBitmask(){
+        assertEquals(board.getBitMask()[1][2],board.getBitMaskElement(1,2));
+    }
 
-                if(board.getBitMaskElement(i, j) && board.getBoardMatrixElement(i,j) != null)
+    @Test
+    public void testSetBitMask(){
+        boolean[][] bitMask = new boolean[ROWS][COLUMNS];
+        board.setBitMask(bitMask);
+        assertEquals(board.getBitMask(),bitMask);
+    }
 
-                    count ++;
-
-            }
-        }
-        assertEquals(ZERO,count);
+    @Test
+    public void testSetBoardMatrix(){
+        Item[][] boardMatrix=new Item[ROWS][COLUMNS];
+        board.setBoardMatrix(boardMatrix);
+        assertEquals(board.getBoardMatrix(),boardMatrix);
     }
 
 }

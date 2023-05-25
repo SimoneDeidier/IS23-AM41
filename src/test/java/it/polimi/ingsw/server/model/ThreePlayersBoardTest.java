@@ -17,7 +17,7 @@ public class ThreePlayersBoardTest {
 
     @BeforeEach
     void initialize(){
-        board= ThreePlayersBoard.getThreePlayersBoard();
+        board= new ThreePlayersBoard();
         board.refillBoard();
     }
 
@@ -38,7 +38,6 @@ public class ThreePlayersBoardTest {
             }
         }
         assertEquals(37,count);
-
     }
 
     @Test

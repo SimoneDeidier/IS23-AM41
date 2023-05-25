@@ -1,12 +1,10 @@
 package it.polimi.ingsw.interfaces;
 
-import it.polimi.ingsw.client.clientcontroller.connection.ConnectionRMI;
 import it.polimi.ingsw.messages.Body;
 import it.polimi.ingsw.server.servercontroller.exceptions.InvalidMoveException;
 
 import java.rmi.Remote;
 import java.rmi.RemoteException;
-import java.time.LocalDateTime;
 
 public interface InterfaceServer extends Remote {
     //What the client can call from the server
@@ -17,4 +15,5 @@ public interface InterfaceServer extends Remote {
     void clearRMI() throws RemoteException;
     void peerToPeerMsgHandler(String sender, String receiver, String text, String localDateTime) throws RemoteException;
     void broadcastMsgHandler(String sender, String text, String localDateTime) throws RemoteException;
+    void disconnection(String nickname) throws RemoteException;
 }

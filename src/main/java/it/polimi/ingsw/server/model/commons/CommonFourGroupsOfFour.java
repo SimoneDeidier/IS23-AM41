@@ -9,6 +9,7 @@ public class CommonFourGroupsOfFour extends CommonTargetCard {
     private final static int NUMBER_OF_TILES_NEEDED_IN_GROUPS = 4;
     public CommonFourGroupsOfFour(int maxPlayerNumber) {
         super(maxPlayerNumber);
+        this.name="CommonFourGroupsOfFour";
     }
     @Override
     public boolean check(Shelf shelf) {
@@ -17,9 +18,11 @@ public class CommonFourGroupsOfFour extends CommonTargetCard {
         for (int i = 0; i < ROWS; i++) {
             for (int j = 0; j < COLUMNS; j++) {
                 if (!visited[i][j]) {
-                    ItemColor value = shelf.getItemByCoordinates(i, j).getColor();
-                    if (dfs(shelf, visited, i, j, value) >= NUMBER_OF_TILES_NEEDED_IN_GROUPS) {
-                        count++;
+                    if(shelf.getItemByCoordinates(i,j)!=null) {
+                        ItemColor value = shelf.getItemByCoordinates(i, j).getColor();
+                        if (dfs(shelf, visited, i, j, value) >= NUMBER_OF_TILES_NEEDED_IN_GROUPS) {
+                            count++;
+                        }
                     }
                 }
             }

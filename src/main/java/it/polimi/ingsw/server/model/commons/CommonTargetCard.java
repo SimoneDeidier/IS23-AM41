@@ -10,13 +10,14 @@ import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
 
-public abstract class CommonTargetCard {
+public abstract class CommonTargetCard implements Serializable {
 
 
     protected final static int ROWS = 6;
     protected final static int COLUMNS = 5;
     protected final static int COLORS = 6;
     protected List<ScoringToken> scoringTokensList;
+    protected String name;
 
     public CommonTargetCard(int numberOfPlayers){
 
@@ -42,17 +43,25 @@ public abstract class CommonTargetCard {
     public ScoringToken assignToken(Player player){
         for(ScoringToken token: scoringTokensList){
             if(token.isTakeable()){
-                token.setOwner(player);
+                token.setTakenBy(player.getNickname());
                 return token;
             }
-            else if(token.getOwner().equals(player)){
+            else if(token.getTakenBy().equals(player.getNickname())){
                 break;
             }
         }
         return null;
     }
 
+    public String getName() {
+        return name;
+    }
 
+    public List<ScoringToken> getScoringTokensList() {
+        return scoringTokensList;
+    }
 
-
+    public void setScoringTokensList(List<ScoringToken> scoringTokensList) {
+        this.scoringTokensList = scoringTokensList;
+    }
 }

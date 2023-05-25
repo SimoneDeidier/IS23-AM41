@@ -4,6 +4,7 @@ import it.polimi.ingsw.messages.NewView;
 
 import java.rmi.Remote;
 import java.rmi.RemoteException;
+import java.util.List;
 
 public interface InterfaceClient extends Remote {
     //What the server can call from the client
@@ -12,10 +13,10 @@ public interface InterfaceClient extends Remote {
     void updateView(NewView newView) throws RemoteException;
     void disconnectUser(int whichMessageToShow) throws RemoteException;
     void confirmConnection(boolean bool) throws RemoteException;
-    void receiveMessage(String sender, String message) throws RemoteException;
+    void receiveMessage(String sender, String message, String localDateTime) throws RemoteException;
     void wrongMessageWarning(String message) throws RemoteException;
-    void receivePersonalTargetCard(int whichPersonal) throws RemoteException;
+    void receiveCards(int whichPersonal, List<String> commonTargetCardList) throws RemoteException;
     void showEndGame(NewView newView) throws RemoteException;
-    void lobbyCreated() throws RemoteException;
+    void lobbyCreated(boolean typeOfGame) throws RemoteException;
     void waitForLobbyCreation() throws RemoteException;
 }

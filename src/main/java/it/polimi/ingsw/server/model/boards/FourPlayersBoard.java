@@ -1,25 +1,23 @@
 package it.polimi.ingsw.server.model.boards;
 
+import it.polimi.ingsw.server.model.items.Item;
 import it.polimi.ingsw.server.model.items.ItemsBag;
 
 import java.io.Serializable;
 
-public class FourPlayersBoard extends BoardFactory implements Serializable {
+public class FourPlayersBoard extends BoardFactory {
 
-    private static BoardFactory instance;
-
-    private FourPlayersBoard() {
+    public FourPlayersBoard() {
         this.itemsBag = ItemsBag.getItemsBag();
         itemsBag.resetItemsBag();
         itemsBag.setupBag();
         bitMask = createBitMask();
-    }
-
-    public static BoardFactory getFourPlayersBoard() {
-        if(instance == null) {
-            instance = new FourPlayersBoard();
+        boardMatrix = new Item[ROWS][COLUMNS];
+        for(int i=0;i<ROWS;i++){
+            for(int j=0;j<COLUMNS;j++){
+                boardMatrix[i][j]=null;
+            }
         }
-        return instance;
     }
 
     @Override

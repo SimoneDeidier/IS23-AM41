@@ -5,15 +5,16 @@ import it.polimi.ingsw.server.model.exceptions.NotEnoughSpaceInColumnException;
 import it.polimi.ingsw.server.model.items.Item;
 import it.polimi.ingsw.server.model.items.ItemColor;
 
+import java.io.Serializable;
 import java.util.List;
 
-public class Shelf {
+public class Shelf implements Serializable {
 
     private final static int ROWS = 6;
     private final static int COLUMNS = 5;
 
     private int shelfPoints;
-    private final Item[][] shelfMatrix;
+    private Item[][] shelfMatrix;
 
     public Shelf() {
         shelfMatrix = new Item[ROWS][COLUMNS];
@@ -127,7 +128,7 @@ public class Shelf {
 
 
     public int freeSpaces(int col){
-        int res = 6;
+        int res = ROWS;
 
         for( int row = ROWS - 1 ; row >= 0; row-- ){
             if(shelfMatrix[row][col] == null){
@@ -162,5 +163,13 @@ public class Shelf {
         if(freeSpaces(column)<numberOfItemsPicked)
             return false;
         return true;
+    }
+
+    public Item[][] getShelfMatrix() {
+        return shelfMatrix;
+    }
+
+    public void setShelfMatrix(Item[][] shelfMatrix){
+        this.shelfMatrix=shelfMatrix;
     }
 }

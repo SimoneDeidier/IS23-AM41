@@ -5,6 +5,7 @@ import it.polimi.ingsw.server.model.Shelf;
 public class CommonStairway extends CommonTargetCard {
     public CommonStairway(int maxPlayerNumber) {
         super(maxPlayerNumber);
+        this.name="CommonStairway";
     }
     @Override
     public boolean check(Shelf shelf) {

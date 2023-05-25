@@ -5,10 +5,15 @@ import it.polimi.ingsw.client.view.GraphicUserInterface;
 import it.polimi.ingsw.client.view.TextUserInterface;
 import it.polimi.ingsw.client.view.UserInterface;
 import it.polimi.ingsw.messages.Body;
+import it.polimi.ingsw.messages.NewView;
+import javafx.scene.Node;
 
+import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.net.URISyntaxException;
 import java.time.LocalDateTime;
 import java.time.temporal.ChronoUnit;
+import java.util.*;
 
 public class ClientControllerTCP implements ClientController {
 
@@ -16,6 +21,11 @@ public class ClientControllerTCP implements ClientController {
     private UserInterface userInterface = null;
     private String playerNickname;
     private int personalTargetCardNumber;
+    private List<String> commonGoalNameList;
+    private List<int[]> positionPicked = new ArrayList<>(3);
+    private Map<Integer, Integer> columnsToFreeSpaces = new HashMap<>(5);
+    private final static int ROWS = 6;
+    private final static int COLS = 5;
 
     public ClientControllerTCP(TCPMessageController tcpMessageController) {
         this.tcpMessageController = tcpMessageController;
@@ -31,7 +41,7 @@ public class ClientControllerTCP implements ClientController {
         userInterfaceThread.start();
         try {
             userInterfaceThread.join();
-            System.err.println("JOINED THE THREAD");
+            System.err.println("JOINED THE GUI THREAD");
         }
         catch (InterruptedException e) {
             e.printStackTrace();
@@ -86,8 +96,13 @@ public class ClientControllerTCP implements ClientController {
     }
 
     @Override
+    public void setCommonGoalList(List<String> commonGoalNameList) {
+        this.commonGoalNameList = commonGoalNameList;
+    }
+
+    @Override
     public void loadGameScreen() throws IOException {
-        userInterface.loadGameScreen(personalTargetCardNumber, playerNickname);
+        userInterface.loadGameScreen(personalTargetCardNumber, playerNickname, commonGoalNameList);
     }
 
     @Override
@@ -112,5 +127,105 @@ public class ClientControllerTCP implements ClientController {
         userInterface.receiveMessage(message, sender, localDateTime);
     }
 
+    @Override
+    public void updateView(NewView newView) throws FileNotFoundException, URISyntaxException {
+        for(int i = 0; i < COLS; i++) {
+            int count = 0;
+            for(int j = 0; j < ROWS; j++) {
+                if(newView.getNicknameToShelfMap().get(playerNickname)[j][i] == null) {
+                    count++;
+                }
+            }
+            columnsToFreeSpaces.put(i, count);
+        }
+        userInterface.updateView(newView);
+    }
+
+    @Override
+    public String getPlayerNickname() {
+        return playerNickname;
+    }
+
+    @Override
+    public void disconnect() {
+        tcpMessageController.printTCPMessage("Disconnect", null);
+    }
+
+    @Override
+    public void rejoinMatch() {
+        tcpMessageController.rejoinMatch();
+    }
+
+    @Override
+    public void rejoinedMatch() {
+        System.out.println("Called rejoined in controller");
+        userInterface.rejoinedMatch();
+    }
+
+    @Override
+    public void invalidPlayer() {
+        userInterface.invalidPlayer();
+    }
+
+    @Override
+    public void insertInPositionPicked(int[] el) {
+        positionPicked.add(el);
+    }
+    @Override
+    public int getPositionPickedSize() {
+        return positionPicked.size();
+    }
+
+    @Override
+    public void sendMove(int col) {
+        Body body = new Body();
+        body.setColumn(col);
+        body.setPositionsPicked(positionPicked);
+        body.setPlayerNickname(playerNickname);
+        tcpMessageController.printTCPMessage("Move", body);
+        positionPicked = new ArrayList<>(3);
+    }
+
+    @Override
+    public void swapCols(List<Node> list) {
+        int col1 = userInterface.getSwapColIndex(list.get(0));
+        int col2 = userInterface.getSwapColIndex(list.get(1));
+        Collections.swap(positionPicked, col1, col2);
+    }
+
+    @Override
+    public void swapCols(int col1, int col2) {
+        Collections.swap(positionPicked, col1, col2);
+    }
+
+    @Override
+    public void incorrectMove() {
+        userInterface.incorrectMove();
+    }
+
+    @Override
+    public void wrongReceiver() {
+        userInterface.wrongReceiver();
+    }
+
+    @Override
+    public void wrongParameters() {
+        userInterface.wrongParameters();
+    }
+
+    @Override
+    public boolean columnHasEnoughSpace(int col) {
+        return columnsToFreeSpaces.get(col) >= positionPicked.size();
+    }
+
+    @Override
+    public void removeInPositionPicked(int col) {
+        positionPicked.remove(col);
+    }
+
+    @Override
+    public void playerRestored() {
+        userInterface.playerRestored();
+    }
 
 }

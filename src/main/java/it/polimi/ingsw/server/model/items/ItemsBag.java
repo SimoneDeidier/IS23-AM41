@@ -1,10 +1,11 @@
 package it.polimi.ingsw.server.model.items;
 
+import java.io.Serializable;
 import java.util.List;
 import java.util.ArrayList;
 import java.util.Random;
 
-public class ItemsBag {
+public class ItemsBag implements Serializable {
     private static ItemsBag instance = null;
     private List<Item> itemList;
     private final static int ITEMNUMBERFORTYPE = 22;

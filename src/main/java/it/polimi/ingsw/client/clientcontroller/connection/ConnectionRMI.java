@@ -1,26 +1,28 @@
 package it.polimi.ingsw.client.clientcontroller.connection;
 
-import it.polimi.ingsw.client.GameLock;
-import it.polimi.ingsw.client.PingThread;
+import it.polimi.ingsw.client.PingThreadClientRmiToServer;
 import it.polimi.ingsw.client.clientcontroller.controller.ClientController;
 import it.polimi.ingsw.client.clientcontroller.controller.ClientControllerRMI;
 import it.polimi.ingsw.interfaces.InterfaceClient;
 import it.polimi.ingsw.interfaces.InterfaceServer;
+import it.polimi.ingsw.messages.Body;
 import it.polimi.ingsw.messages.NewView;
 
+import java.io.FileNotFoundException;
+import java.io.IOException;
 import java.io.Serializable;
+import java.net.URISyntaxException;
 import java.rmi.RemoteException;
 import java.rmi.registry.LocateRegistry;
 import java.rmi.registry.Registry;
 import java.rmi.server.UnicastRemoteObject;
+import java.util.List;
 
 public class ConnectionRMI extends UnicastRemoteObject implements InterfaceClient, Serializable, Connection {
     private final int PORT;
     private final String IP;
     private InterfaceServer stub;
     private ClientController controller;
-    boolean gameStarted=false;
-    private final Object lock = new GameLock();
 
     public ConnectionRMI(int port,String IP) throws RemoteException {
         super();
@@ -61,31 +63,13 @@ public class ConnectionRMI extends UnicastRemoteObject implements InterfaceClien
         controller.invalidNickname();
     }
 
-    public void waitForGameStart() {
-        synchronized (lock) {
-            while (!gameStarted) {
-                try {
-                    lock.wait();
-                } catch (InterruptedException e) {
-                    e.printStackTrace();
-                }
-            }
-        }
-    }
-
     @Override
     public void updateView(NewView newView) throws RemoteException {
-        if(!gameStarted){ //on the first updateView it exits the waitingRoom
-            synchronized (lock) {
-                gameStarted = true;
-                lock.notifyAll();
-            }
-            PingThread pingThread = new PingThread(stub,this); //Starting the thread for pinging the server
-            pingThread.start();
+        try {
+            controller.updateView(newView);
+        } catch (FileNotFoundException | URISyntaxException e) {
+            throw new RuntimeException(e);
         }
-        //And now we tell the controller to show the GUI/TUI and the client shouldn't need a loop, it's constantly waiting for the player's input
-        //The controller will check if the user is the active player, and if he's the active he'll have two options: send message and make move
-        //Otherwise he's only able to send a message until a new updateView
     }
 
     @Override
@@ -97,16 +81,17 @@ public class ConnectionRMI extends UnicastRemoteObject implements InterfaceClien
 
     @Override
     public void confirmConnection(boolean bool) throws RemoteException {
-        //todo
-        if(!bool)
+        if(!bool) {
+            PingThreadClientRmiToServer pingThread = new PingThreadClientRmiToServer(stub,this); //Starting the thread for pinging the server
+            pingThread.start();
             controller.nicknameAccepted();
-        //manca caso in cui è player restored
-        waitForGameStart();
+        }
+        //todo manca caso in cui è player restored
     }
 
     @Override
-    public void receiveMessage(String sender, String message) throws RemoteException {
-        //tell the controller to show the message in the view
+    public void receiveMessage(String sender, String message, String localDateTime) throws RemoteException {
+        controller.receiveMessage(message,sender,localDateTime);
     }
 
     @Override
@@ -115,8 +100,14 @@ public class ConnectionRMI extends UnicastRemoteObject implements InterfaceClien
     }
 
     @Override
-    public void receivePersonalTargetCard(int whichPersonal) throws RemoteException {
-        // todo
+    public void receiveCards(int whichPersonal, List<String> commonTargetCardList) throws RemoteException {
+        controller.setPersonalTargetCardNumber(whichPersonal);
+        controller.setCommonGoalList(commonTargetCardList);
+        try {
+            controller.loadGameScreen();
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
     }
 
     @Override
@@ -125,8 +116,11 @@ public class ConnectionRMI extends UnicastRemoteObject implements InterfaceClien
     }
 
     @Override
-    public void lobbyCreated() throws RemoteException {
-        controller.lobbyCreated();
+    public void lobbyCreated(boolean typeOfGame) throws RemoteException {
+        if(typeOfGame)
+            controller.lobbyCreated();
+        //else
+            //todo case where a lobby is restored
     }
 
     @Override
@@ -134,4 +128,19 @@ public class ConnectionRMI extends UnicastRemoteObject implements InterfaceClien
         controller.waitForLobby();
     }
 
+    public void sendPrivateMessage(Body body) {
+        try {
+            stub.peerToPeerMsgHandler(body.getSenderNickname(),body.getReceiverNickname(), body.getText(), body.getLocalDateTime());
+        } catch (RemoteException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    public void sendBroadcastMessage(Body body) {
+        try {
+            stub.broadcastMsgHandler(body.getSenderNickname(), body.getText(), body.getLocalDateTime());
+        } catch (RemoteException e) {
+            throw new RuntimeException(e);
+        }
+    }
 }

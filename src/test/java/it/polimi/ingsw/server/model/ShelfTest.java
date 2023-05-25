@@ -9,6 +9,7 @@ import org.junit.jupiter.api.RepeatedTest;
 import org.junit.jupiter.api.Test;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Random;
 
@@ -128,4 +129,41 @@ class ShelfTest {
     void insertItemThrowsExceptionInFullShelf() {
         assertThrows(NotEnoughSpaceInColumnException.class, () -> fullShelf.insertItems(random.nextInt(COLUMNS), itemList));
     }
+
+    @Test
+    void isFull() throws NotEnoughSpaceInColumnException {
+        Shelf shelf = new Shelf();
+        assertFalse(shelf.isFull());
+        shelf.insertItems(0, Arrays.asList(new Item(ItemColor.BLUE), new Item(ItemColor.WHITE), new Item(ItemColor.LIGHT_BLUE), new Item(ItemColor.PINK), new Item(ItemColor.LIGHT_BLUE), new Item(ItemColor.BLUE)));
+        shelf.insertItems(1, Arrays.asList(new Item(ItemColor.LIGHT_BLUE), new Item(ItemColor.WHITE), new Item(ItemColor.WHITE), new Item(ItemColor.WHITE), new Item(ItemColor.BLUE), new Item(ItemColor.WHITE)));
+        shelf.insertItems(2, Arrays.asList(new Item(ItemColor.PINK), new Item(ItemColor.PINK), new Item(ItemColor.LIGHT_BLUE), new Item(ItemColor.BLUE), new Item(ItemColor.WHITE), new Item(ItemColor.PINK)));
+        shelf.insertItems(3, Arrays.asList(new Item(ItemColor.YELLOW), new Item(ItemColor.LIGHT_BLUE), new Item(ItemColor.BLUE), new Item(ItemColor.YELLOW), new Item(ItemColor.WHITE), new Item(ItemColor.YELLOW)));
+        shelf.insertItems(4, Arrays.asList(new Item(ItemColor.BLUE), new Item(ItemColor.BLUE), new Item(ItemColor.BLUE), new Item(ItemColor.WHITE), new Item(ItemColor.BLUE), new Item(ItemColor.BLUE)));
+        assertTrue(shelf.isFull());
+    }
+
+    @Test
+    void setShelfPoints() throws NotEnoughSpaceInColumnException {
+        Shelf shelf = new Shelf();
+        shelf.setShelfPoints();
+        assertEquals(0, shelf.getShelfPoints());
+        //three blue tiles => 2 points
+        //five white tiles => 5 points
+        shelf.insertItems(0, Arrays.asList(new Item(ItemColor.BLUE), new Item(ItemColor.BLUE), new Item(ItemColor.BLUE), new Item(ItemColor.WHITE), new Item(ItemColor.LIGHT_BLUE), new Item(ItemColor.BLUE)));
+        shelf.insertItems(1, Arrays.asList(new Item(ItemColor.WHITE), new Item(ItemColor.WHITE), new Item(ItemColor.WHITE), new Item(ItemColor.WHITE), new Item(ItemColor.BLUE), new Item(ItemColor.WHITE)));
+        shelf.setShelfPoints();
+        assertEquals(7, shelf.getShelfPoints());
+    }
+
+
+    @Test
+    void getShelfMatrix(){
+        Shelf shelf = new Shelf();
+        Item item = new Item(ItemColor.YELLOW);
+        shelf.setShelfItem(3, 3, item);
+        Item[][] matrix = shelf.getShelfMatrix();
+        assertEquals(matrix[3][3], item);
+    }
+
+
 }

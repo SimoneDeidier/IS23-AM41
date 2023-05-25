@@ -7,7 +7,6 @@ import it.polimi.ingsw.server.servercontroller.exceptions.*;
 
 import java.net.Socket;
 import java.rmi.RemoteException;
-import java.time.LocalDateTime;
 
 public class TCPMessageController implements TCPMessageControllerInterface {
 
@@ -31,17 +30,21 @@ public class TCPMessageController implements TCPMessageControllerInterface {
                 System.err.println("NEW PRESENTATION MSG - Nickname: " + nickname);
                 try {
                     switch(gameController.presentation(nickname)) {
-                        case 1: { //joined a "new" game
+                        case 1 -> { //joined a "new" game
                             printTCPMessage("Nickname Accepted", null);
                             System.err.println("Sending a Nickname Accepted TCP Message");
                             gameController.putNickToSocketMapping(nickname, this);
-                        } case 2: { //joined a "restored" game
+                        } case 3 -> { //joined a "restored" game
                             printTCPMessage("Player Restored", null);
                             gameController.putNickToSocketMapping(nickname, null);
                         }
-                        case 0: {  // you're joining but I need another nickname
+                        case 0 -> {  // you're joining but I need another nickname
                             printTCPMessage("Invalid Nickname", null);
                             System.err.println("SENDING AN Invalid Nickname MESSAGE");
+                        }
+                        case 2 ->{
+                            gameController.putNickToSocketMapping(nickname, this);
+                            printTCPMessage("Lobby Restored",null);
                         }
                     }
                 }
@@ -54,8 +57,7 @@ public class TCPMessageController implements TCPMessageControllerInterface {
                     gameController.putNickToSocketMapping(nickname, this);
                     gameController.startGame();
                     gameController.yourTarget();
-                    // todo da implementare il new view
-                    // gameController.updateView();
+                    gameController.updateView();
                 } catch (FullLobbyException e) { //you can't connect right now, the lobby is full or a game is already playing on the server
                     printTCPMessage("Goodbye", null);
                     closeConnection();
@@ -78,12 +80,7 @@ public class TCPMessageController implements TCPMessageControllerInterface {
             case "Move" -> {
                 try {
                     gameController.executeMove(message.getBody());
-                    if(gameController.isGameOver()){
-                        gameController.gameOver();
-                    }
-                    else{
-                        gameController.updateView();
-                    }
+                    gameController.updateView();
                 } catch (InvalidMoveException e) {
                     printTCPMessage("Incorrect Move", null);
                 }
@@ -106,9 +103,17 @@ public class TCPMessageController implements TCPMessageControllerInterface {
                 String text = message.getBody().getText();
                 String localDateTime = message.getBody().getLocalDateTime();
                 gameController.broadcastMsg(sender, text, localDateTime);
+                System.err.println("FINITO BROADCAST");
             }
             case "Disconnect" -> {
-                gameController.disconnectUserTCP(this);
+                gameController.intentionalDisconnectionUserTCP(this);
+                serializeDeserialize.closeConnection();
+            }
+            case "Re-Join" -> {
+                if(gameController.checkReJoinRequest(message.getBody().getPlayerNickname())) {
+                    printTCPMessage("Joined", null);
+                }
+                else printTCPMessage("Invalid Player", null);
             }
         }
     }

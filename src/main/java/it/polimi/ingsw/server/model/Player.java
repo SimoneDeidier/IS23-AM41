@@ -4,7 +4,7 @@ import it.polimi.ingsw.server.model.boards.BoardFactory;
 import it.polimi.ingsw.server.model.commons.CommonTargetCard;
 import it.polimi.ingsw.server.model.exceptions.EmptyShelfException;
 import it.polimi.ingsw.server.model.tokens.EndGameToken;
-import it.polimi.ingsw.server.model.tokens.Token;
+import it.polimi.ingsw.server.model.tokens.ScoringToken;
 
 import java.io.IOException;
 import java.io.Serializable;
@@ -19,7 +19,7 @@ public class Player implements Serializable {
     private BoardFactory board;
     private EndGameToken endGameToken;
     private Shelf shelf;
-    private final List<Token> scoringTokenList = new ArrayList<>(2);
+    private List<ScoringToken> scoringTokenList = new ArrayList<>(2);
     private List<CommonTargetCard> commonTargetCardList;
     private PersonalTargetCard personalTargetCard;
 
@@ -27,6 +27,7 @@ public class Player implements Serializable {
         this.nickname = nickname;
         endGameToken = null;
         playerScore=0;
+        this.connected = true;
     }
 
     public String getNickname() {
@@ -40,10 +41,11 @@ public class Player implements Serializable {
     public void updateScore() {
         try {
             playerScore = 0;
-            if (endGameToken != null) {
+            if (hasEndGameToken()) {
                 playerScore += endGameToken.getValue();
             }
             playerScore += personalTargetCard.calculatePoints(shelf);
+
             try {
                 playerScore += shelf.calculateAdjacentItemsPoints();
             }
@@ -52,17 +54,20 @@ public class Player implements Serializable {
                 System.out.println("Player: " + nickname);
             }
             finally {
-                if (commonTargetCardList.get(0).check(shelf)) {
-                    scoringTokenList.add(commonTargetCardList.get(0).assignToken(this));
-                }
-                if (commonTargetCardList.size() == 2 && commonTargetCardList.get(1).check(shelf)) {
-                    scoringTokenList.add(commonTargetCardList.get(1).assignToken(this));
-                }
-                for (Token token : scoringTokenList) {
+                System.err.println("POST ADJACENT");
+                //todo fixare common
+                /*for(CommonTargetCard commonTargetCard:commonTargetCardList){
+                    if (commonTargetCard.check(shelf)) {
+                        scoringTokenList.add(commonTargetCard.assignToken(this));
+                    }
+                }*/
+                System.err.println("POST COMMON");
+                for (ScoringToken token : scoringTokenList) {
                     if (token != null) {
                         playerScore += token.getValue();
                     }
                 }
+                System.err.println("POST UPDATE");
             }
         }
         catch (URISyntaxException | IOException e) {
@@ -89,12 +94,14 @@ public class Player implements Serializable {
         this.personalTargetCard = personalTargetCard;
     }
 
-    public void addScoringToken(Token scoringToken) {
-        if( scoringToken != null )
+    public void addScoringToken(ScoringToken scoringToken) {
+        if( scoringToken != null ) {
             this.scoringTokenList.add(scoringToken);
+            scoringToken.setTakenBy(nickname);
+        }
     }
 
-    public Token getScoringToken(int i){
+    public ScoringToken getScoringToken(int i){
         return scoringTokenList.get(i);
     }
 
@@ -116,5 +123,28 @@ public class Player implements Serializable {
 
     public boolean checkColumnChosen(int numberOfItemsPicked, int column) {
         return shelf.checkColumn(numberOfItemsPicked,column);
+    }
+    public List<CommonTargetCard> getCommonTargetCardList() {
+        return commonTargetCardList;
+    }
+
+    public BoardFactory getBoard() {
+        return board;
+    }
+
+    public List<ScoringToken> getScoringTokenList() {
+        return scoringTokenList;
+    }
+
+    public boolean hasEndGameToken(){
+        return endGameToken != null;
+    }
+
+    public void setPlayerScore(int playerScore) {
+        this.playerScore = playerScore;
+    }
+
+    public void setScoringTokenList(List<ScoringToken> scoringTokenList) {
+        this.scoringTokenList = scoringTokenList;
     }
 }

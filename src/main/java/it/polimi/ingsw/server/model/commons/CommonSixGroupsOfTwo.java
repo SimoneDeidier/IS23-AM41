@@ -7,6 +7,7 @@ public class CommonSixGroupsOfTwo extends CommonTargetCard {
     private final static int NUMBER_OF_GROUPS_NEEDED = 6;
     public CommonSixGroupsOfTwo(int maxPlayerNumber) {
         super(maxPlayerNumber);
+        this.name="CommonSixGroupsOfTwo";
     }
     @Override
     public boolean check(Shelf shelf) {
@@ -15,9 +16,11 @@ public class CommonSixGroupsOfTwo extends CommonTargetCard {
         for (int i = 0; i < ROWS; i++) {
             for (int j = 0; j < COLUMNS; j++) {
                 if (!visited[i][j]) {
-                    ItemColor value = shelf.getItemByCoordinates(i, j).getColor();
-                    if (dfs(shelf, visited, i, j, value) >= 2) {
-                        count++;
+                    if(shelf.getItemByCoordinates(i, j)!=null) {
+                        ItemColor value = shelf.getItemByCoordinates(i, j).getColor();
+                        if (dfs(shelf, visited, i, j, value) >= 2) {
+                            count++;
+                        }
                     }
                 }
             }
