@@ -182,7 +182,7 @@ public class GameController {
             for (int j = 0; j < board.getBoardNumberOfColumns(); j++) {
                 if (board.getBitMaskElement(i, j) && board.getBoardMatrixElement(i, j) != null) {
                     if(!board.itemHasAllFreeSide(i, j))
-                        return false; //There is at least one non-null element that has at least one other item on one of its side
+                        return false; //There is at least one non-null element that has at least one item on one of its side
                 }
             }
         }
