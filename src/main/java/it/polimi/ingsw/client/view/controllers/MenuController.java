@@ -27,7 +27,7 @@ public class MenuController {
     }
 
     public void exit() {
-        gui.close();
+        gui.exit();
         close();
     }
 

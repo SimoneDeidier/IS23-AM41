@@ -193,4 +193,14 @@ public class ClientControllerTCP implements ClientController {
         userInterface.incorrectMove();
     }
 
+    @Override
+    public void wrongReceiver() {
+        userInterface.wrongReceiver();
+    }
+
+    @Override
+    public void wrongParameters() {
+        userInterface.wrongParameters();
+    }
+
 }

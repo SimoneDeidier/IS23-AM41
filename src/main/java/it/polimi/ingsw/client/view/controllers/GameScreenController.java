@@ -44,8 +44,8 @@ public class GameScreenController {
     private final static double PICKED_IT_DIM = 61.0;
     private final static int SHELF_ROWS = 6;
     private final static int SHELF_COL = 5;
-    private final static double SHELF_ITEM_DIM = 43.0;
-    private final static double SHELF_ITEM_OFFSET = 11.0;
+    private final static double SHELF_ITEM_DIM = 41.0;
+    private final static double SHELF_ITEM_OFFSET = 10.1;
 
     private GraphicUserInterface gui;
     private Image personalGoalImage = null;
@@ -71,6 +71,8 @@ public class GameScreenController {
     private GridPane shelfGridPane;
     @FXML
     private AnchorPane turnAnchorPane;
+    @FXML
+    private ImageView chairImageView;
 
     public void initialize() {
         chatVBox.setStyle("-fx-background-color: #442211;");
@@ -236,7 +238,7 @@ public class GameScreenController {
 
     public void addInSelected(Node n) {
         int col = gui.getPositionPickedSize();
-        if(col < 3 && gui.isYourTurn()) {
+        if(col < 3 && gui.isYourTurn() && n.getOpacity() == 1.0) {
             ImageView selected = (ImageView) n;
             ImageView newImgv = new ImageView(selected.getImage());
             selected.setOpacity(0.5);
@@ -358,5 +360,26 @@ public class GameScreenController {
             incorrectMoveStage.showAndWait();
         });
     }
+
+    public void wrongReceiver() {
+        Platform.runLater(() -> {
+            FXMLLoader loader = new FXMLLoader(ClassLoader.getSystemResource("fxml/WrongReceiver.fxml"));
+            Stage wrongReceiverStage = new Stage();
+            try {
+                wrongReceiverStage.setScene(new Scene(loader.load()));
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+            wrongReceiverStage.setTitle("WRONG RECEIVER!");
+            wrongReceiverStage.setResizable(false);
+            wrongReceiverStage.initModality(Modality.APPLICATION_MODAL);
+            wrongReceiverStage.showAndWait();
+        });
+    }
+
+    public void setChair() {
+
+    }
+
 
 }

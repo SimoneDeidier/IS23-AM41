@@ -188,4 +188,14 @@ public class ClientControllerRMI implements ClientController, Serializable {
 
     }
 
+    @Override
+    public void wrongReceiver() {
+
+    }
+
+    @Override
+    public void wrongParameters() {
+
+    }
+
 }

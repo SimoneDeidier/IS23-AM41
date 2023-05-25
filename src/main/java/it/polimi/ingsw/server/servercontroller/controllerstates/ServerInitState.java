@@ -57,7 +57,7 @@ public class ServerInitState implements GameState {
     @Override
     public void setupPlayers(List<Player> playerList, List<CommonTargetCard> commonTargetCardList, BoardFactory board, GameController controller) {
         Gson gson=new Gson();
-        try (FileReader reader = new FileReader("src/main/java/it/polimi/ingsw/Save/OldGame.json")) {
+        try (FileReader reader = new FileReader("src/main/java/it/polimi/ingsw/save/OldGame.json")) {
             Save save = gson.fromJson(reader, Save.class);
             controller.setLastTurn(save.isLastTurn());
             controller.setMaxPlayerNumber(save.getMaxPlayerPlayer());

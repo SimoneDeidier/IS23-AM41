@@ -25,4 +25,4 @@ Thumbs.db
 *.tmp
 
 # Ignore save files
-src/main/java/it/polimi/ingsw/Save/OldGame.json
+src/main/java/it/polimi/ingsw/save/OldGame.json
