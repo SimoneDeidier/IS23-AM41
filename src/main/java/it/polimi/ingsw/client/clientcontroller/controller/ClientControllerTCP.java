@@ -13,9 +13,7 @@ import java.io.IOException;
 import java.net.URISyntaxException;
 import java.time.LocalDateTime;
 import java.time.temporal.ChronoUnit;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
+import java.util.*;
 
 public class ClientControllerTCP implements ClientController {
 
@@ -25,6 +23,9 @@ public class ClientControllerTCP implements ClientController {
     private int personalTargetCardNumber;
     private List<String> commonGoalNameList;
     private List<int[]> positionPicked = new ArrayList<>(3);
+    private Map<Integer, Integer> columnsToFreeSpaces = new HashMap<>(5);
+    private final static int ROWS = 6;
+    private final static int COLS = 5;
 
     public ClientControllerTCP(TCPMessageController tcpMessageController) {
         this.tcpMessageController = tcpMessageController;
@@ -128,6 +129,15 @@ public class ClientControllerTCP implements ClientController {
 
     @Override
     public void updateView(NewView newView) throws FileNotFoundException, URISyntaxException {
+        for(int i = 0; i < COLS; i++) {
+            int count = 0;
+            for(int j = 0; j < ROWS; j++) {
+                if(newView.getNicknameToShelfMap().get(playerNickname)[j][i] == null) {
+                    count++;
+                }
+            }
+            columnsToFreeSpaces.put(i, count);
+        }
         userInterface.updateView(newView);
     }
 
@@ -201,6 +211,21 @@ public class ClientControllerTCP implements ClientController {
     @Override
     public void wrongParameters() {
         userInterface.wrongParameters();
+    }
+
+    @Override
+    public boolean columnHasEnoughSpace(int col) {
+        return columnsToFreeSpaces.get(col) >= positionPicked.size();
+    }
+
+    @Override
+    public void removeInPositionPicked(int col) {
+        positionPicked.remove(col);
+    }
+
+    @Override
+    public void playerRestored() {
+        userInterface.playerRestored();
     }
 
 }

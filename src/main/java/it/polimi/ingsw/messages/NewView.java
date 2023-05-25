@@ -3,7 +3,9 @@ package it.polimi.ingsw.messages;
 import it.polimi.ingsw.server.model.items.Item;
 
 import java.io.Serializable;
+import java.util.ArrayList;
 import java.util.LinkedHashMap;
+import java.util.List;
 import java.util.Map;
 
 public class NewView implements Serializable {
@@ -13,6 +15,7 @@ public class NewView implements Serializable {
     private Map<String, Integer> nicknameToPointsMap = new LinkedHashMap<>(4);
     private Item[][] boardItems;
     private boolean[][] boardBitMask;
+    private List<String> playerList = new ArrayList<>(4);
 
     public String getActivePlayer() {
         return activePlayerNickname;
@@ -60,5 +63,13 @@ public class NewView implements Serializable {
 
     public void setBoardBitMask(boolean[][] boardBitMask) {
         this.boardBitMask = boardBitMask;
+    }
+
+    public List<String> getPlayerList() {
+        return playerList;
+    }
+
+    public void setPlayerList(List<String> playerList) {
+        this.playerList = playerList;
     }
 }

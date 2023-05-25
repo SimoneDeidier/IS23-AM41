@@ -126,6 +126,7 @@ public class GameController {
         newView.setBoardItems(board.getBoardMatrix());
         newView.setBoardBitMask(board.getBitMask());
         for(Player p : playerList) {
+            newView.getPlayerList().add(p.getNickname());
             newView.getNicknameToPointsMap().put(p.getNickname(), p.getPlayerScore());
             newView.getNicknameToShelfMap().put(p.getNickname(), p.getShelf().getShelfMatrix());
         }

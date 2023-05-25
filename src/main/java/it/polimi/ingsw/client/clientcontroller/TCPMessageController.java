@@ -31,7 +31,7 @@ public class TCPMessageController implements TCPMessageControllerInterface {
                 controller.waitForLobby();
             }
             case "Player Restored" -> {
-                // todo
+                controller.playerRestored();
             }
             case "Invalid Nickname" -> {
                 controller.invalidNickname();
@@ -48,7 +48,6 @@ public class TCPMessageController implements TCPMessageControllerInterface {
                 controller.loadGameScreen();
             }
             case "Update View" -> {
-                System.err.println("UPDATE VIEW ARRIVATO");
                 controller.updateView(message.getBody().getNewView());
             }
             case "Lobby Created" -> {

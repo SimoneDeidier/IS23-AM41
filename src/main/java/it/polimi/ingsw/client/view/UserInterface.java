@@ -68,4 +68,10 @@ public interface UserInterface {
     void wrongReceiver();
 
     void wrongParameters();
+
+    boolean columnHasEnoughSpace(int col);
+
+    void removeInPositionPicked(int col);
+
+    void playerRestored();
 }

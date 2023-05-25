@@ -16,7 +16,8 @@ import java.util.Scanner;
 public class TextUserInterface implements UserInterface{
 
     private static ClientController clientController;
-    Scanner scanner;
+    private boolean isYourTurn = false; // todo deve essere modificato quando arriva new view
+    private Scanner scanner;
 
     @Override
     public void run() {
@@ -69,7 +70,7 @@ public class TextUserInterface implements UserInterface{
 
     @Override
     public void loadGameScreen(int personalTargetCardNumber, String nickname, List<String> commonTargetGoals) {
-
+        // ti salvi tutti i valori passati
     }
 
     @Override
@@ -112,22 +113,22 @@ public class TextUserInterface implements UserInterface{
 
     @Override
     public void disconnect() {
-
+        // da sistemare nel controller
     }
 
     @Override
     public void rejoinMatch() {
-
+        // da sistemare nel controller
     }
 
     @Override
     public void exit() {
-
+        // da sistemare nel controller
     }
 
     @Override
     public void rejoinedMatch() {
-
+        // da sistemare nel controller
     }
 
     @Override
@@ -138,24 +139,26 @@ public class TextUserInterface implements UserInterface{
     @Override
     public boolean isYourTurn() {
         // stampa a video una scritta per dire che è il tuo turno
-        return false;
+        return isYourTurn;
     }
 
     @Override
     public void sendMove(int col) {
         // passa al controller la colonna
         // il controller in automatico manda la mossa
+        clientController.sendMove(col);
     }
 
     @Override
     public void insertInPositionPicked(int[] el) {
         // passi al controller le coordinate di un elemento scleto
+        clientController.insertInPositionPicked(el);
     }
 
     @Override
     public int getPositionPickedSize() {
         // check se ha già scelto o meno
-        return 0;
+        return clientController.getPositionPickedSize();
     }
 
     @Override
@@ -188,6 +191,21 @@ public class TextUserInterface implements UserInterface{
     @Override
     public void wrongParameters() {
         // show the user has inserted wrong parameters of the lobby (es.: players > 4 o commons > 2)
+    }
+
+    @Override
+    public boolean columnHasEnoughSpace(int col) {
+        return clientController.columnHasEnoughSpace(col);
+    }
+
+    @Override
+    public void removeInPositionPicked(int col) {
+        clientController.columnHasEnoughSpace(col);
+    }
+
+    @Override
+    public void playerRestored() {
+        // scrive a schermo che un giocatore è stato restorato da un salvataggio
     }
 
 }

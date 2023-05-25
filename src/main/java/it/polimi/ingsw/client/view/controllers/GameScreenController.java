@@ -151,8 +151,9 @@ public class GameScreenController {
             try {
                 Stage stage = new Stage();
                 stage.setScene(new Scene(loader.load()));
-                OtherPlayersController commonGoalController = loader.getController();
-                commonGoalController.setParameters(nicknameToShelfMap, nicknameToPointsMap, playerNickname);
+                OtherPlayersController otherPlayersController = loader.getController();
+                otherPlayersController.setGsc(this);
+                otherPlayersController.setParameters(nicknameToShelfMap, nicknameToPointsMap, playerNickname);
                 stage.setResizable(false);
                 stage.setTitle("My Shelfie - Other players!");
                 stage.show();
@@ -172,7 +173,6 @@ public class GameScreenController {
         newMsg.wrapTextProperty().set(true);
         Platform.runLater(() -> {
             chatVBox.getChildren().add(newMsg);
-            System.err.println(chatVBox.getHeight());
         });
     }
 
@@ -190,7 +190,12 @@ public class GameScreenController {
                         public void handle(MouseEvent mouseEvent) {
                             for(Node n : boardGridPane.getChildren()) {
                                 if(n == mouseEvent.getSource()) {
-                                    addInSelected(n);
+                                    if(n.getOpacity() == 1.0) {
+                                        addInSelected(n);
+                                    }
+                                    else {
+                                        removeFromSelected(n);
+                                    }
                                     break;
                                 }
                             }
@@ -265,6 +270,32 @@ public class GameScreenController {
         }
     }
 
+    public void removeFromSelected(Node n) {
+        for(Node node : pickedItemsGridPane.getChildren()) {
+            ImageView imgv1 = (ImageView) n;
+            ImageView imgv2 = (ImageView) node;
+            if(imgv1.getImage() == imgv2.getImage()) {
+                imgv2.setImage(null);
+                int col = GridPane.getColumnIndex(node);
+                gui.removeInPositionPicked(col);
+            }
+        }
+        for(Node node : pickedItemsGridPane.getChildren()) {
+            ImageView imgv1 = (ImageView) node;
+            if(imgv1.getImage() == null) {
+                for(Node node1 : pickedItemsGridPane.getChildren()) {
+                    ImageView imgv2 = (ImageView) node1;
+                    if(imgv2.getImage() != null && (GridPane.getColumnIndex(imgv1) == (GridPane.getColumnIndex(imgv2) - 1))) {
+                        imgv1.setImage(imgv2.getImage());
+                        imgv2.setImage(null);
+                        break;
+                    }
+                }
+            }
+        }
+        n.setOpacity(1.0);
+    }
+
     public void setupPlayerShelf() throws URISyntaxException, FileNotFoundException {
         for(int i = 0; i < SHELF_ROWS; i++) {
             for(int j = 0; j < SHELF_COL; j++) {
@@ -280,13 +311,15 @@ public class GameScreenController {
                     @Override
                     public void handle(MouseEvent mouseEvent) {
                         for(Node n : shelfGridPane.getChildren()) {
-                            if(n == mouseEvent.getSource() && gui.isYourTurn() && gui.getPositionPickedSize() > 0 /*todo check spazio colonna*/) {
-                                int col = GridPane.getColumnIndex(n);
-                                gui.sendMove(col);
+                            int col = GridPane.getColumnIndex(n);
+                            if(n == mouseEvent.getSource()) {
+                                if(gui.isYourTurn() && gui.getPositionPickedSize() > 0 && gui.columnHasEnoughSpace(col)) {
+                                    gui.sendMove(col);
+                                    pickedItemsGridPane.getChildren().clear();
+                                }
                                 break;
                             }
                         }
-                        pickedItemsGridPane.getChildren().clear();
                     }
                 });
                 shelfGridPane.add(imgv, j, i);
@@ -378,8 +411,8 @@ public class GameScreenController {
     }
 
     public void setChair() {
-
+        chairImageView.setDisable(false);
+        chairImageView.setVisible(true);
     }
-
 
 }

@@ -166,16 +166,14 @@ public class GraphicUserInterface extends Application implements UserInterface, 
         Platform.runLater(() -> {
             try {
                 if(!newView.isGameOver()) {
-                    //todo gameScreenController.setChair(newView.get);
-                    //Non so simo, c'era un get a metà qui
-                    //todo
-                    //todo
-                    //todo metto i todo così li vedi
+                    if(Objects.equals(newView.getPlayerList().get(0), playerNickname)) {
+                        gameScreenController.setChair();
+                    }
                     gameScreenController.clearBoard();
                     gameScreenController.setBoardItems(newView.getBoardItems(), newView.getBoardBitMask());
                     gameScreenController.setPlayerText(playerNickname, newView.getNicknameToPointsMap().get(playerNickname));
-                    gameScreenController.setPersonalShelf(newView.getNicknameToShelfMap().get(clientController.getPlayerNickname()));
-                    gameScreenController.setOtherPlayersParameters(newView.getNicknameToShelfMap(), newView.getNicknameToPointsMap(), clientController.getPlayerNickname());
+                    gameScreenController.setPersonalShelf(newView.getNicknameToShelfMap().get(playerNickname));
+                    gameScreenController.setOtherPlayersParameters(newView.getNicknameToShelfMap(), newView.getNicknameToPointsMap(), playerNickname);
                     gameScreenController.setYourTurnPane(this.isYourTurn);
                 }
                 else {
@@ -289,6 +287,21 @@ public class GraphicUserInterface extends Application implements UserInterface, 
     @Override
     public void wrongParameters() {
         loginScreenController.wrongParameters();
+    }
+
+    @Override
+    public boolean columnHasEnoughSpace(int col) {
+        return clientController.columnHasEnoughSpace(col);
+    }
+
+    @Override
+    public void removeInPositionPicked(int col) {
+        clientController.removeInPositionPicked(col);
+    }
+
+    @Override
+    public void playerRestored() {
+        loginScreenController.playerRestored();
     }
 
 }

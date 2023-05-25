@@ -198,4 +198,19 @@ public class ClientControllerRMI implements ClientController, Serializable {
 
     }
 
+    @Override
+    public boolean columnHasEnoughSpace(int col) {
+        return false;
+    }
+
+    @Override
+    public void removeInPositionPicked(int col) {
+
+    }
+
+    @Override
+    public void playerRestored() {
+
+    }
+
 }
