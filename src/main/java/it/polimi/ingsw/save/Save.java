@@ -3,23 +3,22 @@ package it.polimi.ingsw.save;
 import it.polimi.ingsw.server.model.PersonalTargetCard;
 import it.polimi.ingsw.server.model.items.Item;
 import it.polimi.ingsw.server.model.tokens.ScoringToken;
-import it.polimi.ingsw.server.servercontroller.controllerstates.GameState;
 
-import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
 public class Save {
     private String activePlayerNickname;
-    private Map<String, Item[][]> nicknameToShelfMap = new HashMap<>(4);
-    private Map<String, Integer> nicknameToPointsMap = new HashMap<>(4);
-    private Map<String, List<ScoringToken>> nicknameToScoringTokensMap = new HashMap<>(4);
-    private Map<String, PersonalTargetCard> nicknameToPersonalTargetCard=new HashMap<>(4);
+    private Map<String, Item[][]> nicknameToShelfMap = new LinkedHashMap<>(4);
+    private Map<String, Integer> nicknameToPointsMap = new LinkedHashMap<>(4);
+    private Map<String, List<ScoringToken>> nicknameToScoringTokensMap = new LinkedHashMap<>(4);
+    private Map<String, PersonalTargetCard> nicknameToPersonalTargetCard=new LinkedHashMap<>(4);
     private String endGameTokenAssignedToWhom;
     private boolean lastTurn;
     private int maxPlayerPlayer;
     private boolean gameOver;
-    private Map<String,List<ScoringToken>> commonTargetCardMap=new HashMap<>(4);;
+    private Map<String,List<ScoringToken>> commonTargetCardMap=new LinkedHashMap<>(4);
     private Item[][] boardItems;
     private boolean[][] boardBitMask;
 

@@ -3,14 +3,14 @@ package it.polimi.ingsw.messages;
 import it.polimi.ingsw.server.model.items.Item;
 
 import java.io.Serializable;
-import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.Map;
 
 public class NewView implements Serializable {
     private String activePlayerNickname;
     private boolean gameOver;
-    private Map<String, Item[][]> nicknameToShelfMap = new HashMap<>(4);
-    private Map<String, Integer> nicknameToPointsMap = new HashMap<>(4);
+    private Map<String, Item[][]> nicknameToShelfMap = new LinkedHashMap<>(4);
+    private Map<String, Integer> nicknameToPointsMap = new LinkedHashMap<>(4);
     private Item[][] boardItems;
     private boolean[][] boardBitMask;
 

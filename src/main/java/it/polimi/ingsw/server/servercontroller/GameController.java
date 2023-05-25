@@ -137,10 +137,10 @@ public class GameController {
         Save save=new Save();
         if(activePlayer!=null)
             save.setActivePlayerNickname(activePlayer.getNickname());
-        Map<String, Item[][]> nicknameToShelfMap = new HashMap<>(4);
-        Map<String, Integer> nicknameToPointsMap = new HashMap<>(4);
-        Map<String, List<ScoringToken>> nicknameToScoringTokensMap = new HashMap<>(4);
-        Map<String, PersonalTargetCard> nicknameToPersonalTargetCard=new HashMap<>(4);
+        Map<String, Item[][]> nicknameToShelfMap = new LinkedHashMap<>(4);
+        Map<String, Integer> nicknameToPointsMap = new LinkedHashMap<>(4);
+        Map<String, List<ScoringToken>> nicknameToScoringTokensMap = new LinkedHashMap<>(4);
+        Map<String, PersonalTargetCard> nicknameToPersonalTargetCard=new LinkedHashMap<>(4);
         for(Player player:playerList){
             nicknameToShelfMap.put(player.getNickname(), player.getShelf().getShelfMatrix());
             nicknameToPointsMap.put(player.getNickname(),player.getPlayerScore());
@@ -155,7 +155,7 @@ public class GameController {
         save.setNicknameToPersonalTargetCard(nicknameToPersonalTargetCard);
         save.setLastTurn(lastTurn);
         save.setGameOver(gameOver);
-        Map<String,List<ScoringToken>> commonTargetCardMap=new HashMap<>(4);;
+        Map<String,List<ScoringToken>> commonTargetCardMap=new LinkedHashMap<>(4);;
         for(CommonTargetCard commonTargetCard:commonTargetCardsList){
             commonTargetCardMap.put(commonTargetCard.getName(),commonTargetCard.getScoringTokensList());
         }
