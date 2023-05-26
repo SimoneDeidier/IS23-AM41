@@ -5,6 +5,7 @@ import it.polimi.ingsw.client.clientcontroller.connection.ConnectionRMI;
 import it.polimi.ingsw.client.clientcontroller.connection.ConnectionTCP;
 
 import java.io.BufferedReader;
+import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.nio.charset.StandardCharsets;
@@ -20,6 +21,7 @@ public class Client {
     private final static int RMI_PORT = 1234;
     private static String connectionType;
     private static String uiType;
+    private static boolean connectionOk = true;
 
     public static void main(String[] args) {
 
@@ -30,26 +32,38 @@ public class Client {
             connectionType = stdin.nextLine();
         }
         switch (connectionType) {
-            case "tcp" -> connection = new ConnectionTCP(IP, TCP_PORT);
+            case "tcp" -> {
+                try {
+                    connection = new ConnectionTCP(IP, TCP_PORT);
+                }
+                catch (IOException e) {
+                    connectionOk = false;
+                }
+            }
             case "rmi" -> {
                 try {
                     connection = new ConnectionRMI(RMI_PORT,IP);
                 } catch (RemoteException e) {
-                    throw new RuntimeException(e);
+                    connectionOk = false;
                 }
             }
             default -> System.err.println("Wrong parameter, restart client...");
         }
-        if(!parseUiType(args)) {
-            System.out.println("Select UI type: ");
-            uiType = stdin.nextLine();
+        if(connectionOk) {
+            if (!parseUiType(args)) {
+                System.out.println("Select UI type: ");
+                uiType = stdin.nextLine();
+            }
+            switch (uiType) {
+                case "tui" -> connection.startConnection("tui");
+                case "gui" -> connection.startConnection("gui");
+                default -> System.err.println("Wrong parameter, restart client...");
+            }
         }
-        switch (uiType) {
-            case "tui" -> connection.startConnection("tui");
-            case "gui" -> connection.startConnection("gui");
-            default -> System.err.println("Wrong parameter, restart client...");
+        else {
+            System.out.println("Server is momentarily unreachable, please retry later!");
         }
-        System.err.println("CLOSING THE CLIENT...");
+        System.out.println("Closing the client...");
     }
 
     public static void drawLogo() {

@@ -2,6 +2,7 @@ package it.polimi.ingsw.server.servercontroller;
 
 import com.google.gson.Gson;
 import com.google.gson.JsonObject;
+import it.polimi.ingsw.messages.TCPMessage;
 import it.polimi.ingsw.save.Save;
 import it.polimi.ingsw.messages.Body;
 import it.polimi.ingsw.messages.NewView;
@@ -35,13 +36,16 @@ public class GameController {
     private GameState state;
     private List<CommonTargetCard> commonTargetCardsList;
     private Map<String, TCPMessageController> nickToTCPMessageControllerMapping = new ConcurrentHashMap<>(4);
+    private Map<String, Integer> nickToUnansweredCheck = new HashMap<>(4);
     private final Server server;
     private boolean gameOver;
+    private static final int THREAD_SLEEP = 1000;
 
     private GameController(Server s) {
         this.state = new ServerInitState();
         this.server = s;
         this.gameOver=false;
+        startCheckThread();
     }
 
     public static GameController getGameController(Server s) {
@@ -522,11 +526,44 @@ public class GameController {
     }
 
     public void startCheckThread() {
-        Thread checkThread = new Thread(() -> {
+        new Thread(() -> {
             while(true) {
-                //for() todo da pensare bene il ping
+                for(String nickname : nickToTCPMessageControllerMapping.keySet()) {
+                    System.out.println("Mando check a " + nickname);
+                    nickToTCPMessageControllerMapping.get(nickname).printTCPMessage("Check", null);
+                    if(nickToUnansweredCheck.containsKey(nickname)) {
+                        nickToUnansweredCheck.put(nickname, nickToUnansweredCheck.get(nickname) + 1);
+                    }
+                    else {
+                        nickToUnansweredCheck.put(nickname, 1);
+                    }
+                    if(nickToUnansweredCheck.get(nickname) == 5) {
+                        System.out.println(nickname + " è disonnesso");
+                        for(Player p : playerList) {
+                            // todo qui bisogna fare il check se è nella fase di gioco o quando crea la lobby
+                            if(Objects.equals(p.getNickname(), nickname)) {
+                                p.setConnected(false);
+                            }
+                        }
+                    }
+                }
+                // todo da fare RMI
+                try {
+                    Thread.sleep(THREAD_SLEEP);
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
             }
-        });
+        }).start();
+    }
+
+    public void resetUnansweredCheckCounter(TCPMessageController tcpMessageController) {
+        for(String s : nickToTCPMessageControllerMapping.keySet()) {
+            if(nickToTCPMessageControllerMapping.get(s) == tcpMessageController) {
+                nickToUnansweredCheck.put(s, 0);
+                break;
+            }
+        }
     }
 
 }

@@ -32,50 +32,6 @@ public class Server implements InterfaceServer {
     private final GameController controller = GameController.getGameController(this);
     private final Map<String,InterfaceClient> clientMapRMI = new ConcurrentHashMap<>();
 
-    public static boolean parsePortNumber(String[] args) {
-
-        boolean rmiOK = false;
-        boolean tcpOK = false;
-
-        for(int i = 0; i < args.length - 1; i++) {
-            if(Objects.equals(args[i], "-r") && args[i+1].matches("[0-9]+")) {
-                int parsed = Integer.parseInt(args[i+1]);
-                if(parsed <= 1024 || parsed > 65535 || (tcpOK && (parsed == portTCP))) {
-                    System.out.println("Invalid port number.");
-                    return false;
-                }
-                portRMI = parsed;
-                rmiOK = true;
-            }
-            if(Objects.equals(args[i], "-t") && args[i+1].matches("[0-9]+")) {
-                int parsed = Integer.parseInt(args[i+1]);
-                if(parsed <= 1024 || parsed > 65535 || (rmiOK && (parsed == portRMI))) {
-                    System.out.println("Invalid port number.");
-                    return false;
-                }
-                portTCP = parsed;
-                tcpOK = true;
-            }
-            if(rmiOK && tcpOK) {
-                return true;
-            }
-        }
-        return false;
-
-    }
-
-    public static int setPortNumber(String type, int firstPort) {
-
-        int input;
-        Scanner in = new Scanner(System.in);
-
-        do {
-            System.out.print("Please select a port number for the " + type + " server: ");
-            input = in.nextInt();
-        }while(input <= 1024 || input > 65535 || input == firstPort);
-        return input;
-
-    }
 
     public static void main(String[] args) {
 
@@ -131,6 +87,51 @@ public class Server implements InterfaceServer {
         System.out.println("Server socket was closed - server shutting down.");
         executor.shutdown();
         System.out.println("All threads are joined - server shutting down.");
+
+    }
+
+    public static boolean parsePortNumber(String[] args) {
+
+        boolean rmiOK = false;
+        boolean tcpOK = false;
+
+        for(int i = 0; i < args.length - 1; i++) {
+            if(Objects.equals(args[i], "-r") && args[i+1].matches("[0-9]+")) {
+                int parsed = Integer.parseInt(args[i+1]);
+                if(parsed <= 1024 || parsed > 65535 || (tcpOK && (parsed == portTCP))) {
+                    System.out.println("Invalid port number.");
+                    return false;
+                }
+                portRMI = parsed;
+                rmiOK = true;
+            }
+            if(Objects.equals(args[i], "-t") && args[i+1].matches("[0-9]+")) {
+                int parsed = Integer.parseInt(args[i+1]);
+                if(parsed <= 1024 || parsed > 65535 || (rmiOK && (parsed == portRMI))) {
+                    System.out.println("Invalid port number.");
+                    return false;
+                }
+                portTCP = parsed;
+                tcpOK = true;
+            }
+            if(rmiOK && tcpOK) {
+                return true;
+            }
+        }
+        return false;
+
+    }
+
+    public static int setPortNumber(String type, int firstPort) {
+
+        int input;
+        Scanner in = new Scanner(System.in);
+
+        do {
+            System.out.print("Please select a port number for the " + type + " server: ");
+            input = in.nextInt();
+        }while(input <= 1024 || input > 65535 || input == firstPort);
+        return input;
 
     }
 

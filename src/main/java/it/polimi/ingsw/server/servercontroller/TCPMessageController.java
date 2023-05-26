@@ -115,6 +115,9 @@ public class TCPMessageController implements TCPMessageControllerInterface {
                 }
                 else printTCPMessage("Invalid Player", null);
             }
+            case "Clear" -> {
+                gameController.resetUnansweredCheckCounter(this);
+            }
         }
     }
 

@@ -27,7 +27,6 @@ public class TCPMessageController implements TCPMessageControllerInterface {
         String header = message.getHeader();
         switch (header) {
             case "Nickname Accepted" -> {
-                startClearThread();
                 controller.nicknameAccepted();
             }
             case "Wait for Lobby" -> {
@@ -46,7 +45,6 @@ public class TCPMessageController implements TCPMessageControllerInterface {
                 closeConnection();
             }
             case "Get Parameters" -> {
-                startClearThread();
                 controller.getParameters();
             }
             case "Your Target" -> {
@@ -107,7 +105,7 @@ public class TCPMessageController implements TCPMessageControllerInterface {
     }
 
     public void startClearThread() {
-        Thread clearThread = new Thread(() -> {
+        new Thread(() -> {
             while(clearUnanswered < 5) {
                 System.out.println("MANDO UN PING AL SERVER");
                 printTCPMessage("Clear", null);
@@ -119,14 +117,7 @@ public class TCPMessageController implements TCPMessageControllerInterface {
                 }
             }
             System.out.println("SERVER DISCONNESSO!");
-        });
-        clearThread.start();
-        try {
-            clearThread.join();
-        }
-        catch (InterruptedException e) {
-            e.printStackTrace();
-        }
+        }).start();
     }
 
 }
