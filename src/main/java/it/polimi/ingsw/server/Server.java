@@ -138,18 +138,18 @@ public class Server implements InterfaceServer {
     public void presentation(InterfaceClient cl, String nickname) throws RemoteException {
         try {
             switch(controller.presentation(nickname)) {
-                case 0: {  // you're joining but I need another nickname
+                case 0 -> {  // you're joining but I need another nickname
                     cl.askForNewNickname();
                 }
-                case 1: { //joined a "new" game
+                case 1 -> { //joined a "new" game
                     clientMapRMI.put(nickname,cl);
                     cl.confirmConnection(false);
                 }
-                case 2:{ //first player joining a "restored" game
+                case 2 ->{ //first player joining a "restored" game
                     clientMapRMI.put(nickname,cl);
                     cl.lobbyCreated(false);
                 }
-                case 3: { //joining a restored game
+                case 3 -> { //joining a restored game
                     clientMapRMI.put(nickname,cl);
                     cl.confirmConnection(true);
                 }

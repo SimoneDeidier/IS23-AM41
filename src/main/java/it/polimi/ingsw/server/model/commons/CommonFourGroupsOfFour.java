@@ -37,7 +37,7 @@ public class CommonFourGroupsOfFour extends CommonTargetCard {
         for (int[] neighbor : neighbors) {
             int row = i + neighbor[0];
             int col = j + neighbor[1];
-            if (row >= 0 && row < ROWS && col >= 0 && col < COLUMNS && !visited[row][col] && shelf.getItemByCoordinates(row, col).getColor() != null && shelf.getItemByCoordinates(row, col).getColor() == value) {
+            if (row >= 0 && row < ROWS && col >= 0 && col < COLUMNS && !visited[row][col] && shelf.getItemByCoordinates(row, col) != null && shelf.getItemByCoordinates(row, col).getColor() == value) {
                 count += dfs(shelf, visited, row, col, value);
             }
         }
