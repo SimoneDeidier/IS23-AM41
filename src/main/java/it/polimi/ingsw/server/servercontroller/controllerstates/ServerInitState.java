@@ -167,13 +167,12 @@ public class ServerInitState implements GameState {
                     player.setPersonalTargetCard(save.getNicknameToPersonalTargetCard().get(nickname));
                     newPlayerList.add(player);
                 }
-                for(Player player:newPlayerList){
+                controller.setPlayerList(newPlayerList);
+                for(Player player:controller.getPlayerList()){
                     if(player.getNickname().equals(save.getActivePlayerNickname()))
                         controller.setActivePlayer(player);
                 }
-                if(save.getActivePlayerNickname()==null)
-                    controller.setActivePlayer(null);
-                controller.setPlayerList(newPlayerList);
+                System.err.println(save.getActivePlayerNickname());
             }
 
 

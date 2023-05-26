@@ -224,12 +224,10 @@ public class GameController {
     }
 
     public void setupGame(boolean onlyOneCommonCard) {
-        if(!state.getClass().equals(WaitingForSavedGameState.class)) {
-            this.commonTargetCardsList = state.setupCommonList(onlyOneCommonCard, maxPlayerNumber);
-            this.board = state.setupBoard(maxPlayerNumber);
-            state.boardNeedsRefill(this.board);
-            state.setupPlayers(playerList, commonTargetCardsList, board, this);
-        }
+        this.commonTargetCardsList = state.setupCommonList(onlyOneCommonCard, maxPlayerNumber);
+        this.board = state.setupBoard(maxPlayerNumber);
+        state.boardNeedsRefill(this.board);
+        state.setupPlayers(playerList, commonTargetCardsList, board, this);
     }
 
     public boolean checkLastTurn() {
@@ -351,8 +349,10 @@ public class GameController {
     }
 
     public void startGame(){
-        setupGame(onlyOneCommonCard);
-        activePlayer=playerList.get(0);
+        if(!state.getClass().equals(WaitingForSavedGameState.class)) {
+            setupGame(onlyOneCommonCard);
+            activePlayer = playerList.get(0);
+        }
         changeState(new RunningGameState());
         //todo da spostare in presentation
         /*checkThread = new Thread(() -> {

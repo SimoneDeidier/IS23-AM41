@@ -80,16 +80,14 @@ public class ConnectionRMI extends UnicastRemoteObject implements InterfaceClien
     }
 
     @Override
-    public void confirmConnection(boolean bool) throws RemoteException {
-        if(!bool) {
-            PingThreadClientRmiToServer pingThread = new PingThreadClientRmiToServer(stub,this); //Starting the thread for pinging the server
-            pingThread.start();
-            controller.nicknameAccepted();
+    public void confirmConnection(boolean typeOfLobby) throws RemoteException {
+        PingThreadClientRmiToServer pingThread = new PingThreadClientRmiToServer(stub,this); //Starting the thread for pinging the server
+        pingThread.start();
+        if(typeOfLobby) {
+            controller.playerRestored();
         }
         else{
-            PingThreadClientRmiToServer pingThread = new PingThreadClientRmiToServer(stub,this); //Starting the thread for pinging the server
-            pingThread.start();
-            controller.playerRestored();
+            controller.nicknameAccepted();
         }
     }
 
