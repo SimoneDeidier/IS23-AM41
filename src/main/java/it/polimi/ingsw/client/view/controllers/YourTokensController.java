@@ -31,7 +31,7 @@ public class YourTokensController {
             FileInputStream fis = new FileInputStream(file);
             ImageView egtImgv = new ImageView(new Image(fis));
             egtImgv.setFitHeight(TOKEN_DIM);
-            egtImgv.setFitHeight(TOKEN_DIM);
+            egtImgv.setFitWidth(TOKEN_DIM);
             egtImgv.setTranslateX(TOKEN_OFFSET);
             endGridPane.add(egtImgv, 0, 0);
         }
@@ -41,7 +41,7 @@ public class YourTokensController {
             FileInputStream fis = new FileInputStream(file);
             ImageView scoringImgv = new ImageView(new Image(fis));
             scoringImgv.setFitHeight(TOKEN_DIM);
-            scoringImgv.setFitHeight(TOKEN_DIM);
+            scoringImgv.setFitWidth(TOKEN_DIM);
             scoringImgv.setTranslateX(TOKEN_OFFSET);
             commonsGridPane.add(scoringImgv, count, 0);
             count++;

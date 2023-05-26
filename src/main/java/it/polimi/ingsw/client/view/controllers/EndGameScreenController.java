@@ -41,12 +41,14 @@ public class EndGameScreenController {
     private List<String> getAscendingPointsFromMap(Map<String, Integer> pointsMap) {
         List<String> playerList = new ArrayList<>();
         playerList.addAll(pointsMap.keySet());
-        List<String> orderPlayerList=new ArrayList<>();
+        List<String> orderPlayerList=new ArrayList<>();//list with first player = max number of points
+
         orderPlayerList.add(playerList.get(playerList.size()-1));
         if(pointsMap.get(playerList.get(playerList.size()-2))> pointsMap.get(orderPlayerList.get(0)))
             orderPlayerList.add(0, playerList.get(playerList.size()-2));
         else
             orderPlayerList.add(playerList.get(playerList.size()-2));
+
         if(playerList.size()==3){
             if(pointsMap.get(playerList.get(0))>pointsMap.get(orderPlayerList.get(0)))
                 orderPlayerList.add(0,playerList.get(0));
@@ -55,6 +57,7 @@ public class EndGameScreenController {
             else
                 orderPlayerList.add(playerList.get(0));
         }
+
         if(playerList.size()==4){
             if(pointsMap.get(playerList.get(playerList.size()-3))>pointsMap.get(orderPlayerList.get(0)))
                 orderPlayerList.add(0,playerList.get(playerList.size()-3));

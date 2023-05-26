@@ -14,6 +14,8 @@ public class TCPMessageController implements TCPMessageControllerInterface {
 
     private final SerializeDeserialize serializeDeserialize;
     private final ClientController controller;
+    private static final int CLEAR_DELAY = 1000;
+    private int clearUnanswered = 0;
 
     public TCPMessageController(SerializeDeserialize serializeDeserialize) {
         this.serializeDeserialize = serializeDeserialize;
@@ -25,10 +27,14 @@ public class TCPMessageController implements TCPMessageControllerInterface {
         String header = message.getHeader();
         switch (header) {
             case "Nickname Accepted" -> {
+                startClearThread();
                 controller.nicknameAccepted();
             }
             case "Wait for Lobby" -> {
                 controller.waitForLobby();
+            }
+            case "Lobby Restored" -> {
+                // todo
             }
             case "Player Restored" -> {
                 controller.playerRestored();
@@ -40,6 +46,7 @@ public class TCPMessageController implements TCPMessageControllerInterface {
                 closeConnection();
             }
             case "Get Parameters" -> {
+                startClearThread();
                 controller.getParameters();
             }
             case "Your Target" -> {
@@ -71,7 +78,9 @@ public class TCPMessageController implements TCPMessageControllerInterface {
             case "Invalid Player" -> {
                 controller.invalidPlayer();
             }
-
+            case "Check" -> {
+                clearUnanswered = 0;
+            }
         }
     }
 
@@ -95,6 +104,29 @@ public class TCPMessageController implements TCPMessageControllerInterface {
 
     public String getPlayerNickname() {
         return controller.getPlayerNickname();
+    }
+
+    public void startClearThread() {
+        Thread clearThread = new Thread(() -> {
+            while(clearUnanswered < 5) {
+                System.out.println("MANDO UN PING AL SERVER");
+                printTCPMessage("Clear", null);
+                clearUnanswered++;
+                try {
+                    Thread.sleep(CLEAR_DELAY);
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
+            }
+            System.out.println("SERVER DISCONNESSO!");
+        });
+        clearThread.start();
+        try {
+            clearThread.join();
+        }
+        catch (InterruptedException e) {
+            e.printStackTrace();
+        }
     }
 
 }

@@ -36,7 +36,6 @@ public class GameController {
     private List<CommonTargetCard> commonTargetCardsList;
     private Map<String, TCPMessageController> nickToTCPMessageControllerMapping = new ConcurrentHashMap<>(4);
     private final Server server;
-    private Thread checkThread;
     private boolean gameOver;
 
     private GameController(Server s) {
@@ -359,20 +358,6 @@ public class GameController {
             activePlayer = playerList.get(0);
         }
         changeState(new RunningGameState());
-        //todo da spostare in presentation
-        /*checkThread = new Thread(() -> {
-            System.err.println("THREAD PING STARTED!");
-            while(true) {
-                try {
-                    Thread.sleep(1000);
-                    // mando check a tutti i giocatori
-                   //System.out.printf("Check");
-                } catch (InterruptedException e) {
-                    throw new RuntimeException(e);
-                }
-            }
-        });
-        checkThread.start();*/
     }
 
     public void disconnectAllUsers() throws RemoteException {
@@ -535,6 +520,15 @@ public class GameController {
     public BoardFactory getBoard() {
         return board;
     }
+
+    public void startCheckThread() {
+        Thread checkThread = new Thread(() -> {
+            while(true) {
+                //for() todo da pensare bene il ping
+            }
+        });
+    }
+
 }
 
 

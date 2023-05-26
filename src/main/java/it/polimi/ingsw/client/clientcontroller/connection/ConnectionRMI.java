@@ -119,6 +119,8 @@ public class ConnectionRMI extends UnicastRemoteObject implements InterfaceClien
 
     @Override
     public void lobbyCreated(boolean typeOfGame) throws RemoteException {
+        PingThreadClientRmiToServer pingThread = new PingThreadClientRmiToServer(stub,this); //Starting the thread for pinging the server
+        pingThread.start();
         if(typeOfGame)
             controller.lobbyCreated();
         //else
