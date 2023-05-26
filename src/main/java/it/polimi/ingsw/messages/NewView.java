@@ -1,6 +1,8 @@
 package it.polimi.ingsw.messages;
 
 import it.polimi.ingsw.server.model.items.Item;
+import it.polimi.ingsw.server.model.tokens.EndGameToken;
+import it.polimi.ingsw.server.model.tokens.ScoringToken;
 
 import java.io.Serializable;
 import java.util.ArrayList;
@@ -16,6 +18,10 @@ public class NewView implements Serializable {
     private Item[][] boardItems;
     private boolean[][] boardBitMask;
     private List<String> playerList = new ArrayList<>(4);
+    private EndGameToken endGameToken;
+    private Map<String, List<ScoringToken>> playersToTokens = new LinkedHashMap<>(4);
+    private Map<String, List<ScoringToken>> commonsToTokens = new LinkedHashMap<>(4);
+
 
     public String getActivePlayer() {
         return activePlayerNickname;
@@ -71,5 +77,29 @@ public class NewView implements Serializable {
 
     public void setPlayerList(List<String> playerList) {
         this.playerList = playerList;
+    }
+
+    public EndGameToken getEndGameToken() {
+        return endGameToken;
+    }
+
+    public void setEndGameToken(EndGameToken endGameToken) {
+        this.endGameToken = endGameToken;
+    }
+
+    public Map<String, List<ScoringToken>> getPlayersToTokens() {
+        return playersToTokens;
+    }
+
+    public void setPlayersToTokens(Map<String, List<ScoringToken>> playersToTokens) {
+        this.playersToTokens = playersToTokens;
+    }
+
+    public Map<String, List<ScoringToken>> getCommonsToTokens() {
+        return commonsToTokens;
+    }
+
+    public void setCommonsToTokens(Map<String, List<ScoringToken>> commonsToTokens) {
+        this.commonsToTokens = commonsToTokens;
     }
 }

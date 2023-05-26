@@ -76,6 +76,7 @@ public class Player implements Serializable {
     }
     public void setEndGameToken(EndGameToken endGameToken) {
         this.endGameToken = endGameToken;
+        EndGameToken.getEndGameToken().setTakenBy(nickname);
     }
 
     public void setBoard(BoardFactory board) {

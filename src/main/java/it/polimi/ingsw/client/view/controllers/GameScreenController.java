@@ -3,6 +3,8 @@ package it.polimi.ingsw.client.view.controllers;
 import it.polimi.ingsw.client.view.GraphicUserInterface;
 import it.polimi.ingsw.server.model.items.Item;
 import it.polimi.ingsw.server.model.items.ItemColor;
+import it.polimi.ingsw.server.model.tokens.EndGameToken;
+import it.polimi.ingsw.server.model.tokens.ScoringToken;
 import javafx.application.Platform;
 import javafx.event.EventHandler;
 import javafx.fxml.FXML;
@@ -49,13 +51,16 @@ public class GameScreenController {
 
     private GraphicUserInterface gui;
     private Image personalGoalImage = null;
-    private List<Image> commonGoalImages = new ArrayList<>(2);
+    private List<String> commonGoalNames = new ArrayList<>(2);
     private boolean onlyOneCommon;
     private Map<String, Item[][]> nicknameToShelfMap;
     private Map<String, Integer> nicknameToPointsMap;
     private String playerNickname;
     private Item[][] boardMatrx;
     private List<Node> swapCols = new ArrayList<>(2);
+    private Map<String, List<ScoringToken>> commonsToTokens;
+    private List<ScoringToken> playerTokens;
+    private EndGameToken endGameToken = null;
 
     @FXML
     private Text playerText;
@@ -73,6 +78,8 @@ public class GameScreenController {
     private AnchorPane turnAnchorPane;
     @FXML
     private ImageView chairImageView;
+    @FXML
+    private ImageView endGameTokenImageView;
 
     public void initialize() {
         chatVBox.setStyle("-fx-background-color: #442211;");
@@ -112,12 +119,8 @@ public class GameScreenController {
 
     public void setCommonTargetCard(List<String> commonTargetCardName) throws URISyntaxException, FileNotFoundException {
 
-        for(String name : commonTargetCardName) {
-            File file = new File(ClassLoader.getSystemResource("images/commons/" + name + ".jpg").toURI());
-            FileInputStream fis = new FileInputStream(file);
-            this.commonGoalImages.add(new Image(fis));
-        }
-        this.onlyOneCommon = this.commonGoalImages.size() == 1;
+        this.commonGoalNames = commonTargetCardName;
+        this.onlyOneCommon = this.commonGoalNames.size() == 1;
     }
 
     public void showCommonTargetCard() {
@@ -127,12 +130,12 @@ public class GameScreenController {
                 Stage stage = new Stage();
                 stage.setScene(new Scene(loader.load()));
                 CommonGoalController commonGoalController = loader.getController();
-                commonGoalController.setCommons(onlyOneCommon, commonGoalImages);
+                commonGoalController.setCommons(onlyOneCommon, commonGoalNames, commonsToTokens);
                 stage.setResizable(false);
                 stage.setTitle("My Shelfie - Common goals!");
                 stage.show();
-            } catch (IOException e) {
-                throw new RuntimeException(e);
+            } catch (IOException | URISyntaxException e) {
+                e.printStackTrace();
             }
         });
     }
@@ -415,4 +418,38 @@ public class GameScreenController {
         chairImageView.setVisible(true);
     }
 
+    public void yourTokens() {
+        Platform.runLater(() -> {
+            FXMLLoader loader = new FXMLLoader(ClassLoader.getSystemResource("fxml/YourTokens.fxml"));
+            Stage yourTokensStage = new Stage();
+            try {
+                yourTokensStage.setScene(new Scene(loader.load()));
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+            YourTokensController yourTokensController = loader.getController();
+            try {
+                yourTokensController.setupTokens(playerTokens, endGameToken);
+            } catch (URISyntaxException | FileNotFoundException e) {
+                e.printStackTrace();
+            }
+            yourTokensStage.setTitle("My Shelfie - Your tokens!");
+            yourTokensStage.setResizable(false);
+            yourTokensStage.show();
+        });
+    }
+
+    public void removeEndGameToken() {
+        endGameTokenImageView.setDisable(true);
+        endGameTokenImageView.setVisible(false);
+    }
+
+    public void setTokens(Map<String, List<ScoringToken>> commonsToTokens, List<ScoringToken> playerTokens) {
+        this.commonsToTokens = commonsToTokens;
+        this.playerTokens = playerTokens;
+    }
+
+    public void setEndGameToken(EndGameToken endGameToken) {
+        this.endGameToken = endGameToken;
+    }
 }

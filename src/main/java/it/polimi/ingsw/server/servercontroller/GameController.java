@@ -125,10 +125,15 @@ public class GameController {
         }
         newView.setBoardItems(board.getBoardMatrix());
         newView.setBoardBitMask(board.getBitMask());
+        newView.setEndGameToken(EndGameToken.getEndGameToken());
         for(Player p : playerList) {
             newView.getPlayerList().add(p.getNickname());
             newView.getNicknameToPointsMap().put(p.getNickname(), p.getPlayerScore());
             newView.getNicknameToShelfMap().put(p.getNickname(), p.getShelf().getShelfMatrix());
+            newView.getPlayersToTokens().put(p.getNickname(), p.getScoringTokenList());
+        }
+        for(CommonTargetCard c : commonTargetCardsList) {
+            newView.getCommonsToTokens().put(c.getName(), c.getScoringTokensList());
         }
         saveGameState();
         return newView;

@@ -29,4 +29,8 @@ public class EndGameToken implements Serializable {
     public void setTakenBy(String nickname) {
         this.takenBy = nickname;
     }
+
+    public String getTakenBy() {
+        return takenBy;
+    }
 }

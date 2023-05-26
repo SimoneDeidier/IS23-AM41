@@ -169,10 +169,17 @@ public class GraphicUserInterface extends Application implements UserInterface, 
                     if(Objects.equals(newView.getPlayerList().get(0), playerNickname)) {
                         gameScreenController.setChair();
                     }
+                    if(!newView.getEndGameToken().isTakeable()) {
+                        gameScreenController.removeEndGameToken();
+                    }
+                    if(Objects.equals(newView.getEndGameToken().getTakenBy(), playerNickname)) {
+                        gameScreenController.setEndGameToken(newView.getEndGameToken());
+                    }
                     gameScreenController.clearBoard();
                     gameScreenController.setBoardItems(newView.getBoardItems(), newView.getBoardBitMask());
                     gameScreenController.setPlayerText(playerNickname, newView.getNicknameToPointsMap().get(playerNickname));
                     gameScreenController.setPersonalShelf(newView.getNicknameToShelfMap().get(playerNickname));
+                    gameScreenController.setTokens(newView.getCommonsToTokens(), newView.getPlayersToTokens().get(playerNickname));
                     gameScreenController.setOtherPlayersParameters(newView.getNicknameToShelfMap(), newView.getNicknameToPointsMap(), playerNickname);
                     gameScreenController.setYourTurnPane(this.isYourTurn);
                 }
