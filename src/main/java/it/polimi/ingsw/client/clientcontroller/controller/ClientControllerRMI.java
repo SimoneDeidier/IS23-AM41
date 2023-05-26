@@ -16,8 +16,7 @@ import java.net.URISyntaxException;
 import java.rmi.RemoteException;
 import java.time.LocalDateTime;
 import java.time.temporal.ChronoUnit;
-import java.util.ArrayList;
-import java.util.List;
+import java.util.*;
 
 public class ClientControllerRMI implements ClientController, Serializable {
 
@@ -26,6 +25,10 @@ public class ClientControllerRMI implements ClientController, Serializable {
     private String playerNickname;
     private int personalTargetCardNumber;
     private List<String> commonGoalNameList = new ArrayList<>();
+    private List<int[]> positionPicked = new ArrayList<>(3);
+    private Map<Integer, Integer> columnsToFreeSpaces = new HashMap<>(5);
+    private final static int ROWS = 6;
+    private final static int COLS = 5;
 
     public ClientControllerRMI(ConnectionRMI connectionRMI) {
         this.connectionRMI = connectionRMI;
@@ -130,6 +133,15 @@ public class ClientControllerRMI implements ClientController, Serializable {
 
     @Override
     public void updateView(NewView newView) throws FileNotFoundException, URISyntaxException {
+        for(int i = 0; i < COLS; i++) {
+            int count = 0;
+            for(int j = 0; j < ROWS; j++) {
+                if(newView.getNicknameToShelfMap().get(playerNickname)[j][i] == null) {
+                    count++;
+                }
+            }
+            columnsToFreeSpaces.put(i, count);
+        }
         userInterface.updateView(newView);
     }
 
@@ -139,78 +151,84 @@ public class ClientControllerRMI implements ClientController, Serializable {
     }
 
     @Override
-    public void disconnect() {
+    public void disconnect() { //per ora no
 
     }
 
     @Override
-    public void rejoinMatch() {
+    public void rejoinMatch() { //per ora no
 
     }
 
     @Override
-    public void rejoinedMatch() {
+    public void rejoinedMatch() { //per ora no
 
     }
 
     @Override
-    public void invalidPlayer() {
-
+    public void invalidPlayer() { //per ora no, è quando fallisce il re join
     }
 
     @Override
     public void insertInPositionPicked(int[] el) {
-
+        positionPicked.add(el);
     }
 
     @Override
     public int getPositionPickedSize() {
-        return 0;
+        return positionPicked.size();
     }
 
     @Override
     public void sendMove(int col) {
-
+        Body body = new Body();
+        body.setColumn(col);
+        body.setPositionsPicked(positionPicked);
+        body.setPlayerNickname(playerNickname);
+        connectionRMI.sendMoveToServer(body);
+        positionPicked = new ArrayList<>(3);
     }
 
     @Override
     public void swapCols(List<Node> list) {
-
+        int col1 = userInterface.getSwapColIndex(list.get(0));
+        int col2 = userInterface.getSwapColIndex(list.get(1));
+        Collections.swap(positionPicked, col1, col2);
     }
 
     @Override
     public void swapCols(int col1, int col2) {
-
+        Collections.swap(positionPicked, col1, col2);
     }
 
     @Override
     public void incorrectMove() {
-
+        userInterface.incorrectMove();
     }
 
     @Override
     public void wrongReceiver() {
-
+        userInterface.wrongReceiver();
     }
 
     @Override
     public void wrongParameters() {
-
+        userInterface.wrongParameters();
     }
 
     @Override
     public boolean columnHasEnoughSpace(int col) {
-        return false;
+        return columnsToFreeSpaces.get(col) >= positionPicked.size();
     }
 
     @Override
     public void removeInPositionPicked(int col) {
-
+        positionPicked.remove(col);
     }
 
     @Override
     public void playerRestored() {
-
+        userInterface.playerRestored();
     }
 
 }

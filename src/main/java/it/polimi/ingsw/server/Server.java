@@ -138,20 +138,20 @@ public class Server implements InterfaceServer {
     public void presentation(InterfaceClient cl, String nickname) throws RemoteException {
         try {
             switch(controller.presentation(nickname)) {
-                case 1: { //joined a "new" game
+                case 0 -> {  // you're joining but I need another nickname
+                    cl.askForNewNickname();
+                }
+                case 1 -> { //joined a "new" game
                     clientMapRMI.put(nickname,cl);
                     cl.confirmConnection(false);
                 }
-                case 3: { //joining a restored game
-                    clientMapRMI.put(nickname,cl);
-                    cl.confirmConnection(true);
-                }
-                case 0: {  // you're joining but I need another nickname
-                    cl.askForNewNickname();
-                }
-                case 2:{ //first player joining a "restored" game
+                case 2 ->{ //first player joining a "restored" game
                     clientMapRMI.put(nickname,cl);
                     cl.lobbyCreated(false);
+                }
+                case 3 -> { //joining a restored game
+                    clientMapRMI.put(nickname,cl);
+                    cl.confirmConnection(true);
                 }
             }
         } catch (CancelGameException e) { //the game is being canceled because a restoring of a saved game failed
@@ -177,12 +177,16 @@ public class Server implements InterfaceServer {
         if(controller.createLobby(maxPlayerNumber,onlyOneCommonCard))
             cl.lobbyCreated(true);
         else
-            cl.askParameters();
+            cl.askParametersAgain();
     }
 
-    public void executeMove(Body move) throws RemoteException, InvalidMoveException {
-        controller.executeMove(move);
-        controller.updateView();
+    public void executeMove(Body move) throws RemoteException {
+        try {
+            controller.executeMove(move);
+            controller.updateView();
+        } catch (InvalidMoveException e) {
+            clientMapRMI.get(move.getPlayerNickname()).incorrectMove();
+        }
     }
 
     public void updateViewRMI(NewView newView) throws RemoteException {

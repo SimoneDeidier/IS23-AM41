@@ -55,7 +55,6 @@ public class Player implements Serializable {
             }
             finally {
                 System.err.println("POST ADJACENT");
-                //todo fixare common
                 /*for(CommonTargetCard commonTargetCard:commonTargetCardList){
                     if (commonTargetCard.check(shelf)) {
                         scoringTokenList.add(commonTargetCard.assignToken(this));

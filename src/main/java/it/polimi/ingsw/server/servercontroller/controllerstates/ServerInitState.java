@@ -42,12 +42,17 @@ public class ServerInitState implements GameState {
 
     @Override
     public List<CommonTargetCard> setupCommonList(boolean isOnlyOneCommon, int maxPlayerNumber) {
-        return null;
+        return new ArrayList<>();
     }
 
     @Override
     public BoardFactory setupBoard(int maxPlayerNumber) {
-        return null;
+        if(maxPlayerNumber==2)
+            return new TwoPlayersBoard();
+        else if(maxPlayerNumber==3)
+            return new ThreePlayersBoard();
+        return new FourPlayersBoard();
+
     }
 
     @Override
@@ -81,72 +86,70 @@ public class ServerInitState implements GameState {
             }
             controller.setState(new RunningGameState());
             controller.setGameOver(save.isGameOver());
-            List<CommonTargetCard> newCommonList=new ArrayList<>();
             for(String name:save.getCommonTargetCardMap().keySet()){
                 switch (name) {
                     case "CommonDiagonal" -> {
                         CommonTargetCard commonTargetCard = new CommonDiagonal(save.getMaxPlayerPlayer());
                         commonTargetCard.setScoringTokensList(save.getCommonTargetCardMap().get(name));
-                        newCommonList.add(commonTargetCard);
+                        controller.getCommonTargetCardsList().add(commonTargetCard);
                     }
                     case "CommonEightSame" -> {
                         CommonTargetCard commonTargetCard = new CommonEightSame(save.getMaxPlayerPlayer());
                         commonTargetCard.setScoringTokensList(save.getCommonTargetCardMap().get(name));
-                        newCommonList.add(commonTargetCard);
+                        controller.getCommonTargetCardsList().add(commonTargetCard);
                     }
                     case "CommonFourCorners" -> {
                         CommonTargetCard commonTargetCard = new CommonFourCorners(save.getMaxPlayerPlayer());
                         commonTargetCard.setScoringTokensList(save.getCommonTargetCardMap().get(name));
-                        newCommonList.add(commonTargetCard);
+                        controller.getCommonTargetCardsList().add(commonTargetCard);
                     }
                     case "CommonFourGroupsOfFour" -> {
                         CommonTargetCard commonTargetCard = new CommonFourGroupsOfFour(save.getMaxPlayerPlayer());
                         commonTargetCard.setScoringTokensList(save.getCommonTargetCardMap().get(name));
-                        newCommonList.add(commonTargetCard);
+                        controller.getCommonTargetCardsList().add(commonTargetCard);
                     }
                     case "CommonFourRows" -> {
                         CommonTargetCard commonTargetCard = new CommonFourRows(save.getMaxPlayerPlayer());
                         commonTargetCard.setScoringTokensList(save.getCommonTargetCardMap().get(name));
-                        newCommonList.add(commonTargetCard);
+                        controller.getCommonTargetCardsList().add(commonTargetCard);
                     }
                     case "CommonSixGroupsOfTwo" -> {
                         CommonTargetCard commonTargetCard = new CommonSixGroupsOfTwo(save.getMaxPlayerPlayer());
                         commonTargetCard.setScoringTokensList(save.getCommonTargetCardMap().get(name));
-                        newCommonList.add(commonTargetCard);
+                        controller.getCommonTargetCardsList().add(commonTargetCard);
                     }
                     case "CommonStairway" -> {
                         CommonTargetCard commonTargetCard = new CommonStairway(save.getMaxPlayerPlayer());
                         commonTargetCard.setScoringTokensList(save.getCommonTargetCardMap().get(name));
-                        newCommonList.add(commonTargetCard);
+                        controller.getCommonTargetCardsList().add(commonTargetCard);
                     }
                     case "CommonThreeColumns" -> {
                         CommonTargetCard commonTargetCard = new CommonThreeColumns(save.getMaxPlayerPlayer());
                         commonTargetCard.setScoringTokensList(save.getCommonTargetCardMap().get(name));
-                        newCommonList.add(commonTargetCard);
+                        controller.getCommonTargetCardsList().add(commonTargetCard);
                     }
                     case "CommonTwoColumns" -> {
                         CommonTargetCard commonTargetCard = new CommonTwoColumns(save.getMaxPlayerPlayer());
                         commonTargetCard.setScoringTokensList(save.getCommonTargetCardMap().get(name));
-                        newCommonList.add(commonTargetCard);
+                        controller.getCommonTargetCardsList().add(commonTargetCard);
                     }
                     case "CommonTwoRows" -> {
                         CommonTargetCard commonTargetCard = new CommonTwoRows(save.getMaxPlayerPlayer());
                         commonTargetCard.setScoringTokensList(save.getCommonTargetCardMap().get(name));
-                        newCommonList.add(commonTargetCard);
+                        controller.getCommonTargetCardsList().add(commonTargetCard);
                     }
                     case "CommonTwoSquares" -> {
                         CommonTargetCard commonTargetCard = new CommonTwoSquares(save.getMaxPlayerPlayer());
                         commonTargetCard.setScoringTokensList(save.getCommonTargetCardMap().get(name));
-                        newCommonList.add(commonTargetCard);
+                        controller.getCommonTargetCardsList().add(commonTargetCard);
                     }
                     case "CommonX" -> {
                         CommonTargetCard commonTargetCard = new CommonX(save.getMaxPlayerPlayer());
                         commonTargetCard.setScoringTokensList(save.getCommonTargetCardMap().get(name));
-                        newCommonList.add(commonTargetCard);
+                        controller.getCommonTargetCardsList().add(commonTargetCard);
                     }
                 }
-                controller.setCommonTargetCardsList(newCommonList);
-                controller.setOnlyOneCommonCard(newCommonList.size()==1);
+                controller.setOnlyOneCommonCard(controller.getCommonTargetCardsList().size()==1);
                 List<Player> newPlayerList=new ArrayList<>();
                 for(String nickname:save.getNicknameToShelfMap().keySet()){
                     Player player=new Player(nickname);
@@ -160,17 +163,16 @@ public class ServerInitState implements GameState {
                     newShelf.setShelfMatrix(save.getNicknameToShelfMap().get(nickname));
                     player.setShelf(newShelf);
                     player.setScoringTokenList(save.getNicknameToScoringTokensMap().get(nickname));
-                    player.setCommonTargetCardList(newCommonList);
+                    player.setCommonTargetCardList(controller.getCommonTargetCardsList());
                     player.setPersonalTargetCard(save.getNicknameToPersonalTargetCard().get(nickname));
                     newPlayerList.add(player);
                 }
-                for(Player player:newPlayerList){
+                controller.setPlayerList(newPlayerList);
+                for(Player player:controller.getPlayerList()){
                     if(player.getNickname().equals(save.getActivePlayerNickname()))
                         controller.setActivePlayer(player);
                 }
-                if(save.getActivePlayerNickname()==null)
-                    controller.setActivePlayer(null);
-                controller.setPlayerList(newPlayerList);
+                System.err.println(save.getActivePlayerNickname());
             }
 
 
