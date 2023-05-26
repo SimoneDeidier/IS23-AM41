@@ -1,6 +1,7 @@
 package it.polimi.ingsw.server.servercontroller;
 
 import com.google.gson.Gson;
+import com.google.gson.JsonObject;
 import it.polimi.ingsw.save.Save;
 import it.polimi.ingsw.messages.Body;
 import it.polimi.ingsw.messages.NewView;
@@ -16,6 +17,8 @@ import it.polimi.ingsw.server.servercontroller.exceptions.*;
 
 import java.io.FileWriter;
 import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Paths;
 import java.rmi.RemoteException;
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
@@ -28,10 +31,8 @@ public class GameController {
     private boolean lastTurn = false;
     private boolean onlyOneCommonCard = false;
     private Player activePlayer = null; //acts as a kind of turn
-
     private BoardFactory board;
     private GameState state;
-
     private List<CommonTargetCard> commonTargetCardsList;
     private Map<String, TCPMessageController> nickToTCPMessageControllerMapping = new ConcurrentHashMap<>(4);
     private final Server server;
@@ -156,17 +157,12 @@ public class GameController {
         save.setNicknameToPersonalTargetCard(nicknameToPersonalTargetCard);
         save.setLastTurn(lastTurn);
         save.setGameOver(gameOver);
-        Map<String,List<ScoringToken>> commonTargetCardMap=new LinkedHashMap<>(4);;
         for(CommonTargetCard commonTargetCard:commonTargetCardsList){
-            commonTargetCardMap.put(commonTargetCard.getName(),commonTargetCard.getScoringTokensList());
+            save.getCommonTargetCardMap().put(commonTargetCard.getName(),commonTargetCard.getScoringTokensList());
         }
-        save.setCommonTargetCardMap(commonTargetCardMap);
         save.setBoardItems(board.getBoardMatrix());
         save.setBoardBitMask(board.getBitMask());
         save.setMaxPlayerPlayer(maxPlayerNumber);
-
-
-
         Gson gson= new Gson();
         try (FileWriter writer = new FileWriter("src/main/java/it/polimi/ingsw/save/OldGame.json")) {
             gson.toJson(save, writer);
@@ -228,10 +224,12 @@ public class GameController {
     }
 
     public void setupGame(boolean onlyOneCommonCard) {
-        this.commonTargetCardsList = state.setupCommonList(onlyOneCommonCard, maxPlayerNumber);
-        this.board = state.setupBoard(maxPlayerNumber);
-        state.boardNeedsRefill(this.board);
-        state.setupPlayers(playerList, commonTargetCardsList, board,this );
+        if(!state.getClass().equals(WaitingForSavedGameState.class)) {
+            this.commonTargetCardsList = state.setupCommonList(onlyOneCommonCard, maxPlayerNumber);
+            this.board = state.setupBoard(maxPlayerNumber);
+            state.boardNeedsRefill(this.board);
+            state.setupPlayers(playerList, commonTargetCardsList, board, this);
+        }
     }
 
     public boolean checkLastTurn() {
@@ -285,7 +283,7 @@ public class GameController {
 
     public boolean checkSavedGame(String nickname) {
         //todo togliere il commento, funziona al 100%, c'è il commento solo per testare caso in cui non trova il nickname ma funziona!!
-        /*try {
+        try {
             String jsonContent = new String(Files.readAllBytes(Paths.get("src/main/java/it/polimi/ingsw/save/OldGame.json")));
             Gson gson = new Gson();
             JsonObject jsonObject = gson.fromJson(jsonContent, JsonObject.class);
@@ -299,7 +297,7 @@ public class GameController {
             }
         } catch(IOException e){
             throw new RuntimeException(e);
-        }*/
+        }
         return false;
     }
 
@@ -307,6 +305,7 @@ public class GameController {
         int availableSlots = getAvailableSlot();
         if (availableSlots == -1) { //handling the first player
             if (checkSavedGame(nickname)) { //the first player is present in the saved game
+                System.out.println("fa il setup sono in "+ state);
                 setupGame(onlyOneCommonCard);
                 changeState(new WaitingForSavedGameState());
                 for (Player player : playerList) {
@@ -392,12 +391,13 @@ public class GameController {
                     break;
                 }
             }
-            for(CommonTargetCard c : commonTargetCardsList) {
+            for(CommonTargetCard c : commonTargetCardsList) { //here is not null
                 body.getCommonTargetCardsName().add(c.getName());
             }
             getNickToTCPMessageControllerMapping().get(s).printTCPMessage("Your Target", body);
         }
         List<String> commonList=new ArrayList<>();
+        System.out.println(commonTargetCardsList); //here is null
         for(CommonTargetCard commonTargetCard: commonTargetCardsList){
             commonList.add(commonTargetCard.getName());
         }

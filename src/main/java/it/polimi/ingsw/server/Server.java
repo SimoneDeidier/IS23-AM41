@@ -177,12 +177,16 @@ public class Server implements InterfaceServer {
         if(controller.createLobby(maxPlayerNumber,onlyOneCommonCard))
             cl.lobbyCreated(true);
         else
-            cl.askParameters();
+            cl.askParametersAgain();
     }
 
-    public void executeMove(Body move) throws RemoteException, InvalidMoveException {
-        controller.executeMove(move);
-        controller.updateView();
+    public void executeMove(Body move) throws RemoteException {
+        try {
+            controller.executeMove(move);
+            controller.updateView();
+        } catch (InvalidMoveException e) {
+            clientMapRMI.get(move.getPlayerNickname()).incorrectMove();
+        }
     }
 
     public void updateViewRMI(NewView newView) throws RemoteException {

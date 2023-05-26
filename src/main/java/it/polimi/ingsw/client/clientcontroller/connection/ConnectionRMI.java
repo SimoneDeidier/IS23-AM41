@@ -86,7 +86,11 @@ public class ConnectionRMI extends UnicastRemoteObject implements InterfaceClien
             pingThread.start();
             controller.nicknameAccepted();
         }
-        //todo manca caso in cui è player restored
+        else{
+            PingThreadClientRmiToServer pingThread = new PingThreadClientRmiToServer(stub,this); //Starting the thread for pinging the server
+            pingThread.start();
+            controller.playerRestored();
+        }
     }
 
     @Override
@@ -96,7 +100,7 @@ public class ConnectionRMI extends UnicastRemoteObject implements InterfaceClien
 
     @Override
     public void wrongMessageWarning(String message) throws RemoteException {
-        //tell the controller to show the message in the view explaining the nickname tagged was wrong
+        controller.wrongReceiver();
     }
 
     @Override
@@ -128,6 +132,11 @@ public class ConnectionRMI extends UnicastRemoteObject implements InterfaceClien
         controller.waitForLobby();
     }
 
+    @Override
+    public void askParametersAgain() {
+        controller.wrongParameters();
+    }
+
     public void sendPrivateMessage(Body body) {
         try {
             stub.peerToPeerMsgHandler(body.getSenderNickname(),body.getReceiverNickname(), body.getText(), body.getLocalDateTime());
@@ -142,5 +151,18 @@ public class ConnectionRMI extends UnicastRemoteObject implements InterfaceClien
         } catch (RemoteException e) {
             throw new RuntimeException(e);
         }
+    }
+
+    public void sendMoveToServer(Body body) {
+        try {
+            stub.executeMove(body);
+        } catch (RemoteException e) {
+            throw new RuntimeException();
+        }
+    }
+
+    @Override
+    public void incorrectMove() {
+        controller.incorrectMove();
     }
 }

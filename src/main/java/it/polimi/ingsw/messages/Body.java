@@ -2,11 +2,12 @@ package it.polimi.ingsw.messages;
 
 import it.polimi.ingsw.server.model.PersonalTargetCard;
 
+import java.io.Serializable;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
-public class Body {
+public class Body implements Serializable {
     private String playerNickname;
     private List<int[]> positionsPicked;    //like (4 0) (4 1) (4 2), in order of insertion in the shelf
     private int column;                     //0 --> first to be inserted and so on
