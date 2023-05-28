@@ -302,7 +302,7 @@ public class GameController {
                 }
             }
         } catch(IOException e){
-            throw new RuntimeException(e);
+            return false;
         }
         return false;
     }
@@ -311,7 +311,6 @@ public class GameController {
         int availableSlots = getAvailableSlot();
         if (availableSlots == -1) { //handling the first player
             if (checkSavedGame(nickname)) { //the first player is present in the saved game
-                System.out.println("fa il setup sono in "+ state);
                 setupGame(onlyOneCommonCard);
                 changeState(new WaitingForSavedGameState());
                 for (Player player : playerList) {
