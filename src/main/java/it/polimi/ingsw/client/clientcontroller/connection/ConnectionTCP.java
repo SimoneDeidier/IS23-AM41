@@ -6,6 +6,7 @@ import java.io.*;
 import java.net.ConnectException;
 import java.net.Socket;
 import java.net.URISyntaxException;
+import java.util.NoSuchElementException;
 import java.util.Scanner;
 
 public class ConnectionTCP implements Connection {
@@ -34,8 +35,14 @@ public class ConnectionTCP implements Connection {
     public void startConnection(String uiType) {
         Thread socketReader = new Thread(() -> {
             while(!closeConnection) {
-                String inMsg;
-                if ((inMsg = socketIn.nextLine()) != null) {
+                String inMsg = null;
+                try {
+                    inMsg = socketIn.nextLine();
+                }
+                catch (NoSuchElementException | IllegalStateException e) {
+                    closeConnection = true;
+                }
+                if (inMsg != null) {
                     try {
                         serializeDeserialize.deserialize(inMsg);
                     } catch (IOException | URISyntaxException e) {

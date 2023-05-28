@@ -133,5 +133,20 @@ class PlayerTest {
 
     }
 
+    @Test
+    void setPlayerScore(){
+        player.setPlayerScore(10);
+        assertEquals(10, player.getPlayerScore());
+    }
+
+
+
+    @Test
+    void ScoringTokenList(){
+        List<ScoringToken> list = new ArrayList<>();
+        list.add(new ScoringToken(8));
+        player.setScoringTokenList(list);
+        assertEquals(list, player.getScoringTokenList());
+    }
 
 }
