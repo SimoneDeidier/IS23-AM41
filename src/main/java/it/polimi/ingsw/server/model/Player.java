@@ -55,11 +55,14 @@ public class Player implements Serializable {
             }
             finally {
                 System.err.println("POST ADJACENT");
-                /*for(CommonTargetCard commonTargetCard:commonTargetCardList){
+                for(CommonTargetCard commonTargetCard:commonTargetCardList){
                     if (commonTargetCard.check(shelf)) {
-                        scoringTokenList.add(commonTargetCard.assignToken(this));
+                        ScoringToken scoringToken=commonTargetCard.assignToken(this);
+                        if(scoringToken!=null){
+                            scoringTokenList.add(scoringToken);
+                        }
                     }
-                }*/
+                }
                 System.err.println("POST COMMON");
                 for (ScoringToken token : scoringTokenList) {
                     if (token != null) {
