@@ -108,7 +108,7 @@ public class CommonGoalController {
                 for(ScoringToken tk : list) {
                     if(tk.isTakeable()) {
                         System.out.println("TOKEN VAL: " + tk.getValue() + " - TAKEABLE: " + tk.isTakeable());
-                        System.out.println("TK taken by: " + tk.getTakenBy());
+                        System.out.println("TK taken by: " + tk.whoTookThatToken());
                         if (tk.getValue() > max) {
                             System.out.println(tk.getValue() + " > " + max);
                             max = tk.getValue();

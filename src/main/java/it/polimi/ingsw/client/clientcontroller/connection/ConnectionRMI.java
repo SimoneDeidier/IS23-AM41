@@ -123,8 +123,8 @@ public class ConnectionRMI extends UnicastRemoteObject implements InterfaceClien
         pingThread.start();
         if(typeOfGame)
             controller.lobbyCreated();
-        //else
-            //todo case where a lobby is restored
+        else
+            controller.lobbyCreated();
     }
 
     @Override

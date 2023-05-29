@@ -14,7 +14,7 @@ public class ScoringTokenTest {
     @Test
     public void testIsNotTakeable() {
         ScoringToken token=new ScoringToken(5);
-        token.setTakenBy("sam");
+        token.setWhoItWasTakenBy("sam");
         assert(!token.isTakeable());
     }
 }

@@ -57,7 +57,7 @@ public class Player implements Serializable {
                 System.err.println("POST ADJACENT");
                 for(CommonTargetCard commonTargetCard:commonTargetCardList){
                     if (commonTargetCard.check(shelf)) {
-                        ScoringToken scoringToken=commonTargetCard.assignToken(this);
+                        ScoringToken scoringToken=commonTargetCard.assignToken(this); //assignToken verifies the player doesn't already have obtained a token from that same commonTargetCard
                         if(scoringToken!=null){
                             scoringTokenList.add(scoringToken);
                         }
@@ -100,7 +100,7 @@ public class Player implements Serializable {
     public void addScoringToken(ScoringToken scoringToken) {
         if( scoringToken != null ) {
             this.scoringTokenList.add(scoringToken);
-            scoringToken.setTakenBy(nickname);
+            scoringToken.setWhoItWasTakenBy(nickname);
         }
     }
 

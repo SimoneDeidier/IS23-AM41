@@ -151,22 +151,22 @@ public class ClientControllerRMI implements ClientController, Serializable {
     }
 
     @Override
-    public void disconnect() { //per ora no
+    public void disconnect() { //todol
 
     }
 
     @Override
-    public void rejoinMatch() { //per ora no
+    public void rejoinMatch() { //todo
 
     }
 
     @Override
-    public void rejoinedMatch() { //per ora no
+    public void rejoinedMatch() { //todo
 
     }
 
     @Override
-    public void invalidPlayer() { //per ora no, è quando fallisce il re join
+    public void invalidPlayer() { //todo, è quando fallisce il re join
     }
 
     @Override
@@ -232,23 +232,23 @@ public class ClientControllerRMI implements ClientController, Serializable {
     }
 
     @Override
-    public void startClearThread() {
+    public void startClearThread() { //todo
 
     }
 
     @Override
-    public void serverNotResponding() {
+    public void serverNotResponding() { //todo
 
     }
 
     @Override
-    public void closeConnection() {
+    public void closeConnection() { //todo
 
     }
 
     @Override
     public void lobbyRestored() {
-
+        userInterface.lobbyCreated();
     }
 
 }
