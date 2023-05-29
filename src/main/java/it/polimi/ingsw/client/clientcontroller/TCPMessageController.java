@@ -33,7 +33,7 @@ public class TCPMessageController implements TCPMessageControllerInterface {
                 controller.waitForLobby();
             }
             case "Lobby Restored" -> {
-                // todo
+                controller.lobbyRestored();
             }
             case "Player Restored" -> {
                 controller.playerRestored();
@@ -117,6 +117,7 @@ public class TCPMessageController implements TCPMessageControllerInterface {
                 }
             }
             System.out.println("SERVER DISCONNESSO!");
+            controller.serverNotResponding();
         }).start();
     }
 

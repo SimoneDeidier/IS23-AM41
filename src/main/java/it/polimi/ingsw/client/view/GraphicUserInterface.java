@@ -64,6 +64,7 @@ public class GraphicUserInterface extends Application implements UserInterface, 
     @Override
     public void sendNickname(String nickname) {
         clientController.sendNickname(nickname);
+        clientController.startClearThread();
     }
 
     @Override
@@ -206,6 +207,7 @@ public class GraphicUserInterface extends Application implements UserInterface, 
 
     @Override
     public void disconnect() {
+        // todo non chiudo la socket?
         clientController.disconnect();
         Platform.runLater(() -> {
             guiStage.close();
@@ -309,6 +311,20 @@ public class GraphicUserInterface extends Application implements UserInterface, 
     @Override
     public void playerRestored() {
         loginScreenController.playerRestored();
+    }
+
+    @Override
+    public void serverNotResponding() {
+        // todo carica la alert e poi chiude tutto
+        Platform.runLater(() -> {
+            guiStage.close();
+            clientController.closeConnection();
+        });
+    }
+
+    @Override
+    public void lobbyRestored() {
+        loginScreenController.lobbyRestored();
     }
 
 }

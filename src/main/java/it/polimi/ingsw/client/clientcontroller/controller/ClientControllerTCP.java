@@ -228,4 +228,24 @@ public class ClientControllerTCP implements ClientController {
         userInterface.playerRestored();
     }
 
+    @Override
+    public void startClearThread() {
+        tcpMessageController.startClearThread();
+    }
+
+    @Override
+    public void serverNotResponding() {
+        userInterface.serverNotResponding();
+    }
+
+    @Override
+    public void closeConnection() {
+        tcpMessageController.closeConnection();
+    }
+
+    @Override
+    public void lobbyRestored() {
+        userInterface.lobbyRestored();
+    }
+
 }

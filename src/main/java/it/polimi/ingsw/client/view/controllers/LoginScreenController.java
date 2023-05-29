@@ -44,6 +44,8 @@ public class LoginScreenController {
     private AnchorPane impossibleEventAnchorPane;
     @FXML
     private AnchorPane playerRestoredAnchorPane;
+    @FXML
+    private AnchorPane lobbyRestoredAnchorPane;
 
     private GraphicUserInterface gui = null;
     private List<Integer> players = Arrays.asList(2, 3, 4);
@@ -146,6 +148,10 @@ public class LoginScreenController {
 
     public void playerRestored() {
         changePane(nicknameAnchorPane, playerRestoredAnchorPane);
+    }
+
+    public void lobbyRestored() {
+        changePane(nicknameAnchorPane, lobbyRestoredAnchorPane);
     }
 
 }

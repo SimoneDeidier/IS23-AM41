@@ -231,4 +231,24 @@ public class ClientControllerRMI implements ClientController, Serializable {
         userInterface.playerRestored();
     }
 
+    @Override
+    public void startClearThread() {
+
+    }
+
+    @Override
+    public void serverNotResponding() {
+
+    }
+
+    @Override
+    public void closeConnection() {
+
+    }
+
+    @Override
+    public void lobbyRestored() {
+
+    }
+
 }

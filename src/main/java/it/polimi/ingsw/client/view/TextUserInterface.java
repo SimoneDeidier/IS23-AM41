@@ -497,5 +497,15 @@ public class TextUserInterface implements UserInterface{
         // scrive a schermo che un giocatore è stato restorato da un salvataggio
     }
 
+    @Override
+    public void serverNotResponding() {
+
+    }
+
+    @Override
+    public void lobbyRestored() {
+
+    }
+
 }
 

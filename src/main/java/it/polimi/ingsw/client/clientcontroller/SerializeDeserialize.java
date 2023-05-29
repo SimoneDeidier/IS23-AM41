@@ -54,8 +54,4 @@ public class SerializeDeserialize implements SerializeDeserializeInterface {
         tcpMessageController.printTCPMessage("Re-Join", body);
     }
 
-    public void startClearThread() {
-        tcpMessageController.startClearThread();
-    }
-
 }

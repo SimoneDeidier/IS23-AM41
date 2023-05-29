@@ -102,5 +102,14 @@
             </Text>
          </children>
       </AnchorPane>
+      <AnchorPane fx:id="lobbyRestoredAnchorPane" disable="true" layoutX="309.0" layoutY="399.0" prefHeight="200.0" prefWidth="200.0" visible="false" AnchorPane.bottomAnchor="89.0" AnchorPane.leftAnchor="299.0" AnchorPane.topAnchor="389.0">
+         <children>
+            <Text strokeType="OUTSIDE" strokeWidth="0.0" text="Lobby has been restored! Please wait for the game start!" AnchorPane.leftAnchor="151.0" AnchorPane.rightAnchor="152.0" AnchorPane.topAnchor="89.0">
+               <font>
+                  <Font size="17.0" />
+               </font>
+            </Text>
+         </children>
+      </AnchorPane>
    </children>
 </AnchorPane>

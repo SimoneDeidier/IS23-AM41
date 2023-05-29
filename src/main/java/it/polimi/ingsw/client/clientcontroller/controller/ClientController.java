@@ -63,4 +63,12 @@ public interface ClientController {
     void removeInPositionPicked(int col);
 
     void playerRestored();
+
+    void startClearThread();
+
+    void serverNotResponding();
+
+    void closeConnection();
+
+    void lobbyRestored();
 }

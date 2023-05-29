@@ -125,7 +125,7 @@ public class GameScreenController {
 
     public void showCommonTargetCard() {
         Platform.runLater(() -> {
-            FXMLLoader loader = new FXMLLoader(ClassLoader.getSystemResource("fxml/CommonView.fxml"));
+            FXMLLoader loader = new FXMLLoader(ClassLoader.getSystemResource("fxml/CommonGoal.fxml"));
             try {
                 Stage stage = new Stage();
                 stage.setScene(new Scene(loader.load()));

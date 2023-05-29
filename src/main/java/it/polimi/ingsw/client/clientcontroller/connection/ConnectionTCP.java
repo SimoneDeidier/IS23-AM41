@@ -24,11 +24,10 @@ public class ConnectionTCP implements Connection {
     public ConnectionTCP(String ip, int port) throws IOException {
         this.IP = ip;
         this.PORT = port;
-            socket = new Socket(ip, port);
-            socketIn = new Scanner(socket.getInputStream());
-            socketOut = new PrintWriter(socket.getOutputStream(), true);
-            this.serializeDeserialize = new SerializeDeserialize(this);
-            serializeDeserialize.startClearThread();
+        this.socket = new Socket(ip, port);
+        this.socketIn = new Scanner(socket.getInputStream());
+        this.socketOut = new PrintWriter(socket.getOutputStream(), true);
+        this.serializeDeserialize = new SerializeDeserialize(this);
     }
 
     @Override
