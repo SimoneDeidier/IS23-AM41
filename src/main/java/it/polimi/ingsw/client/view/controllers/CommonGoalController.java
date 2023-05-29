@@ -82,7 +82,7 @@ public class CommonGoalController {
             imageView2.setFitHeight(HEIGHT_TWO);
             imageView2.setTranslateY(OFFSET_Y_TWO);
             imageView2.setTranslateX(OFFSET_X_TWO_RIGHT);
-            ImageView tkImgv2 = new ImageView(getMaxTokenValueByCardNumber(commons.get(0), map));
+            ImageView tkImgv2 = new ImageView(getMaxTokenValueByCardNumber(commons.get(1), map));
             tkImgv2.setFitWidth(TOKEN_DIM_TWO);
             tkImgv2.setFitHeight(TOKEN_DIM_TWO);
             tkImgv2.setRotate(TOKEN_ROTATE);
