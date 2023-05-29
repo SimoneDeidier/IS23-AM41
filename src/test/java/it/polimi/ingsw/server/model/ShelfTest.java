@@ -165,5 +165,17 @@ class ShelfTest {
         assertEquals(matrix[3][3], item);
     }
 
+    @Test
+    void setShelfMatrix(){
+        Shelf shelf = new Shelf();
+        Item item = new Item(ItemColor.YELLOW);
+        Item[][] matrix = new Item[9][9];
+        matrix[3][3] = item;
+        shelf.setShelfMatrix(matrix);
+        assertEquals(matrix[3][3], item);
+    }
+
+
+
 
 }

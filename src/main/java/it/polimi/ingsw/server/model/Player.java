@@ -55,12 +55,14 @@ public class Player implements Serializable {
             }
             finally {
                 System.err.println("POST ADJACENT");
-                //todo fixare common
-                /*for(CommonTargetCard commonTargetCard:commonTargetCardList){
+                for(CommonTargetCard commonTargetCard:commonTargetCardList){
                     if (commonTargetCard.check(shelf)) {
-                        scoringTokenList.add(commonTargetCard.assignToken(this));
+                        ScoringToken scoringToken=commonTargetCard.assignToken(this); //assignToken verifies the player doesn't already have obtained a token from that same commonTargetCard
+                        if(scoringToken!=null){
+                            scoringTokenList.add(scoringToken);
+                        }
                     }
-                }*/
+                }
                 System.err.println("POST COMMON");
                 for (ScoringToken token : scoringTokenList) {
                     if (token != null) {
@@ -76,6 +78,7 @@ public class Player implements Serializable {
     }
     public void setEndGameToken(EndGameToken endGameToken) {
         this.endGameToken = endGameToken;
+        EndGameToken.getEndGameToken().setTakenBy(nickname);
     }
 
     public void setBoard(BoardFactory board) {
@@ -97,7 +100,7 @@ public class Player implements Serializable {
     public void addScoringToken(ScoringToken scoringToken) {
         if( scoringToken != null ) {
             this.scoringTokenList.add(scoringToken);
-            scoringToken.setTakenBy(nickname);
+            scoringToken.setWhoItWasTakenBy(nickname);
         }
     }
 

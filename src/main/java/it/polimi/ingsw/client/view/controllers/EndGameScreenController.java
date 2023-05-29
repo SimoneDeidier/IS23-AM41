@@ -25,18 +25,56 @@ public class EndGameScreenController {
 
     public void setParameters(NewView newView) {
         Map<String, Integer> pointsMap = newView.getNicknameToPointsMap();
-        List<Integer> orderedPoints = getAscendingPointsFromMap(pointsMap);
-        List<String> orderedPlayers = getAscendingPlayersFromMap(pointsMap, orderedPoints);
+        List<String> orderedPlayers = getAscendingPointsFromMap(pointsMap);
         int size = orderedPlayers.size();
         winsLabel.setText(orderedPlayers.get(size - 1) + " WINS!");
-        firstLabel.setText("1° - " + orderedPlayers.get(size - 1) + " - " + orderedPoints.get(size - 1) + " points");
-        secondLabel.setText("2° - " + orderedPlayers.get(size - 2) + " - " + orderedPoints.get(size - 2) + " points");
+        firstLabel.setText("1° - " + orderedPlayers.get(size - 1) + " - " + pointsMap.get(orderedPlayers.get(size - 1)) + " points");
+        secondLabel.setText("2° - " + orderedPlayers.get(size - 2) + " - " + pointsMap.get(orderedPlayers.get(size - 2)) + " points");
         if(size > 2) {
-            thirdLabel.setText("3° - " + orderedPlayers.get(size - 3) + " - " + orderedPoints.get(size - 3) + " points");
+            thirdLabel.setText("3° - " + orderedPlayers.get(size - 3) + " - " + pointsMap.get(orderedPlayers.get(size - 3)) + " points");
         }
         if(size == 4) {
-            fourthLabel.setText("4° - " + orderedPlayers.get(0) + " - " + orderedPoints.get(0) + " points");
+            fourthLabel.setText("4° - " + orderedPlayers.get(0) + " - " + pointsMap.get(orderedPlayers.get(0)) + " points");
         }
+    }
+
+    private List<String> getAscendingPointsFromMap(Map<String, Integer> pointsMap) {
+        List<String> playerList = new ArrayList<>();
+        playerList.addAll(pointsMap.keySet());
+        List<String> orderPlayerList=new ArrayList<>();//list with first player = max number of points
+
+        orderPlayerList.add(playerList.get(playerList.size()-1));
+        if(pointsMap.get(playerList.get(playerList.size()-2))> pointsMap.get(orderPlayerList.get(0)))
+            orderPlayerList.add(0, playerList.get(playerList.size()-2));
+        else
+            orderPlayerList.add(playerList.get(playerList.size()-2));
+
+        if(playerList.size()==3){
+            if(pointsMap.get(playerList.get(0))>pointsMap.get(orderPlayerList.get(0)))
+                orderPlayerList.add(0,playerList.get(0));
+            else if(pointsMap.get(playerList.get(0))>pointsMap.get(orderPlayerList.get(1)))
+                orderPlayerList.add(1, playerList.get(0));
+            else
+                orderPlayerList.add(playerList.get(0));
+        }
+
+        if(playerList.size()==4){
+            if(pointsMap.get(playerList.get(playerList.size()-3))>pointsMap.get(orderPlayerList.get(0)))
+                orderPlayerList.add(0,playerList.get(playerList.size()-3));
+            else if(pointsMap.get(playerList.get(playerList.size()-3))>pointsMap.get(orderPlayerList.get(1)))
+                orderPlayerList.add(1, playerList.get(playerList.size()-3));
+            else
+                orderPlayerList.add(playerList.get(playerList.size()-3));
+            if(pointsMap.get(playerList.get(0))>pointsMap.get(orderPlayerList.get(0)))
+                orderPlayerList.add(0,playerList.get(0));
+            else if(pointsMap.get(playerList.get(0))>pointsMap.get(orderPlayerList.get(1)))
+                orderPlayerList.add(1,playerList.get(0));
+            else if(pointsMap.get(playerList.get(0))>pointsMap.get(orderPlayerList.get(2)))
+                orderPlayerList.add(2,playerList.get(0));
+            else orderPlayerList.add(playerList.get(0));
+        }
+        Collections.reverse(orderPlayerList);
+        return orderPlayerList;
     }
 
     public void exit() {
@@ -45,28 +83,6 @@ public class EndGameScreenController {
 
     public void setGui(GraphicUserInterface gui) {
         this.gui = gui;
-    }
-
-    public List<Integer> getAscendingPointsFromMap(Map<String, Integer> map) {
-        List<Integer> res = new ArrayList<>(4);
-        for(String s : map.keySet()) {
-            res.add(map.get(s));
-        }
-        Collections.sort(res);
-        return res;
-    }
-
-    public List<String> getAscendingPlayersFromMap(Map<String, Integer> map, List<Integer> ascPoints) {
-        List<String> res = new ArrayList<>(4);
-        for(Integer i : ascPoints) {
-            for(String s : map.keySet()) {
-                if(Objects.equals(map.get(s), i) && !res.contains(s)) {
-                    res.add(s);
-                    break;
-                }
-            }
-        }
-        return res;
     }
 
 }

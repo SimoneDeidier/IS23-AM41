@@ -58,7 +58,7 @@ public class OtherPlayersController {
     // four players
 
     private static final double TRANSLATE_X_THREE = 43.0;
-    private static final double TRANSLATE_X_OFFSET_THREE = 44.0;
+    private static final double TRANSLATE_X_OFFSET_THREE = 306.0;
     private static final double TRANSLATE_Y_THREE_SHELF = 243.0;
     private static final double TRANSLATE_Y_THREE_TEXT = 189.0;
     private static final double SHELF_WIDTH_THREE = 262.0;

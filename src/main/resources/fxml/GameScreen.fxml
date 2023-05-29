@@ -157,10 +157,20 @@
             </Text>
          </children>
       </AnchorPane>
+      <ImageView fx:id="endGameTokenImageView" fitHeight="69.0" fitWidth="69.0" layoutX="501.0" layoutY="474.0" pickOnBounds="true" preserveRatio="true" rotate="9.0" AnchorPane.bottomAnchor="177.0" AnchorPane.leftAnchor="501.0">
+         <image>
+            <Image url="@../images/tokens/endgametoken.jpg" />
+         </image>
+      </ImageView>
       <ImageView fx:id="chairImageView" disable="true" fitHeight="53.0" fitWidth="50.0" pickOnBounds="true" preserveRatio="true" visible="false" AnchorPane.leftAnchor="451.0" AnchorPane.topAnchor="9.0">
          <image>
             <Image url="@../images/chair.png" />
          </image>
       </ImageView>
+      <Button mnemonicParsing="false" onAction="#yourTokens" text="Your Tokens" AnchorPane.bottomAnchor="13.0" AnchorPane.rightAnchor="613.0">
+         <font>
+            <Font size="15.0" />
+         </font>
+      </Button>
    </children>
 </AnchorPane>

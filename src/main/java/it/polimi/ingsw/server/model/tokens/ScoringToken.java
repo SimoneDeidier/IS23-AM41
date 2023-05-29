@@ -15,10 +15,10 @@ public class ScoringToken implements Serializable {
     public int getValue() {
         return value;
     }
-    public void setTakenBy(String nickname) {
+    public void setWhoItWasTakenBy(String nickname) {
         this.takenBy = nickname;
     }
-    public String getTakenBy() {
+    public String whoTookThatToken() {
         return takenBy;
     }
 }

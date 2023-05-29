@@ -64,6 +64,7 @@ public class GraphicUserInterface extends Application implements UserInterface, 
     @Override
     public void sendNickname(String nickname) {
         clientController.sendNickname(nickname);
+        clientController.startClearThread();
     }
 
     @Override
@@ -169,10 +170,17 @@ public class GraphicUserInterface extends Application implements UserInterface, 
                     if(Objects.equals(newView.getPlayerList().get(0), playerNickname)) {
                         gameScreenController.setChair();
                     }
+                    if(!newView.getEndGameToken().isTakeable()) {
+                        gameScreenController.removeEndGameToken();
+                    }
+                    if(Objects.equals(newView.getEndGameToken().getTakenBy(), playerNickname)) {
+                        gameScreenController.setEndGameToken(newView.getEndGameToken());
+                    }
                     gameScreenController.clearBoard();
                     gameScreenController.setBoardItems(newView.getBoardItems(), newView.getBoardBitMask());
                     gameScreenController.setPlayerText(playerNickname, newView.getNicknameToPointsMap().get(playerNickname));
                     gameScreenController.setPersonalShelf(newView.getNicknameToShelfMap().get(playerNickname));
+                    gameScreenController.setTokens(newView.getCommonsToTokens(), newView.getPlayersToTokens().get(playerNickname));
                     gameScreenController.setOtherPlayersParameters(newView.getNicknameToShelfMap(), newView.getNicknameToPointsMap(), playerNickname);
                     gameScreenController.setYourTurnPane(this.isYourTurn);
                 }
@@ -199,6 +207,7 @@ public class GraphicUserInterface extends Application implements UserInterface, 
 
     @Override
     public void disconnect() {
+        // todo non chiudo la socket?
         clientController.disconnect();
         Platform.runLater(() -> {
             guiStage.close();
@@ -302,6 +311,20 @@ public class GraphicUserInterface extends Application implements UserInterface, 
     @Override
     public void playerRestored() {
         loginScreenController.playerRestored();
+    }
+
+    @Override
+    public void serverNotResponding() {
+        // todo carica la alert e poi chiude tutto
+        Platform.runLater(() -> {
+            guiStage.close();
+            clientController.closeConnection();
+        });
+    }
+
+    @Override
+    public void lobbyRestored() {
+        loginScreenController.lobbyRestored();
     }
 
 }

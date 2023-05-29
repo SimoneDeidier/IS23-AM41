@@ -74,4 +74,8 @@ public interface UserInterface {
     void removeInPositionPicked(int col);
 
     void playerRestored();
+
+    void serverNotResponding();
+
+    void lobbyRestored();
 }

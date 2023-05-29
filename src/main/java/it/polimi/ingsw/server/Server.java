@@ -32,50 +32,6 @@ public class Server implements InterfaceServer {
     private final GameController controller = GameController.getGameController(this);
     private final Map<String,InterfaceClient> clientMapRMI = new ConcurrentHashMap<>();
 
-    public static boolean parsePortNumber(String[] args) {
-
-        boolean rmiOK = false;
-        boolean tcpOK = false;
-
-        for(int i = 0; i < args.length - 1; i++) {
-            if(Objects.equals(args[i], "-r") && args[i+1].matches("[0-9]+")) {
-                int parsed = Integer.parseInt(args[i+1]);
-                if(parsed <= 1024 || parsed > 65535 || (tcpOK && (parsed == portTCP))) {
-                    System.out.println("Invalid port number.");
-                    return false;
-                }
-                portRMI = parsed;
-                rmiOK = true;
-            }
-            if(Objects.equals(args[i], "-t") && args[i+1].matches("[0-9]+")) {
-                int parsed = Integer.parseInt(args[i+1]);
-                if(parsed <= 1024 || parsed > 65535 || (rmiOK && (parsed == portRMI))) {
-                    System.out.println("Invalid port number.");
-                    return false;
-                }
-                portTCP = parsed;
-                tcpOK = true;
-            }
-            if(rmiOK && tcpOK) {
-                return true;
-            }
-        }
-        return false;
-
-    }
-
-    public static int setPortNumber(String type, int firstPort) {
-
-        int input;
-        Scanner in = new Scanner(System.in);
-
-        do {
-            System.out.print("Please select a port number for the " + type + " server: ");
-            input = in.nextInt();
-        }while(input <= 1024 || input > 65535 || input == firstPort);
-        return input;
-
-    }
 
     public static void main(String[] args) {
 
@@ -134,24 +90,69 @@ public class Server implements InterfaceServer {
 
     }
 
+    public static boolean parsePortNumber(String[] args) {
+
+        boolean rmiOK = false;
+        boolean tcpOK = false;
+
+        for(int i = 0; i < args.length - 1; i++) {
+            if(Objects.equals(args[i], "-r") && args[i+1].matches("[0-9]+")) {
+                int parsed = Integer.parseInt(args[i+1]);
+                if(parsed <= 1024 || parsed > 65535 || (tcpOK && (parsed == portTCP))) {
+                    System.out.println("Invalid port number.");
+                    return false;
+                }
+                portRMI = parsed;
+                rmiOK = true;
+            }
+            if(Objects.equals(args[i], "-t") && args[i+1].matches("[0-9]+")) {
+                int parsed = Integer.parseInt(args[i+1]);
+                if(parsed <= 1024 || parsed > 65535 || (rmiOK && (parsed == portRMI))) {
+                    System.out.println("Invalid port number.");
+                    return false;
+                }
+                portTCP = parsed;
+                tcpOK = true;
+            }
+            if(rmiOK && tcpOK) {
+                return true;
+            }
+        }
+        return false;
+
+    }
+
+    public static int setPortNumber(String type, int firstPort) {
+
+        int input;
+        Scanner in = new Scanner(System.in);
+
+        do {
+            System.out.print("Please select a port number for the " + type + " server: ");
+            input = in.nextInt();
+        }while(input <= 1024 || input > 65535 || input == firstPort);
+        return input;
+
+    }
+
     @Override
     public void presentation(InterfaceClient cl, String nickname) throws RemoteException {
         try {
             switch(controller.presentation(nickname)) {
-                case 1: { //joined a "new" game
+                case 0 -> {  // you're joining but I need another nickname
+                    cl.askForNewNickname();
+                }
+                case 1 -> { //joined a "new" game
                     clientMapRMI.put(nickname,cl);
                     cl.confirmConnection(false);
                 }
-                case 3: { //joining a restored game
-                    clientMapRMI.put(nickname,cl);
-                    cl.confirmConnection(true);
-                }
-                case 0: {  // you're joining but I need another nickname
-                    cl.askForNewNickname();
-                }
-                case 2:{ //first player joining a "restored" game
+                case 2 ->{ //first player joining a "restored" game
                     clientMapRMI.put(nickname,cl);
                     cl.lobbyCreated(false);
+                }
+                case 3 -> { //joining a restored game
+                    clientMapRMI.put(nickname,cl);
+                    cl.confirmConnection(true);
                 }
             }
         } catch (CancelGameException e) { //the game is being canceled because a restoring of a saved game failed
@@ -177,12 +178,16 @@ public class Server implements InterfaceServer {
         if(controller.createLobby(maxPlayerNumber,onlyOneCommonCard))
             cl.lobbyCreated(true);
         else
-            cl.askParameters();
+            cl.askParametersAgain();
     }
 
-    public void executeMove(Body move) throws RemoteException, InvalidMoveException {
-        controller.executeMove(move);
-        controller.updateView();
+    public void executeMove(Body move) throws RemoteException {
+        try {
+            controller.executeMove(move);
+            controller.updateView();
+        } catch (InvalidMoveException e) {
+            clientMapRMI.get(move.getPlayerNickname()).incorrectMove();
+        }
     }
 
     public void updateViewRMI(NewView newView) throws RemoteException {

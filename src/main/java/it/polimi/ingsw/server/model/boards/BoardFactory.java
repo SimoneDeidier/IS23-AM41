@@ -123,7 +123,7 @@ public abstract class BoardFactory implements Serializable {
             return true;
         }
         //Check down
-        if(i<ROWS && getBoardMatrixElement(i+1,j)==null){
+        if(i<ROWS-1 && getBoardMatrixElement(i+1,j)==null){
             return true;
         }
         //Check left
@@ -131,20 +131,49 @@ public abstract class BoardFactory implements Serializable {
             return true;
         }
         //Check right
-        return j<COLUMNS && getBoardMatrixElement(i, j + 1) == null;
+        return j<COLUMNS-1 && getBoardMatrixElement(i, j + 1) == null;
 
     }
 
     public boolean itemHasAllFreeSide(int i,int j){
-        return i>0 && (getBoardMatrixElement(i-1,j)==null && i<ROWS && getBoardMatrixElement(i+1,j)==null
-                && j>0 && getBoardMatrixElement(i,j-1)==null && j<COLUMNS && getBoardMatrixElement(i, j + 1) == null);
+        if(i==0){
+            if(j==0){
+                if(getBoardMatrixElement(i+1,j)==null && getBoardMatrixElement(i,j+1)==null)
+                    return true;
+            }
+            else if(j==COLUMNS-1){
+                if(getBoardMatrixElement(i,j-1)==null && getBoardMatrixElement(i+1,j)==null)
+                    return true;
+            }
+            return getBoardMatrixElement(i,j-1)==null && getBoardMatrixElement(i,j+1)==null && getBoardMatrixElement(i+1,j)==null;
+        }
+        if(j==0){
+            if(i==8){
+                if(getBoardMatrixElement(i-1,j)==null && getBoardMatrixElement(i,j+1)==null)
+                    return true;
+            }
+            return getBoardMatrixElement(i-1,j)==null && getBoardMatrixElement(i+1,j)==null && getBoardMatrixElement(i,j+1)==null;
+        }
+        if(i==8){
+            if(j==8){
+                if(getBoardMatrixElement(i-1,j)==null && getBoardMatrixElement(i,j-1)==null)
+                    return true;
+            }
+            return getBoardMatrixElement(i,j-1)==null && getBoardMatrixElement(i,j+1)==null && getBoardMatrixElement(i-1,j)==null;
+        }
+        if(j==8){
+            return getBoardMatrixElement(i-1,j)==null && getBoardMatrixElement(i+1,j)==null && getBoardMatrixElement(i,j-1)==null;
+        }
+        return getBoardMatrixElement(i-1,j)==null && getBoardMatrixElement(i+1,j)==null
+                && getBoardMatrixElement(i,j-1)==null && getBoardMatrixElement(i,j+1)==null;
     }
 
     public boolean checkInLine(List<int[]> list){
         int x1=list.get(0)[0],y1=list.get(0)[1];
         if(list.size()==2){
             int x2=list.get(1)[0],y2=list.get(1)[1];
-            return (x1 == x2 - 1 && y1 == y2) || (x1 == x2 + 1 && y1 == y2) || (x1 == x2 && y1 == y2 - 1) || ((x1 == x2 && y1 == y2 + 1));
+            return (x1 == x2 - 1 && y1 == y2) || (x1 == x2 + 1 && y1 == y2)
+                    || (x1 == x2 && y1 == y2 - 1) || ((x1 == x2 && y1 == y2 + 1));
         }
 
         if(list.size()==3){

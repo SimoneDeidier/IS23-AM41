@@ -42,10 +42,6 @@ public class SocketManager implements Runnable {
         }
     }
 
-    public Scanner getSocketInput() {
-        return socketInput;
-    }
-
     public PrintWriter getSocketOutput() {
         return socketOutput;
     }

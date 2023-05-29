@@ -1,6 +1,8 @@
 package it.polimi.ingsw.server.servercontroller;
 
 import com.google.gson.Gson;
+import com.google.gson.JsonObject;
+import it.polimi.ingsw.messages.TCPMessage;
 import it.polimi.ingsw.save.Save;
 import it.polimi.ingsw.messages.Body;
 import it.polimi.ingsw.messages.NewView;
@@ -16,6 +18,8 @@ import it.polimi.ingsw.server.servercontroller.exceptions.*;
 
 import java.io.FileWriter;
 import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Paths;
 import java.rmi.RemoteException;
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
@@ -28,20 +32,20 @@ public class GameController {
     private boolean lastTurn = false;
     private boolean onlyOneCommonCard = false;
     private Player activePlayer = null; //acts as a kind of turn
-
     private BoardFactory board;
     private GameState state;
-
     private List<CommonTargetCard> commonTargetCardsList;
     private Map<String, TCPMessageController> nickToTCPMessageControllerMapping = new ConcurrentHashMap<>(4);
+    private Map<String, Integer> nickToUnansweredCheck = new HashMap<>(4);
     private final Server server;
-    private Thread checkThread;
     private boolean gameOver;
+    private static final int THREAD_SLEEP = 1000;
 
     private GameController(Server s) {
         this.state = new ServerInitState();
         this.server = s;
         this.gameOver=false;
+        startCheckThread();
     }
 
     public static GameController getGameController(Server s) {
@@ -125,10 +129,15 @@ public class GameController {
         }
         newView.setBoardItems(board.getBoardMatrix());
         newView.setBoardBitMask(board.getBitMask());
+        newView.setEndGameToken(EndGameToken.getEndGameToken());
         for(Player p : playerList) {
             newView.getPlayerList().add(p.getNickname());
             newView.getNicknameToPointsMap().put(p.getNickname(), p.getPlayerScore());
             newView.getNicknameToShelfMap().put(p.getNickname(), p.getShelf().getShelfMatrix());
+            newView.getPlayersToTokens().put(p.getNickname(), p.getScoringTokenList());
+        }
+        for(CommonTargetCard c : commonTargetCardsList) {
+            newView.getCommonsToTokens().put(c.getName(), c.getScoringTokensList());
         }
         saveGameState();
         return newView;
@@ -156,17 +165,12 @@ public class GameController {
         save.setNicknameToPersonalTargetCard(nicknameToPersonalTargetCard);
         save.setLastTurn(lastTurn);
         save.setGameOver(gameOver);
-        Map<String,List<ScoringToken>> commonTargetCardMap=new LinkedHashMap<>(4);;
         for(CommonTargetCard commonTargetCard:commonTargetCardsList){
-            commonTargetCardMap.put(commonTargetCard.getName(),commonTargetCard.getScoringTokensList());
+            save.getCommonTargetCardMap().put(commonTargetCard.getName(),commonTargetCard.getScoringTokensList());
         }
-        save.setCommonTargetCardMap(commonTargetCardMap);
         save.setBoardItems(board.getBoardMatrix());
         save.setBoardBitMask(board.getBitMask());
         save.setMaxPlayerPlayer(maxPlayerNumber);
-
-
-
         Gson gson= new Gson();
         try (FileWriter writer = new FileWriter("src/main/java/it/polimi/ingsw/save/OldGame.json")) {
             gson.toJson(save, writer);
@@ -231,7 +235,7 @@ public class GameController {
         this.commonTargetCardsList = state.setupCommonList(onlyOneCommonCard, maxPlayerNumber);
         this.board = state.setupBoard(maxPlayerNumber);
         state.boardNeedsRefill(this.board);
-        state.setupPlayers(playerList, commonTargetCardsList, board,this );
+        state.setupPlayers(playerList, commonTargetCardsList, board, this);
     }
 
     public boolean checkLastTurn() {
@@ -285,7 +289,7 @@ public class GameController {
 
     public boolean checkSavedGame(String nickname) {
         //todo togliere il commento, funziona al 100%, c'è il commento solo per testare caso in cui non trova il nickname ma funziona!!
-        /*try {
+        try {
             String jsonContent = new String(Files.readAllBytes(Paths.get("src/main/java/it/polimi/ingsw/save/OldGame.json")));
             Gson gson = new Gson();
             JsonObject jsonObject = gson.fromJson(jsonContent, JsonObject.class);
@@ -298,8 +302,8 @@ public class GameController {
                 }
             }
         } catch(IOException e){
-            throw new RuntimeException(e);
-        }*/
+            return false;
+        }
         return false;
     }
 
@@ -352,23 +356,11 @@ public class GameController {
     }
 
     public void startGame(){
-        setupGame(onlyOneCommonCard);
-        activePlayer=playerList.get(0);
+        if(!state.getClass().equals(WaitingForSavedGameState.class)) {
+            setupGame(onlyOneCommonCard);
+            activePlayer = playerList.get(0);
+        }
         changeState(new RunningGameState());
-        //todo da spostare in presentation
-        /*checkThread = new Thread(() -> {
-            System.err.println("THREAD PING STARTED!");
-            while(true) {
-                try {
-                    Thread.sleep(1000);
-                    // mando check a tutti i giocatori
-                   //System.out.printf("Check");
-                } catch (InterruptedException e) {
-                    throw new RuntimeException(e);
-                }
-            }
-        });
-        checkThread.start();*/
     }
 
     public void disconnectAllUsers() throws RemoteException {
@@ -392,12 +384,13 @@ public class GameController {
                     break;
                 }
             }
-            for(CommonTargetCard c : commonTargetCardsList) {
+            for(CommonTargetCard c : commonTargetCardsList) { //here is not null
                 body.getCommonTargetCardsName().add(c.getName());
             }
             getNickToTCPMessageControllerMapping().get(s).printTCPMessage("Your Target", body);
         }
         List<String> commonList=new ArrayList<>();
+        System.out.println(commonTargetCardsList); //here is null
         for(CommonTargetCard commonTargetCard: commonTargetCardsList){
             commonList.add(commonTargetCard.getName());
         }
@@ -530,6 +523,48 @@ public class GameController {
     public BoardFactory getBoard() {
         return board;
     }
+
+    public void startCheckThread() {
+        new Thread(() -> {
+            while(true) {
+                for(String nickname : nickToTCPMessageControllerMapping.keySet()) {
+                    System.out.println("Mando check a " + nickname);
+                    nickToTCPMessageControllerMapping.get(nickname).printTCPMessage("Check", null);
+                    if(nickToUnansweredCheck.containsKey(nickname)) {
+                        nickToUnansweredCheck.put(nickname, nickToUnansweredCheck.get(nickname) + 1);
+                    }
+                    else {
+                        nickToUnansweredCheck.put(nickname, 1);
+                    }
+                    if(nickToUnansweredCheck.get(nickname) == 5) {
+                        System.out.println(nickname + " è disonnesso");
+                        for(Player p : playerList) {
+                            // todo qui bisogna fare il check se è nella fase di gioco o quando crea la lobby
+                            if(Objects.equals(p.getNickname(), nickname)) {
+                                p.setConnected(false);
+                            }
+                        }
+                    }
+                }
+                // todo da fare RMI
+                try {
+                    Thread.sleep(THREAD_SLEEP);
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
+            }
+        }).start();
+    }
+
+    public void resetUnansweredCheckCounter(TCPMessageController tcpMessageController) {
+        for(String s : nickToTCPMessageControllerMapping.keySet()) {
+            if(nickToTCPMessageControllerMapping.get(s) == tcpMessageController) {
+                nickToUnansweredCheck.put(s, 0);
+                break;
+            }
+        }
+    }
+
 }
 
 

@@ -80,13 +80,15 @@ public class ConnectionRMI extends UnicastRemoteObject implements InterfaceClien
     }
 
     @Override
-    public void confirmConnection(boolean bool) throws RemoteException {
-        if(!bool) {
-            PingThreadClientRmiToServer pingThread = new PingThreadClientRmiToServer(stub,this); //Starting the thread for pinging the server
-            pingThread.start();
+    public void confirmConnection(boolean typeOfLobby) throws RemoteException {
+        PingThreadClientRmiToServer pingThread = new PingThreadClientRmiToServer(stub,this); //Starting the thread for pinging the server
+        pingThread.start();
+        if(typeOfLobby) {
+            controller.playerRestored();
+        }
+        else{
             controller.nicknameAccepted();
         }
-        //todo manca caso in cui è player restored
     }
 
     @Override
@@ -96,7 +98,7 @@ public class ConnectionRMI extends UnicastRemoteObject implements InterfaceClien
 
     @Override
     public void wrongMessageWarning(String message) throws RemoteException {
-        //tell the controller to show the message in the view explaining the nickname tagged was wrong
+        controller.wrongReceiver();
     }
 
     @Override
@@ -117,15 +119,22 @@ public class ConnectionRMI extends UnicastRemoteObject implements InterfaceClien
 
     @Override
     public void lobbyCreated(boolean typeOfGame) throws RemoteException {
+        PingThreadClientRmiToServer pingThread = new PingThreadClientRmiToServer(stub,this); //Starting the thread for pinging the server
+        pingThread.start();
         if(typeOfGame)
             controller.lobbyCreated();
-        //else
-            //todo case where a lobby is restored
+        else
+            controller.lobbyCreated();
     }
 
     @Override
     public void waitForLobbyCreation() throws RemoteException {
         controller.waitForLobby();
+    }
+
+    @Override
+    public void askParametersAgain() {
+        controller.wrongParameters();
     }
 
     public void sendPrivateMessage(Body body) {
@@ -142,5 +151,18 @@ public class ConnectionRMI extends UnicastRemoteObject implements InterfaceClien
         } catch (RemoteException e) {
             throw new RuntimeException(e);
         }
+    }
+
+    public void sendMoveToServer(Body body) {
+        try {
+            stub.executeMove(body);
+        } catch (RemoteException e) {
+            throw new RuntimeException();
+        }
+    }
+
+    @Override
+    public void incorrectMove() {
+        controller.incorrectMove();
     }
 }

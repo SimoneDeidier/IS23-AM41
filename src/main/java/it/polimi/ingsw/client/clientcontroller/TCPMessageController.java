@@ -14,6 +14,8 @@ public class TCPMessageController implements TCPMessageControllerInterface {
 
     private final SerializeDeserialize serializeDeserialize;
     private final ClientController controller;
+    private static final int CLEAR_DELAY = 1000;
+    private int clearUnanswered = 0;
 
     public TCPMessageController(SerializeDeserialize serializeDeserialize) {
         this.serializeDeserialize = serializeDeserialize;
@@ -29,6 +31,9 @@ public class TCPMessageController implements TCPMessageControllerInterface {
             }
             case "Wait for Lobby" -> {
                 controller.waitForLobby();
+            }
+            case "Lobby Restored" -> {
+                controller.lobbyRestored();
             }
             case "Player Restored" -> {
                 controller.playerRestored();
@@ -71,7 +76,9 @@ public class TCPMessageController implements TCPMessageControllerInterface {
             case "Invalid Player" -> {
                 controller.invalidPlayer();
             }
-
+            case "Check" -> {
+                clearUnanswered = 0;
+            }
         }
     }
 
@@ -95,6 +102,23 @@ public class TCPMessageController implements TCPMessageControllerInterface {
 
     public String getPlayerNickname() {
         return controller.getPlayerNickname();
+    }
+
+    public void startClearThread() {
+        new Thread(() -> {
+            while(clearUnanswered < 5) {
+                System.out.println("MANDO UN PING AL SERVER");
+                printTCPMessage("Clear", null);
+                clearUnanswered++;
+                try {
+                    Thread.sleep(CLEAR_DELAY);
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
+            }
+            System.out.println("SERVER DISCONNESSO!");
+            controller.serverNotResponding();
+        }).start();
     }
 
 }

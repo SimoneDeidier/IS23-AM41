@@ -1,7 +1,6 @@
 package it.polimi.ingsw.client.view.controllers;
 
 import it.polimi.ingsw.client.view.GraphicUserInterface;
-import it.polimi.ingsw.server.model.items.Item;
 import javafx.application.Platform;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
@@ -45,6 +44,8 @@ public class LoginScreenController {
     private AnchorPane impossibleEventAnchorPane;
     @FXML
     private AnchorPane playerRestoredAnchorPane;
+    @FXML
+    private AnchorPane lobbyRestoredAnchorPane;
 
     private GraphicUserInterface gui = null;
     private List<Integer> players = Arrays.asList(2, 3, 4);
@@ -147,6 +148,10 @@ public class LoginScreenController {
 
     public void playerRestored() {
         changePane(nicknameAnchorPane, playerRestoredAnchorPane);
+    }
+
+    public void lobbyRestored() {
+        changePane(nicknameAnchorPane, lobbyRestoredAnchorPane);
     }
 
 }

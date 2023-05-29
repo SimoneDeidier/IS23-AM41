@@ -4,23 +4,40 @@ Professor: Alessandro Margara<br />
 Group name: **IS23-AM41**<br />
 Students:
 
-* [D'Alessio Edoardo](https://github.com/EdoardoDAlessio)
-* [De Ciechi Samuele](https://github.com/Samdec01)
-* [Deidier Simone](https://github.com/SimoneDeidier)
-* [Ermacora Iacopo](https://github.com/IacopoErmacoraPolimi)
+* [D'Alessio Edoardo - edoardo.dalessio@mail.polimi.it](https://github.com/EdoardoDAlessio)
+* [De Ciechi Samuele - samuele.deciechi@mail.polimi.it](https://github.com/Samdec01)
+* [Deidier Simone simone.deidier@mail.polimi.it](https://github.com/SimoneDeidier)
+* [Ermacora Iacopo - iacopo.ermacora@mail.polimi.it](https://github.com/IacopoErmacoraPolimi)
 
 ## Objectives
 
-- [ ] Simple rules
-- [ ] Full rules
-- [ ] Text User Interface
-- [ ] Graphic User Interface
-- [ ] RMI connection
-- [ ] Socket connection
+- [x] Simple rules
+- [x] Full rules
+- [x] Text User Interface
+- [x] Graphic User Interface
+- [x] RMI connection
+- [x] Socket connection
 - [ ] Multiple matches
-- [ ] Persistence
-- [ ] Disconnection resilience
-- [ ] Chat
+- [x] Persistence
+- [x] Disconnection resilience
+- [x] Chat
+
+### Works status
+
+|Feature name|Status|Percentage status|Comments|
+|:-:|:-:|:-:|:-:|
+|Simple rules|Done|100%||
+|Full rules|Done|100%||
+|TUI|Work in progress|50%|We are implementing some missing game screens|
+|GUI|Work in progress|95%|Some screens need to be refined, but overall the GUI is full working|
+|RMI|Done|100%||
+|TCP|Done|100%||
+|Multiple matches|Not implemented|0%|We chose to not implement this advanced feature|
+|Server persistance|Work in progress|80%|We have to make some test and link the UI with some messages|
+|Disconnection resilience|Work in progress|80%|We have to make some test and link the UI with some messages|
+|Chat|Done|100%||
+
+* *Latest update: 29/05/2023*
 
 ## Unified Modeling Language
 
@@ -32,3 +49,16 @@ During this course, we will have to review some documents of other's groups. Our
 
 * All the *peer-review documents* are available to read in the ***deliveries/peer-reviews/reviews*** folder.
 * All the *description documents* are available to read in the ***deliveries/peer-reviews/documents*** folder.
+
+## Code testing
+
+All the code from the *Model classes* and the most important from the *Server-Controller classes* has been tested with ***JUnit***, a powerful suite for the code testing and validation. Our test coverage:
+
+* Number of tests: **40.104** - *all passed*
+
+|*MVC* Classes|Class coverage|Method coverage|Lines of code coverage|
+|:-:|:-:|:-:|:-:|
+|Model|100%|99%|92%|
+|Server-Controller|33%|45%|23%|
+
+* *Latest update: 29/05/2023*
