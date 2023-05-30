@@ -525,6 +525,7 @@ public class GameController {
     }
 
     public void startCheckThread() {
+        server.startCheckThreadRMI();
         new Thread(() -> {
             while(true) {
                 for(String nickname : nickToTCPMessageControllerMapping.keySet()) {
@@ -540,13 +541,13 @@ public class GameController {
                         System.out.println(nickname + " è disonnesso");
                         for(Player p : playerList) {
                             // todo qui bisogna fare il check se è nella fase di gioco o quando crea la lobby
+                            //todo serve anche controllare se era il suo turno e nel caso cambiare l'active player
                             if(Objects.equals(p.getNickname(), nickname)) {
                                 p.setConnected(false);
                             }
                         }
                     }
                 }
-                // todo da fare RMI
                 try {
                     Thread.sleep(THREAD_SLEEP);
                 } catch (InterruptedException e) {

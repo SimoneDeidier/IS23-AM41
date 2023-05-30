@@ -29,8 +29,9 @@ public class Server implements InterfaceServer {
 
     private static int portRMI;
     private static int portTCP;
-    private final GameController controller = GameController.getGameController(this);
     private final Map<String,InterfaceClient> clientMapRMI = new ConcurrentHashMap<>();
+    private final GameController controller = GameController.getGameController(this);
+    private static final int CHECK_DELAY_MILLISECONDS = 5000;
 
 
     public static void main(String[] args) {
@@ -162,6 +163,7 @@ public class Server implements InterfaceServer {
             clientMapRMI.put(nickname,cl);
             controller.startGame();
             controller.yourTarget();
+            cl.startClearThread();
             controller.updateView();
         } catch (FullLobbyException e) { //you can't connect right now, the lobby is full or a game is already playing on the server
             cl.disconnectUser(1);
@@ -249,8 +251,38 @@ public class Server implements InterfaceServer {
     }
 
     @Override
-    public void clearRMI() throws RemoteException { //ping from client to server
+    public void clearRMI() throws RemoteException { //ping called from client to server
         //it's empty, we need to check on the other side for RemoteExceptions
+    }
+    public void startCheckThreadRMI() {
+        new Thread(() -> {
+            while (true) {
+                try {
+                    for (String nickname : clientMapRMI.keySet()) {
+                        System.out.println("Pingo " + nickname);
+                        try {
+                            clientMapRMI.get(nickname).check();
+                        } catch (RemoteException e) {
+                            System.out.println("Client " + nickname + " disconnesso");
+                            controller.changePlayerConnectionStatus(nickname); //devo già farlo se in lobby???????
+                            if(controller.getActivePlayer().getNickname().equals(nickname)){
+                                //todo cambio di turno
+                            }
+                            clientMapRMI.remove(nickname);
+                            break;
+                        }
+                        Thread.sleep(CHECK_DELAY_MILLISECONDS);
+                    }
+                } catch (InterruptedException e) {
+                    //thread interrupted
+                }
+            }
+        }).start();
+
+    }
+
+    public int howManyPlayersConnectedInRMI(){
+        return clientMapRMI.size();
     }
 
 }
