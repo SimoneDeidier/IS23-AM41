@@ -7,6 +7,8 @@ import it.polimi.ingsw.messages.NewView;
 import it.polimi.ingsw.server.model.Player;
 import it.polimi.ingsw.server.servercontroller.GameController;
 import it.polimi.ingsw.server.servercontroller.SocketManager;
+import it.polimi.ingsw.server.servercontroller.controllerstates.RunningGameState;
+import it.polimi.ingsw.server.servercontroller.controllerstates.ServerInitState;
 import it.polimi.ingsw.server.servercontroller.exceptions.*;
 
 import java.io.IOException;
@@ -264,25 +266,40 @@ public class Server implements InterfaceServer {
                             clientMapRMI.get(nickname).check();
                         } catch (RemoteException e) {
                             System.out.println("Client " + nickname + " disconnesso");
-                            controller.changePlayerConnectionStatus(nickname); //devo già farlo se in lobby???????
-                            if(controller.getActivePlayer().getNickname().equals(nickname)){
-                                //todo cambio di turno
+                            controller.changePlayerConnectionStatus(nickname);
+                            if(controller.getState().getClass().equals(RunningGameState.class)
+                                && controller.getActivePlayer().getNickname().equals(nickname)){
+                                controller.changeActivePlayer();
+                                controller.updateView();
+                            }
+                            if(controller.getPlayerList().size()==1 && controller.getMaxPlayerNumber()==0){
+                                controller.changeState(new ServerInitState());
+                                controller.getPlayerList().clear();
                             }
                             clientMapRMI.remove(nickname);
                             break;
                         }
                         Thread.sleep(CHECK_DELAY_MILLISECONDS);
                     }
-                } catch (InterruptedException e) {
+                } catch (InterruptedException | RemoteException e) {
                     //thread interrupted
                 }
             }
         }).start();
-
     }
 
-    public int howManyPlayersConnectedInRMI(){
-        return clientMapRMI.size();
-    }
+    public void disconnectLastRMIUser() {
+        for(String nickname: clientMapRMI.keySet()) {
+            for(Player player: controller.getPlayerList()) {
+                if(player.isConnected() && player.getNickname().equals(nickname)){
+                    try {
+                        clientMapRMI.get(nickname).disconnectUser(9); //random number
+                        clientMapRMI.clear();
+                    } catch (RemoteException ignored) {
+                    }
+                }
+            }
 
+        }
+    }
 }
