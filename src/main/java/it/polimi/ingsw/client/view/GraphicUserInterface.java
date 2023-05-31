@@ -16,6 +16,7 @@ import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyCodeCombination;
 import javafx.scene.input.KeyCombination;
 import javafx.scene.input.KeyEvent;
+import javafx.stage.Modality;
 import javafx.stage.Stage;
 
 
@@ -315,8 +316,18 @@ public class GraphicUserInterface extends Application implements UserInterface, 
 
     @Override
     public void serverNotResponding() {
-        // todo carica la alert e poi chiude tutto
         Platform.runLater(() -> {
+            FXMLLoader loader = new FXMLLoader(ClassLoader.getSystemResource("fxml/ServerNotResponding.fxml"));
+            Stage stage = new Stage();
+            try {
+                stage.setScene(new Scene(loader.load()));
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+            stage.setTitle("My Shelfie - Server not responding!");
+            stage.setResizable(false);
+            stage.initModality(Modality.APPLICATION_MODAL);
+            stage.showAndWait();
             guiStage.close();
             clientController.closeConnection();
         });

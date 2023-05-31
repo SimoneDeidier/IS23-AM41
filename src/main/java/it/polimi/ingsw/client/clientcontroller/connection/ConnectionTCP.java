@@ -17,6 +17,7 @@ public class ConnectionTCP implements Connection {
     private PrintWriter socketOut;
     private Scanner socketIn;
     private SerializeDeserialize serializeDeserialize = null;
+    private boolean closeTCPThread = false;
 
     private String IP = null;
     private int PORT = 0;
@@ -33,19 +34,20 @@ public class ConnectionTCP implements Connection {
     @Override
     public void startConnection(String uiType) {
         Thread socketReader = new Thread(() -> {
-            while(!closeConnection) {
-                String inMsg = null;
-                try {
-                    inMsg = socketIn.nextLine();
-                }
-                catch (NoSuchElementException | IllegalStateException e) {
-                    closeConnection = true;
-                }
-                if (inMsg != null) {
+            while(!closeTCPThread) {
+                while (!closeConnection) {
+                    String inMsg = null;
                     try {
-                        serializeDeserialize.deserialize(inMsg);
-                    } catch (IOException | URISyntaxException e) {
-                        e.printStackTrace();
+                        inMsg = socketIn.nextLine();
+                    } catch (NoSuchElementException | IllegalStateException e) {
+                        closeConnection = true;
+                    }
+                    if (inMsg != null) {
+                        try {
+                            serializeDeserialize.deserialize(inMsg);
+                        } catch (IOException | URISyntaxException e) {
+                            e.printStackTrace();
+                        }
                     }
                 }
             }

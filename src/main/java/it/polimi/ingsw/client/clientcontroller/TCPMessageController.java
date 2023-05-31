@@ -107,7 +107,6 @@ public class TCPMessageController implements TCPMessageControllerInterface {
     public void startClearThread() {
         new Thread(() -> {
             while(clearUnanswered < 5) {
-                System.out.println("MANDO UN PING AL SERVER");
                 printTCPMessage("Clear", null);
                 clearUnanswered++;
                 try {
@@ -116,7 +115,6 @@ public class TCPMessageController implements TCPMessageControllerInterface {
                     e.printStackTrace();
                 }
             }
-            System.out.println("SERVER DISCONNESSO!");
             controller.serverNotResponding();
         }).start();
     }
