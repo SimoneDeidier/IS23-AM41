@@ -24,6 +24,7 @@ public class ConnectionRMI extends UnicastRemoteObject implements InterfaceClien
     private ClientController controller;
     private static final int CLEAR_DELAY_MILLISECONDS = 5000;
     private boolean clientConnected;
+    private boolean wasIJustReconnected =false;
 
     public ConnectionRMI(int port, String IP) throws RemoteException {
         super();
@@ -66,6 +67,15 @@ public class ConnectionRMI extends UnicastRemoteObject implements InterfaceClien
 
     @Override
     public void updateView(NewView newView) throws RemoteException {
+        System.out.println(clientConnected);
+        if(wasIJustReconnected){ //todo far vedere a simo
+            try {
+                controller.loadGameScreen();
+            } catch (IOException e) {
+                throw new RuntimeException(e);
+            }
+            wasIJustReconnected=false;
+        }
         try {
             controller.updateView(newView);
         } catch (FileNotFoundException | URISyntaxException e) {
@@ -183,7 +193,33 @@ public class ConnectionRMI extends UnicastRemoteObject implements InterfaceClien
         //it's empty, we need to check on the other side for RemoteExceptions
     }
 
+    public void voluntaryDisconnection(){ //todo far vedere a simo
+        clientConnected=false;
+        try {
+            stub.voluntaryDisconnection(controller.getPlayerNickname());
+        } catch (RemoteException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    @Override
+    public void rejoinedMatch() throws RemoteException {
+        controller.rejoinedMatch();
+        wasIJustReconnected=true;
+    }
+
+    @Override
+    public void invalidPlayerForRejoiningTheMatch() throws RemoteException {
+        controller.invalidPlayer();
+    }
+
     public void setClientConnected(boolean clientConnected) {
         this.clientConnected = clientConnected;
+    }
+    public void makeARejoinRequest(){
+        try {
+            stub.rejoinRequest(controller.getPlayerNickname(),this );
+        } catch (RemoteException ignored) {
+        }
     }
 }

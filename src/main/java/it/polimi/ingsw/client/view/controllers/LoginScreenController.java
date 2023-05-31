@@ -113,6 +113,7 @@ public class LoginScreenController {
     public void rejoinedMatch() {
         System.out.println("Changing panes...");
         changePane(rejoinAnchorPane, rejoinedAnchorPane);
+
     }
 
     public void invalidPlayerNickname() {

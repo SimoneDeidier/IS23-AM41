@@ -164,7 +164,7 @@ public class GraphicUserInterface extends Application implements UserInterface, 
     @Override
     public void updateView(NewView newView) throws FileNotFoundException, URISyntaxException {
         String playerNickname = clientController.getPlayerNickname();
-        this.isYourTurn = Objects.equals(newView.getActivePlayer(), playerNickname);
+        this.isYourTurn = Objects.equals(newView.getActivePlayer(), playerNickname) && !newView.youAreTheLastUserAndYouAlreadyMadeYourMove(); //todo far vedere a simo
         Platform.runLater(() -> {
             try {
                 if(!newView.isGameOver()) {
@@ -242,7 +242,7 @@ public class GraphicUserInterface extends Application implements UserInterface, 
     @Override
     public void rejoinedMatch() {
         System.out.println("Called rejoined in gui");
-        // loginScreenController.rejoinedMatch();
+        loginScreenController.rejoinedMatch();
     }
 
     @Override

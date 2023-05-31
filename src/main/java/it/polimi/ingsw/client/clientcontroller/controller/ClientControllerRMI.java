@@ -153,21 +153,30 @@ public class ClientControllerRMI implements ClientController, Serializable {
 
     @Override
     public void disconnect() { //todol
-
+        connectionRMI.setClientConnected(false); //stops the ping thread
+        connectionRMI.voluntaryDisconnection();
     }
 
     @Override
     public void rejoinMatch() { //todo
-
+        connectionRMI.makeARejoinRequest();
     }
 
     @Override
     public void rejoinedMatch() { //todo
-
+        System.out.println("Called rejoined in controller");
+        try { //restarting the ping to the server
+            connectionRMI.setClientConnected(true);
+            connectionRMI.startClearThread();
+        } catch (RemoteException e) {
+            throw new RuntimeException(e);
+        }
+        userInterface.rejoinedMatch();
     }
 
     @Override
     public void invalidPlayer() { //todo, è quando fallisce il re join
+        userInterface.invalidPlayer();
     }
 
     @Override

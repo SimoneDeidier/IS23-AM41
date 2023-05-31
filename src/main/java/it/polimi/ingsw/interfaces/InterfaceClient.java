@@ -22,4 +22,6 @@ public interface InterfaceClient extends Remote {
     void incorrectMove() throws RemoteException;
     void startClearThread() throws RemoteException;
     void check() throws RemoteException;
+    void rejoinedMatch() throws RemoteException;
+    void invalidPlayerForRejoiningTheMatch() throws RemoteException;
 }
