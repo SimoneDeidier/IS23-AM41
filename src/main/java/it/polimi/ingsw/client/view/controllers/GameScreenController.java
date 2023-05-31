@@ -274,28 +274,27 @@ public class GameScreenController {
     }
 
     public void removeFromSelected(Node n) {
+        int col = 0;
+
         for(Node node : pickedItemsGridPane.getChildren()) {
-            ImageView imgv1 = (ImageView) n;
-            ImageView imgv2 = (ImageView) node;
-            if(imgv1.getImage() == imgv2.getImage()) {
-                imgv2.setImage(null);
-                int col = GridPane.getColumnIndex(node);
-                gui.removeInPositionPicked(col);
+            ImageView selected = (ImageView) n;
+            ImageView pickedSelected = (ImageView) node;
+            if(selected.getImage() == pickedSelected.getImage()) {
+                col = GridPane.getColumnIndex(node);
             }
         }
+        gui.removeInPositionPicked(col);
+        int maxIndex = gui.getPositionPickedSize();
+        for(int i = col; i < maxIndex; i++) {
+            swapTwoImageViewInGridPane(getGridPaneChildrenByCoordinate(pickedItemsGridPane, 0, i), getGridPaneChildrenByCoordinate(pickedItemsGridPane, 0, i+1));
+        }
+        Node toRemove = null;
         for(Node node : pickedItemsGridPane.getChildren()) {
-            ImageView imgv1 = (ImageView) node;
-            if(imgv1.getImage() == null) {
-                for(Node node1 : pickedItemsGridPane.getChildren()) {
-                    ImageView imgv2 = (ImageView) node1;
-                    if(imgv2.getImage() != null && (GridPane.getColumnIndex(imgv1) == (GridPane.getColumnIndex(imgv2) - 1))) {
-                        imgv1.setImage(imgv2.getImage());
-                        imgv2.setImage(null);
-                        break;
-                    }
-                }
+            if(GridPane.getColumnIndex(node) == maxIndex) {
+                toRemove = node;
             }
         }
+        pickedItemsGridPane.getChildren().remove(toRemove);
         n.setOpacity(1.0);
     }
 
@@ -451,5 +450,22 @@ public class GameScreenController {
 
     public void setEndGameToken(EndGameToken endGameToken) {
         this.endGameToken = endGameToken;
+    }
+
+    public Node getGridPaneChildrenByCoordinate(GridPane gp, int row, int col) {
+        for(Node n : gp.getChildren()) {
+            if(GridPane.getColumnIndex(n) == col && GridPane.getRowIndex(n) == row) {
+                return n;
+            }
+        }
+        return null;
+    }
+
+    public void swapTwoImageViewInGridPane(Node one, Node two) {
+        ImageView oneImgv = (ImageView) one;
+        ImageView twoImgv = (ImageView) two;
+        Image tmp = oneImgv.getImage();
+        oneImgv.setImage(twoImgv.getImage());
+        twoImgv.setImage(tmp);
     }
 }

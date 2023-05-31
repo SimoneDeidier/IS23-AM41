@@ -1,6 +1,5 @@
 package it.polimi.ingsw.client.clientcontroller.connection;
 
-import it.polimi.ingsw.client.PingThreadClientRmiToServer;
 import it.polimi.ingsw.client.clientcontroller.controller.ClientController;
 import it.polimi.ingsw.client.clientcontroller.controller.ClientControllerRMI;
 import it.polimi.ingsw.interfaces.InterfaceClient;
@@ -23,25 +22,28 @@ public class ConnectionRMI extends UnicastRemoteObject implements InterfaceClien
     private final String IP;
     private InterfaceServer stub;
     private ClientController controller;
+    private static final int CLEAR_DELAY_MILLISECONDS = 5000;
+    private boolean clientConnected;
+    private boolean wasIJustReconnected =false;
 
-    public ConnectionRMI(int port,String IP) throws RemoteException {
+    public ConnectionRMI(int port, String IP) throws RemoteException {
         super();
-        this.PORT=port;
-        this.IP=IP;
+        this.PORT = port;
+        this.IP = IP;
     }
 
     @Override
-    public void startConnection(String uiType){
+    public void startConnection(String uiType) {
         try {
             // Getting the registry
             Registry registry = LocateRegistry.getRegistry(IP, PORT);
             // Looking up the registry for the remote object
             stub = (InterfaceServer) registry.lookup("serverInterface");
-            controller=new ClientControllerRMI(this);
+            clientConnected=true;
+            controller = new ClientControllerRMI(this);
             controller.startUserInterface(uiType);
-        }
-        catch (Exception e) {
-            e.printStackTrace();
+        } catch (Exception e) {
+            System.out.println("Server is offline or unreachable");
         }
     }
 
@@ -54,8 +56,8 @@ public class ConnectionRMI extends UnicastRemoteObject implements InterfaceClien
         controller.getParameters();
     }
 
-    public void sendParameters(int maxPlayerNumber,boolean onlyOneCommon) throws RemoteException{
-        stub.sendParameters(this,maxPlayerNumber,onlyOneCommon);
+    public void sendParameters(int maxPlayerNumber, boolean onlyOneCommon) throws RemoteException {
+        stub.sendParameters(this, maxPlayerNumber, onlyOneCommon);
     }
 
     @Override
@@ -65,6 +67,15 @@ public class ConnectionRMI extends UnicastRemoteObject implements InterfaceClien
 
     @Override
     public void updateView(NewView newView) throws RemoteException {
+        System.out.println(clientConnected);
+        if(wasIJustReconnected){ //todo far vedere a simo
+            try {
+                controller.loadGameScreen();
+            } catch (IOException e) {
+                throw new RuntimeException(e);
+            }
+            wasIJustReconnected=false;
+        }
         try {
             controller.updateView(newView);
         } catch (FileNotFoundException | URISyntaxException e) {
@@ -75,25 +86,24 @@ public class ConnectionRMI extends UnicastRemoteObject implements InterfaceClien
     @Override
     public void disconnectUser(int whichMessageToShow) throws RemoteException {
         //todo
+        clientConnected=false; //stops the ping thread
         //tell the controller to show an error page, prompting the user to restart the client in order to join a new game
 
     }
 
     @Override
     public void confirmConnection(boolean typeOfLobby) throws RemoteException {
-        PingThreadClientRmiToServer pingThread = new PingThreadClientRmiToServer(stub,this); //Starting the thread for pinging the server
-        pingThread.start();
-        if(typeOfLobby) {
+        startClearThread();
+        if (typeOfLobby) {
             controller.playerRestored();
-        }
-        else{
+        } else {
             controller.nicknameAccepted();
         }
     }
 
     @Override
     public void receiveMessage(String sender, String message, String localDateTime) throws RemoteException {
-        controller.receiveMessage(message,sender,localDateTime);
+        controller.receiveMessage(message, sender, localDateTime);
     }
 
     @Override
@@ -113,18 +123,12 @@ public class ConnectionRMI extends UnicastRemoteObject implements InterfaceClien
     }
 
     @Override
-    public void showEndGame(NewView newView) throws RemoteException {
-        //tell the controller to make the view show the end game screen
-    }
-
-    @Override
     public void lobbyCreated(boolean typeOfGame) throws RemoteException {
-        PingThreadClientRmiToServer pingThread = new PingThreadClientRmiToServer(stub,this); //Starting the thread for pinging the server
-        pingThread.start();
-        if(typeOfGame)
+        startClearThread();
+        if (typeOfGame)
             controller.lobbyCreated();
         else
-            controller.lobbyCreated();
+            controller.lobbyRestored();
     }
 
     @Override
@@ -139,7 +143,7 @@ public class ConnectionRMI extends UnicastRemoteObject implements InterfaceClien
 
     public void sendPrivateMessage(Body body) {
         try {
-            stub.peerToPeerMsgHandler(body.getSenderNickname(),body.getReceiverNickname(), body.getText(), body.getLocalDateTime());
+            stub.peerToPeerMsgHandler(body.getSenderNickname(), body.getReceiverNickname(), body.getText(), body.getLocalDateTime());
         } catch (RemoteException e) {
             throw new RuntimeException(e);
         }
@@ -164,5 +168,58 @@ public class ConnectionRMI extends UnicastRemoteObject implements InterfaceClien
     @Override
     public void incorrectMove() {
         controller.incorrectMove();
+    }
+
+    public void startClearThread() throws RemoteException {
+        new Thread(() -> {
+            while (clientConnected) {
+                try {
+                    System.out.println("Pingo il server");
+                    stub.clearRMI();
+                    Thread.sleep(CLEAR_DELAY_MILLISECONDS);
+                } catch (RemoteException e) {
+                    System.out.println("Server crashato!");
+                    controller.serverNotResponding();
+                    break;
+                } catch (InterruptedException e) {
+                    // interrupted thread or the client is dead
+                }
+            }
+        }).start();
+    }
+
+    @Override
+    public void check() throws RemoteException { //ping called from server to client
+        //it's empty, we need to check on the other side for RemoteExceptions
+    }
+
+    public void voluntaryDisconnection(){ //todo far vedere a simo
+        clientConnected=false;
+        try {
+            stub.voluntaryDisconnection(controller.getPlayerNickname());
+        } catch (RemoteException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    @Override
+    public void rejoinedMatch() throws RemoteException {
+        controller.rejoinedMatch();
+        wasIJustReconnected=true;
+    }
+
+    @Override
+    public void invalidPlayerForRejoiningTheMatch() throws RemoteException {
+        controller.invalidPlayer();
+    }
+
+    public void setClientConnected(boolean clientConnected) {
+        this.clientConnected = clientConnected;
+    }
+    public void makeARejoinRequest(){
+        try {
+            stub.rejoinRequest(controller.getPlayerNickname(),this );
+        } catch (RemoteException ignored) {
+        }
     }
 }

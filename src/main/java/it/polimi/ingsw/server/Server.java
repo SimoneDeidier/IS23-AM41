@@ -5,8 +5,11 @@ import it.polimi.ingsw.interfaces.InterfaceServer;
 import it.polimi.ingsw.messages.Body;
 import it.polimi.ingsw.messages.NewView;
 import it.polimi.ingsw.server.model.Player;
+import it.polimi.ingsw.server.model.commons.CommonTargetCard;
 import it.polimi.ingsw.server.servercontroller.GameController;
 import it.polimi.ingsw.server.servercontroller.SocketManager;
+import it.polimi.ingsw.server.servercontroller.controllerstates.RunningGameState;
+import it.polimi.ingsw.server.servercontroller.controllerstates.ServerInitState;
 import it.polimi.ingsw.server.servercontroller.exceptions.*;
 
 import java.io.IOException;
@@ -17,10 +20,7 @@ import java.rmi.RemoteException;
 import java.rmi.registry.LocateRegistry;
 import java.rmi.registry.Registry;
 import java.rmi.server.UnicastRemoteObject;
-import java.util.List;
-import java.util.Map;
-import java.util.Objects;
-import java.util.Scanner;
+import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
@@ -29,8 +29,9 @@ public class Server implements InterfaceServer {
 
     private static int portRMI;
     private static int portTCP;
-    private final GameController controller = GameController.getGameController(this);
     private final Map<String,InterfaceClient> clientMapRMI = new ConcurrentHashMap<>();
+    private final GameController controller = GameController.getGameController(this);
+    private static final int CHECK_DELAY_MILLISECONDS = 5000;
 
 
     public static void main(String[] args) {
@@ -162,6 +163,7 @@ public class Server implements InterfaceServer {
             clientMapRMI.put(nickname,cl);
             controller.startGame();
             controller.yourTarget();
+            cl.startClearThread();
             controller.updateView();
         } catch (FullLobbyException e) { //you can't connect right now, the lobby is full or a game is already playing on the server
             cl.disconnectUser(1);
@@ -236,10 +238,13 @@ public class Server implements InterfaceServer {
     }
 
     @Override
-    public void disconnection(String nickname) throws RemoteException {
+    public void voluntaryDisconnection(String nickname) throws RemoteException {
         controller.changePlayerConnectionStatus(nickname);
-        clientMapRMI.get(nickname).disconnectUser(7/*boh*/);
-        clientMapRMI.remove(nickname);
+        clientMapRMI.remove(nickname); //stops the ping from the server towards that user
+        if(controller.getActivePlayer().getNickname().equals(nickname)){
+            controller.changeActivePlayer();
+            controller.updateView();
+        }
     }
 
     public void broadcastMsg(String sender, String text,String localDateTime) throws RemoteException {
@@ -249,8 +254,72 @@ public class Server implements InterfaceServer {
     }
 
     @Override
-    public void clearRMI() throws RemoteException { //ping from client to server
+    public void clearRMI() throws RemoteException { //ping called from client to server
         //it's empty, we need to check on the other side for RemoteExceptions
     }
+    public void startCheckThreadRMI() {
+        new Thread(() -> {
+            while (true) {
+                try {
+                    for (String nickname : clientMapRMI.keySet()) {
+                        System.out.println("Pingo " + nickname);
+                        try {
+                            clientMapRMI.get(nickname).check();
+                        } catch (RemoteException e) {
+                            System.out.println("Client " + nickname + " disconnesso");
+                            controller.changePlayerConnectionStatus(nickname);
+                            if(controller.getState().getClass().equals(RunningGameState.class)
+                                && controller.getActivePlayer().getNickname().equals(nickname)){
+                                controller.changeActivePlayer();
+                                controller.updateView();
+                            }
+                            if(controller.getPlayerList().size()==1 && controller.getMaxPlayerNumber()==0){
+                                controller.changeState(new ServerInitState());
+                                controller.getPlayerList().clear();
+                            }
+                            clientMapRMI.remove(nickname);
+                            break;
+                        }
+                        Thread.sleep(CHECK_DELAY_MILLISECONDS);
+                    }
+                } catch (InterruptedException | RemoteException e) {
+                    //thread interrupted
+                }
+            }
+        }).start();
+    }
 
+    public void disconnectLastRMIUser() {
+        for(String nickname: clientMapRMI.keySet()) {
+            for(Player player: controller.getPlayerList()) {
+                if(player.isConnected() && player.getNickname().equals(nickname)){
+                    try {
+                        clientMapRMI.get(nickname).disconnectUser(9); //todo qua manca in realtà la funzione in grafica
+                        clientMapRMI.clear();
+                    } catch (RemoteException ignored) {
+                    }
+                }
+            }
+
+        }
+    }
+
+    public void rejoinRequest(String nickname, InterfaceClient cl) throws RemoteException{
+        if(controller.checkReJoinRequest(nickname)){
+            if(controller.didLastUserMadeHisMove()){ //updateView for everyone as soon as he connects because he needs to make a move right away
+                controller.setLastUserMadeHisMove(false);
+                clientMapRMI.put(nickname, cl);
+                clientMapRMI.get(nickname).rejoinedMatch();
+                controller.changeActivePlayer();
+                controller.updateView();
+            }
+            else { //he'll wait for the first updateView
+                clientMapRMI.put(nickname, cl);
+                clientMapRMI.get(nickname).rejoinedMatch();
+            }
+        }
+        else{ //impossible case
+            clientMapRMI.get(nickname).invalidPlayerForRejoiningTheMatch();
+        }
+    }
 }

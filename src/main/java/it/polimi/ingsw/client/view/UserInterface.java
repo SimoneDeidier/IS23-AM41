@@ -13,7 +13,7 @@ import java.net.URISyntaxException;
 import java.time.LocalDateTime;
 import java.util.List;
 
-public interface UserInterface {
+public interface UserInterface extends Runnable {
 
     void run();
     void setClientController(ClientController clientController);
