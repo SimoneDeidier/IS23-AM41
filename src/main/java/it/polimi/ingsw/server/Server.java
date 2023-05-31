@@ -7,6 +7,8 @@ import it.polimi.ingsw.messages.NewView;
 import it.polimi.ingsw.server.model.Player;
 import it.polimi.ingsw.server.servercontroller.GameController;
 import it.polimi.ingsw.server.servercontroller.SocketManager;
+import it.polimi.ingsw.server.servercontroller.controllerstates.RunningGameState;
+import it.polimi.ingsw.server.servercontroller.controllerstates.ServerInitState;
 import it.polimi.ingsw.server.servercontroller.exceptions.*;
 
 import java.io.IOException;
@@ -29,8 +31,9 @@ public class Server implements InterfaceServer {
 
     private static int portRMI;
     private static int portTCP;
-    private final GameController controller = GameController.getGameController(this);
     private final Map<String,InterfaceClient> clientMapRMI = new ConcurrentHashMap<>();
+    private final GameController controller = GameController.getGameController(this);
+    private static final int CHECK_DELAY_MILLISECONDS = 5000;
 
 
     public static void main(String[] args) {
@@ -162,6 +165,7 @@ public class Server implements InterfaceServer {
             clientMapRMI.put(nickname,cl);
             controller.startGame();
             controller.yourTarget();
+            cl.startClearThread();
             controller.updateView();
         } catch (FullLobbyException e) { //you can't connect right now, the lobby is full or a game is already playing on the server
             cl.disconnectUser(1);
@@ -249,8 +253,53 @@ public class Server implements InterfaceServer {
     }
 
     @Override
-    public void clearRMI() throws RemoteException { //ping from client to server
+    public void clearRMI() throws RemoteException { //ping called from client to server
         //it's empty, we need to check on the other side for RemoteExceptions
     }
+    public void startCheckThreadRMI() {
+        new Thread(() -> {
+            while (true) {
+                try {
+                    for (String nickname : clientMapRMI.keySet()) {
+                        System.out.println("Pingo " + nickname);
+                        try {
+                            clientMapRMI.get(nickname).check();
+                        } catch (RemoteException e) {
+                            System.out.println("Client " + nickname + " disconnesso");
+                            controller.changePlayerConnectionStatus(nickname);
+                            if(controller.getState().getClass().equals(RunningGameState.class)
+                                && controller.getActivePlayer().getNickname().equals(nickname)){
+                                controller.changeActivePlayer();
+                                controller.updateView();
+                            }
+                            if(controller.getPlayerList().size()==1 && controller.getMaxPlayerNumber()==0){
+                                controller.changeState(new ServerInitState());
+                                controller.getPlayerList().clear();
+                            }
+                            clientMapRMI.remove(nickname);
+                            break;
+                        }
+                        Thread.sleep(CHECK_DELAY_MILLISECONDS);
+                    }
+                } catch (InterruptedException | RemoteException e) {
+                    //thread interrupted
+                }
+            }
+        }).start();
+    }
 
+    public void disconnectLastRMIUser() {
+        for(String nickname: clientMapRMI.keySet()) {
+            for(Player player: controller.getPlayerList()) {
+                if(player.isConnected() && player.getNickname().equals(nickname)){
+                    try {
+                        clientMapRMI.get(nickname).disconnectUser(9); //random number
+                        clientMapRMI.clear();
+                    } catch (RemoteException ignored) {
+                    }
+                }
+            }
+
+        }
+    }
 }

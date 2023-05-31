@@ -21,4 +21,6 @@ public interface InterfaceClient extends Remote {
     void waitForLobbyCreation() throws RemoteException;
     void askParametersAgain() throws RemoteException;
     void incorrectMove() throws RemoteException;
+    void startClearThread() throws RemoteException;
+    void check() throws RemoteException;
 }

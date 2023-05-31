@@ -248,7 +248,7 @@ public class ClientControllerRMI implements ClientController, Serializable {
 
     @Override
     public void lobbyRestored() {
-        userInterface.lobbyCreated();
+        userInterface.lobbyRestored();
     }
 
 }
