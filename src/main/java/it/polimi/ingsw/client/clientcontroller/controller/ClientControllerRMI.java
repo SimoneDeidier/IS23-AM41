@@ -45,6 +45,7 @@ public class ClientControllerRMI implements ClientController, Serializable {
         userInterfaceThread.start();
         try {
             userInterfaceThread.join();
+            System.err.println("JOINED THE GUI THREAD");
         } catch (InterruptedException e) {
             throw new RuntimeException(e);
         }
@@ -232,18 +233,18 @@ public class ClientControllerRMI implements ClientController, Serializable {
     }
 
     @Override
-    public void startClearThread() { //todo
-
+    public void startClearThread() { //only used in TCP
     }
 
     @Override
-    public void serverNotResponding() { //todo
-
+    public void serverNotResponding() {
+        connectionRMI.setClientConnected(false); //stops the ping thread
+        userInterface.serverNotResponding();
     }
 
     @Override
-    public void closeConnection() { //todo
-
+    public void closeConnection() { //todo capire se serve altro
+        connectionRMI.setClientConnected(false); //stops the ping thread
     }
 
     @Override

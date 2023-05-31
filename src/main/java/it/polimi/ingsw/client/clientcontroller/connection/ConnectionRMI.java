@@ -23,6 +23,7 @@ public class ConnectionRMI extends UnicastRemoteObject implements InterfaceClien
     private InterfaceServer stub;
     private ClientController controller;
     private static final int CLEAR_DELAY_MILLISECONDS = 5000;
+    private boolean clientConnected;
 
     public ConnectionRMI(int port, String IP) throws RemoteException {
         super();
@@ -37,10 +38,11 @@ public class ConnectionRMI extends UnicastRemoteObject implements InterfaceClien
             Registry registry = LocateRegistry.getRegistry(IP, PORT);
             // Looking up the registry for the remote object
             stub = (InterfaceServer) registry.lookup("serverInterface");
+            clientConnected=true;
             controller = new ClientControllerRMI(this);
             controller.startUserInterface(uiType);
         } catch (Exception e) {
-            e.printStackTrace();
+            System.out.println("Server is offline or unreachable");
         }
     }
 
@@ -74,6 +76,7 @@ public class ConnectionRMI extends UnicastRemoteObject implements InterfaceClien
     @Override
     public void disconnectUser(int whichMessageToShow) throws RemoteException {
         //todo
+        clientConnected=false; //stops the ping thread
         //tell the controller to show an error page, prompting the user to restart the client in order to join a new game
 
     }
@@ -107,11 +110,6 @@ public class ConnectionRMI extends UnicastRemoteObject implements InterfaceClien
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
-    }
-
-    @Override
-    public void showEndGame(NewView newView) throws RemoteException {
-        //tell the controller to make the view show the end game screen
     }
 
     @Override
@@ -164,14 +162,14 @@ public class ConnectionRMI extends UnicastRemoteObject implements InterfaceClien
 
     public void startClearThread() throws RemoteException {
         new Thread(() -> {
-            while (true) {
+            while (clientConnected) {
                 try {
                     System.out.println("Pingo il server");
                     stub.clearRMI();
                     Thread.sleep(CLEAR_DELAY_MILLISECONDS);
                 } catch (RemoteException e) {
-                        System.out.println("Server crashato!");
-                        //controller.disconnectUser(8);
+                    System.out.println("Server crashato!");
+                    controller.serverNotResponding();
                     break;
                 } catch (InterruptedException e) {
                     // interrupted thread or the client is dead
@@ -183,5 +181,9 @@ public class ConnectionRMI extends UnicastRemoteObject implements InterfaceClien
     @Override
     public void check() throws RemoteException { //ping called from server to client
         //it's empty, we need to check on the other side for RemoteExceptions
+    }
+
+    public void setClientConnected(boolean clientConnected) {
+        this.clientConnected = clientConnected;
     }
 }
