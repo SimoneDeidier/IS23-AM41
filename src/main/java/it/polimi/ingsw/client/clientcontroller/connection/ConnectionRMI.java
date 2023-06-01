@@ -67,7 +67,6 @@ public class ConnectionRMI extends UnicastRemoteObject implements InterfaceClien
 
     @Override
     public void updateView(NewView newView) throws RemoteException {
-        System.out.println(clientConnected);
         if(wasIJustReconnected){ //todo far vedere a simo
             try {
                 controller.loadGameScreen();
