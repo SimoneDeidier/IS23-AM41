@@ -32,6 +32,7 @@ public class GameController {
     private boolean onlyOneCommonCard = false;
     private Player activePlayer = null; //acts as a kind of turn
     private BoardFactory board;
+    private EndGameToken endGameToken= EndGameToken.getEndGameToken(); //todo add in UML (added because it's singleton, it needs to be reset after end of the game)
     private GameState state;
     private List<CommonTargetCard> commonTargetCardsList;
     private Map<String, TCPMessageController> nickToTCPMessageControllerMapping = new ConcurrentHashMap<>(4);
@@ -42,7 +43,7 @@ public class GameController {
     private static final int TIMER_DURATION_MILLISECONDS = 30000;
     private Timer timer;
     private boolean timerIsRunning=false;
-    private boolean lastUserMadeHisMove=false;
+    private boolean lastConnectedUserMadeHisMove =false;
 
     private GameController(Server s) {
         this.state = new ServerInitState();
@@ -119,7 +120,7 @@ public class GameController {
             nextIndex=nextIndexCalc(nextIndex);
         if(nextIndex!=-1) {
             if(nextIndex==currentPlayerIndex) //todo far vedere a simo
-                lastUserMadeHisMove=true;
+                lastConnectedUserMadeHisMove =true;
             activePlayer = playerList.get(nextIndex);
         }
         else {
@@ -137,7 +138,7 @@ public class GameController {
             newView.setActivePlayer(getActivePlayer().getNickname());
             newView.setGameOver(false);
         }
-        newView.setYouAreTheLastUserAndYouAlreadyMadeYourMove(lastUserMadeHisMove); //recently added
+        newView.setYouAreTheLastUserAndYouAlreadyMadeYourMove(lastConnectedUserMadeHisMove); //recently added
         newView.setBoardItems(board.getBoardMatrix());
         newView.setBoardBitMask(board.getBitMask());
         newView.setEndGameToken(EndGameToken.getEndGameToken());
@@ -266,6 +267,11 @@ public class GameController {
         changeState(new ServerInitState());
         commonTargetCardsList = new ArrayList<>();
         nickToTCPMessageControllerMapping = new ConcurrentHashMap<>(4);
+        nickToUnansweredCheck = new HashMap<>(4);
+        gameOver=false;
+        lastConnectedUserMadeHisMove =false;
+        endGameToken.resetEndGameToken();
+        server.prepareServerForNewGame();
     }
 
     public int checkNicknameAvailability(String nickname) {
@@ -412,6 +418,10 @@ public class GameController {
             getNickToTCPMessageControllerMapping().get(s).printTCPMessage("Update View", body);
         }
         server.updateViewRMI(newView);
+
+        if(newView.isGameOver()){
+            prepareForNewGame();
+        }
     }
 
     public void peerToPeerMsg(String sender, String receiver, String text, String localDateTime) throws InvalidNicknameException, RemoteException {
@@ -626,10 +636,10 @@ public class GameController {
     }
 
     public boolean didLastUserMadeHisMove() {
-        return lastUserMadeHisMove;
+        return lastConnectedUserMadeHisMove;
     }
-    public void setLastUserMadeHisMove(boolean bool){
-        this.lastUserMadeHisMove=bool;
+    public void setLastConnectedUserMadeHisMove(boolean bool){
+        this.lastConnectedUserMadeHisMove =bool;
     }
 }
 

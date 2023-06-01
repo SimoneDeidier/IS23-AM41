@@ -19,6 +19,8 @@ import java.time.temporal.ChronoUnit;
 import java.util.*;
 
 public class ClientControllerRMI implements ClientController, Serializable {
+    //todo per ogni remoteException o interrupted non tirare throw new RuntimeException(e); ma messaggio d'errore così
+    //se caduta rete non errore brutto ma bello?
 
     private final ConnectionRMI connectionRMI;
     private UserInterface userInterface = null;
@@ -45,7 +47,7 @@ public class ClientControllerRMI implements ClientController, Serializable {
         userInterfaceThread.start();
         try {
             userInterfaceThread.join();
-            System.err.println("JOINED THE GUI THREAD");
+            System.err.println("JOINED THE VIEW THREAD");
         } catch (InterruptedException e) {
             throw new RuntimeException(e);
         }
