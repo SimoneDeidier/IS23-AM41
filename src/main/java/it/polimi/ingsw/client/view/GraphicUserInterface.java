@@ -65,7 +65,9 @@ public class GraphicUserInterface extends Application implements UserInterface, 
     @Override
     public void sendNickname(String nickname) {
         clientController.sendNickname(nickname);
+        System.out.println("NICKNAME SENDED");
         clientController.startClearThread();
+        System.out.println("STARTED CLEAR THREAD");
     }
 
     @Override
@@ -207,41 +209,13 @@ public class GraphicUserInterface extends Application implements UserInterface, 
     }
 
     @Override
-    public void disconnect() {
-        // todo non chiudo la socket?
-        clientController.disconnect();
-        Platform.runLater(() -> {
-            guiStage.close();
-            FXMLLoader loader = new FXMLLoader(ClassLoader.getSystemResource("fxml/LoginScreen.fxml"));
-            guiStage = new Stage();
-            try {
-                guiStage.setScene(new Scene(loader.load()));
-            } catch (IOException e) {
-                throw new RuntimeException(e);
-            }
-            loginScreenController = loader.getController();
-            loginScreenController.setGui(this);
-            loginScreenController.rejoinScreen();
-            guiStage.setResizable(false);
-            guiStage.setTitle("Welcome to My Shelfie!");
-            guiStage.show();
-        });
-    }
-
-    @Override
-    public void rejoinMatch() {
-        clientController.rejoinMatch();
-    }
-
-    @Override
     public void exit() {
-        clientController.disconnect();
+        clientController.exit();
         guiStage.close();
     }
 
     @Override
     public void rejoinedMatch() {
-        System.out.println("Called rejoined in gui");
         loginScreenController.rejoinedMatch();
     }
 
@@ -336,6 +310,11 @@ public class GraphicUserInterface extends Application implements UserInterface, 
     @Override
     public void lobbyRestored() {
         loginScreenController.lobbyRestored();
+    }
+
+    @Override
+    public void fullLobby() {
+        loginScreenController.fullLobby();
     }
 
 }

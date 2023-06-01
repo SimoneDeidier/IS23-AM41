@@ -39,10 +39,6 @@ public interface UserInterface extends Runnable {
 
     void updateView(NewView newView) throws FileNotFoundException, URISyntaxException;
 
-    void disconnect();
-
-    void rejoinMatch();
-
     void exit();
 
     void rejoinedMatch();
@@ -78,4 +74,6 @@ public interface UserInterface extends Runnable {
     void serverNotResponding();
 
     void lobbyRestored();
+
+    void fullLobby();
 }

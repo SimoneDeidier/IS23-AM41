@@ -5,7 +5,6 @@ import it.polimi.ingsw.interfaces.InterfaceServer;
 import it.polimi.ingsw.messages.Body;
 import it.polimi.ingsw.messages.NewView;
 import it.polimi.ingsw.server.model.Player;
-import it.polimi.ingsw.server.model.commons.CommonTargetCard;
 import it.polimi.ingsw.server.servercontroller.GameController;
 import it.polimi.ingsw.server.servercontroller.SocketManager;
 import it.polimi.ingsw.server.servercontroller.controllerstates.RunningGameState;
@@ -172,6 +171,8 @@ public class Server implements InterfaceServer {
             cl.askParameters();
         } catch (WaitForLobbyParametersException e) {
             cl.waitForLobbyCreation();
+        } catch (RejoinRequestException e) {
+            // todo
         }
     }
 
@@ -273,7 +274,7 @@ public class Server implements InterfaceServer {
                                 controller.changeActivePlayer();
                                 controller.updateView();
                             }
-                            if(controller.getPlayerList().size()==1 && controller.getMaxPlayerNumber()==0){
+                            if(controller.getPlayerList().size()==1 && controller.getMaxPlayerNumber()==0){ //the first player who was setting up the lobby disconnected
                                 controller.changeState(new ServerInitState());
                                 controller.getPlayerList().clear();
                             }
@@ -295,7 +296,6 @@ public class Server implements InterfaceServer {
                 if(player.isConnected() && player.getNickname().equals(nickname)){
                     try {
                         clientMapRMI.get(nickname).disconnectUser(9); //todo qua manca in realtà la funzione in grafica
-                        clientMapRMI.clear();
                     } catch (RemoteException ignored) {
                     }
                 }
@@ -304,10 +304,12 @@ public class Server implements InterfaceServer {
         }
     }
 
+
     public void rejoinRequest(String nickname, InterfaceClient cl) throws RemoteException{
+        /* todo sorry samu ma mi sa che questa dovrai modificarla!
         if(controller.checkReJoinRequest(nickname)){
             if(controller.didLastUserMadeHisMove()){ //updateView for everyone as soon as he connects because he needs to make a move right away
-                controller.setLastUserMadeHisMove(false);
+                controller.setLastConnectedUserMadeHisMove(false);
                 clientMapRMI.put(nickname, cl);
                 clientMapRMI.get(nickname).rejoinedMatch();
                 controller.changeActivePlayer();
@@ -320,6 +322,10 @@ public class Server implements InterfaceServer {
         }
         else{ //impossible case
             clientMapRMI.get(nickname).invalidPlayerForRejoiningTheMatch();
-        }
+        }*/
+    }
+
+    public void prepareServerForNewGame(){
+        clientMapRMI.clear();
     }
 }

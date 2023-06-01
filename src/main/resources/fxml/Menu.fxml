@@ -6,7 +6,6 @@
 <?import javafx.scene.layout.AnchorPane?>
 <?import javafx.scene.text.Font?>
 
-
 <AnchorPane prefHeight="640.0" prefWidth="360.0" xmlns="http://javafx.com/javafx/19" xmlns:fx="http://javafx.com/fxml/1" fx:controller="it.polimi.ingsw.client.view.controllers.MenuController">
    <children>
       <ImageView fitHeight="640.0" fitWidth="360.0" pickOnBounds="true" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
@@ -19,7 +18,7 @@
             <Image url="@../images/title.png" />
          </image>
       </ImageView>
-      <Button layoutX="153.0" layoutY="218.0" mnemonicParsing="false" onAction="#disconnectUser" text="Disconnect" AnchorPane.leftAnchor="117.0" AnchorPane.rightAnchor="115.0" AnchorPane.topAnchor="289.0">
+      <Button layoutX="153.0" layoutY="218.0" mnemonicParsing="false" onAction="#openWebsite" text="Website" AnchorPane.leftAnchor="117.0" AnchorPane.rightAnchor="115.0" AnchorPane.topAnchor="289.0">
          <font>
             <Font size="21.0" />
          </font>
@@ -29,7 +28,7 @@
             <Font size="21.0" />
          </font>
       </Button>
-      <Button layoutX="154.0" layoutY="362.0" mnemonicParsing="false" onAction="#openRulebook" text="Rules" AnchorPane.leftAnchor="117.0" AnchorPane.rightAnchor="115.0" AnchorPane.topAnchor="343.0">
+      <Button layoutX="154.0" layoutY="362.0" mnemonicParsing="false" onAction="#openGit" text="Git" AnchorPane.leftAnchor="117.0" AnchorPane.rightAnchor="115.0" AnchorPane.topAnchor="343.0">
          <font>
             <Font size="21.0" />
          </font>

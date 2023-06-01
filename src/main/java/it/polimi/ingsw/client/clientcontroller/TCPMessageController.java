@@ -16,6 +16,7 @@ public class TCPMessageController implements TCPMessageControllerInterface {
     private final ClientController controller;
     private static final int CLEAR_DELAY = 1000;
     private int clearUnanswered = 0;
+    private boolean closeClearThread = false;
 
     public TCPMessageController(SerializeDeserialize serializeDeserialize) {
         this.serializeDeserialize = serializeDeserialize;
@@ -42,6 +43,15 @@ public class TCPMessageController implements TCPMessageControllerInterface {
                 controller.invalidNickname();
             }
             case "Goodbye" -> {
+                switch (message.getBody().getGoodbyeType()) {
+                    case 0 -> {
+                        // todo entra una persona in una partita che si stava restorando
+                    }
+                    case 1 -> {
+                        // todo sei rimasto da solo hai vinto!
+                    }
+                    default -> System.err.println("INCORRECT GOODBYE TCP MESSAGE!");
+                }
                 closeConnection();
             }
             case "Get Parameters" -> {
@@ -70,7 +80,7 @@ public class TCPMessageController implements TCPMessageControllerInterface {
             case "New Msg" -> {
                 controller.receiveMessage(message.getBody().getText(), message.getBody().getSenderNickname(), message.getBody().getLocalDateTime());
             }
-            case "Joined" -> {
+            case "Rejoined" -> {
                 controller.rejoinedMatch();
             }
             case "Invalid Player" -> {
@@ -78,6 +88,11 @@ public class TCPMessageController implements TCPMessageControllerInterface {
             }
             case "Check" -> {
                 clearUnanswered = 0;
+            }
+            case "Full Lobby" -> {
+                controller.fullLobby();
+                stopClearThread();
+                closeConnection();
             }
         }
     }
@@ -96,17 +111,13 @@ public class TCPMessageController implements TCPMessageControllerInterface {
         controller.startUserInterface(uiType);
     }
 
-    public void rejoinMatch() {
-        serializeDeserialize.rejoinMatch();
-    }
-
     public String getPlayerNickname() {
         return controller.getPlayerNickname();
     }
 
     public void startClearThread() {
         new Thread(() -> {
-            while(clearUnanswered < 5) {
+            while(clearUnanswered < 5 && !closeClearThread) {
                 printTCPMessage("Clear", null);
                 clearUnanswered++;
                 try {
@@ -114,9 +125,16 @@ public class TCPMessageController implements TCPMessageControllerInterface {
                 } catch (InterruptedException e) {
                     e.printStackTrace();
                 }
+                System.out.println("UNANSWERED CLEAR: " + clearUnanswered);
             }
-            controller.serverNotResponding();
+            if(!closeClearThread) {
+                controller.serverNotResponding();
+            }
         }).start();
+    }
+
+    public void stopClearThread() {
+        this.closeClearThread = true;
     }
 
 }

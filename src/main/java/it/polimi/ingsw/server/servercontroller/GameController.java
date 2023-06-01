@@ -32,6 +32,7 @@ public class GameController {
     private boolean onlyOneCommonCard = false;
     private Player activePlayer = null; //acts as a kind of turn
     private BoardFactory board;
+    private EndGameToken endGameToken= EndGameToken.getEndGameToken(); //todo add in UML (added because it's singleton, it needs to be reset after end of the game)
     private GameState state;
     private List<CommonTargetCard> commonTargetCardsList;
     private Map<String, TCPMessageController> nickToTCPMessageControllerMapping = new ConcurrentHashMap<>(4);
@@ -39,10 +40,10 @@ public class GameController {
     private final Server server;
     private boolean gameOver;
     private static final int THREAD_SLEEP_MILLISECONDS = 1000;
-    private static final int TIMER_DURATION_MILLISECONDS = 30000;
+    private static final int TIMER_DURATION_MILLISECONDS = 10000;
     private Timer timer;
     private boolean timerIsRunning=false;
-    private boolean lastUserMadeHisMove=false;
+    private boolean lastConnectedUserMadeHisMove =false;
 
     private GameController(Server s) {
         this.state = new ServerInitState();
@@ -119,7 +120,7 @@ public class GameController {
             nextIndex=nextIndexCalc(nextIndex);
         if(nextIndex!=-1) {
             if(nextIndex==currentPlayerIndex) //todo far vedere a simo
-                lastUserMadeHisMove=true;
+                lastConnectedUserMadeHisMove =true;
             activePlayer = playerList.get(nextIndex);
         }
         else {
@@ -137,7 +138,7 @@ public class GameController {
             newView.setActivePlayer(getActivePlayer().getNickname());
             newView.setGameOver(false);
         }
-        newView.setYouAreTheLastUserAndYouAlreadyMadeYourMove(lastUserMadeHisMove); //recently added
+        newView.setYouAreTheLastUserAndYouAlreadyMadeYourMove(lastConnectedUserMadeHisMove); //recently added
         newView.setBoardItems(board.getBoardMatrix());
         newView.setBoardBitMask(board.getBitMask());
         newView.setEndGameToken(EndGameToken.getEndGameToken());
@@ -266,6 +267,11 @@ public class GameController {
         changeState(new ServerInitState());
         commonTargetCardsList = new ArrayList<>();
         nickToTCPMessageControllerMapping = new ConcurrentHashMap<>(4);
+        nickToUnansweredCheck = new HashMap<>(4);
+        gameOver=false;
+        lastConnectedUserMadeHisMove =false;
+        endGameToken.resetEndGameToken();
+        server.prepareServerForNewGame();
     }
 
     public int checkNicknameAvailability(String nickname) {
@@ -317,7 +323,7 @@ public class GameController {
         return false;
     }
 
-    public synchronized int presentation(String nickname) throws FirstPlayerException, CancelGameException, GameStartException, FullLobbyException, WaitForLobbyParametersException { //response to presentation
+    public synchronized int presentation(String nickname) throws FirstPlayerException, CancelGameException, GameStartException, FullLobbyException, WaitForLobbyParametersException, RejoinRequestException { //response to presentation
         int availableSlots = getAvailableSlot();
         if (availableSlots == -1) { //handling the first player
             if (checkSavedGame(nickname)) { //the first player is present in the saved game
@@ -340,6 +346,10 @@ public class GameController {
             throw new WaitForLobbyParametersException();
         }
         else if (availableSlots == 0) {  //No place for a new player
+            // check if the connect is for a disconnected user
+            if(checkForDisconnectedPlayer(nickname)) {
+                throw new RejoinRequestException();
+            }
             throw new FullLobbyException();
         }
 
@@ -371,7 +381,9 @@ public class GameController {
 
     public void disconnectAllUsers() throws RemoteException {
         for(String s : nickToTCPMessageControllerMapping.keySet()) {
-            nickToTCPMessageControllerMapping.get(s).printTCPMessage("Goodbye", null);
+            Body body = new Body();
+            body.setGoodbyeType(0);
+            nickToTCPMessageControllerMapping.get(s).printTCPMessage("Goodbye", body);
             nickToTCPMessageControllerMapping.get(s).closeConnection();
         }
         server.disconnectAllRMIUsers();
@@ -396,7 +408,6 @@ public class GameController {
             getNickToTCPMessageControllerMapping().get(s).printTCPMessage("Your Target", body);
         }
         List<String> commonList=new ArrayList<>();
-        System.out.println(commonTargetCardsList); //here is null
         for(CommonTargetCard commonTargetCard: commonTargetCardsList){
             commonList.add(commonTargetCard.getName());
         }
@@ -412,6 +423,10 @@ public class GameController {
             getNickToTCPMessageControllerMapping().get(s).printTCPMessage("Update View", body);
         }
         server.updateViewRMI(newView);
+
+        if(newView.isGameOver()){
+            prepareForNewGame();
+        }
     }
 
     public void peerToPeerMsg(String sender, String receiver, String text, String localDateTime) throws InvalidNicknameException, RemoteException {
@@ -476,16 +491,6 @@ public class GameController {
         }
     }
 
-    public boolean checkReJoinRequest(String nickname) {
-        for(Player p : playerList) {
-            if(Objects.equals(p.getNickname(), nickname) && !p.isConnected()) {
-                p.setConnected(true);
-                return true;
-            }
-        }
-        return false;
-    }
-
     public void setBoard(BoardFactory b){
         this.board = b;
     }
@@ -530,7 +535,6 @@ public class GameController {
         new Thread(() -> {
             while(true) {
                 for(String nickname : nickToTCPMessageControllerMapping.keySet()) {
-                    System.out.println("Mando check a " + nickname);
                     nickToTCPMessageControllerMapping.get(nickname).printTCPMessage("Check", null);
                     if(nickToUnansweredCheck.containsKey(nickname)) {
                         nickToUnansweredCheck.put(nickname, nickToUnansweredCheck.get(nickname) + 1);
@@ -541,10 +545,15 @@ public class GameController {
                     if(nickToUnansweredCheck.get(nickname) == 5) {
                         System.out.println(nickname + " è disconnesso");
                         for(Player p : playerList) {
-                            // todo qui bisogna fare il check se è nella fase di gioco o quando crea la lobby
-                            //todo serve anche controllare se era il suo turno e nel caso cambiare l'active player
                             if(Objects.equals(p.getNickname(), nickname)) {
                                 p.setConnected(false);
+                            }
+                            if(!state.getClass().equals(RunningGameState.class)) {
+                                // todo da pensare bene
+                            }
+                            else if(activePlayer == p) {
+                                // todo funziona lato server, ma come lo diciamo ai player
+                                changeActivePlayer();
                             }
                         }
                     }
@@ -555,7 +564,8 @@ public class GameController {
                 }
                 try {
                     Thread.sleep(THREAD_SLEEP_MILLISECONDS);
-                } catch (InterruptedException e) {
+                }
+                catch (InterruptedException e) {
                     e.printStackTrace();
                 }
             }
@@ -563,14 +573,16 @@ public class GameController {
     }
 
     public void startTimer(){
-        timerIsRunning=true;
-        timer = new Timer();
+        System.out.println("STARTED TIMER!!!");
+        this.timerIsRunning = true;
+        this.timer = new Timer();
         timer.schedule(new TimerTask() {
             @Override
             public void run() {
 
                 if (countConnectedUsers() <= 1) {
                     endGameForLackOfPlayers();
+                    System.out.println("PARTITA FINITA");
                 } else {
                     cancelTimer();
                 }
@@ -583,7 +595,9 @@ public class GameController {
             for (Player player : playerList) {
                 if (player.isConnected()) {
                     if (nickToTCPMessageControllerMapping.containsKey(player.getNickname())) { //the last user is tcp
-                        nickToTCPMessageControllerMapping.get(player.getNickname()).printTCPMessage("Goodbye", null); //todo different message from goodbye
+                        Body body = new Body();
+                        body.setGoodbyeType(1);
+                        nickToTCPMessageControllerMapping.get(player.getNickname()).printTCPMessage("Goodbye", body);
                         nickToTCPMessageControllerMapping.get(player.getNickname()).closeConnection();
                     }
                     server.disconnectLastRMIUser();
@@ -626,11 +640,21 @@ public class GameController {
     }
 
     public boolean didLastUserMadeHisMove() {
-        return lastUserMadeHisMove;
+        return lastConnectedUserMadeHisMove;
     }
-    public void setLastUserMadeHisMove(boolean bool){
-        this.lastUserMadeHisMove=bool;
+    public void setLastConnectedUserMadeHisMove(boolean bool){
+        this.lastConnectedUserMadeHisMove =bool;
     }
+
+    public boolean checkForDisconnectedPlayer(String nickname) {
+        for(Player p : playerList) {
+            if(!p.isConnected() && Objects.equals(p.getNickname(), nickname)) {
+                return true;
+            }
+        }
+        return false;
+    }
+
 }
 
 

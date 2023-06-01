@@ -19,6 +19,8 @@ import java.time.temporal.ChronoUnit;
 import java.util.*;
 
 public class ClientControllerRMI implements ClientController, Serializable {
+    //todo per ogni remoteException o interrupted non tirare throw new RuntimeException(e); ma messaggio d'errore così
+    //se caduta rete non errore brutto ma bello?
 
     private final ConnectionRMI connectionRMI;
     private UserInterface userInterface = null;
@@ -45,7 +47,7 @@ public class ClientControllerRMI implements ClientController, Serializable {
         userInterfaceThread.start();
         try {
             userInterfaceThread.join();
-            System.err.println("JOINED THE GUI THREAD");
+            System.err.println("JOINED THE VIEW THREAD");
         } catch (InterruptedException e) {
             throw new RuntimeException(e);
         }
@@ -151,16 +153,11 @@ public class ClientControllerRMI implements ClientController, Serializable {
         return playerNickname;
     }
 
-    @Override
-    public void disconnect() { //todol
+    /* @Override
+    public void disconnect() { //todo da togliere ho modificato samu
         connectionRMI.setClientConnected(false); //stops the ping thread
         connectionRMI.voluntaryDisconnection();
-    }
-
-    @Override
-    public void rejoinMatch() { //todo
-        connectionRMI.makeARejoinRequest();
-    }
+    } */
 
     @Override
     public void rejoinedMatch() { //todo
@@ -259,6 +256,16 @@ public class ClientControllerRMI implements ClientController, Serializable {
     @Override
     public void lobbyRestored() {
         userInterface.lobbyRestored();
+    }
+
+    @Override
+    public void exit() {
+
+    }
+
+    @Override
+    public void fullLobby() {
+
     }
 
 }

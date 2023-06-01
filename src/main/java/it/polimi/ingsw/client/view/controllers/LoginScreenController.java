@@ -37,8 +37,6 @@ public class LoginScreenController {
     @FXML
     private Text insertNickText;
     @FXML
-    private AnchorPane rejoinAnchorPane;
-    @FXML
     private AnchorPane rejoinedAnchorPane;
     @FXML
     private AnchorPane impossibleEventAnchorPane;
@@ -46,6 +44,8 @@ public class LoginScreenController {
     private AnchorPane playerRestoredAnchorPane;
     @FXML
     private AnchorPane lobbyRestoredAnchorPane;
+    @FXML
+    private AnchorPane fullLobbyAnchorPane;
 
     private GraphicUserInterface gui = null;
     private List<Integer> players = Arrays.asList(2, 3, 4);
@@ -102,22 +102,13 @@ public class LoginScreenController {
         waitForLobbyText.setVisible(true);
     }
 
-    public void rejoinMatch() {
-        gui.rejoinMatch();
-    }
-
-    public void rejoinScreen() {
-        changePane(nicknameAnchorPane, rejoinAnchorPane);
-    }
-
     public void rejoinedMatch() {
-        System.out.println("Changing panes...");
-        changePane(rejoinAnchorPane, rejoinedAnchorPane);
+        changePane(nicknameAnchorPane, rejoinedAnchorPane);
 
     }
 
     public void invalidPlayerNickname() {
-        changePane(rejoinAnchorPane, impossibleEventAnchorPane);
+        changePane(nicknameAnchorPane, impossibleEventAnchorPane);
     }
 
     public void setGui(GraphicUserInterface gui) {
@@ -153,6 +144,10 @@ public class LoginScreenController {
 
     public void lobbyRestored() {
         changePane(nicknameAnchorPane, lobbyRestoredAnchorPane);
+    }
+
+    public void fullLobby() {
+        changePane(nicknameAnchorPane, fullLobbyAnchorPane);
     }
 
 }

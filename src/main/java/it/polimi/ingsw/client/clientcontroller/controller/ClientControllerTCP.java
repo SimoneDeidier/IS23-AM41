@@ -147,18 +147,7 @@ public class ClientControllerTCP implements ClientController {
     }
 
     @Override
-    public void disconnect() {
-        tcpMessageController.printTCPMessage("Disconnect", null);
-    }
-
-    @Override
-    public void rejoinMatch() {
-        tcpMessageController.rejoinMatch();
-    }
-
-    @Override
     public void rejoinedMatch() {
-        System.out.println("Called rejoined in controller");
         userInterface.rejoinedMatch();
     }
 
@@ -252,6 +241,17 @@ public class ClientControllerTCP implements ClientController {
     @Override
     public void lobbyRestored() {
         userInterface.lobbyRestored();
+    }
+
+    @Override
+    public void exit() {
+        tcpMessageController.stopClearThread();
+        tcpMessageController.printTCPMessage("Disconnect", null);
+    }
+
+    @Override
+    public void fullLobby() {
+        userInterface.fullLobby();
     }
 
 }

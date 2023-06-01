@@ -42,10 +42,6 @@ public class SerializeDeserialize implements SerializeDeserializeInterface {
         tcpMessageController.startUserInterface(uiType);
     }
 
-    public void rejoinMatch() {
-        connectionTCP.rejoinMatch();
-    }
-
     public void sendRejoinMsg() {
         Body body = new Body();
         body.setPlayerNickname(tcpMessageController.getPlayerNickname());

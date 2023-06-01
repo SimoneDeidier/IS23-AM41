@@ -53,8 +53,6 @@ public class WaitingForPlayerState implements GameState {
     public List<CommonTargetCard> generateRandomCommonCards(boolean onlyOneCommonCard,int maxPlayerNumber) {
         List<CommonTargetCard> list =new ArrayList<>();
         list.add(getRandomCommon(maxPlayerNumber));
-        //todo linea testing
-        //list.add(new CommonDiagonal(maxPlayerNumber));
         if(onlyOneCommonCard){
             return list;
         }
