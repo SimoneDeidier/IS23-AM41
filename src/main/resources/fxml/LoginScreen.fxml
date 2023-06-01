@@ -65,16 +65,6 @@
             </Text>
          </children>
       </AnchorPane>
-      <AnchorPane fx:id="rejoinAnchorPane" disable="true" prefHeight="200.0" prefWidth="200.0" visible="false" AnchorPane.bottomAnchor="89.0" AnchorPane.leftAnchor="299.0" AnchorPane.rightAnchor="298.0" AnchorPane.topAnchor="389.0">
-         <children>
-            <Text strokeType="OUTSIDE" strokeWidth="0.0" text="You are currently disconnected from the match!" AnchorPane.leftAnchor="173.0" AnchorPane.rightAnchor="173.0" AnchorPane.topAnchor="89.0">
-               <font>
-                  <Font size="17.0" />
-               </font>
-            </Text>
-            <Button mnemonicParsing="false" onAction="#rejoinMatch" text="Rejoin" AnchorPane.leftAnchor="317.0" AnchorPane.rightAnchor="315.0" AnchorPane.topAnchor="189.0" />
-         </children>
-      </AnchorPane>
       <AnchorPane fx:id="rejoinedAnchorPane" disable="true" layoutX="140.0" layoutY="354.0" prefHeight="200.0" prefWidth="200.0" visible="false" AnchorPane.bottomAnchor="89.0" AnchorPane.leftAnchor="299.0" AnchorPane.rightAnchor="298.0" AnchorPane.topAnchor="389.0">
          <children>
             <Text strokeType="OUTSIDE" strokeWidth="0.0" text="You have been rejoined to a lobby! Please wait for the game!" AnchorPane.leftAnchor="129.0" AnchorPane.rightAnchor="129.0" AnchorPane.topAnchor="13.0">

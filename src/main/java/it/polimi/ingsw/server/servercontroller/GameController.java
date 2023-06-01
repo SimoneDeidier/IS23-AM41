@@ -317,7 +317,7 @@ public class GameController {
         return false;
     }
 
-    public synchronized int presentation(String nickname) throws FirstPlayerException, CancelGameException, GameStartException, FullLobbyException, WaitForLobbyParametersException { //response to presentation
+    public synchronized int presentation(String nickname) throws FirstPlayerException, CancelGameException, GameStartException, FullLobbyException, WaitForLobbyParametersException, RejoinRequestException { //response to presentation
         int availableSlots = getAvailableSlot();
         if (availableSlots == -1) { //handling the first player
             if (checkSavedGame(nickname)) { //the first player is present in the saved game
@@ -340,6 +340,10 @@ public class GameController {
             throw new WaitForLobbyParametersException();
         }
         else if (availableSlots == 0) {  //No place for a new player
+            // check if the connect is for a disconnected user
+            if(checkForDisconnectedPlayer(nickname)) {
+                throw new RejoinRequestException();
+            }
             throw new FullLobbyException();
         }
 
@@ -474,16 +478,6 @@ public class GameController {
                 return;
             }
         }
-    }
-
-    public boolean checkReJoinRequest(String nickname) {
-        for(Player p : playerList) {
-            if(Objects.equals(p.getNickname(), nickname) && !p.isConnected()) {
-                p.setConnected(true);
-                return true;
-            }
-        }
-        return false;
     }
 
     public void setBoard(BoardFactory b){
@@ -631,6 +625,16 @@ public class GameController {
     public void setLastUserMadeHisMove(boolean bool){
         this.lastUserMadeHisMove=bool;
     }
+
+    public boolean checkForDisconnectedPlayer(String nickname) {
+        for(Player p : playerList) {
+            if(!p.isConnected() && Objects.equals(p.getNickname(), nickname)) {
+                return true;
+            }
+        }
+        return false;
+    }
+
 }
 
 

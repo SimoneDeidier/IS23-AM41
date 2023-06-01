@@ -3,10 +3,13 @@ package it.polimi.ingsw.server.servercontroller;
 import it.polimi.ingsw.interfaces.TCPMessageControllerInterface;
 import it.polimi.ingsw.messages.Body;
 import it.polimi.ingsw.messages.TCPMessage;
+import it.polimi.ingsw.server.model.Player;
+import it.polimi.ingsw.server.model.commons.CommonTargetCard;
 import it.polimi.ingsw.server.servercontroller.exceptions.*;
 
 import java.net.Socket;
 import java.rmi.RemoteException;
+import java.util.Objects;
 
 public class TCPMessageController implements TCPMessageControllerInterface {
 
@@ -59,12 +62,27 @@ public class TCPMessageController implements TCPMessageControllerInterface {
                     gameController.yourTarget();
                     gameController.updateView();
                 } catch (FullLobbyException e) { //you can't connect right now, the lobby is full or a game is already playing on the server
-                    printTCPMessage("Goodbye", null);
+                    printTCPMessage("Full Lobby", null);
                     closeConnection();
                 } catch (FirstPlayerException e) { //you're the first player connecting for creating a new game, I need more parameters from you
                     gameController.putNickToSocketMapping(nickname, this);
-                    System.err.println("Sending a Get Parameters TCP Message");
                     printTCPMessage("Get Parameters", null);
+                }
+                catch (RejoinRequestException e) {
+                    // todo nuova cosa samu, riesci a spostarla su rmi?
+                    gameController.changePlayerConnectionStatus(nickname);
+                    printTCPMessage("Rejoined", null);
+                    Body body = new Body();
+                    for(Player p : gameController.getPlayerList()) {
+                        if(Objects.equals(p.getNickname(), nickname)) {
+                            body.setPersonalCardNumber(p.getPersonalTargetCard().getPersonalNumber());
+                        }
+                    }
+                    for(CommonTargetCard c : gameController.getCommonTargetCardsList()) {
+                        body.getCommonTargetCardsName().add(c.getName());
+                    }
+                    gameController.getNickToTCPMessageControllerMapping().put(nickname, this);
+                    printTCPMessage("Your Target", body);
                 }
             }
             case "Create Lobby" -> {
@@ -103,17 +121,10 @@ public class TCPMessageController implements TCPMessageControllerInterface {
                 String text = message.getBody().getText();
                 String localDateTime = message.getBody().getLocalDateTime();
                 gameController.broadcastMsg(sender, text, localDateTime);
-                System.err.println("FINITO BROADCAST");
             }
             case "Disconnect" -> {
                 gameController.intentionalDisconnectionUserTCP(this);
                 serializeDeserialize.closeConnection();
-            }
-            case "Re-Join" -> {
-                if(gameController.checkReJoinRequest(message.getBody().getPlayerNickname())) {
-                    printTCPMessage("Joined", null);
-                }
-                else printTCPMessage("Invalid Player", null);
             }
             case "Clear" -> {
                 gameController.resetUnansweredCheckCounter(this);

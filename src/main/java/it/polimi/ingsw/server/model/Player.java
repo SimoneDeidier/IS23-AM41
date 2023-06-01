@@ -56,14 +56,16 @@ public class Player implements Serializable {
             finally {
                 System.err.println("POST ADJACENT");
                 for(CommonTargetCard commonTargetCard:commonTargetCardList){
+                    System.err.println("CHECK COMMON " + commonTargetCard.getName());
                     if (commonTargetCard.check(shelf)) {
                         ScoringToken scoringToken=commonTargetCard.assignToken(this); //assignToken verifies the player doesn't already have obtained a token from that same commonTargetCard
                         if(scoringToken!=null){
                             scoringTokenList.add(scoringToken);
                         }
                     }
+                    System.err.println("END COMMON " + commonTargetCard.getName());
                 }
-                System.err.println("POST COMMON");
+                System.err.println("POST COMMONS");
                 for (ScoringToken token : scoringTokenList) {
                     if (token != null) {
                         playerScore += token.getValue();

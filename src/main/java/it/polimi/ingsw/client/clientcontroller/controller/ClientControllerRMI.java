@@ -151,16 +151,11 @@ public class ClientControllerRMI implements ClientController, Serializable {
         return playerNickname;
     }
 
-    @Override
-    public void disconnect() { //todol
+    /* @Override
+    public void disconnect() { //todo da togliere ho modificato samu
         connectionRMI.setClientConnected(false); //stops the ping thread
         connectionRMI.voluntaryDisconnection();
-    }
-
-    @Override
-    public void rejoinMatch() { //todo
-        connectionRMI.makeARejoinRequest();
-    }
+    } */
 
     @Override
     public void rejoinedMatch() { //todo
@@ -259,6 +254,11 @@ public class ClientControllerRMI implements ClientController, Serializable {
     @Override
     public void lobbyRestored() {
         userInterface.lobbyRestored();
+    }
+
+    @Override
+    public void exit() {
+
     }
 
 }

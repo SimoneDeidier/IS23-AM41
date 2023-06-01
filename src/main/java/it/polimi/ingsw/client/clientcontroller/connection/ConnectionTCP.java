@@ -17,7 +17,6 @@ public class ConnectionTCP implements Connection {
     private PrintWriter socketOut;
     private Scanner socketIn;
     private SerializeDeserialize serializeDeserialize = null;
-    private boolean closeTCPThread = false;
 
     private String IP = null;
     private int PORT = 0;
@@ -34,23 +33,22 @@ public class ConnectionTCP implements Connection {
     @Override
     public void startConnection(String uiType) {
         Thread socketReader = new Thread(() -> {
-            while(!closeTCPThread) {
-                while (!closeConnection) {
-                    String inMsg = null;
+            while (!closeConnection) {
+                String inMsg = null;
+                try {
+                    inMsg = socketIn.nextLine();
+                } catch (NoSuchElementException | IllegalStateException e) {
+                    closeConnection = true;
+                }
+                if (inMsg != null) {
                     try {
-                        inMsg = socketIn.nextLine();
-                    } catch (NoSuchElementException | IllegalStateException e) {
-                        closeConnection = true;
-                    }
-                    if (inMsg != null) {
-                        try {
-                            serializeDeserialize.deserialize(inMsg);
-                        } catch (IOException | URISyntaxException e) {
-                            e.printStackTrace();
-                        }
+                        serializeDeserialize.deserialize(inMsg);
+                    } catch (IOException | URISyntaxException e) {
+                        e.printStackTrace();
                     }
                 }
             }
+            System.out.println("I'M OUT THE TCP THREAD");
         });
         socketReader.start();
         serializeDeserialize.startUserInterface(uiType);
@@ -77,21 +75,6 @@ public class ConnectionTCP implements Connection {
         catch (IOException e) {
             e.printStackTrace();
         }
-    }
-
-    public void rejoinMatch() {
-        try {
-            socket = new Socket(IP, PORT);
-            socketIn = new Scanner(socket.getInputStream());
-            socketOut = new PrintWriter(socket.getOutputStream(), true);
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-        this.closeConnection = false;
-    }
-
-    public void closeTCPThread() {
-        this.closeTCPThread = true;
     }
 
 }

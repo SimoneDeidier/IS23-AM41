@@ -172,6 +172,8 @@ public class Server implements InterfaceServer {
             cl.askParameters();
         } catch (WaitForLobbyParametersException e) {
             cl.waitForLobbyCreation();
+        } catch (RejoinRequestException e) {
+            // todo
         }
     }
 
@@ -304,7 +306,9 @@ public class Server implements InterfaceServer {
         }
     }
 
+
     public void rejoinRequest(String nickname, InterfaceClient cl) throws RemoteException{
+        /* todo sorry samu ma mi sa che questa dovrai modificarla!
         if(controller.checkReJoinRequest(nickname)){
             if(controller.didLastUserMadeHisMove()){ //updateView for everyone as soon as he connects because he needs to make a move right away
                 controller.setLastUserMadeHisMove(false);
@@ -320,6 +324,6 @@ public class Server implements InterfaceServer {
         }
         else{ //impossible case
             clientMapRMI.get(nickname).invalidPlayerForRejoiningTheMatch();
-        }
+        }*/
     }
 }

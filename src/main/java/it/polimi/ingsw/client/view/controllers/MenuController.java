@@ -17,12 +17,12 @@ public class MenuController {
         this.menuStage = menuStage;
     }
 
-    public void disconnectUser() {
-        gui.disconnect();
-        close();
+
+    public void openGit() {
+
     }
 
-    public void openRulebook() {
+    public void openWebsite() {
 
     }
 

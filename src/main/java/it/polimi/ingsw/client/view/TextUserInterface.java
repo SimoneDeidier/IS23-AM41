@@ -389,18 +389,8 @@ public class TextUserInterface implements UserInterface{
     }
 
     @Override
-    public void disconnect() {
-        // da sistemare nel controller
-    }
-
-    @Override
-    public void rejoinMatch() {
-        // da sistemare nel controller
-    }
-
-    @Override
     public void exit() {
-        // da sistemare nel controller
+        // chiude tutto ed esce
     }
 
     @Override
