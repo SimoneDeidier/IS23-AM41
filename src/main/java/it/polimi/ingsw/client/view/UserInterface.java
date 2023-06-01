@@ -74,4 +74,6 @@ public interface UserInterface extends Runnable {
     void serverNotResponding();
 
     void lobbyRestored();
+
+    void fullLobby();
 }

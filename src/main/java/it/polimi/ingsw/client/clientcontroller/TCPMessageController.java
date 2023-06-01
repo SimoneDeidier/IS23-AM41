@@ -78,11 +78,11 @@ public class TCPMessageController implements TCPMessageControllerInterface {
                 controller.invalidPlayer();
             }
             case "Check" -> {
-                System.out.println("ARRIVATO CHECK");
                 clearUnanswered = 0;
             }
             case "Full Lobby" -> {
-                // todo mostra alert a schermo + chiudi thread grafica
+                controller.fullLobby();
+                stopClearThread();
                 closeConnection();
             }
         }
@@ -118,7 +118,9 @@ public class TCPMessageController implements TCPMessageControllerInterface {
                 }
                 System.out.println("UNANSWERED CLEAR: " + clearUnanswered);
             }
-            controller.serverNotResponding();
+            if(!closeClearThread) {
+                controller.serverNotResponding();
+            }
         }).start();
     }
 

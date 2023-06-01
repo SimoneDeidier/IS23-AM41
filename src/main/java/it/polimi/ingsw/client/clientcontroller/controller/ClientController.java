@@ -69,4 +69,6 @@ public interface ClientController {
     void lobbyRestored();
 
     void exit();
+
+    void fullLobby();
 }

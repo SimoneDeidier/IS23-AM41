@@ -312,4 +312,9 @@ public class GraphicUserInterface extends Application implements UserInterface, 
         loginScreenController.lobbyRestored();
     }
 
+    @Override
+    public void fullLobby() {
+        loginScreenController.fullLobby();
+    }
+
 }

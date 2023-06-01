@@ -497,5 +497,10 @@ public class TextUserInterface implements UserInterface{
 
     }
 
+    @Override
+    public void fullLobby() {
+
+    }
+
 }
 

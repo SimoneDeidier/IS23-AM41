@@ -249,4 +249,9 @@ public class ClientControllerTCP implements ClientController {
         tcpMessageController.printTCPMessage("Disconnect", null);
     }
 
+    @Override
+    public void fullLobby() {
+        userInterface.fullLobby();
+    }
+
 }
