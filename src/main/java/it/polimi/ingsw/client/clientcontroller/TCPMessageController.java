@@ -43,6 +43,15 @@ public class TCPMessageController implements TCPMessageControllerInterface {
                 controller.invalidNickname();
             }
             case "Goodbye" -> {
+                switch (message.getBody().getGoodbyeType()) {
+                    case 0 -> {
+                        // todo entra una persona in una partita che si stava restorando
+                    }
+                    case 1 -> {
+                        // todo sei rimasto da solo hai vinto!
+                    }
+                    default -> System.err.println("INCORRECT GOODBYE TCP MESSAGE!");
+                }
                 closeConnection();
             }
             case "Get Parameters" -> {

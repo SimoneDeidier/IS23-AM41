@@ -20,6 +20,7 @@ public class Body implements Serializable {
     private NewView newView;
     private String localDateTime;
     private List<String> commonTargetCardsName = new ArrayList<>(2);
+    private int goodbyeType;
 
     public String getPlayerNickname() {
         return playerNickname;
@@ -113,7 +114,11 @@ public class Body implements Serializable {
         return commonTargetCardsName;
     }
 
-    public void setCommonTargetCardsName(List<String> commonTargetCardsName) {
-        this.commonTargetCardsName = commonTargetCardsName;
+    public int getGoodbyeType() {
+        return goodbyeType;
+    }
+
+    public void setGoodbyeType(int goodbyeType) {
+        this.goodbyeType = goodbyeType;
     }
 }

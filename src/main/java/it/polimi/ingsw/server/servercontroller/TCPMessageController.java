@@ -26,16 +26,13 @@ public class TCPMessageController implements TCPMessageControllerInterface {
     @Override
     public void readTCPMessage(TCPMessage message) throws RemoteException {
         String header = message.getHeader();
-        System.err.println("New TCP message - header: " + header);
         switch (header) {
             case "Presentation" -> {
                 String nickname = message.getBody().getPlayerNickname();
-                System.err.println("NEW PRESENTATION MSG - Nickname: " + nickname);
                 try {
                     switch(gameController.presentation(nickname)) {
                         case 1 -> { //joined a "new" game
                             printTCPMessage("Nickname Accepted", null);
-                            System.err.println("Sending a Nickname Accepted TCP Message");
                             gameController.putNickToSocketMapping(nickname, this);
                         } case 3 -> { //joined a "restored" game
                             printTCPMessage("Player Restored", null);
@@ -43,7 +40,6 @@ public class TCPMessageController implements TCPMessageControllerInterface {
                         }
                         case 0 -> {  // you're joining but I need another nickname
                             printTCPMessage("Invalid Nickname", null);
-                            System.err.println("SENDING AN Invalid Nickname MESSAGE");
                         }
                         case 2 ->{
                             gameController.putNickToSocketMapping(nickname, this);
