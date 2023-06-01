@@ -61,14 +61,6 @@ public class ConnectionTCP implements Connection {
         catch (InterruptedException e) {
             e.printStackTrace();
         }
-        socketOut.close();
-        socketIn.close();
-        try {
-            socket.close();
-        }
-        catch (IOException e) {
-            e.printStackTrace();
-        }
     }
 
     public PrintWriter getSocketOut() {
@@ -77,6 +69,14 @@ public class ConnectionTCP implements Connection {
 
     public void closeConnection() {
         this.closeConnection = true;
+        socketOut.close();
+        socketIn.close();
+        try {
+            socket.close();
+        }
+        catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 
     public void rejoinMatch() {
@@ -88,36 +88,10 @@ public class ConnectionTCP implements Connection {
             e.printStackTrace();
         }
         this.closeConnection = false;
-        Thread socketReader = new Thread(() -> {
-            System.err.println("STARTED NEW SOCKET THREAD");
-            while(!closeConnection) {
-                String inMsg;
-                if ((inMsg = socketIn.nextLine()) != null) {
-                    try {
-                        serializeDeserialize.deserialize(inMsg);
-                    } catch (IOException | URISyntaxException e) {
-                        e.printStackTrace();
-                    }
-                }
-            }
-        });
-        socketReader.start();
-        serializeDeserialize.sendRejoinMsg();
-        try {
-            socketReader.join();
-            System.err.println("JOINED THE SOCKET THREAD");
-        }
-        catch (InterruptedException e) {
-            e.printStackTrace();
-        }
-        socketOut.close();
-        socketIn.close();
-        try {
-            socket.close();
-        }
-        catch (IOException e) {
-            e.printStackTrace();
-        }
+    }
+
+    public void closeTCPThread() {
+        this.closeTCPThread = true;
     }
 
 }
