@@ -151,9 +151,29 @@ class CommonDiagonalTest {
         // create a sample shelf with Fourth diagonal
         Shelf shelFourth = new Shelf();
         shelFourth.insertItems(0, Arrays.asList(new Item(ItemColor.PINK), new Item(ItemColor.PINK), new Item(ItemColor.BLUE), new Item(ItemColor.PINK), new Item(ItemColor.BLUE), new Item(ItemColor.BLUE)));
+        assertFalse(CommonDiagonal.check(shelFourth));
         shelFourth.insertItems(1, Arrays.asList(new Item(ItemColor.BLUE), new Item(ItemColor.PINK), new Item(ItemColor.PINK), new Item(ItemColor.BLUE), new Item(ItemColor.BLUE)));
+        assertFalse(CommonDiagonal.check(shelFourth));
         shelFourth.insertItems(2, Arrays.asList(new Item(ItemColor.PINK), new Item(ItemColor.PINK), new Item(ItemColor.PINK)));
+        assertFalse(CommonDiagonal.check(shelFourth));
         shelFourth.insertItems(3, Arrays.asList(new Item(ItemColor.YELLOW), new Item(ItemColor.BLUE), new Item(ItemColor.BLUE), new Item(ItemColor.PINK), new Item(ItemColor.PINK)));
+        assertFalse(CommonDiagonal.check(shelFourth));
+        shelFourth.insertItems(4, Arrays.asList(new Item(ItemColor.BLUE), new Item(ItemColor.BLUE), new Item(ItemColor.PINK), new Item(ItemColor.LIGHT_BLUE), new Item(ItemColor.PINK), new Item(ItemColor.PINK)));
+        assertTrue(CommonDiagonal.check(shelFourth));
+    }
+
+    @Test
+    void checkTest() throws NotEnoughSpaceInColumnException {
+        CommonTargetCard CommonDiagonal = new CommonDiagonal(2);
+        // create a sample shelf with Fourth diagonal
+        Shelf shelFourth = new Shelf();
+        assertFalse(CommonDiagonal.check(shelFourth));
+        shelFourth.insertItems(1, Arrays.asList(new Item(ItemColor.BLUE), new Item(ItemColor.PINK), new Item(ItemColor.PINK), new Item(ItemColor.BLUE), new Item(ItemColor.BLUE)));
+        assertFalse(CommonDiagonal.check(shelFourth));
+        shelFourth.insertItems(2, Arrays.asList(new Item(ItemColor.PINK), new Item(ItemColor.PINK), new Item(ItemColor.PINK)));
+        assertFalse(CommonDiagonal.check(shelFourth));
+        shelFourth.insertItems(3, Arrays.asList(new Item(ItemColor.YELLOW), new Item(ItemColor.BLUE), new Item(ItemColor.BLUE), new Item(ItemColor.PINK), new Item(ItemColor.PINK)));
+        assertFalse(CommonDiagonal.check(shelFourth));
         shelFourth.insertItems(4, Arrays.asList(new Item(ItemColor.BLUE), new Item(ItemColor.BLUE), new Item(ItemColor.PINK), new Item(ItemColor.LIGHT_BLUE), new Item(ItemColor.PINK), new Item(ItemColor.PINK)));
         assertFalse(CommonDiagonal.check(shelFourth));
     }

@@ -55,7 +55,7 @@ public class CommonDiagonal extends CommonTargetCard {
 
         if (third) {
             for (int i = 1; i < COLUMNS; i++) {
-                if (shelf.getItemByCoordinates(COLUMNS - 1, COLUMNS - 1).getColor() != shelf.getItemByCoordinates(COLUMNS - 1 - i, COLUMNS - 1 - i).getColor())
+                if (shelf.getItemByCoordinates(COLUMNS - 1, 0).getColor() != shelf.getItemByCoordinates(COLUMNS - 1 - i, i).getColor())
                     check = false;
             }
             if (check)
@@ -65,7 +65,7 @@ public class CommonDiagonal extends CommonTargetCard {
 
         if (fourth) {
             for (int i = 1; i < COLUMNS; i++) {
-                if (shelf.getItemByCoordinates(COLUMNS, COLUMNS - 1).getColor() != shelf.getItemByCoordinates(COLUMNS - i, COLUMNS - 1 - i).getColor())
+                if (shelf.getItemByCoordinates( COLUMNS, 0 ).getColor() != shelf.getItemByCoordinates(COLUMNS - i, i).getColor())
                     check = false;
             }
             return check;
