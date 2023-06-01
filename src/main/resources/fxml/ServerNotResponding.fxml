@@ -19,6 +19,6 @@
             <Font size="17.0" />
          </font>
       </Text>
-      <Text fill="WHITE" strokeType="OUTSIDE" strokeWidth="0.0" text="Server is momentairly unreachable. Please,&#10;wait a fiew seconds and restart the client!&#10;" textAlignment="CENTER" AnchorPane.leftAnchor="11.0" AnchorPane.topAnchor="69.0" />
+      <Text fill="WHITE" strokeType="OUTSIDE" strokeWidth="0.0" text="Server is momentarily unreachable. Please,&#10;wait a few seconds and restart the client!&#10;" textAlignment="CENTER" AnchorPane.leftAnchor="11.0" AnchorPane.topAnchor="69.0" />
    </children>
 </AnchorPane>

@@ -2,7 +2,6 @@ package it.polimi.ingsw.server.servercontroller;
 
 import com.google.gson.Gson;
 import com.google.gson.JsonObject;
-import it.polimi.ingsw.messages.TCPMessage;
 import it.polimi.ingsw.save.Save;
 import it.polimi.ingsw.messages.Body;
 import it.polimi.ingsw.messages.NewView;
@@ -43,6 +42,7 @@ public class GameController {
     private static final int TIMER_DURATION_MILLISECONDS = 30000;
     private Timer timer;
     private boolean timerIsRunning=false;
+    private boolean lastUserMadeHisMove=false;
 
     private GameController(Server s) {
         this.state = new ServerInitState();
@@ -113,11 +113,15 @@ public class GameController {
     }
 
     public void changeActivePlayer() {
+        int currentPlayerIndex=playerList.indexOf(activePlayer);
         int nextIndex=nextIndexCalc(playerList.indexOf(activePlayer));
         while(nextIndex!=-1 && !playerList.get(nextIndex).isConnected())
             nextIndex=nextIndexCalc(nextIndex);
-        if(nextIndex!=-1)
-            activePlayer=playerList.get(nextIndex);
+        if(nextIndex!=-1) {
+            if(nextIndex==currentPlayerIndex) //todo far vedere a simo
+                lastUserMadeHisMove=true;
+            activePlayer = playerList.get(nextIndex);
+        }
         else {
             activePlayer = null;
             gameOver=true;
@@ -133,6 +137,7 @@ public class GameController {
             newView.setActivePlayer(getActivePlayer().getNickname());
             newView.setGameOver(false);
         }
+        newView.setYouAreTheLastUserAndYouAlreadyMadeYourMove(lastUserMadeHisMove); //recently added
         newView.setBoardItems(board.getBoardMatrix());
         newView.setBoardBitMask(board.getBitMask());
         newView.setEndGameToken(EndGameToken.getEndGameToken());
@@ -294,7 +299,6 @@ public class GameController {
     }
 
     public boolean checkSavedGame(String nickname) {
-        //todo togliere il commento, funziona al 100%, c'è il commento solo per testare caso in cui non trova il nickname ma funziona!!
         try {
             String jsonContent = new String(Files.readAllBytes(Paths.get("src/main/java/it/polimi/ingsw/save/OldGame.json")));
             Gson gson = new Gson();
@@ -322,16 +326,13 @@ public class GameController {
                 for (Player player : playerList) {
                     if (player.getNickname().equals(nickname)) {
                         player.setConnected(true);
-                        //todo starts ping towards that user
                     }
-                    //todo aggiungere giocatore alla lista di player tcp o rmi?
                 }
                 return 2;
             } else {
                 changeState(new WaitingForPlayerState()); //the first player is new
                 addPlayer(new Player(nickname));
                 System.err.println(playerList);
-                //todo Start ping towards first player
                 throw new FirstPlayerException();
             }
         }
@@ -350,7 +351,6 @@ public class GameController {
             }
             default -> {  //you're in! (case: 1)
                 addPlayer(new Player(nickname));
-                //todo starts ping towards that user
                 if (isGameReady()) {
                     throw new GameStartException();
                 }
@@ -484,7 +484,6 @@ public class GameController {
             }
         }
         return false;
-        // todo da fare in RMI
     }
 
     public void setBoard(BoardFactory b){
@@ -513,10 +512,6 @@ public class GameController {
 
     public void setState(GameState state) {
         this.state = state;
-    }
-
-    public void setCommonTargetCardsList(List<CommonTargetCard> commonTargetCardsList) {
-        this.commonTargetCardsList = commonTargetCardsList;
     }
 
     public void setGameOver(boolean gameOver) {
@@ -570,7 +565,7 @@ public class GameController {
     public void startTimer(){
         timerIsRunning=true;
         timer = new Timer();
-        timer.schedule(new TimerTask() { //todo mentre il giocatore è da solo non deve poter fare infinite mosse come ora
+        timer.schedule(new TimerTask() {
             @Override
             public void run() {
 
@@ -628,6 +623,13 @@ public class GameController {
 
     public GameState getState() {
         return state;
+    }
+
+    public boolean didLastUserMadeHisMove() {
+        return lastUserMadeHisMove;
+    }
+    public void setLastUserMadeHisMove(boolean bool){
+        this.lastUserMadeHisMove=bool;
     }
 }
 

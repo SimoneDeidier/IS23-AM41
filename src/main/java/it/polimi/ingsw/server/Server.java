@@ -5,6 +5,7 @@ import it.polimi.ingsw.interfaces.InterfaceServer;
 import it.polimi.ingsw.messages.Body;
 import it.polimi.ingsw.messages.NewView;
 import it.polimi.ingsw.server.model.Player;
+import it.polimi.ingsw.server.model.commons.CommonTargetCard;
 import it.polimi.ingsw.server.servercontroller.GameController;
 import it.polimi.ingsw.server.servercontroller.SocketManager;
 import it.polimi.ingsw.server.servercontroller.controllerstates.RunningGameState;
@@ -19,10 +20,7 @@ import java.rmi.RemoteException;
 import java.rmi.registry.LocateRegistry;
 import java.rmi.registry.Registry;
 import java.rmi.server.UnicastRemoteObject;
-import java.util.List;
-import java.util.Map;
-import java.util.Objects;
-import java.util.Scanner;
+import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
@@ -240,10 +238,13 @@ public class Server implements InterfaceServer {
     }
 
     @Override
-    public void disconnection(String nickname) throws RemoteException {
+    public void voluntaryDisconnection(String nickname) throws RemoteException {
         controller.changePlayerConnectionStatus(nickname);
-        clientMapRMI.get(nickname).disconnectUser(7/*boh*/);
-        clientMapRMI.remove(nickname);
+        clientMapRMI.remove(nickname); //stops the ping from the server towards that user
+        if(controller.getActivePlayer().getNickname().equals(nickname)){
+            controller.changeActivePlayer();
+            controller.updateView();
+        }
     }
 
     public void broadcastMsg(String sender, String text,String localDateTime) throws RemoteException {
@@ -293,13 +294,32 @@ public class Server implements InterfaceServer {
             for(Player player: controller.getPlayerList()) {
                 if(player.isConnected() && player.getNickname().equals(nickname)){
                     try {
-                        clientMapRMI.get(nickname).disconnectUser(9); //random number
+                        clientMapRMI.get(nickname).disconnectUser(9); //todo qua manca in realtà la funzione in grafica
                         clientMapRMI.clear();
                     } catch (RemoteException ignored) {
                     }
                 }
             }
 
+        }
+    }
+
+    public void rejoinRequest(String nickname, InterfaceClient cl) throws RemoteException{
+        if(controller.checkReJoinRequest(nickname)){
+            if(controller.didLastUserMadeHisMove()){ //updateView for everyone as soon as he connects because he needs to make a move right away
+                controller.setLastUserMadeHisMove(false);
+                clientMapRMI.put(nickname, cl);
+                clientMapRMI.get(nickname).rejoinedMatch();
+                controller.changeActivePlayer();
+                controller.updateView();
+            }
+            else { //he'll wait for the first updateView
+                clientMapRMI.put(nickname, cl);
+                clientMapRMI.get(nickname).rejoinedMatch();
+            }
+        }
+        else{ //impossible case
+            clientMapRMI.get(nickname).invalidPlayerForRejoiningTheMatch();
         }
     }
 }
