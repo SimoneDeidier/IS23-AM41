@@ -29,7 +29,6 @@ public class PersonalTargetCard implements Serializable {
     final int greenCol;
 
     public PersonalTargetCard(int personal) throws IOException, URISyntaxException {
-        personalNumber = personal;
         Gson gson = new Gson();
         File jsonFile = new File(ClassLoader.getSystemResource("json/PersonalTargetCards.json").toURI());
         String jsonString = FileUtils.readFileToString(jsonFile, StandardCharsets.UTF_8);
