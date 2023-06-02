@@ -17,7 +17,7 @@ public class TCPMessageController implements TCPMessageControllerInterface {
     private static final int CLEAR_DELAY = 1000;
     private int clearUnanswered = 0;
     private boolean closeClearThread = false;
-    //private boolean
+    private boolean wasIJustReconnected = false;
 
     public TCPMessageController(SerializeDeserialize serializeDeserialize) {
         this.serializeDeserialize = serializeDeserialize;
@@ -51,6 +51,7 @@ public class TCPMessageController implements TCPMessageControllerInterface {
                     case 1 -> {
                         controller.alonePlayerWins();
                     }
+                    case 2 -> {}
                     default -> System.err.println("INCORRECT GOODBYE TCP MESSAGE!");
                 }
                 closeClient();
@@ -61,9 +62,14 @@ public class TCPMessageController implements TCPMessageControllerInterface {
             case "Your Target" -> {
                 controller.setPersonalTargetCardNumber(message.getBody().getPersonalCardNumber());
                 controller.setCommonGoalList(message.getBody().getCommonTargetCardsName());
-                controller.loadGameScreen();
+                if(!wasIJustReconnected) {
+                    controller.loadGameScreen();
+                }
             }
             case "Update View" -> {
+                if(wasIJustReconnected) {
+                    controller.loadGameScreen();
+                }
                 controller.updateView(message.getBody().getNewView());
             }
             case "Lobby Created" -> {
@@ -82,6 +88,7 @@ public class TCPMessageController implements TCPMessageControllerInterface {
                 controller.receiveMessage(message.getBody().getText(), message.getBody().getSenderNickname(), message.getBody().getLocalDateTime());
             }
             case "Rejoined" -> {
+                this.wasIJustReconnected = true;
                 controller.rejoinedMatch();
             }
             case "Invalid Player" -> {

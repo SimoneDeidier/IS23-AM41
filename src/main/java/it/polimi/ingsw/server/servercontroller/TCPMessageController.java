@@ -67,7 +67,8 @@ public class TCPMessageController implements TCPMessageControllerInterface {
                     printTCPMessage("Get Parameters", null);
                 }
                 catch (RejoinRequestException e) {
-                    // todo nuova cosa samu, riesci a spostarla su rmi?
+                    System.out.println("REJOIN REQUEST");
+                    System.out.println("VAL: " + gameController.didLastUserMadeHisMove());
                     gameController.changePlayerConnectionStatus(nickname);
                     printTCPMessage("Rejoined", null);
                     Body body = new Body();
@@ -79,8 +80,17 @@ public class TCPMessageController implements TCPMessageControllerInterface {
                     for(CommonTargetCard c : gameController.getCommonTargetCardsList()) {
                         body.getCommonTargetCardsName().add(c.getName());
                     }
+                    System.out.println("VAL: " + gameController.didLastUserMadeHisMove());
                     gameController.getNickToTCPMessageControllerMapping().put(nickname, this);
                     printTCPMessage("Your Target", body);
+                    System.out.println("VAL: " + gameController.didLastUserMadeHisMove());
+                    if(gameController.didLastUserMadeHisMove()) {
+                        System.out.println("SONO ENTRATO NELL'IF");
+                        gameController.setLastConnectedUserMadeHisMove(false);
+                        gameController.changeActivePlayer();
+                        gameController.updateView();
+                        System.out.println("HO MANDATO LA UPDATE VIEW");
+                    }
                 }
             }
             case "Create Lobby" -> {

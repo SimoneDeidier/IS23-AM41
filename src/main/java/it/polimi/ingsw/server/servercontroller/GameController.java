@@ -44,7 +44,7 @@ public class GameController {
     private static final int TIMER_DURATION_MILLISECONDS = 30000;
     private Timer timer;
     private boolean timerIsRunning=false;
-    private boolean lastConnectedUserMadeHisMove =false;
+    private boolean lastConnectedUserMadeHisMove = false;
 
     private GameController(Server s) {
         this.state = new ServerInitState();
@@ -121,7 +121,7 @@ public class GameController {
             nextIndex=nextIndexCalc(nextIndex);
         if(nextIndex!=-1) {
             if(nextIndex==currentPlayerIndex) //todo far vedere a simo
-                lastConnectedUserMadeHisMove =true;
+                lastConnectedUserMadeHisMove = true;
             activePlayer = playerList.get(nextIndex);
         }
         else {
@@ -475,7 +475,7 @@ public class GameController {
     }
 
 
-    public void intentionalDisconnectionUserTCP(TCPMessageController tcpMessageController) {
+    public void intentionalDisconnectionUserTCP(TCPMessageController tcpMessageController) throws RemoteException {
         String nickname = null;
         for(String s : nickToTCPMessageControllerMapping.keySet()) {
             if(nickToTCPMessageControllerMapping.get(s) == tcpMessageController) {
@@ -486,7 +486,16 @@ public class GameController {
         for(Player p : playerList) {
             if(Objects.equals(p.getNickname(), nickname)) {
                 p.setConnected(false);
-                tcpMessageController.printTCPMessage("Goodbye", null);
+                Body b = new Body();
+                b.setGoodbyeType(2);
+                tcpMessageController.printTCPMessage("Goodbye", b);
+                if(p == activePlayer) {
+                    System.out.println(p.getNickname() + " era attivo player");
+                    changeActivePlayer();
+                    System.out.println("New active player: " + activePlayer.getNickname());
+                    System.out.println("VAL: " + lastConnectedUserMadeHisMove);
+                    updateView();
+                }
                 return;
             }
         }
