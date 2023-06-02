@@ -408,11 +408,7 @@ public class GameController {
             }
             getNickToTCPMessageControllerMapping().get(s).printTCPMessage("Your Target", body);
         }
-        List<String> commonList=new ArrayList<>();
-        for(CommonTargetCard commonTargetCard: commonTargetCardsList){
-            commonList.add(commonTargetCard.getName());
-        }
-        server.sendCardsRMI(commonList);
+        server.sendCardsRMI();
     }
 
     public void updateView() throws RemoteException {

@@ -5,6 +5,7 @@ import it.polimi.ingsw.interfaces.InterfaceServer;
 import it.polimi.ingsw.messages.Body;
 import it.polimi.ingsw.messages.NewView;
 import it.polimi.ingsw.server.model.Player;
+import it.polimi.ingsw.server.model.commons.CommonTargetCard;
 import it.polimi.ingsw.server.servercontroller.GameController;
 import it.polimi.ingsw.server.servercontroller.SocketManager;
 import it.polimi.ingsw.server.servercontroller.controllerstates.RunningGameState;
@@ -183,14 +184,14 @@ public class Server implements InterfaceServer {
             controller.setLastConnectedUserMadeHisMove(false);
             clientMapRMI.put(nickname, cl);
             clientMapRMI.get(nickname).rejoinedMatch();
-            controller.yourTarget();
+            sendCardsRMI();
             controller.changeActivePlayer();
             controller.updateView();
         }
         else { //he'll wait for the first updateView
             clientMapRMI.put(nickname, cl);
             clientMapRMI.get(nickname).rejoinedMatch();
-            controller.yourTarget();
+            sendCardsRMI();
         }
     }
 
@@ -226,10 +227,14 @@ public class Server implements InterfaceServer {
         }
     }
 
-    public void sendCardsRMI(List<String> commonTargetCardList) throws RemoteException {
+    public void sendCardsRMI() throws RemoteException {
+        List<String> commonList=new ArrayList<>();
+        for(CommonTargetCard commonTargetCard: controller.getCommonTargetCardsList()){
+            commonList.add(commonTargetCard.getName());
+        }
         for(Player p : controller.getPlayerList()) {
             if(clientMapRMI.containsKey(p.getNickname())) {
-                clientMapRMI.get(p.getNickname()).receiveCards(p.getPersonalTargetCard().getPersonalNumber(),commonTargetCardList);
+                clientMapRMI.get(p.getNickname()).receiveCards(p.getPersonalTargetCard().getPersonalNumber(),commonList);
             }
         }
     }
