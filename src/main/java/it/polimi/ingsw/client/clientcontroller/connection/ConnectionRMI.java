@@ -25,6 +25,7 @@ public class ConnectionRMI extends UnicastRemoteObject implements InterfaceClien
     private static final int CLEAR_DELAY_MILLISECONDS = 5000;
     private boolean clientConnected;
     private boolean wasIJustReconnected =false;
+    private boolean alreadySetMyCards=false;
 
     public ConnectionRMI(int port, String IP) throws RemoteException {
         super();
@@ -67,7 +68,7 @@ public class ConnectionRMI extends UnicastRemoteObject implements InterfaceClien
 
     @Override
     public void updateView(NewView newView) throws RemoteException {
-        if(wasIJustReconnected){ //todo far vedere a simo
+        if(wasIJustReconnected){
             try {
                 controller.loadGameScreen();
             } catch (IOException e) {
@@ -84,9 +85,21 @@ public class ConnectionRMI extends UnicastRemoteObject implements InterfaceClien
 
     @Override
     public void disconnectUser(int whichMessageToShow) throws RemoteException {
-        //todo
         clientConnected=false; //stops the ping thread
-        //tell the controller to show an error page, prompting the user to restart the client in order to join a new game
+
+        switch(whichMessageToShow){
+            case 0 -> {
+                try {
+                    controller.cantRestoreLobby();
+                } catch (IOException e) {
+                    throw new RuntimeException(e);
+                }
+            }
+            case 1 -> {
+                controller.alonePlayerWins();
+            }
+            default -> System.err.println("INCORRECT GOODBYE TCP MESSAGE!");
+        }
 
     }
 
@@ -112,12 +125,17 @@ public class ConnectionRMI extends UnicastRemoteObject implements InterfaceClien
 
     @Override
     public void receiveCards(int whichPersonal, List<String> commonTargetCardList) throws RemoteException {
-        controller.setPersonalTargetCardNumber(whichPersonal);
-        controller.setCommonGoalList(commonTargetCardList);
-        try {
-            controller.loadGameScreen();
-        } catch (IOException e) {
-            throw new RuntimeException(e);
+        if(!alreadySetMyCards) {
+            controller.setPersonalTargetCardNumber(whichPersonal);
+            controller.setCommonGoalList(commonTargetCardList);
+            if(!wasIJustReconnected) {
+                try {
+                    controller.loadGameScreen();
+                } catch (IOException e) {
+                    throw new RuntimeException(e);
+                }
+            }
+            alreadySetMyCards=true;
         }
     }
 
@@ -192,8 +210,7 @@ public class ConnectionRMI extends UnicastRemoteObject implements InterfaceClien
         //it's empty, we need to check on the other side for RemoteExceptions
     }
 
-    public void voluntaryDisconnection(){ //todo far vedere a simo
-        clientConnected=false;
+    public void voluntaryDisconnection(){
         try {
             stub.voluntaryDisconnection(controller.getPlayerNickname());
         } catch (RemoteException e) {
@@ -203,22 +220,16 @@ public class ConnectionRMI extends UnicastRemoteObject implements InterfaceClien
 
     @Override
     public void rejoinedMatch() throws RemoteException {
-        controller.rejoinedMatch();
         wasIJustReconnected=true;
+        controller.rejoinedMatch();
     }
 
     @Override
-    public void invalidPlayerForRejoiningTheMatch() throws RemoteException {
-        controller.invalidPlayer();
+    public void fullLobby() throws RemoteException {
+        controller.fullLobby();
     }
 
     public void setClientConnected(boolean clientConnected) {
         this.clientConnected = clientConnected;
-    }
-    public void makeARejoinRequest(){
-        try {
-            stub.rejoinRequest(controller.getPlayerNickname(),this );
-        } catch (RemoteException ignored) {
-        }
     }
 }

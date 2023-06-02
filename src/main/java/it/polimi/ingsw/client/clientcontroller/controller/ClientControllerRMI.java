@@ -160,7 +160,7 @@ public class ClientControllerRMI implements ClientController, Serializable {
     } */
 
     @Override
-    public void rejoinedMatch() { //todo
+    public void rejoinedMatch() {
         System.out.println("Called rejoined in controller");
         try { //restarting the ping to the server
             connectionRMI.setClientConnected(true);
@@ -260,22 +260,23 @@ public class ClientControllerRMI implements ClientController, Serializable {
 
     @Override
     public void exit() {
-
+        connectionRMI.setClientConnected(false); //stops the ping thread
+        connectionRMI.voluntaryDisconnection();
     }
 
     @Override
     public void fullLobby() {
-
+        userInterface.fullLobby();
     }
 
     @Override
     public void cantRestoreLobby() throws IOException {
-
+        userInterface.cantRestoreLobby();
     }
 
     @Override
     public void alonePlayerWins() {
-
+        userInterface.alonePlayerWins();
     }
 
 }

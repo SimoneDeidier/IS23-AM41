@@ -158,6 +158,7 @@ public class Server implements InterfaceServer {
         } catch (CancelGameException e) { //the game is being canceled because a restoring of a saved game failed
             clientMapRMI.put(nickname,cl);
             controller.disconnectAllUsers();
+            controller.prepareForNewGame();
         } catch (GameStartException e) { //the game is starting because everyone is connected, updating everyone views
             clientMapRMI.put(nickname,cl);
             controller.startGame();
@@ -165,14 +166,31 @@ public class Server implements InterfaceServer {
             cl.startClearThread();
             controller.updateView();
         } catch (FullLobbyException e) { //you can't connect right now, the lobby is full or a game is already playing on the server
-            cl.disconnectUser(1);
+            cl.fullLobby();
         } catch (FirstPlayerException e) { //you're the first player connecting for creating a new game, I need more parameters from you
             clientMapRMI.put(nickname,cl);
             cl.askParameters();
         } catch (WaitForLobbyParametersException e) {
             cl.waitForLobbyCreation();
         } catch (RejoinRequestException e) {
-            // todo
+            rejoinRequest(nickname,cl);
+        }
+    }
+
+    public void rejoinRequest(String nickname, InterfaceClient cl) throws RemoteException{
+        controller.changePlayerConnectionStatus(nickname);
+        if(controller.didLastUserMadeHisMove()){ //updateView for everyone as soon as he connects because he needs to make a move right away
+            controller.setLastConnectedUserMadeHisMove(false);
+            clientMapRMI.put(nickname, cl);
+            clientMapRMI.get(nickname).rejoinedMatch();
+            controller.yourTarget();
+            controller.changeActivePlayer();
+            controller.updateView();
+        }
+        else { //he'll wait for the first updateView
+            clientMapRMI.put(nickname, cl);
+            clientMapRMI.get(nickname).rejoinedMatch();
+            controller.yourTarget();
         }
     }
 
@@ -295,34 +313,13 @@ public class Server implements InterfaceServer {
             for(Player player: controller.getPlayerList()) {
                 if(player.isConnected() && player.getNickname().equals(nickname)){
                     try {
-                        clientMapRMI.get(nickname).disconnectUser(9); //todo qua manca in realtà la funzione in grafica
+                        clientMapRMI.get(nickname).disconnectUser(1);
                     } catch (RemoteException ignored) {
                     }
                 }
             }
 
         }
-    }
-
-
-    public void rejoinRequest(String nickname, InterfaceClient cl) throws RemoteException{
-        /* todo sorry samu ma mi sa che questa dovrai modificarla!
-        if(controller.checkReJoinRequest(nickname)){
-            if(controller.didLastUserMadeHisMove()){ //updateView for everyone as soon as he connects because he needs to make a move right away
-                controller.setLastConnectedUserMadeHisMove(false);
-                clientMapRMI.put(nickname, cl);
-                clientMapRMI.get(nickname).rejoinedMatch();
-                controller.changeActivePlayer();
-                controller.updateView();
-            }
-            else { //he'll wait for the first updateView
-                clientMapRMI.put(nickname, cl);
-                clientMapRMI.get(nickname).rejoinedMatch();
-            }
-        }
-        else{ //impossible case
-            clientMapRMI.get(nickname).invalidPlayerForRejoiningTheMatch();
-        }*/
     }
 
     public void prepareServerForNewGame(){

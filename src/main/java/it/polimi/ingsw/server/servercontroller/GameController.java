@@ -41,7 +41,7 @@ public class GameController {
     private final Server server;
     private boolean gameOver;
     private static final int THREAD_SLEEP_MILLISECONDS = 1000;
-    private static final int TIMER_DURATION_MILLISECONDS = 10000;
+    private static final int TIMER_DURATION_MILLISECONDS = 30000;
     private Timer timer;
     private boolean timerIsRunning=false;
     private boolean lastConnectedUserMadeHisMove =false;
@@ -139,7 +139,7 @@ public class GameController {
             newView.setActivePlayer(getActivePlayer().getNickname());
             newView.setGameOver(false);
         }
-        newView.setYouAreTheLastUserAndYouAlreadyMadeYourMove(lastConnectedUserMadeHisMove); //recently added
+        newView.setYouAreTheLastUserAndYouAlreadyMadeYourMove(lastConnectedUserMadeHisMove);
         newView.setBoardItems(board.getBoardMatrix());
         newView.setBoardBitMask(board.getBitMask());
         newView.setEndGameToken(EndGameToken.getEndGameToken());
@@ -347,7 +347,7 @@ public class GameController {
             throw new WaitForLobbyParametersException();
         }
         else if (availableSlots == 0) {  //No place for a new player
-            // check if the connect is for a disconnected user
+            // check if the connection is from a disconnected user
             if(checkForDisconnectedPlayer(nickname)) {
                 throw new RejoinRequestException();
             }

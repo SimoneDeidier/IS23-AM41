@@ -53,6 +53,7 @@ public class TCPMessageController implements TCPMessageControllerInterface {
                 catch (CancelGameException e) { //the game is being canceled because a restoring of a saved game failed
                     gameController.getNickToTCPMessageControllerMapping().put(nickname, this);
                     gameController.disconnectAllUsers();
+                    gameController.prepareForNewGame();
                 } catch (GameStartException e) { //the game is starting because everyone is connected, updating everyone views
                     gameController.putNickToSocketMapping(nickname, this);
                     gameController.startGame();
