@@ -641,7 +641,7 @@ public class GameController {
         return lastConnectedUserMadeHisMove;
     }
     public void setLastConnectedUserMadeHisMove(boolean bool){
-        this.lastConnectedUserMadeHisMove =bool;
+        this.lastConnectedUserMadeHisMove = bool;
     }
 
     public boolean checkForDisconnectedPlayer(String nickname) {

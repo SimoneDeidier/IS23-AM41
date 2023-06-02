@@ -17,6 +17,7 @@ public class TCPMessageController implements TCPMessageControllerInterface {
     private static final int CLEAR_DELAY = 1000;
     private int clearUnanswered = 0;
     private boolean closeClearThread = false;
+    //private boolean
 
     public TCPMessageController(SerializeDeserialize serializeDeserialize) {
         this.serializeDeserialize = serializeDeserialize;
