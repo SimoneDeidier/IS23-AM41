@@ -61,6 +61,7 @@ public class GameScreenController {
     private Map<String, List<ScoringToken>> commonsToTokens;
     private List<ScoringToken> playerTokens;
     private EndGameToken endGameToken = null;
+    private String firstPlayer;
 
     @FXML
     private Text playerText;
@@ -238,10 +239,11 @@ public class GameScreenController {
         return new Image(fis);
     }
 
-    public void setOtherPlayersParameters(Map<String, Item[][]> nicknameToShelfMap, Map<String, Integer> nicknameToPointsMap, String playerNickname) {
+    public void setOtherPlayersParameters(Map<String, Item[][]> nicknameToShelfMap, Map<String, Integer> nicknameToPointsMap, String playerNickname, String firstPlayer) {
         this.nicknameToShelfMap = nicknameToShelfMap;
         this.nicknameToPointsMap = nicknameToPointsMap;
         this.playerNickname = playerNickname;
+        this.firstPlayer = firstPlayer;
     }
 
     public void addInSelected(Node n) {

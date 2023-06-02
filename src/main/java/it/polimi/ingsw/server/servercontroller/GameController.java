@@ -15,6 +15,7 @@ import it.polimi.ingsw.server.model.tokens.ScoringToken;
 import it.polimi.ingsw.server.servercontroller.controllerstates.*;
 import it.polimi.ingsw.server.servercontroller.exceptions.*;
 
+import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.nio.file.Files;
@@ -40,10 +41,10 @@ public class GameController {
     private final Server server;
     private boolean gameOver;
     private static final int THREAD_SLEEP_MILLISECONDS = 1000;
-    private static final int TIMER_DURATION_MILLISECONDS = 10000;
+    private static final int TIMER_DURATION_MILLISECONDS = 30000;
     private Timer timer;
     private boolean timerIsRunning=false;
-    private boolean lastConnectedUserMadeHisMove =false;
+    private boolean lastConnectedUserMadeHisMove = false;
 
     private GameController(Server s) {
         this.state = new ServerInitState();
@@ -120,7 +121,7 @@ public class GameController {
             nextIndex=nextIndexCalc(nextIndex);
         if(nextIndex!=-1) {
             if(nextIndex==currentPlayerIndex) //todo far vedere a simo
-                lastConnectedUserMadeHisMove =true;
+                lastConnectedUserMadeHisMove = true;
             activePlayer = playerList.get(nextIndex);
         }
         else {
@@ -138,7 +139,7 @@ public class GameController {
             newView.setActivePlayer(getActivePlayer().getNickname());
             newView.setGameOver(false);
         }
-        newView.setYouAreTheLastUserAndYouAlreadyMadeYourMove(lastConnectedUserMadeHisMove); //recently added
+        newView.setYouAreTheLastUserAndYouAlreadyMadeYourMove(lastConnectedUserMadeHisMove);
         newView.setBoardItems(board.getBoardMatrix());
         newView.setBoardBitMask(board.getBitMask());
         newView.setEndGameToken(EndGameToken.getEndGameToken());
@@ -346,7 +347,7 @@ public class GameController {
             throw new WaitForLobbyParametersException();
         }
         else if (availableSlots == 0) {  //No place for a new player
-            // check if the connect is for a disconnected user
+            // check if the connection is from a disconnected user
             if(checkForDisconnectedPlayer(nickname)) {
                 throw new RejoinRequestException();
             }
@@ -407,11 +408,7 @@ public class GameController {
             }
             getNickToTCPMessageControllerMapping().get(s).printTCPMessage("Your Target", body);
         }
-        List<String> commonList=new ArrayList<>();
-        for(CommonTargetCard commonTargetCard: commonTargetCardsList){
-            commonList.add(commonTargetCard.getName());
-        }
-        server.sendCardsRMI(commonList);
+        server.sendCardsRMI();
     }
 
     public void updateView() throws RemoteException {
@@ -474,7 +471,7 @@ public class GameController {
     }
 
 
-    public void intentionalDisconnectionUserTCP(TCPMessageController tcpMessageController) {
+    public void intentionalDisconnectionUserTCP(TCPMessageController tcpMessageController) throws RemoteException {
         String nickname = null;
         for(String s : nickToTCPMessageControllerMapping.keySet()) {
             if(nickToTCPMessageControllerMapping.get(s) == tcpMessageController) {
@@ -485,7 +482,16 @@ public class GameController {
         for(Player p : playerList) {
             if(Objects.equals(p.getNickname(), nickname)) {
                 p.setConnected(false);
-                tcpMessageController.printTCPMessage("Goodbye", null);
+                Body b = new Body();
+                b.setGoodbyeType(2);
+                tcpMessageController.printTCPMessage("Goodbye", b);
+                if(p == activePlayer) {
+                    System.out.println(p.getNickname() + " era attivo player");
+                    changeActivePlayer();
+                    System.out.println("New active player: " + activePlayer.getNickname());
+                    System.out.println("VAL: " + lastConnectedUserMadeHisMove);
+                    updateView();
+                }
                 return;
             }
         }
@@ -591,6 +597,7 @@ public class GameController {
     }
 
     public void endGameForLackOfPlayers() {
+        deleteSavedGame();
         if(countConnectedUsers()==1) {
             for (Player player : playerList) {
                 if (player.isConnected()) {
@@ -643,7 +650,7 @@ public class GameController {
         return lastConnectedUserMadeHisMove;
     }
     public void setLastConnectedUserMadeHisMove(boolean bool){
-        this.lastConnectedUserMadeHisMove =bool;
+        this.lastConnectedUserMadeHisMove = bool;
     }
 
     public boolean checkForDisconnectedPlayer(String nickname) {
@@ -653,6 +660,16 @@ public class GameController {
             }
         }
         return false;
+    }
+
+    public void deleteSavedGame() {
+        try {
+            File file = new File("src/main/java/it/polimi/ingsw/save/OldGame.json");
+            file.delete();
+        }
+        catch (SecurityException | NullPointerException e) {
+            e.printStackTrace();
+        }
     }
 
 }

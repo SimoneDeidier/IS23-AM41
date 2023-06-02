@@ -104,7 +104,6 @@ public class LoginScreenController {
 
     public void rejoinedMatch() {
         changePane(nicknameAnchorPane, rejoinedAnchorPane);
-
     }
 
     public void invalidPlayerNickname() {
