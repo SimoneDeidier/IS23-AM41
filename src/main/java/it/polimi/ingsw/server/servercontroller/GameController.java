@@ -272,6 +272,7 @@ public class GameController {
         lastConnectedUserMadeHisMove =false;
         endGameToken.resetEndGameToken();
         server.prepareServerForNewGame();
+        timerIsRunning=false;
     }
 
     public int checkNicknameAvailability(String nickname) {
@@ -522,7 +523,7 @@ public class GameController {
         server.startCheckThreadRMI(); //RMI thread is different, located in server
         new Thread(() -> {
             while(true) {
-                /*for(String nickname : nickToTCPMessageControllerMapping.keySet()) {
+                for(String nickname : nickToTCPMessageControllerMapping.keySet()) {
                     nickToTCPMessageControllerMapping.get(nickname).printTCPMessage("Check", null);
                     if(nickToUnansweredCheck.containsKey(nickname)) {
                         nickToUnansweredCheck.put(nickname, nickToUnansweredCheck.get(nickname) + 1);
@@ -545,7 +546,7 @@ public class GameController {
                             getPlayerList().clear();
                         }
                     }
-                }*/
+                }
                 if(state.getClass().equals(RunningGameState.class)
                     && countConnectedUsers() <= 1 && !timerIsRunning){
                     startTimer();
@@ -569,7 +570,6 @@ public class GameController {
                 if (countConnectedUsers() <= 1) {
                     endGameForLackOfPlayers();
                 } else {
-                    System.out.println("Timer annullato");
                     cancelTimer();
                 }
             }
