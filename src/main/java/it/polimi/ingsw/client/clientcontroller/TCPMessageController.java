@@ -33,6 +33,7 @@ public class TCPMessageController implements TCPMessageControllerInterface {
             }
             case "Wait for Lobby" -> {
                 controller.waitForLobby();
+                stopClearThread();
             }
             case "Lobby Restored" -> {
                 controller.lobbyRestored();
@@ -123,6 +124,7 @@ public class TCPMessageController implements TCPMessageControllerInterface {
     }
 
     public void startClearThread() {
+        closeClearThread = false;
         new Thread(() -> {
             while(clearUnanswered < 5 && !closeClearThread) {
                 printTCPMessage("Clear", null);

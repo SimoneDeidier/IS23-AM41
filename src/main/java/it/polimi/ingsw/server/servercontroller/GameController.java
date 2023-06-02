@@ -43,7 +43,7 @@ public class GameController {
     private static final int THREAD_SLEEP_MILLISECONDS = 1000;
     private static final int TIMER_DURATION_MILLISECONDS = 30000;
     private Timer timer;
-    private boolean timerIsRunning=false;
+    private boolean timerIsRunning = false;
     private boolean lastConnectedUserMadeHisMove = false;
 
     private GameController(Server s) {
@@ -86,7 +86,6 @@ public class GameController {
     }
 
     public void executeMove(Body body) throws InvalidMoveException {
-        System.err.println("CALLED EXECUTE MOVE");
         if (checkMove(body)) {
             List<Item> items = getListItems(body);
             try { //inutile qui simo, ti convincerò
@@ -120,7 +119,7 @@ public class GameController {
         while(nextIndex!=-1 && !playerList.get(nextIndex).isConnected())
             nextIndex=nextIndexCalc(nextIndex);
         if(nextIndex!=-1) {
-            if(nextIndex==currentPlayerIndex) //todo far vedere a simo
+            if(nextIndex==currentPlayerIndex)
                 lastConnectedUserMadeHisMove = true;
             activePlayer = playerList.get(nextIndex);
         }
@@ -339,7 +338,6 @@ public class GameController {
             } else {
                 changeState(new WaitingForPlayerState()); //the first player is new
                 addPlayer(new Player(nickname));
-                System.err.println(playerList);
                 throw new FirstPlayerException();
             }
         }
@@ -391,15 +389,11 @@ public class GameController {
     }
 
     public void yourTarget() throws RemoteException {
-        System.err.println("YOUR TARGET");
-        System.err.println("UTENTI TCP: " + getNickToTCPMessageControllerMapping().keySet());
         for(String s : getNickToTCPMessageControllerMapping().keySet()) {
             Body body = new Body();
-            System.err.println("PLAYER LIST: " + playerList);
             for(Player p : playerList) {
                 if(Objects.equals(p.getNickname(), s)) {
                     body.setPersonalCardNumber(p.getPersonalTargetCard().getPersonalNumber());
-                    System.err.println("MANDO A: " + p.getNickname());
                     break;
                 }
             }
@@ -412,7 +406,6 @@ public class GameController {
     }
 
     public void updateView() throws RemoteException {
-        System.err.println("CALLED UPDATE VIEW");
         Body body = new Body();
         NewView newView = getNewView();
         body.setNewView(newView);
@@ -433,7 +426,6 @@ public class GameController {
 
         // send the message to receiver
         if(nickToTCPMessageControllerMapping.containsKey(receiver)) {
-            System.err.println("Mando PTP MSG a " + receiver);
             Body body = new Body();
             body.setSenderNickname(sender);
             body.setText(text);
@@ -446,7 +438,6 @@ public class GameController {
 
         // send the message to the sender
         if(nickToTCPMessageControllerMapping.containsKey(sender)) {
-            System.err.println("Mando PTP MSG a " + sender);
             Body body = new Body();
             body.setSenderNickname(sender);
             body.setText(text);
@@ -460,7 +451,6 @@ public class GameController {
 
     public void broadcastMsg(String sender, String text, String localDateTime) throws RemoteException {
         for(String s : nickToTCPMessageControllerMapping.keySet()) {
-            System.err.println("MANDO BRD MSG A " + s);
             Body body = new Body();
             body.setSenderNickname(sender);
             body.setText(text);
@@ -479,21 +469,13 @@ public class GameController {
                 break;
             }
         }
-        for(Player p : playerList) {
-            if(Objects.equals(p.getNickname(), nickname)) {
-                p.setConnected(false);
-                Body b = new Body();
-                b.setGoodbyeType(2);
-                tcpMessageController.printTCPMessage("Goodbye", b);
-                if(p == activePlayer) {
-                    System.out.println(p.getNickname() + " era attivo player");
-                    changeActivePlayer();
-                    System.out.println("New active player: " + activePlayer.getNickname());
-                    System.out.println("VAL: " + lastConnectedUserMadeHisMove);
-                    updateView();
-                }
-                return;
-            }
+        changePlayerConnectionStatus(nickname);
+        Body b = new Body();
+        b.setGoodbyeType(2);
+        tcpMessageController.printTCPMessage("Goodbye", b);
+        if(activePlayer.getNickname().equals(nickname)) {
+            changeActivePlayer();
+            updateView();
         }
     }
 
@@ -549,18 +531,18 @@ public class GameController {
                         nickToUnansweredCheck.put(nickname, 1);
                     }
                     if(nickToUnansweredCheck.get(nickname) == 5) {
-                        System.out.println(nickname + " è disconnesso");
-                        for(Player p : playerList) {
-                            if(Objects.equals(p.getNickname(), nickname)) {
-                                p.setConnected(false);
+                        changePlayerConnectionStatus(nickname);
+                        if(state.getClass().equals(RunningGameState.class) && activePlayer.getNickname().equals(nickname)) {
+                            changeActivePlayer();
+                            try {
+                                updateView();
+                            } catch (RemoteException e) {
+                                e.printStackTrace();
                             }
-                            if(!state.getClass().equals(RunningGameState.class)) {
-                                // todo da pensare bene
-                            }
-                            else if(activePlayer == p) {
-                                // todo funziona lato server, ma come lo diciamo ai player
-                                changeActivePlayer();
-                            }
+                        }
+                        else if(getPlayerList().size() == 1 && getMaxPlayerNumber() == 0) {
+                            changeState(new ServerInitState());
+                            getPlayerList().clear();
                         }
                     }
                 }
@@ -579,16 +561,13 @@ public class GameController {
     }
 
     public void startTimer(){
-        System.out.println("STARTED TIMER!!!");
         this.timerIsRunning = true;
         this.timer = new Timer();
         timer.schedule(new TimerTask() {
             @Override
             public void run() {
-
                 if (countConnectedUsers() <= 1) {
                     endGameForLackOfPlayers();
-                    System.out.println("PARTITA FINITA");
                 } else {
                     cancelTimer();
                 }

@@ -297,7 +297,7 @@ public class Server implements InterfaceServer {
                                 controller.changeActivePlayer();
                                 controller.updateView();
                             }
-                            if(controller.getPlayerList().size()==1 && controller.getMaxPlayerNumber()==0){ //the first player who was setting up the lobby disconnected
+                            else if(controller.getPlayerList().size()==1 && controller.getMaxPlayerNumber()==0){ //the first player who was setting up the lobby disconnected
                                 controller.changeState(new ServerInitState());
                                 controller.getPlayerList().clear();
                             }
