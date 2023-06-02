@@ -45,14 +45,14 @@ public class TCPMessageController implements TCPMessageControllerInterface {
             case "Goodbye" -> {
                 switch (message.getBody().getGoodbyeType()) {
                     case 0 -> {
-                        // todo entra una persona in una partita che si stava restorando
+                        controller.cantRestoreLobby();
                     }
                     case 1 -> {
-                        // todo sei rimasto da solo hai vinto!
+                        controller.alonePlayerWins();
                     }
                     default -> System.err.println("INCORRECT GOODBYE TCP MESSAGE!");
                 }
-                closeConnection();
+                closeClient();
             }
             case "Get Parameters" -> {
                 controller.getParameters();
@@ -91,8 +91,7 @@ public class TCPMessageController implements TCPMessageControllerInterface {
             }
             case "Full Lobby" -> {
                 controller.fullLobby();
-                stopClearThread();
-                closeConnection();
+                closeClient();
             }
         }
     }
@@ -135,6 +134,11 @@ public class TCPMessageController implements TCPMessageControllerInterface {
 
     public void stopClearThread() {
         this.closeClearThread = true;
+    }
+
+    public void closeClient() {
+        this.stopClearThread();
+        this.closeConnection();
     }
 
 }

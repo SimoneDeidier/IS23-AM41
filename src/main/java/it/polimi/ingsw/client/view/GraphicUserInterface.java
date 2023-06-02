@@ -317,4 +317,39 @@ public class GraphicUserInterface extends Application implements UserInterface, 
         loginScreenController.fullLobby();
     }
 
+    @Override
+    public void cantRestoreLobby() {
+        Platform.runLater(() -> {
+            FXMLLoader loader = new FXMLLoader(ClassLoader.getSystemResource("fxml/CantRestoreLobby.fxml"));
+            Stage stage = new Stage();
+            try {
+                stage.setScene(new Scene(loader.load()));
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+            stage.setResizable(false);
+            stage.setTitle("My Shelfie - Can't restore lobby!");
+            stage.initModality(Modality.APPLICATION_MODAL);
+            stage.showAndWait();
+            guiStage.close();
+        });
+    }
+
+    @Override
+    public void alonePlayerWins() {
+        Platform.runLater(() -> {
+            FXMLLoader loader = new FXMLLoader(ClassLoader.getSystemResource("fxml/AlonePlayerWins.fxml"));
+            Stage stage = new Stage();
+            try {
+                stage.setScene(new Scene(loader.load()));
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+            stage.setResizable(false);
+            stage.setTitle("My Shelfie - You have won!!!");
+            stage.showAndWait();
+            guiStage.close();
+        });
+    }
+
 }

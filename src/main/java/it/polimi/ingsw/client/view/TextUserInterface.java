@@ -502,5 +502,15 @@ public class TextUserInterface implements UserInterface{
 
     }
 
+    @Override
+    public void cantRestoreLobby() throws IOException {
+
+    }
+
+    @Override
+    public void alonePlayerWins() {
+
+    }
+
 }
 

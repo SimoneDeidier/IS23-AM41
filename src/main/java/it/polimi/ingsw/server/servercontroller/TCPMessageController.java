@@ -36,7 +36,7 @@ public class TCPMessageController implements TCPMessageControllerInterface {
                             gameController.putNickToSocketMapping(nickname, this);
                         } case 3 -> { //joined a "restored" game
                             printTCPMessage("Player Restored", null);
-                            gameController.putNickToSocketMapping(nickname, null);
+                            gameController.putNickToSocketMapping(nickname, this);
                         }
                         case 0 -> {  // you're joining but I need another nickname
                             printTCPMessage("Invalid Nickname", null);
@@ -51,6 +51,7 @@ public class TCPMessageController implements TCPMessageControllerInterface {
                     printTCPMessage("Wait for Lobby", null);
                 }
                 catch (CancelGameException e) { //the game is being canceled because a restoring of a saved game failed
+                    gameController.getNickToTCPMessageControllerMapping().put(nickname, this);
                     gameController.disconnectAllUsers();
                 } catch (GameStartException e) { //the game is starting because everyone is connected, updating everyone views
                     gameController.putNickToSocketMapping(nickname, this);

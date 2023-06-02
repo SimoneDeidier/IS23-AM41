@@ -71,4 +71,8 @@ public interface ClientController {
     void exit();
 
     void fullLobby();
+
+    void cantRestoreLobby() throws IOException;
+
+    void alonePlayerWins();
 }

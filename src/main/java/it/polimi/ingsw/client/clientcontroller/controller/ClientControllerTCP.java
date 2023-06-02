@@ -254,4 +254,14 @@ public class ClientControllerTCP implements ClientController {
         userInterface.fullLobby();
     }
 
+    @Override
+    public void cantRestoreLobby() throws IOException {
+        userInterface.cantRestoreLobby();
+    }
+
+    @Override
+    public void alonePlayerWins() {
+        userInterface.alonePlayerWins();
+    }
+
 }

@@ -76,4 +76,8 @@ public interface UserInterface extends Runnable {
     void lobbyRestored();
 
     void fullLobby();
+
+    void cantRestoreLobby() throws IOException;
+
+    void alonePlayerWins();
 }
