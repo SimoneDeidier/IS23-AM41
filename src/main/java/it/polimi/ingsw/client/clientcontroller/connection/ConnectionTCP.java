@@ -61,6 +61,11 @@ public class ConnectionTCP implements Connection {
         }
     }
 
+    @Override
+    public void closeRMI() {
+        //useless in TCP
+    }
+
     public PrintWriter getSocketOut() {
         return socketOut;
     }

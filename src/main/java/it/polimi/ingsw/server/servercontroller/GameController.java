@@ -272,6 +272,7 @@ public class GameController {
         lastConnectedUserMadeHisMove =false;
         endGameToken.resetEndGameToken();
         server.prepareServerForNewGame();
+        timerIsRunning=false;
     }
 
     public int checkNicknameAvailability(String nickname) {
