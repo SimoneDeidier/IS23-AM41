@@ -80,4 +80,6 @@ public interface UserInterface extends Runnable {
     void cantRestoreLobby() throws IOException;
 
     void alonePlayerWins();
+
+    void playerDisconnected(String nickname);
 }

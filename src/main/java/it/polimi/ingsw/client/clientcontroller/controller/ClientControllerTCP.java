@@ -264,4 +264,9 @@ public class ClientControllerTCP implements ClientController {
         userInterface.alonePlayerWins();
     }
 
+    @Override
+    public void playerDisconnected(String nickname) {
+        userInterface.playerDisconnected(nickname);
+    }
+
 }

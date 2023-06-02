@@ -41,7 +41,7 @@ public class GameController {
     private final Server server;
     private boolean gameOver;
     private static final int THREAD_SLEEP_MILLISECONDS = 1000;
-    private static final int TIMER_DURATION_MILLISECONDS = 30000;
+    private static final int TIMER_DURATION_MILLISECONDS = 10000;
     private Timer timer;
     private boolean timerIsRunning = false;
     private boolean lastConnectedUserMadeHisMove = false;
@@ -532,6 +532,9 @@ public class GameController {
                     }
                     if(nickToUnansweredCheck.get(nickname) == 5) {
                         changePlayerConnectionStatus(nickname);
+                        if(state.getClass().equals(RunningGameState.class)) {
+                            notifyOfDisconnectionAllUsers(nickname);
+                        }
                         if(state.getClass().equals(RunningGameState.class) && activePlayer.getNickname().equals(nickname)) {
                             changeActivePlayer();
                             try {
@@ -649,6 +652,17 @@ public class GameController {
         catch (SecurityException | NullPointerException e) {
             e.printStackTrace();
         }
+    }
+
+    public void notifyOfDisconnectionAllUsers(String nickname) {
+        for(String user : nickToTCPMessageControllerMapping.keySet()) {
+            if(!Objects.equals(nickname, user)) {
+                Body b = new Body();
+                b.setPlayerNickname(nickname);
+                nickToTCPMessageControllerMapping.get(user).printTCPMessage("Player Disconnected", b);
+            }
+        }
+        // todo fai anche in RMI
     }
 
 }

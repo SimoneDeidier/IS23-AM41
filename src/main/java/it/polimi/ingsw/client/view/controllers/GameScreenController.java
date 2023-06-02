@@ -1,10 +1,12 @@
 package it.polimi.ingsw.client.view.controllers;
 
 import it.polimi.ingsw.client.view.GraphicUserInterface;
+import it.polimi.ingsw.server.model.Player;
 import it.polimi.ingsw.server.model.items.Item;
 import it.polimi.ingsw.server.model.items.ItemColor;
 import it.polimi.ingsw.server.model.tokens.EndGameToken;
 import it.polimi.ingsw.server.model.tokens.ScoringToken;
+import javafx.animation.FadeTransition;
 import javafx.application.Platform;
 import javafx.event.EventHandler;
 import javafx.fxml.FXML;
@@ -21,19 +23,17 @@ import javafx.scene.layout.GridPane;
 import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
 import javafx.scene.text.Text;
+import javafx.scene.text.TextAlignment;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
+import javafx.util.Duration;
 
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.net.URISyntaxException;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
-import java.util.Random;
-
+import java.util.*;
 
 
 public class GameScreenController {
@@ -48,6 +48,10 @@ public class GameScreenController {
     private final static int SHELF_COL = 5;
     private final static double SHELF_ITEM_DIM = 41.0;
     private final static double SHELF_ITEM_OFFSET = 10.1;
+    private final static double TRANSITION_DURATION_EFF = 1000.0;
+    private final static long NOTIFY_DURATION = 3000;
+    private final static double OPACITY_LOW = 0.0;
+    private final static double OPACITY_HIGH = 0.9;
 
     private GraphicUserInterface gui;
     private Image personalGoalImage = null;
@@ -62,6 +66,8 @@ public class GameScreenController {
     private List<ScoringToken> playerTokens;
     private EndGameToken endGameToken = null;
     private String firstPlayer;
+    private List<String> disconnectedPlayersToShow = new ArrayList<>();
+    private boolean notifyIsOn = false;
 
     @FXML
     private Text playerText;
@@ -81,6 +87,10 @@ public class GameScreenController {
     private ImageView chairImageView;
     @FXML
     private ImageView endGameTokenImageView;
+    @FXML
+    private AnchorPane notificationAnchorPane;
+    @FXML
+    private Label notificationLabel;
 
     public void initialize() {
         chatVBox.setStyle("-fx-background-color: #442211;");
@@ -469,5 +479,31 @@ public class GameScreenController {
         Image tmp = oneImgv.getImage();
         oneImgv.setImage(twoImgv.getImage());
         twoImgv.setImage(tmp);
+    }
+
+    public void playerDisconnected(String nickname) {
+        // todo non setta il testo e la fa vedere due volte lol
+        System.out.println("CHIAMATO PER " + nickname);
+        if(!notifyIsOn) {
+            System.out.println("DENTRO IF");
+            notifyIsOn = true;
+            Platform.runLater(() -> notificationLabel.setText(nickname + "\nhas disconnected!"));
+            FadeTransition fadeIn = new FadeTransition(Duration.millis(TRANSITION_DURATION_EFF), notificationAnchorPane);
+            fadeIn.setFromValue(OPACITY_LOW);
+            fadeIn.setToValue(OPACITY_HIGH);
+            fadeIn.play();
+            Timer timer = new Timer();
+            timer.schedule(new TimerTask() {
+                @Override
+                public void run() {
+                    FadeTransition fadeOut = new FadeTransition(Duration.millis(TRANSITION_DURATION_EFF), notificationAnchorPane);
+                    fadeOut.setFromValue(OPACITY_HIGH);
+                    fadeOut.setToValue(OPACITY_LOW);
+                    fadeOut.play();
+                    notifyIsOn = false;
+                }
+            }, NOTIFY_DURATION);
+        }
+
     }
 }

@@ -355,4 +355,9 @@ public class GraphicUserInterface extends Application implements UserInterface, 
         });
     }
 
+    @Override
+    public void playerDisconnected(String nickname) {
+        gameScreenController.playerDisconnected(nickname);
+    }
+
 }

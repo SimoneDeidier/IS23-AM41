@@ -279,4 +279,9 @@ public class ClientControllerRMI implements ClientController, Serializable {
         userInterface.alonePlayerWins();
     }
 
+    @Override
+    public void playerDisconnected(String nickname) {
+
+    }
+
 }
