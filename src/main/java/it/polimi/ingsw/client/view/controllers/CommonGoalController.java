@@ -54,14 +54,17 @@ public class CommonGoalController {
             imageView.setFitHeight(HEIGHT_ONE);
             imageView.setTranslateX(OFFSET_X_ONE);
             imageView.setTranslateY(OFFSET_Y_ONE);
-            ImageView tkImgv = new ImageView(getMaxTokenValueByCardNumber(commons.get(0), map));
-            tkImgv.setFitWidth(TOKEN_DIM_ONE);
-            tkImgv.setFitHeight(TOKEN_DIM_ONE);
-            tkImgv.setRotate(TOKEN_ROTATE);
-            tkImgv.setTranslateX(TOKEN_OFF_X_ONE);
-            tkImgv.setTranslateY(TOKEN_OFF_Y_ONE);
             mainAnchorPane.getChildren().add(imageView);
-            mainAnchorPane.getChildren().add(tkImgv);
+            Image img = getMaxTokenValueByCardNumber(commons.get(0), map);
+            if(img != null) {
+                ImageView tkImgv = new ImageView(img);
+                tkImgv.setFitWidth(TOKEN_DIM_ONE);
+                tkImgv.setFitHeight(TOKEN_DIM_ONE);
+                tkImgv.setRotate(TOKEN_ROTATE);
+                tkImgv.setTranslateX(TOKEN_OFF_X_ONE);
+                tkImgv.setTranslateY(TOKEN_OFF_Y_ONE);
+                mainAnchorPane.getChildren().add(tkImgv);
+            }
         }
         else {
             ImageView imageView1 = new ImageView(getCommonImageByName(commons.get(0)));
@@ -69,27 +72,33 @@ public class CommonGoalController {
             imageView1.setFitHeight(HEIGHT_TWO);
             imageView1.setTranslateY(OFFSET_Y_TWO);
             imageView1.setTranslateX(OFFSET_X_TWO_LEFT);
-            ImageView tkImgv1 = new ImageView(getMaxTokenValueByCardNumber(commons.get(0), map));
-            tkImgv1.setFitWidth(TOKEN_DIM_TWO);
-            tkImgv1.setFitHeight(TOKEN_DIM_TWO);
-            tkImgv1.setRotate(TOKEN_ROTATE);
-            tkImgv1.setTranslateX(TOKEN_OFF_X_TWO_LEFT);
-            tkImgv1.setTranslateY(TOKEN_OFF_Y_TWO);
             mainAnchorPane.getChildren().add(imageView1);
-            mainAnchorPane.getChildren().add(tkImgv1);
+            Image img = getMaxTokenValueByCardNumber(commons.get(0), map);
+            if(img != null) {
+                ImageView tkImgv1 = new ImageView(img);
+                tkImgv1.setFitWidth(TOKEN_DIM_TWO);
+                tkImgv1.setFitHeight(TOKEN_DIM_TWO);
+                tkImgv1.setRotate(TOKEN_ROTATE);
+                tkImgv1.setTranslateX(TOKEN_OFF_X_TWO_LEFT);
+                tkImgv1.setTranslateY(TOKEN_OFF_Y_TWO);
+                mainAnchorPane.getChildren().add(tkImgv1);
+            }
             ImageView imageView2 = new ImageView(getCommonImageByName(commons.get(1)));
             imageView2.setFitWidth(WIDTH_TWO);
             imageView2.setFitHeight(HEIGHT_TWO);
             imageView2.setTranslateY(OFFSET_Y_TWO);
             imageView2.setTranslateX(OFFSET_X_TWO_RIGHT);
-            ImageView tkImgv2 = new ImageView(getMaxTokenValueByCardNumber(commons.get(1), map));
-            tkImgv2.setFitWidth(TOKEN_DIM_TWO);
-            tkImgv2.setFitHeight(TOKEN_DIM_TWO);
-            tkImgv2.setRotate(TOKEN_ROTATE);
-            tkImgv2.setTranslateX(TOKEN_OFF_X_TWO_RIGHT);
-            tkImgv2.setTranslateY(TOKEN_OFF_Y_TWO);
             mainAnchorPane.getChildren().add(imageView2);
-            mainAnchorPane.getChildren().add(tkImgv2);
+            Image img1 = getMaxTokenValueByCardNumber(commons.get(1), map);
+            if(img1 != null) {
+                ImageView tkImgv2 = new ImageView(img1);
+                tkImgv2.setFitWidth(TOKEN_DIM_TWO);
+                tkImgv2.setFitHeight(TOKEN_DIM_TWO);
+                tkImgv2.setRotate(TOKEN_ROTATE);
+                tkImgv2.setTranslateX(TOKEN_OFF_X_TWO_RIGHT);
+                tkImgv2.setTranslateY(TOKEN_OFF_Y_TWO);
+                mainAnchorPane.getChildren().add(tkImgv2);
+            }
         }
     }
 
@@ -104,7 +113,7 @@ public class CommonGoalController {
             if(Objects.equals(s, name)) {
                 System.out.println(s);
                 List<ScoringToken> list = map.get(s);
-                int max = 0;
+                int max = -1;
                 for(ScoringToken tk : list) {
                     if(tk.isTakeable()) {
                         System.out.println("TOKEN VAL: " + tk.getValue() + " - TAKEABLE: " + tk.isTakeable());
@@ -115,9 +124,11 @@ public class CommonGoalController {
                         }
                     }
                 }
-                File file = new File(ClassLoader.getSystemResource("images/tokens/scoring" + max + ".jpg").toURI());
-                FileInputStream fis = new FileInputStream(file);
-                return new Image(fis);
+                if(max != -1) {
+                    File file = new File(ClassLoader.getSystemResource("images/tokens/scoring" + max + ".jpg").toURI());
+                    FileInputStream fis = new FileInputStream(file);
+                    return new Image(fis);
+                }
             }
         }
         return null;
