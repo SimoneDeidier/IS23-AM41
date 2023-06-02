@@ -292,12 +292,14 @@ public class Server implements InterfaceServer {
                         } catch (RemoteException e) {
                             System.out.println("Client " + nickname + " disconnesso");
                             controller.changePlayerConnectionStatus(nickname);
-                            if(controller.getState().getClass().equals(RunningGameState.class)
-                                && controller.getActivePlayer().getNickname().equals(nickname)){
+                            if (controller.getState().getClass().equals(RunningGameState.class)
+                                    && controller.getActivePlayer().getNickname().equals(nickname)) {
                                 controller.changeActivePlayer();
+                                clientMapRMI.remove(nickname);
                                 controller.updateView();
+                                break;
                             }
-                            if(controller.getPlayerList().size()==1 && controller.getMaxPlayerNumber()==0){ //the first player who was setting up the lobby disconnected
+                            if (controller.getPlayerList().size() == 1 && controller.getMaxPlayerNumber() == 0) { //the first player who was setting up the lobby disconnected
                                 controller.changeState(new ServerInitState());
                                 controller.getPlayerList().clear();
                             }
@@ -306,7 +308,7 @@ public class Server implements InterfaceServer {
                         }
                         Thread.sleep(CHECK_DELAY_MILLISECONDS);
                     }
-                } catch (InterruptedException | RemoteException e) {
+                } catch(InterruptedException | RemoteException e){
                     //thread interrupted
                 }
             }

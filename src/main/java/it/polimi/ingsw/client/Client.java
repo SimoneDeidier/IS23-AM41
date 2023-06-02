@@ -63,6 +63,7 @@ public class Client {
         else {
             System.out.println("Server is momentarily unreachable, please retry later!");
         }
+        connection.closeRMI();
         System.out.println("Closing the client...");
     }
 

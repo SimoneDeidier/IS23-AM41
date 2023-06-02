@@ -540,7 +540,7 @@ public class GameController {
         server.startCheckThreadRMI(); //RMI thread is different, located in server
         new Thread(() -> {
             while(true) {
-                for(String nickname : nickToTCPMessageControllerMapping.keySet()) {
+                /*for(String nickname : nickToTCPMessageControllerMapping.keySet()) {
                     nickToTCPMessageControllerMapping.get(nickname).printTCPMessage("Check", null);
                     if(nickToUnansweredCheck.containsKey(nickname)) {
                         nickToUnansweredCheck.put(nickname, nickToUnansweredCheck.get(nickname) + 1);
@@ -563,7 +563,7 @@ public class GameController {
                             }
                         }
                     }
-                }
+                }*/
                 if(state.getClass().equals(RunningGameState.class)
                     && countConnectedUsers() <= 1 && !timerIsRunning){
                     startTimer();
@@ -590,6 +590,7 @@ public class GameController {
                     endGameForLackOfPlayers();
                     System.out.println("PARTITA FINITA");
                 } else {
+                    System.out.println("Timer annullato");
                     cancelTimer();
                 }
             }

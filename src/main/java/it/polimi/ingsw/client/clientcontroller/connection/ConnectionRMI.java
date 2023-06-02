@@ -11,6 +11,7 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.Serializable;
 import java.net.URISyntaxException;
+import java.rmi.NoSuchObjectException;
 import java.rmi.RemoteException;
 import java.rmi.registry.LocateRegistry;
 import java.rmi.registry.Registry;
@@ -231,5 +232,9 @@ public class ConnectionRMI extends UnicastRemoteObject implements InterfaceClien
 
     public void setClientConnected(boolean clientConnected) {
         this.clientConnected = clientConnected;
+    }
+    @Override
+    public void closeRMI() {
+        System.exit(0);
     }
 }
