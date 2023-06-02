@@ -166,7 +166,7 @@ public class GraphicUserInterface extends Application implements UserInterface, 
     @Override
     public void updateView(NewView newView) throws FileNotFoundException, URISyntaxException {
         String playerNickname = clientController.getPlayerNickname();
-        this.isYourTurn = Objects.equals(newView.getActivePlayer(), playerNickname) && !newView.youAreTheLastUserAndYouAlreadyMadeYourMove(); //todo far vedere a simo
+        this.isYourTurn = Objects.equals(newView.getActivePlayer(), playerNickname) && !newView.youAreTheLastUserAndYouAlreadyMadeYourMove();
         Platform.runLater(() -> {
             try {
                 if(!newView.isGameOver()) {
@@ -184,8 +184,11 @@ public class GraphicUserInterface extends Application implements UserInterface, 
                     gameScreenController.setPlayerText(playerNickname, newView.getNicknameToPointsMap().get(playerNickname));
                     gameScreenController.setPersonalShelf(newView.getNicknameToShelfMap().get(playerNickname));
                     gameScreenController.setTokens(newView.getCommonsToTokens(), newView.getPlayersToTokens().get(playerNickname));
-                    gameScreenController.setOtherPlayersParameters(newView.getNicknameToShelfMap(), newView.getNicknameToPointsMap(), playerNickname);
+                    gameScreenController.setOtherPlayersParameters(newView.getNicknameToShelfMap(), newView.getNicknameToPointsMap(), playerNickname, newView.getPlayerList().get(0));
                     gameScreenController.setYourTurnPane(this.isYourTurn);
+                    if(newView.youAreTheLastUserAndYouAlreadyMadeYourMove()) {
+                        // todo mostrare la cosa che dice il nome della funzione
+                    }
                 }
                 else {
                     guiStage.close();

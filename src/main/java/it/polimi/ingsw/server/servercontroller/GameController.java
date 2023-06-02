@@ -15,6 +15,7 @@ import it.polimi.ingsw.server.model.tokens.ScoringToken;
 import it.polimi.ingsw.server.servercontroller.controllerstates.*;
 import it.polimi.ingsw.server.servercontroller.exceptions.*;
 
+import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.nio.file.Files;
@@ -591,6 +592,7 @@ public class GameController {
     }
 
     public void endGameForLackOfPlayers() {
+        deleteSavedGame();
         if(countConnectedUsers()==1) {
             for (Player player : playerList) {
                 if (player.isConnected()) {
@@ -653,6 +655,16 @@ public class GameController {
             }
         }
         return false;
+    }
+
+    public void deleteSavedGame() {
+        try {
+            File file = new File("src/main/java/it/polimi/ingsw/save/OldGame.json");
+            file.delete();
+        }
+        catch (SecurityException | NullPointerException e) {
+            e.printStackTrace();
+        }
     }
 
 }
