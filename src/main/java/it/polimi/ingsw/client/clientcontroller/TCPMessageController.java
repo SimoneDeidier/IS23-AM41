@@ -105,6 +105,9 @@ public class TCPMessageController implements TCPMessageControllerInterface {
             case "Player Disconnected" -> {
                 controller.playerDisconnected(message.getBody().getPlayerNickname());
             }
+            case "Player Reconnected" -> {
+                controller.playerReconnected(message.getBody().getPlayerNickname());
+            }
         }
     }
 

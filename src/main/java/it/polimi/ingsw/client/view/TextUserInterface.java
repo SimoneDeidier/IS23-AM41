@@ -1035,5 +1035,15 @@ public class TextUserInterface implements UserInterface{
 
     }
 
+    @Override
+    public void playerReconnected(String nickname) {
+
+    }
+
+    @Override
+    public void setTakeableItems(boolean[][] takeableItems) {
+
+    }
+
 }
 

@@ -77,4 +77,6 @@ public interface ClientController {
     void alonePlayerWins();
 
     void playerDisconnected(String nickname);
+
+    void playerReconnected(String nickane);
 }

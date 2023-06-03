@@ -82,4 +82,8 @@ public interface UserInterface extends Runnable {
     void alonePlayerWins();
 
     void playerDisconnected(String nickname);
+
+    void playerReconnected(String nickname);
+
+    void setTakeableItems(boolean[][] takeableItems);
 }

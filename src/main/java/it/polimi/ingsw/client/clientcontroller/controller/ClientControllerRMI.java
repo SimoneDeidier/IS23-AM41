@@ -284,4 +284,9 @@ public class ClientControllerRMI implements ClientController, Serializable {
 
     }
 
+    @Override
+    public void playerReconnected(String nickane) {
+
+    }
+
 }

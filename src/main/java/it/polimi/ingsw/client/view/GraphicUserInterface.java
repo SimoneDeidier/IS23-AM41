@@ -29,6 +29,7 @@ import java.util.Objects;
 
 public class GraphicUserInterface extends Application implements UserInterface, Serializable {
 
+
     private static ClientController clientController;
     private static Stage guiStage;
     private static LoginScreenController loginScreenController;
@@ -358,6 +359,16 @@ public class GraphicUserInterface extends Application implements UserInterface, 
     @Override
     public void playerDisconnected(String nickname) {
         gameScreenController.playerDisconnected(nickname);
+    }
+
+    @Override
+    public void playerReconnected(String nickname) {
+        gameScreenController.playerReconnected(nickname);
+    }
+
+    @Override
+    public void setTakeableItems(boolean[][] takeableItems) {
+        Platform.runLater(() -> gameScreenController.setTakeableItems(takeableItems));
     }
 
 }

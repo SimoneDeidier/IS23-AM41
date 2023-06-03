@@ -85,6 +85,7 @@ public class TCPMessageController implements TCPMessageControllerInterface {
                         gameController.changeActivePlayer();
                         gameController.updateView();
                     }
+                    gameController.notifyOfReconnectionAllUsers(nickname);
                 }
             }
             case "Create Lobby" -> {

@@ -41,7 +41,7 @@ public class GameController {
     private final Server server;
     private boolean gameOver;
     private static final int THREAD_SLEEP_MILLISECONDS = 1000;
-    private static final int TIMER_DURATION_MILLISECONDS = 10000;
+    private static final int TIMER_DURATION_MILLISECONDS = 15000;
     private Timer timer;
     private boolean timerIsRunning = false;
     private boolean lastConnectedUserMadeHisMove = false;
@@ -470,6 +470,7 @@ public class GameController {
                 break;
             }
         }
+        nickToTCPMessageControllerMapping.remove(nickname);
         changePlayerConnectionStatus(nickname);
         Body b = new Body();
         b.setGoodbyeType(2);
@@ -478,6 +479,7 @@ public class GameController {
             changeActivePlayer();
             updateView();
         }
+        notifyOfDisconnectionAllUsers(nickname);
     }
 
     public void setBoard(BoardFactory b){
@@ -664,6 +666,17 @@ public class GameController {
             }
         }
         // todo fai anche in RMI
+    }
+
+    public void notifyOfReconnectionAllUsers(String nickname) {
+        for(String user : nickToTCPMessageControllerMapping.keySet()) {
+            if(!Objects.equals(nickname, user)) {
+                Body b = new Body();
+                b.setPlayerNickname(nickname);
+                nickToTCPMessageControllerMapping.get(user).printTCPMessage("Player Reconnected", b);
+            }
+        }
+        // todo anche RMI
     }
 
 }

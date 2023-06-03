@@ -15,6 +15,8 @@ import javafx.scene.Node;
 import javafx.scene.Scene;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextArea;
+import javafx.scene.effect.DropShadow;
+import javafx.scene.effect.Effect;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.input.MouseEvent;
@@ -52,6 +54,8 @@ public class GameScreenController {
     private final static long NOTIFY_DURATION = 3000;
     private final static double OPACITY_LOW = 0.0;
     private final static double OPACITY_HIGH = 0.9;
+    private final static double EFFECT_DIM = 43.0;
+    private final static Color EFFECT_COL = Color.rgb(84, 0, 255);
 
     private GraphicUserInterface gui;
     private Image personalGoalImage = null;
@@ -68,6 +72,7 @@ public class GameScreenController {
     private String firstPlayer;
     private List<String> disconnectedPlayersToShow = new ArrayList<>();
     private boolean notifyIsOn = false;
+    private boolean[][] takeableItems = null;
 
     @FXML
     private Text playerText;
@@ -204,7 +209,9 @@ public class GameScreenController {
                         public void handle(MouseEvent mouseEvent) {
                             for(Node n : boardGridPane.getChildren()) {
                                 if(n == mouseEvent.getSource()) {
-                                    if(n.getOpacity() == 1.0) {
+                                    int row = GridPane.getRowIndex(n);
+                                    int col = GridPane.getColumnIndex(n);
+                                    if(n.getOpacity() == 1.0 && (takeableItems == null || takeableItems[row][col])) {
                                         addInSelected(n);
                                     }
                                     else {
@@ -482,10 +489,7 @@ public class GameScreenController {
     }
 
     public void playerDisconnected(String nickname) {
-        // todo non setta il testo e la fa vedere due volte lol
-        System.out.println("CHIAMATO PER " + nickname);
         if(!notifyIsOn) {
-            System.out.println("DENTRO IF");
             notifyIsOn = true;
             Platform.runLater(() -> notificationLabel.setText(nickname + "\nhas disconnected!"));
             FadeTransition fadeIn = new FadeTransition(Duration.millis(TRANSITION_DURATION_EFF), notificationAnchorPane);
@@ -501,9 +505,51 @@ public class GameScreenController {
                     fadeOut.setToValue(OPACITY_LOW);
                     fadeOut.play();
                     notifyIsOn = false;
+                    timer.cancel();
                 }
             }, NOTIFY_DURATION);
         }
+    }
 
+    public void playerReconnected(String nickname) {
+        if(!notifyIsOn) {
+            notifyIsOn = true;
+            Platform.runLater(() -> notificationLabel.setText(nickname + "\nhas reconnected!"));
+            FadeTransition fadeIn = new FadeTransition(Duration.millis(TRANSITION_DURATION_EFF), notificationAnchorPane);
+            fadeIn.setFromValue(OPACITY_LOW);
+            fadeIn.setToValue(OPACITY_HIGH);
+            fadeIn.play();
+            Timer timer = new Timer();
+            timer.schedule(new TimerTask() {
+                @Override
+                public void run() {
+                    FadeTransition fadeOut = new FadeTransition(Duration.millis(TRANSITION_DURATION_EFF), notificationAnchorPane);
+                    fadeOut.setFromValue(OPACITY_HIGH);
+                    fadeOut.setToValue(OPACITY_LOW);
+                    fadeOut.play();
+                    notifyIsOn = false;
+                    timer.cancel();
+                }
+            }, NOTIFY_DURATION);
+        }
+    }
+
+    public void setTakeableItems(boolean[][] takeableItems) {
+        this.takeableItems = takeableItems;
+        for(int i = 0; i < BOARD_DIM; i++) {
+            for(int j = 0; j < BOARD_DIM; j++) {
+                if(takeableItems[i][j]) {
+                    for(Node n : boardGridPane.getChildren()) {
+                        if(GridPane.getRowIndex(n) == i && GridPane.getColumnIndex(n) == j) {
+                            DropShadow takeableEff = new DropShadow();
+                            takeableEff.setWidth(EFFECT_DIM);
+                            takeableEff.setHeight(EFFECT_DIM);
+                            takeableEff.setColor(EFFECT_COL);
+                            n.setEffect(takeableEff);
+                        }
+                    }
+                }
+            }
+        }
     }
 }
