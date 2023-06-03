@@ -130,23 +130,13 @@ public class GraphicUserInterface extends Application implements UserInterface, 
                 @Override
                 public void handle(KeyEvent keyEvent) {
                     if(keyCombination.match(keyEvent)) {
-                        Platform.runLater(() -> {
-                            FXMLLoader loader = new FXMLLoader(ClassLoader.getSystemResource("fxml/Menu.fxml"));
-                            Stage stage = new Stage();
-                            try {
-                                stage.setScene(new Scene(loader.load()));
-                            } catch (IOException e) {
-                                throw new RuntimeException(e);
-                            }
-                            MenuController menuController = loader.getController();
-                            menuController.setGui(getGui());
-                            menuController.setMenuStage(stage);
-                            stage.setResizable(false);
-                            stage.setTitle("My Shelfie - Main menu!");
-                            stage.show();
-                        });
+                        gameScreenController.openMenu();
                     }
                 }
+            });
+            guiStage.setOnCloseRequest(e -> {
+                e.consume();
+                gameScreenController.openMenu();
             });
             guiStage.setResizable(false);;
             guiStage.setTitle("My Shelfie - Gaming Phase");
