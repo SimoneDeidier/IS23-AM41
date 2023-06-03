@@ -316,7 +316,7 @@ public class Server implements InterfaceServer {
                         System.out.println("Pingo " + nickname);
                         try {
                             clientMapRMI.get(nickname).check();
-                        } catch (RemoteException e) {
+                        } catch (RemoteException | NullPointerException e) {
                             System.out.println("Client " + nickname + " disconnesso");
                             controller.notifyOfDisconnectionAllUsers(nickname);
                             controller.changePlayerConnectionStatus(nickname);

@@ -556,6 +556,10 @@ public class GameController {
                     && countConnectedUsers() <= 1 && !timerIsRunning){
                     startTimer();
                 }
+                if(timerIsRunning && countConnectedUsers()>1){
+                    cancelTimer();
+                    timerIsRunning=false;
+                }
                 try {
                     Thread.sleep(THREAD_SLEEP_MILLISECONDS);
                 }
