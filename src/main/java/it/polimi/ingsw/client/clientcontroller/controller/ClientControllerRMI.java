@@ -31,6 +31,8 @@ public class ClientControllerRMI implements ClientController, Serializable {
     private Map<Integer, Integer> columnsToFreeSpaces = new HashMap<>(5);
     private final static int ROWS = 6;
     private final static int COLS = 5;
+    private final static int BOARD_DIM = 9;
+    private boolean[][] takeableItems = new boolean[BOARD_DIM][BOARD_DIM];
 
     public ClientControllerRMI(ConnectionRMI connectionRMI) {
         this.connectionRMI = connectionRMI;
@@ -59,7 +61,7 @@ public class ClientControllerRMI implements ClientController, Serializable {
         try {
             connectionRMI.presentation(nickname);
         } catch (RemoteException e) {
-            throw new RuntimeException(e);
+            System.out.println("Network error, we're sorry for the inconvenience, try restarting the client");
         }
     }
 
@@ -78,7 +80,7 @@ public class ClientControllerRMI implements ClientController, Serializable {
         try {
             connectionRMI.sendParameters(numPlayers,numCommons==1);
         } catch (RemoteException e) {
-            throw new RuntimeException(e);
+            System.out.println("Network error, we're sorry for the inconvenience, try restarting the client");
         }
     }
 
@@ -145,19 +147,29 @@ public class ClientControllerRMI implements ClientController, Serializable {
             }
             columnsToFreeSpaces.put(i, count);
         }
+        Item[][] board = newView.getBoardItems();
+        for(int i = 0; i < BOARD_DIM; i++) {
+            for(int j = 0; j < BOARD_DIM; j++) {
+                if(board[i][j] != null) {
+                    if(i == 0 || i == BOARD_DIM - 1 || j == 0 || j == BOARD_DIM - 1) {
+                        takeableItems[i][j] = true;
+                    }
+                    else if(board[i-1][j] == null || board[i+1][j] == null || board[i][j-1] == null || board[i][j+1] == null) {
+                        takeableItems[i][j] = true;
+                    }
+                    else takeableItems[i][j] = false;
+                }
+                else takeableItems[i][j] = false;
+            }
+        }
         userInterface.updateView(newView);
+        userInterface.setTakeableItems(takeableItems);
     }
 
     @Override
     public String getPlayerNickname() {
         return playerNickname;
     }
-
-    /* @Override
-    public void disconnect() { //todo da togliere ho modificato samu
-        connectionRMI.setClientConnected(false); //stops the ping thread
-        connectionRMI.voluntaryDisconnection();
-    } */
 
     @Override
     public void rejoinedMatch() {
@@ -166,7 +178,7 @@ public class ClientControllerRMI implements ClientController, Serializable {
             connectionRMI.setClientConnected(true);
             connectionRMI.startClearThread();
         } catch (RemoteException e) {
-            throw new RuntimeException(e);
+            System.out.println("Network error, we're sorry for the inconvenience, try restarting the client");;
         }
         userInterface.rejoinedMatch();
     }
@@ -281,12 +293,12 @@ public class ClientControllerRMI implements ClientController, Serializable {
 
     @Override
     public void playerDisconnected(String nickname) {
-
+        userInterface.playerDisconnected(nickname);
     }
 
     @Override
-    public void playerReconnected(String nickane) {
-
+    public void playerReconnected(String nickname) {
+        userInterface.playerReconnected(nickname);
     }
 
 }

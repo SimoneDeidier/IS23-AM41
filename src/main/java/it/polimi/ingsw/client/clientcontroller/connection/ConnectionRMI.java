@@ -163,7 +163,7 @@ public class ConnectionRMI extends UnicastRemoteObject implements InterfaceClien
         try {
             stub.peerToPeerMsgHandler(body.getSenderNickname(), body.getReceiverNickname(), body.getText(), body.getLocalDateTime());
         } catch (RemoteException e) {
-            throw new RuntimeException(e);
+            System.out.println("Network error, we're sorry for the inconvenience, try restarting the client");
         }
     }
 
@@ -171,7 +171,7 @@ public class ConnectionRMI extends UnicastRemoteObject implements InterfaceClien
         try {
             stub.broadcastMsgHandler(body.getSenderNickname(), body.getText(), body.getLocalDateTime());
         } catch (RemoteException e) {
-            throw new RuntimeException(e);
+            System.out.println("Network error, we're sorry for the inconvenience, try restarting the client");
         }
     }
 
@@ -179,7 +179,7 @@ public class ConnectionRMI extends UnicastRemoteObject implements InterfaceClien
         try {
             stub.executeMove(body);
         } catch (RemoteException e) {
-            throw new RuntimeException();
+            System.out.println("Network error, we're sorry for the inconvenience, try restarting the client");
         }
     }
 
@@ -200,7 +200,7 @@ public class ConnectionRMI extends UnicastRemoteObject implements InterfaceClien
                     controller.serverNotResponding();
                     break;
                 } catch (InterruptedException e) {
-                    // interrupted thread or the client is dead
+                    System.out.println("Network error, we're sorry for the inconvenience, try restarting the client");
                 }
             }
         }).start();
@@ -215,7 +215,7 @@ public class ConnectionRMI extends UnicastRemoteObject implements InterfaceClien
         try {
             stub.voluntaryDisconnection(controller.getPlayerNickname());
         } catch (RemoteException e) {
-            throw new RuntimeException(e);
+            System.out.println("Network error, we're sorry for the inconvenience, try restarting the client");
         }
     }
 
@@ -228,6 +228,16 @@ public class ConnectionRMI extends UnicastRemoteObject implements InterfaceClien
     @Override
     public void fullLobby() throws RemoteException {
         controller.fullLobby();
+    }
+
+    @Override
+    public void notificationForReconnection(String nickname) throws RemoteException {
+        controller.playerReconnected(nickname);
+    }
+
+    @Override
+    public void notificationForDisconnection(String nickname) throws RemoteException {
+        controller.playerDisconnected(nickname);
     }
 
     public void setClientConnected(boolean clientConnected) {
