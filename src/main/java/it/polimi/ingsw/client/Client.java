@@ -63,7 +63,12 @@ public class Client {
         else {
             System.out.println("Server is momentarily unreachable, please retry later!");
         }
-        connection.closeRMI();
+        try {
+            connection.closeRMI();
+        }
+        catch (NullPointerException e) {
+            System.out.println("Connection never opened!");
+        }
         System.out.println("Closing the client...");
     }
 

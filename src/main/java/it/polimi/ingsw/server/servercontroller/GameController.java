@@ -525,30 +525,30 @@ public class GameController {
         server.startCheckThreadRMI(); //RMI thread is different, located in server
         new Thread(() -> {
             while(true) {
-                for(String nickname : nickToTCPMessageControllerMapping.keySet()) {
-                    nickToTCPMessageControllerMapping.get(nickname).printTCPMessage("Check", null);
-                    if(nickToUnansweredCheck.containsKey(nickname)) {
-                        nickToUnansweredCheck.put(nickname, nickToUnansweredCheck.get(nickname) + 1);
-                    }
-                    else {
-                        nickToUnansweredCheck.put(nickname, 1);
-                    }
-                    if(nickToUnansweredCheck.get(nickname) == 5) {
-                        changePlayerConnectionStatus(nickname);
-                        if(state.getClass().equals(RunningGameState.class)) {
-                            notifyOfDisconnectionAllUsers(nickname);
+                synchronized (nickToTCPMessageControllerMapping) {
+                    for (String nickname : nickToTCPMessageControllerMapping.keySet()) {
+                        nickToTCPMessageControllerMapping.get(nickname).printTCPMessage("Check", null);
+                        if (nickToUnansweredCheck.containsKey(nickname)) {
+                            nickToUnansweredCheck.put(nickname, nickToUnansweredCheck.get(nickname) + 1);
+                        } else {
+                            nickToUnansweredCheck.put(nickname, 1);
                         }
-                        if(state.getClass().equals(RunningGameState.class) && activePlayer.getNickname().equals(nickname)) {
-                            changeActivePlayer();
-                            try {
-                                updateView();
-                            } catch (RemoteException e) {
-                                e.printStackTrace();
+                        if (nickToUnansweredCheck.get(nickname) == 5) {
+                            changePlayerConnectionStatus(nickname);
+                            if (state.getClass().equals(RunningGameState.class)) {
+                                notifyOfDisconnectionAllUsers(nickname);
                             }
-                        }
-                        else if(getPlayerList().size() == 1 && getMaxPlayerNumber() == 0) {
-                            changeState(new ServerInitState());
-                            getPlayerList().clear();
+                            if (state.getClass().equals(RunningGameState.class) && activePlayer.getNickname().equals(nickname)) {
+                                changeActivePlayer();
+                                try {
+                                    updateView();
+                                } catch (RemoteException e) {
+                                    e.printStackTrace();
+                                }
+                            } else if (getPlayerList().size() == 1 && getMaxPlayerNumber() == 0) {
+                                changeState(new ServerInitState());
+                                getPlayerList().clear();
+                            }
                         }
                     }
                 }

@@ -35,6 +35,7 @@ public class GraphicUserInterface extends Application implements UserInterface, 
     private static LoginScreenController loginScreenController;
     private static GameScreenController gameScreenController;
     private boolean isYourTurn = false;
+    private boolean loadedGame = false;
 
     @Override
     public void run() {
@@ -141,6 +142,7 @@ public class GraphicUserInterface extends Application implements UserInterface, 
             guiStage.setResizable(false);;
             guiStage.setTitle("My Shelfie - Gaming Phase");
             guiStage.show();
+            loadedGame = true;
         });
     }
 
@@ -348,12 +350,16 @@ public class GraphicUserInterface extends Application implements UserInterface, 
 
     @Override
     public void playerDisconnected(String nickname) {
-        gameScreenController.playerDisconnected(nickname);
+        if(loadedGame) {
+            gameScreenController.playerDisconnected(nickname);
+        }
     }
 
     @Override
     public void playerReconnected(String nickname) {
-        gameScreenController.playerReconnected(nickname);
+        if(loadedGame) {
+            gameScreenController.playerReconnected(nickname);
+        }
     }
 
     @Override
