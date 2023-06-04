@@ -44,7 +44,7 @@ public class ClientControllerTCP implements ClientController {
         userInterfaceThread.start();
         try {
             userInterfaceThread.join();
-            System.err.println("JOINED THE GUI THREAD");
+            System.err.println("JOINED THE VIEW THREAD");
         }
         catch (InterruptedException e) {
             e.printStackTrace();

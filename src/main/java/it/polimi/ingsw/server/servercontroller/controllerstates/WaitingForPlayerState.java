@@ -156,9 +156,7 @@ public class WaitingForPlayerState implements GameState {
             player.setShelf(new Shelf());
             player.setCommonTargetCardList(commonTargetCardList);
             try {
-                PersonalTargetCard personal=generateRandomPersonal(playerList);
-                System.out.println(personal.getPersonalNumber());
-                player.setPersonalTargetCard(personal);
+                player.setPersonalTargetCard(generateRandomPersonal(playerList));
             } catch (IOException | URISyntaxException e) {
                 throw new RuntimeException(e);
             }

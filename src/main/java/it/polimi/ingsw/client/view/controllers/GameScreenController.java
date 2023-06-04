@@ -1,7 +1,6 @@
 package it.polimi.ingsw.client.view.controllers;
 
 import it.polimi.ingsw.client.view.GraphicUserInterface;
-import it.polimi.ingsw.server.model.Player;
 import it.polimi.ingsw.server.model.items.Item;
 import it.polimi.ingsw.server.model.items.ItemColor;
 import it.polimi.ingsw.server.model.tokens.EndGameToken;
@@ -16,7 +15,6 @@ import javafx.scene.Scene;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextArea;
 import javafx.scene.effect.DropShadow;
-import javafx.scene.effect.Effect;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.input.MouseEvent;
@@ -25,7 +23,6 @@ import javafx.scene.layout.GridPane;
 import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
 import javafx.scene.text.Text;
-import javafx.scene.text.TextAlignment;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
 import javafx.util.Duration;
@@ -364,7 +361,7 @@ public class GameScreenController {
             Image tmpImage = firstImgv.getImage();
             firstImgv.setImage(secondImgv.getImage());
             secondImgv.setImage(tmpImage);
-            gui.swapCols(swapCols);
+            gui.swapColsGUI(swapCols);
             swapCols = new ArrayList<>(2);
         }
     }

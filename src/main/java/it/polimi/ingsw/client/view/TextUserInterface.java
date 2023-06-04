@@ -277,7 +277,7 @@ public class TextUserInterface implements UserInterface{
                     if(first < getPositionPickedSize() && second < getPositionPickedSize() && first != second){
                         Collections.swap(selectedItems, first, second);
                         Collections.swap(selectedItemsCoordinates, first, second);
-                        swapCols(first, second);
+                        swapColsTUI(first, second);
                         mainGamePage();
                     } else {
                         tileNotAvailable();
@@ -917,7 +917,7 @@ public class TextUserInterface implements UserInterface{
     }
 
     @Override
-    public void swapCols(List<Node> list) {
+    public void swapColsGUI(List<Node> list) {
         // NO CLI
     }
 
@@ -928,7 +928,7 @@ public class TextUserInterface implements UserInterface{
     }
 
     @Override
-    public void swapCols(int col1, int col2) {
+    public void swapColsTUI(int col1, int col2) {
         clientController.swapCols(col1, col2);
     }
 

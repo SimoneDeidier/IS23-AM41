@@ -29,10 +29,11 @@ public class PersonalTargetCard implements Serializable {
     final int greenCol;
 
     public PersonalTargetCard(int personal) throws IOException, URISyntaxException {
+        this.personalNumber=personal;
+
         Gson gson = new Gson();
         File jsonFile = new File(ClassLoader.getSystemResource("json/PersonalTargetCards.json").toURI());
         String jsonString = FileUtils.readFileToString(jsonFile, StandardCharsets.UTF_8);
-        personalNumber=personal;
 
         JsonArray jsonArray = gson.fromJson(jsonString, JsonArray.class);
 

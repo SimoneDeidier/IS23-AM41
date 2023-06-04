@@ -67,9 +67,7 @@ public class GraphicUserInterface extends Application implements UserInterface, 
     @Override
     public void sendNickname(String nickname) {
         clientController.sendNickname(nickname);
-        System.out.println("NICKNAME SENDED");
         clientController.startClearThread();
-        System.out.println("STARTED CLEAR THREAD");
     }
 
     @Override
@@ -240,7 +238,7 @@ public class GraphicUserInterface extends Application implements UserInterface, 
     }
 
     @Override
-    public void swapCols(List<Node> list) {
+    public void swapColsGUI(List<Node> list) {
         clientController.swapCols(list);
     }
 
@@ -250,7 +248,7 @@ public class GraphicUserInterface extends Application implements UserInterface, 
     }
 
     @Override
-    public void swapCols(int col1, int col2) {
+    public void swapColsTUI(int col1, int col2) {
         // NO IN GUI
     }
 

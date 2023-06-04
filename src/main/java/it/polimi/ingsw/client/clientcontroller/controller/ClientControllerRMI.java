@@ -173,7 +173,6 @@ public class ClientControllerRMI implements ClientController, Serializable {
 
     @Override
     public void rejoinedMatch() {
-        System.out.println("Called rejoined in controller");
         try { //restarting the ping to the server
             connectionRMI.setClientConnected(true);
             connectionRMI.startClearThread();

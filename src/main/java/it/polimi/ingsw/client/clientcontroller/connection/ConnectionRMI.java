@@ -164,6 +164,7 @@ public class ConnectionRMI extends UnicastRemoteObject implements InterfaceClien
             stub.peerToPeerMsgHandler(body.getSenderNickname(), body.getReceiverNickname(), body.getText(), body.getLocalDateTime());
         } catch (RemoteException e) {
             System.out.println("Network error, we're sorry for the inconvenience, try restarting the client");
+            //todo dovrei anche chiudere il client?
         }
     }
 
