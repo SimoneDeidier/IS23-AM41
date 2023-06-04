@@ -58,11 +58,7 @@ public class ClientControllerRMI implements ClientController, Serializable {
     @Override
     public void sendNickname(String nickname) {
         this.playerNickname = nickname;
-        try {
-            connectionRMI.presentation(nickname);
-        } catch (RemoteException e) {
-            System.out.println("Network error, we're sorry for the inconvenience, try restarting the client");
-        }
+        connectionRMI.presentation(nickname);
     }
 
     @Override
@@ -77,11 +73,7 @@ public class ClientControllerRMI implements ClientController, Serializable {
 
     @Override
     public void sendParameters(int numPlayers, int numCommons) {
-        try {
-            connectionRMI.sendParameters(numPlayers,numCommons==1);
-        } catch (RemoteException e) {
-            System.out.println("Network error, we're sorry for the inconvenience, try restarting the client");
-        }
+        connectionRMI.sendParameters(numPlayers,numCommons==1);
     }
 
     @Override
