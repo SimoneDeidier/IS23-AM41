@@ -22,7 +22,6 @@ public class SerializeDeserialize implements SerializeDeserializeInterface {
 
     @Override
     public void deserialize(String input) throws IOException, URISyntaxException {
-        System.err.println(input);
         TCPMessage message = gson.fromJson(input, TCPMessage.class);
         tcpMessageController.readTCPMessage(message);
     }
@@ -30,7 +29,6 @@ public class SerializeDeserialize implements SerializeDeserializeInterface {
     @Override
     public void serialize(TCPMessage message) {
         String outMsg = gson.toJson(message);
-        System.err.println(outMsg);
         connectionTCP.getSocketOut().println(outMsg);
         connectionTCP.getSocketOut().flush();
     }
@@ -42,10 +40,6 @@ public class SerializeDeserialize implements SerializeDeserializeInterface {
 
     public void startUserInterface(String uiType) {
         tcpMessageController.startUserInterface(uiType);
-    }
-
-    public void rejoinMatch() {
-        connectionTCP.rejoinMatch();
     }
 
     public void sendRejoinMsg() {

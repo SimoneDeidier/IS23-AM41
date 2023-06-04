@@ -3,10 +3,13 @@ package it.polimi.ingsw.server.servercontroller;
 import it.polimi.ingsw.interfaces.TCPMessageControllerInterface;
 import it.polimi.ingsw.messages.Body;
 import it.polimi.ingsw.messages.TCPMessage;
+import it.polimi.ingsw.server.model.Player;
+import it.polimi.ingsw.server.model.commons.CommonTargetCard;
 import it.polimi.ingsw.server.servercontroller.exceptions.*;
 
 import java.net.Socket;
 import java.rmi.RemoteException;
+import java.util.Objects;
 
 public class TCPMessageController implements TCPMessageControllerInterface {
 
@@ -23,24 +26,20 @@ public class TCPMessageController implements TCPMessageControllerInterface {
     @Override
     public void readTCPMessage(TCPMessage message) throws RemoteException {
         String header = message.getHeader();
-        System.err.println("New TCP message - header: " + header);
         switch (header) {
             case "Presentation" -> {
                 String nickname = message.getBody().getPlayerNickname();
-                System.err.println("NEW PRESENTATION MSG - Nickname: " + nickname);
                 try {
                     switch(gameController.presentation(nickname)) {
                         case 1 -> { //joined a "new" game
                             printTCPMessage("Nickname Accepted", null);
-                            System.err.println("Sending a Nickname Accepted TCP Message");
                             gameController.putNickToSocketMapping(nickname, this);
                         } case 3 -> { //joined a "restored" game
                             printTCPMessage("Player Restored", null);
-                            gameController.putNickToSocketMapping(nickname, null);
+                            gameController.putNickToSocketMapping(nickname, this);
                         }
                         case 0 -> {  // you're joining but I need another nickname
                             printTCPMessage("Invalid Nickname", null);
-                            System.err.println("SENDING AN Invalid Nickname MESSAGE");
                         }
                         case 2 ->{
                             gameController.putNickToSocketMapping(nickname, this);
@@ -52,19 +51,41 @@ public class TCPMessageController implements TCPMessageControllerInterface {
                     printTCPMessage("Wait for Lobby", null);
                 }
                 catch (CancelGameException e) { //the game is being canceled because a restoring of a saved game failed
+                    gameController.getNickToTCPMessageControllerMapping().put(nickname, this);
                     gameController.disconnectAllUsers();
+                    gameController.prepareForNewGame();
                 } catch (GameStartException e) { //the game is starting because everyone is connected, updating everyone views
                     gameController.putNickToSocketMapping(nickname, this);
                     gameController.startGame();
                     gameController.yourTarget();
                     gameController.updateView();
                 } catch (FullLobbyException e) { //you can't connect right now, the lobby is full or a game is already playing on the server
-                    printTCPMessage("Goodbye", null);
+                    printTCPMessage("Full Lobby", null);
                     closeConnection();
                 } catch (FirstPlayerException e) { //you're the first player connecting for creating a new game, I need more parameters from you
                     gameController.putNickToSocketMapping(nickname, this);
-                    System.err.println("Sending a Get Parameters TCP Message");
                     printTCPMessage("Get Parameters", null);
+                }
+                catch (RejoinRequestException e) {
+                    gameController.changePlayerConnectionStatus(nickname);
+                    printTCPMessage("Rejoined", null);
+                    Body body = new Body();
+                    for(Player p : gameController.getPlayerList()) {
+                        if(Objects.equals(p.getNickname(), nickname)) {
+                            body.setPersonalCardNumber(p.getPersonalTargetCard().getPersonalNumber());
+                        }
+                    }
+                    for(CommonTargetCard c : gameController.getCommonTargetCardsList()) {
+                        body.getCommonTargetCardsName().add(c.getName());
+                    }
+                    gameController.getNickToTCPMessageControllerMapping().put(nickname, this);
+                    printTCPMessage("Your Target", body);
+                    if(gameController.didLastUserMadeHisMove()) {
+                        gameController.setLastConnectedUserMadeHisMove(false);
+                        gameController.changeActivePlayer();
+                        gameController.updateView();
+                    }
+                    gameController.notifyOfReconnectionAllUsers(nickname);
                 }
             }
             case "Create Lobby" -> {
@@ -103,17 +124,10 @@ public class TCPMessageController implements TCPMessageControllerInterface {
                 String text = message.getBody().getText();
                 String localDateTime = message.getBody().getLocalDateTime();
                 gameController.broadcastMsg(sender, text, localDateTime);
-                System.err.println("FINITO BROADCAST");
             }
             case "Disconnect" -> {
                 gameController.intentionalDisconnectionUserTCP(this);
                 serializeDeserialize.closeConnection();
-            }
-            case "Re-Join" -> {
-                if(gameController.checkReJoinRequest(message.getBody().getPlayerNickname())) {
-                    printTCPMessage("Joined", null);
-                }
-                else printTCPMessage("Invalid Player", null);
             }
             case "Clear" -> {
                 gameController.resetUnansweredCheckCounter(this);

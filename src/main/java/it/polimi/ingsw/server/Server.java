@@ -5,8 +5,11 @@ import it.polimi.ingsw.interfaces.InterfaceServer;
 import it.polimi.ingsw.messages.Body;
 import it.polimi.ingsw.messages.NewView;
 import it.polimi.ingsw.server.model.Player;
+import it.polimi.ingsw.server.model.commons.CommonTargetCard;
 import it.polimi.ingsw.server.servercontroller.GameController;
 import it.polimi.ingsw.server.servercontroller.SocketManager;
+import it.polimi.ingsw.server.servercontroller.controllerstates.RunningGameState;
+import it.polimi.ingsw.server.servercontroller.controllerstates.ServerInitState;
 import it.polimi.ingsw.server.servercontroller.exceptions.*;
 
 import java.io.IOException;
@@ -17,10 +20,7 @@ import java.rmi.RemoteException;
 import java.rmi.registry.LocateRegistry;
 import java.rmi.registry.Registry;
 import java.rmi.server.UnicastRemoteObject;
-import java.util.List;
-import java.util.Map;
-import java.util.Objects;
-import java.util.Scanner;
+import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
@@ -29,8 +29,9 @@ public class Server implements InterfaceServer {
 
     private static int portRMI;
     private static int portTCP;
-    private final GameController controller = GameController.getGameController(this);
     private final Map<String,InterfaceClient> clientMapRMI = new ConcurrentHashMap<>();
+    private final GameController controller = GameController.getGameController(this);
+    private static final int CHECK_DELAY_MILLISECONDS = 5000;
 
 
     public static void main(String[] args) {
@@ -158,18 +159,44 @@ public class Server implements InterfaceServer {
         } catch (CancelGameException e) { //the game is being canceled because a restoring of a saved game failed
             clientMapRMI.put(nickname,cl);
             controller.disconnectAllUsers();
+            controller.prepareForNewGame();
         } catch (GameStartException e) { //the game is starting because everyone is connected, updating everyone views
             clientMapRMI.put(nickname,cl);
             controller.startGame();
             controller.yourTarget();
+            cl.startClearThread();
             controller.updateView();
         } catch (FullLobbyException e) { //you can't connect right now, the lobby is full or a game is already playing on the server
-            cl.disconnectUser(1);
+            cl.fullLobby();
         } catch (FirstPlayerException e) { //you're the first player connecting for creating a new game, I need more parameters from you
             clientMapRMI.put(nickname,cl);
             cl.askParameters();
         } catch (WaitForLobbyParametersException e) {
             cl.waitForLobbyCreation();
+        } catch (RejoinRequestException e) {
+            rejoinRequest(nickname,cl);
+        }
+    }
+
+    public void rejoinRequest(String nickname, InterfaceClient cl){
+        try {
+            controller.changePlayerConnectionStatus(nickname);
+            if (controller.didLastUserMadeHisMove()) { //updateView for everyone as soon as he connects because he needs to make a move right away
+                controller.notifyOfReconnectionAllUsers(nickname);
+                controller.setLastConnectedUserMadeHisMove(false);
+                clientMapRMI.put(nickname, cl);
+                clientMapRMI.get(nickname).rejoinedMatch();
+                sendCardsRMI();
+                controller.changeActivePlayer();
+                controller.updateView();
+            } else { //he'll wait for the first updateView
+                controller.notifyOfReconnectionAllUsers(nickname);
+                clientMapRMI.put(nickname, cl);
+                clientMapRMI.get(nickname).rejoinedMatch();
+                sendCardsRMI();
+            }
+        }catch (RemoteException e){
+            //problem with communication with client, how do I handle it?
         }
     }
 
@@ -181,6 +208,7 @@ public class Server implements InterfaceServer {
             cl.askParametersAgain();
     }
 
+    @Override
     public void executeMove(Body move) throws RemoteException {
         try {
             controller.executeMove(move);
@@ -190,25 +218,41 @@ public class Server implements InterfaceServer {
         }
     }
 
-    public void updateViewRMI(NewView newView) throws RemoteException {
+    public void updateViewRMI(NewView newView) {
         for(InterfaceClient cl: clientMapRMI.values()){
-            cl.updateView(newView);
+            try {
+                cl.updateView(newView);
+            } catch (RemoteException e) {
+                //problem with communication with client, how do I handle it?
+            }
         }
     }
 
 
 
-    public void disconnectAllRMIUsers() throws RemoteException {
+    public void disconnectAllRMIUsers() {
         for(Map.Entry<String,InterfaceClient> entry : clientMapRMI.entrySet()){
-            entry.getValue().disconnectUser(0);
+            try {
+                entry.getValue().disconnectUser(0);
+            } catch (RemoteException e) {
+                //problem with communication with client, how do I handle it?
+            }
             clientMapRMI.remove(entry.getKey());
         }
     }
 
-    public void sendCardsRMI(List<String> commonTargetCardList) throws RemoteException {
+    public void sendCardsRMI() {
+        List<String> commonList=new ArrayList<>();
+        for(CommonTargetCard commonTargetCard: controller.getCommonTargetCardsList()){
+            commonList.add(commonTargetCard.getName());
+        }
         for(Player p : controller.getPlayerList()) {
             if(clientMapRMI.containsKey(p.getNickname())) {
-                clientMapRMI.get(p.getNickname()).receiveCards(p.getPersonalTargetCard().getPersonalNumber(),commonTargetCardList);
+                try {
+                    clientMapRMI.get(p.getNickname()).receiveCards(p.getPersonalTargetCard().getPersonalNumber(),commonList);
+                } catch (RemoteException e) {
+                    //problem with communication with client, how do I handle it?
+                }
             }
         }
     }
@@ -226,8 +270,12 @@ public class Server implements InterfaceServer {
         }
     }
 
-    public void peerToPeerMsg(String sender, String receiver, String text, String localDateTime) throws RemoteException {
-        clientMapRMI.get(receiver).receiveMessage(sender, text, localDateTime);
+    public void peerToPeerMsg(String sender, String receiver, String text, String localDateTime) {
+        try {
+            clientMapRMI.get(receiver).receiveMessage(sender, text, localDateTime);
+        } catch (RemoteException e) {
+            //problem with communication with client, how do I handle it?
+        }
     }
 
     @Override
@@ -236,21 +284,101 @@ public class Server implements InterfaceServer {
     }
 
     @Override
-    public void disconnection(String nickname) throws RemoteException {
+    public void voluntaryDisconnection(String nickname) throws RemoteException {
+        controller.notifyOfDisconnectionAllUsers(nickname);
         controller.changePlayerConnectionStatus(nickname);
-        clientMapRMI.get(nickname).disconnectUser(7/*boh*/);
-        clientMapRMI.remove(nickname);
+        clientMapRMI.remove(nickname); //stops the ping from the server towards that user
+        if(controller.getActivePlayer().getNickname().equals(nickname)){
+            controller.changeActivePlayer();
+            controller.updateView();
+        }
     }
 
-    public void broadcastMsg(String sender, String text,String localDateTime) throws RemoteException {
+    public void broadcastMsg(String sender, String text,String localDateTime) {
         for(InterfaceClient interfaceClient: clientMapRMI.values()) {
-            interfaceClient.receiveMessage(sender, text,localDateTime );
+            try {
+                interfaceClient.receiveMessage(sender, text,localDateTime );
+            } catch (RemoteException e) {
+                //problem with communication with client, how do I handle it?
+            }
         }
     }
 
     @Override
-    public void clearRMI() throws RemoteException { //ping from client to server
+    public void clearRMI() throws RemoteException { //ping called from client to server
         //it's empty, we need to check on the other side for RemoteExceptions
     }
+    public void startCheckThreadRMI() {
+        new Thread(() -> {
+            while (true) {
+                try {
+                    for (String nickname : clientMapRMI.keySet()) {
+                        System.out.println("Pingo " + nickname);
+                        try {
+                            clientMapRMI.get(nickname).check();
+                        } catch (RemoteException | NullPointerException e) {
+                            System.out.println("Client " + nickname + " disconnesso");
+                            controller.notifyOfDisconnectionAllUsers(nickname);
+                            controller.changePlayerConnectionStatus(nickname);
+                            if (controller.getState().getClass().equals(RunningGameState.class)
+                                    && controller.getActivePlayer().getNickname().equals(nickname)) {
+                                controller.changeActivePlayer();
+                                clientMapRMI.remove(nickname);
+                                controller.updateView();
+                                break;
+                            }
+                            if (controller.getPlayerList().size() == 1 && controller.getMaxPlayerNumber() == 0) { //the first player who was setting up the lobby disconnected
+                                controller.changeState(new ServerInitState());
+                                controller.getPlayerList().clear();
+                            }
+                            clientMapRMI.remove(nickname);
+                            break;
+                        }
+                        Thread.sleep(CHECK_DELAY_MILLISECONDS);
+                    }
+                } catch(InterruptedException | RemoteException e){
+                    //thread interrupted
+                }
+            }
+        }).start();
+    }
 
+    public void disconnectLastRMIUser() {
+        for(String nickname: clientMapRMI.keySet()) {
+            for(Player player: controller.getPlayerList()) {
+                if(player.isConnected() && player.getNickname().equals(nickname)){
+                    try {
+                        clientMapRMI.get(nickname).disconnectUser(1);
+                    } catch (RemoteException e) {
+                        //problem with communication with client, how do I handle it?
+                    }
+                }
+            }
+
+        }
+    }
+
+    public void prepareServerForNewGame(){
+        clientMapRMI.clear();
+    }
+
+    public void notifyOfDisconnectionAllRMIUsers(String nickname) {
+        for(String user:clientMapRMI.keySet()){
+            try {
+                clientMapRMI.get(user).notificationForDisconnection(nickname);
+            } catch (RemoteException e) {
+                //problem with communication with client, how do I handle it?
+            }
+        }
+    }
+
+    public void notifyOfReconnectionAllRMIUsers(String nickname) {
+        for(String user: clientMapRMI.keySet()){
+            try {
+                clientMapRMI.get(user).notificationForReconnection(nickname);
+            } catch (RemoteException e) {
+                //problem with communication with client, how do I handle it?
+            }
+        }
+    }
 }

@@ -19,6 +19,8 @@ import java.time.temporal.ChronoUnit;
 import java.util.*;
 
 public class ClientControllerRMI implements ClientController, Serializable {
+    //todo per ogni remoteException o interrupted non tirare throw new RuntimeException(e); ma messaggio d'errore così
+    //se caduta rete non errore brutto ma bello?
 
     private final ConnectionRMI connectionRMI;
     private UserInterface userInterface = null;
@@ -29,6 +31,8 @@ public class ClientControllerRMI implements ClientController, Serializable {
     private Map<Integer, Integer> columnsToFreeSpaces = new HashMap<>(5);
     private final static int ROWS = 6;
     private final static int COLS = 5;
+    private final static int BOARD_DIM = 9;
+    private boolean[][] takeableItems = new boolean[BOARD_DIM][BOARD_DIM];
 
     public ClientControllerRMI(ConnectionRMI connectionRMI) {
         this.connectionRMI = connectionRMI;
@@ -45,6 +49,7 @@ public class ClientControllerRMI implements ClientController, Serializable {
         userInterfaceThread.start();
         try {
             userInterfaceThread.join();
+            System.err.println("JOINED THE VIEW THREAD");
         } catch (InterruptedException e) {
             throw new RuntimeException(e);
         }
@@ -56,7 +61,7 @@ public class ClientControllerRMI implements ClientController, Serializable {
         try {
             connectionRMI.presentation(nickname);
         } catch (RemoteException e) {
-            throw new RuntimeException(e);
+            System.out.println("Network error, we're sorry for the inconvenience, try restarting the client");
         }
     }
 
@@ -75,7 +80,7 @@ public class ClientControllerRMI implements ClientController, Serializable {
         try {
             connectionRMI.sendParameters(numPlayers,numCommons==1);
         } catch (RemoteException e) {
-            throw new RuntimeException(e);
+            System.out.println("Network error, we're sorry for the inconvenience, try restarting the client");
         }
     }
 
@@ -142,7 +147,23 @@ public class ClientControllerRMI implements ClientController, Serializable {
             }
             columnsToFreeSpaces.put(i, count);
         }
+        Item[][] board = newView.getBoardItems();
+        for(int i = 0; i < BOARD_DIM; i++) {
+            for(int j = 0; j < BOARD_DIM; j++) {
+                if(board[i][j] != null) {
+                    if(i == 0 || i == BOARD_DIM - 1 || j == 0 || j == BOARD_DIM - 1) {
+                        takeableItems[i][j] = true;
+                    }
+                    else if(board[i-1][j] == null || board[i+1][j] == null || board[i][j-1] == null || board[i][j+1] == null) {
+                        takeableItems[i][j] = true;
+                    }
+                    else takeableItems[i][j] = false;
+                }
+                else takeableItems[i][j] = false;
+            }
+        }
         userInterface.updateView(newView);
+        userInterface.setTakeableItems(takeableItems);
     }
 
     @Override
@@ -151,22 +172,20 @@ public class ClientControllerRMI implements ClientController, Serializable {
     }
 
     @Override
-    public void disconnect() { //todol
-
-    }
-
-    @Override
-    public void rejoinMatch() { //todo
-
-    }
-
-    @Override
-    public void rejoinedMatch() { //todo
-
+    public void rejoinedMatch() {
+        System.out.println("Called rejoined in controller");
+        try { //restarting the ping to the server
+            connectionRMI.setClientConnected(true);
+            connectionRMI.startClearThread();
+        } catch (RemoteException e) {
+            System.out.println("Network error, we're sorry for the inconvenience, try restarting the client");;
+        }
+        userInterface.rejoinedMatch();
     }
 
     @Override
     public void invalidPlayer() { //todo, è quando fallisce il re join
+        userInterface.invalidPlayer();
     }
 
     @Override
@@ -232,23 +251,54 @@ public class ClientControllerRMI implements ClientController, Serializable {
     }
 
     @Override
-    public void startClearThread() { //todo
-
+    public void startClearThread() { //only used in TCP
     }
 
     @Override
-    public void serverNotResponding() { //todo
-
+    public void serverNotResponding() {
+        connectionRMI.setClientConnected(false); //stops the ping thread
+        userInterface.serverNotResponding();
     }
 
     @Override
-    public void closeConnection() { //todo
-
+    public void closeConnection() { //todo capire se serve altro
+        connectionRMI.setClientConnected(false); //stops the ping thread
     }
 
     @Override
     public void lobbyRestored() {
-        userInterface.lobbyCreated();
+        userInterface.lobbyRestored();
+    }
+
+    @Override
+    public void exit() {
+        connectionRMI.setClientConnected(false); //stops the ping thread
+        connectionRMI.voluntaryDisconnection();
+    }
+
+    @Override
+    public void fullLobby() {
+        userInterface.fullLobby();
+    }
+
+    @Override
+    public void cantRestoreLobby() throws IOException {
+        userInterface.cantRestoreLobby();
+    }
+
+    @Override
+    public void alonePlayerWins() {
+        userInterface.alonePlayerWins();
+    }
+
+    @Override
+    public void playerDisconnected(String nickname) {
+        userInterface.playerDisconnected(nickname);
+    }
+
+    @Override
+    public void playerReconnected(String nickname) {
+        userInterface.playerReconnected(nickname);
     }
 
 }

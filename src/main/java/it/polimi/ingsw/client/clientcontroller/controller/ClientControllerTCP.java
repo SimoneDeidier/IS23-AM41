@@ -6,6 +6,7 @@ import it.polimi.ingsw.client.view.TextUserInterface;
 import it.polimi.ingsw.client.view.UserInterface;
 import it.polimi.ingsw.messages.Body;
 import it.polimi.ingsw.messages.NewView;
+import it.polimi.ingsw.server.model.items.Item;
 import javafx.scene.Node;
 
 import java.io.FileNotFoundException;
@@ -26,6 +27,8 @@ public class ClientControllerTCP implements ClientController {
     private Map<Integer, Integer> columnsToFreeSpaces = new HashMap<>(5);
     private final static int ROWS = 6;
     private final static int COLS = 5;
+    private final static int BOARD_DIM = 9;
+    private boolean[][] takeableItems = new boolean[BOARD_DIM][BOARD_DIM];
 
     public ClientControllerTCP(TCPMessageController tcpMessageController) {
         this.tcpMessageController = tcpMessageController;
@@ -138,7 +141,23 @@ public class ClientControllerTCP implements ClientController {
             }
             columnsToFreeSpaces.put(i, count);
         }
+        Item[][] board = newView.getBoardItems();
+        for(int i = 0; i < BOARD_DIM; i++) {
+            for(int j = 0; j < BOARD_DIM; j++) {
+                if(board[i][j] != null) {
+                    if(i == 0 || i == BOARD_DIM - 1 || j == 0 || j == BOARD_DIM - 1) {
+                        takeableItems[i][j] = true;
+                    }
+                    else if(board[i-1][j] == null || board[i+1][j] == null || board[i][j-1] == null || board[i][j+1] == null) {
+                        takeableItems[i][j] = true;
+                    }
+                    else takeableItems[i][j] = false;
+                }
+                else takeableItems[i][j] = false;
+            }
+        }
         userInterface.updateView(newView);
+        userInterface.setTakeableItems(takeableItems);
     }
 
     @Override
@@ -147,18 +166,7 @@ public class ClientControllerTCP implements ClientController {
     }
 
     @Override
-    public void disconnect() {
-        tcpMessageController.printTCPMessage("Disconnect", null);
-    }
-
-    @Override
-    public void rejoinMatch() {
-        tcpMessageController.rejoinMatch();
-    }
-
-    @Override
     public void rejoinedMatch() {
-        System.out.println("Called rejoined in controller");
         userInterface.rejoinedMatch();
     }
 
@@ -170,6 +178,9 @@ public class ClientControllerTCP implements ClientController {
     @Override
     public void insertInPositionPicked(int[] el) {
         positionPicked.add(el);
+        for(int[] x : positionPicked) {
+            System.out.println(x[0] + " - " + x[1]);
+        }
     }
     @Override
     public int getPositionPickedSize() {
@@ -221,6 +232,9 @@ public class ClientControllerTCP implements ClientController {
     @Override
     public void removeInPositionPicked(int col) {
         positionPicked.remove(col);
+        for(int[] el : positionPicked) {
+            System.out.println(el[0] + " - " + el[1]);
+        }
     }
 
     @Override
@@ -246,6 +260,37 @@ public class ClientControllerTCP implements ClientController {
     @Override
     public void lobbyRestored() {
         userInterface.lobbyRestored();
+    }
+
+    @Override
+    public void exit() {
+        tcpMessageController.stopClearThread();
+        tcpMessageController.printTCPMessage("Disconnect", null);
+    }
+
+    @Override
+    public void fullLobby() {
+        userInterface.fullLobby();
+    }
+
+    @Override
+    public void cantRestoreLobby() throws IOException {
+        userInterface.cantRestoreLobby();
+    }
+
+    @Override
+    public void alonePlayerWins() {
+        userInterface.alonePlayerWins();
+    }
+
+    @Override
+    public void playerDisconnected(String nickname) {
+        userInterface.playerDisconnected(nickname);
+    }
+
+    @Override
+    public void playerReconnected(String nickname) {
+       userInterface.playerReconnected(nickname);
     }
 
 }

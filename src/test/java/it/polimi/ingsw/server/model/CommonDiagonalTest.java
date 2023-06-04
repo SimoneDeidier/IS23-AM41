@@ -9,6 +9,9 @@ import org.junit.jupiter.api.Test;
 
 import java.util.Arrays;
 
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+
 class CommonDiagonalTest {
 
     @Test
@@ -95,5 +98,83 @@ class CommonDiagonalTest {
         shelfE.insertItems(4, Arrays.asList(new Item(ItemColor.PINK), new Item(ItemColor.BLUE), new Item(ItemColor.PINK), new Item(ItemColor.LIGHT_BLUE), new Item(ItemColor.PINK), new Item(ItemColor.PINK)));
 
         assert(!CommonDiagonal.check(shelfE));
+    }
+    
+    @Test 
+    void checkFirstDiagonal() throws NotEnoughSpaceInColumnException {
+        CommonTargetCard CommonDiagonal = new CommonDiagonal(2);
+        // create a sample shelf with first diagonal
+        Shelf shelFirst = new Shelf();
+        shelFirst.insertItems(0, Arrays.asList(new Item(ItemColor.PINK), new Item(ItemColor.PINK), new Item(ItemColor.BLUE), new Item(ItemColor.PINK), new Item(ItemColor.BLUE), new Item(ItemColor.BLUE)));
+        shelFirst.insertItems(1, Arrays.asList(new Item(ItemColor.BLUE), new Item(ItemColor.WHITE), new Item(ItemColor.PINK), new Item(ItemColor.LIGHT_BLUE), new Item(ItemColor.BLUE), new Item(ItemColor.WHITE)));
+        shelFirst.insertItems(2, Arrays.asList(new Item(ItemColor.PINK), new Item(ItemColor.PINK), new Item(ItemColor.BLUE), new Item(ItemColor.BLUE), new Item(ItemColor.LIGHT_BLUE), new Item(ItemColor.PINK)));
+        shelFirst.insertItems(3, Arrays.asList(new Item(ItemColor.YELLOW), new Item(ItemColor.BLUE), new Item(ItemColor.BLUE), new Item(ItemColor.YELLOW), new Item(ItemColor.PINK), new Item(ItemColor.YELLOW)));
+        shelFirst.insertItems(4, Arrays.asList(new Item(ItemColor.PINK), new Item(ItemColor.BLUE), new Item(ItemColor.PINK), new Item(ItemColor.LIGHT_BLUE), new Item(ItemColor.PINK), new Item(ItemColor.PINK)));
+
+        assert(CommonDiagonal.check(shelFirst));
+    }
+
+    @Test
+    void checkSecondDiagonal() throws NotEnoughSpaceInColumnException {
+        CommonTargetCard CommonDiagonal = new CommonDiagonal(2);
+        // create a sample shelf with Second diagonal
+        Shelf shelSecond = new Shelf();
+        shelSecond.insertItems(0, Arrays.asList(new Item(ItemColor.PINK), new Item(ItemColor.PINK), new Item(ItemColor.BLUE), new Item(ItemColor.PINK), new Item(ItemColor.BLUE), new Item(ItemColor.BLUE)));
+        shelSecond.insertItems(1, Arrays.asList(new Item(ItemColor.BLUE), new Item(ItemColor.WHITE), new Item(ItemColor.PINK), new Item(ItemColor.BLUE), new Item(ItemColor.BLUE), new Item(ItemColor.WHITE)));
+        shelSecond.insertItems(2, Arrays.asList(new Item(ItemColor.PINK), new Item(ItemColor.PINK), new Item(ItemColor.BLUE), new Item(ItemColor.BLUE), new Item(ItemColor.LIGHT_BLUE), new Item(ItemColor.PINK)));
+        shelSecond.insertItems(3, Arrays.asList(new Item(ItemColor.YELLOW), new Item(ItemColor.BLUE), new Item(ItemColor.BLUE), new Item(ItemColor.YELLOW), new Item(ItemColor.PINK), new Item(ItemColor.YELLOW)));
+        shelSecond.insertItems(4, Arrays.asList(new Item(ItemColor.BLUE), new Item(ItemColor.BLUE), new Item(ItemColor.PINK), new Item(ItemColor.LIGHT_BLUE), new Item(ItemColor.PINK), new Item(ItemColor.PINK)));
+
+        assert(CommonDiagonal.check(shelSecond));
+    }
+
+    @Test
+    void checkThirdDiagonal() throws NotEnoughSpaceInColumnException {
+        CommonTargetCard CommonDiagonal = new CommonDiagonal(2);
+        // create a sample shelf with Third diagonal
+        Shelf shelThird = new Shelf();
+        shelThird.insertItems(0, Arrays.asList(new Item(ItemColor.PINK), new Item(ItemColor.PINK), new Item(ItemColor.BLUE), new Item(ItemColor.PINK), new Item(ItemColor.BLUE), new Item(ItemColor.BLUE)));
+        assertFalse(CommonDiagonal.check(shelThird));
+        shelThird.insertItems(1, Arrays.asList(new Item(ItemColor.BLUE), new Item(ItemColor.WHITE), new Item(ItemColor.PINK), new Item(ItemColor.BLUE), new Item(ItemColor.BLUE), new Item(ItemColor.WHITE)));
+        assertFalse(CommonDiagonal.check(shelThird));
+        shelThird.insertItems(2, Arrays.asList(new Item(ItemColor.PINK), new Item(ItemColor.PINK), new Item(ItemColor.BLUE), new Item(ItemColor.PINK), new Item(ItemColor.LIGHT_BLUE), new Item(ItemColor.PINK)));
+        assertFalse(CommonDiagonal.check(shelThird));
+        shelThird.insertItems(3, Arrays.asList(new Item(ItemColor.YELLOW), new Item(ItemColor.BLUE), new Item(ItemColor.BLUE), new Item(ItemColor.YELLOW), new Item(ItemColor.PINK), new Item(ItemColor.YELLOW)));
+        assertFalse(CommonDiagonal.check(shelThird));
+        shelThird.insertItems(4, Arrays.asList(new Item(ItemColor.BLUE), new Item(ItemColor.BLUE), new Item(ItemColor.PINK), new Item(ItemColor.LIGHT_BLUE), new Item(ItemColor.PINK), new Item(ItemColor.PINK)));
+        assertTrue(CommonDiagonal.check(shelThird));
+    }
+    
+    @Test
+    void checkFourthDiagonal() throws NotEnoughSpaceInColumnException {
+        CommonTargetCard CommonDiagonal = new CommonDiagonal(2);
+        // create a sample shelf with Fourth diagonal
+        Shelf shelFourth = new Shelf();
+        shelFourth.insertItems(0, Arrays.asList(new Item(ItemColor.PINK), new Item(ItemColor.PINK), new Item(ItemColor.BLUE), new Item(ItemColor.PINK), new Item(ItemColor.BLUE), new Item(ItemColor.BLUE)));
+        assertFalse(CommonDiagonal.check(shelFourth));
+        shelFourth.insertItems(1, Arrays.asList(new Item(ItemColor.BLUE), new Item(ItemColor.PINK), new Item(ItemColor.PINK), new Item(ItemColor.BLUE), new Item(ItemColor.BLUE)));
+        assertFalse(CommonDiagonal.check(shelFourth));
+        shelFourth.insertItems(2, Arrays.asList(new Item(ItemColor.PINK), new Item(ItemColor.PINK), new Item(ItemColor.PINK)));
+        assertFalse(CommonDiagonal.check(shelFourth));
+        shelFourth.insertItems(3, Arrays.asList(new Item(ItemColor.YELLOW), new Item(ItemColor.BLUE), new Item(ItemColor.BLUE), new Item(ItemColor.PINK), new Item(ItemColor.PINK)));
+        assertFalse(CommonDiagonal.check(shelFourth));
+        shelFourth.insertItems(4, Arrays.asList(new Item(ItemColor.BLUE), new Item(ItemColor.BLUE), new Item(ItemColor.PINK), new Item(ItemColor.LIGHT_BLUE), new Item(ItemColor.PINK), new Item(ItemColor.PINK)));
+        assertTrue(CommonDiagonal.check(shelFourth));
+    }
+
+    @Test
+    void checkTest() throws NotEnoughSpaceInColumnException {
+        CommonTargetCard CommonDiagonal = new CommonDiagonal(2);
+        // create a sample shelf with Fourth diagonal
+        Shelf shelFourth = new Shelf();
+        assertFalse(CommonDiagonal.check(shelFourth));
+        shelFourth.insertItems(1, Arrays.asList(new Item(ItemColor.BLUE), new Item(ItemColor.PINK), new Item(ItemColor.PINK), new Item(ItemColor.BLUE), new Item(ItemColor.BLUE)));
+        assertFalse(CommonDiagonal.check(shelFourth));
+        shelFourth.insertItems(2, Arrays.asList(new Item(ItemColor.PINK), new Item(ItemColor.PINK), new Item(ItemColor.PINK)));
+        assertFalse(CommonDiagonal.check(shelFourth));
+        shelFourth.insertItems(3, Arrays.asList(new Item(ItemColor.YELLOW), new Item(ItemColor.BLUE), new Item(ItemColor.BLUE), new Item(ItemColor.PINK), new Item(ItemColor.PINK)));
+        assertFalse(CommonDiagonal.check(shelFourth));
+        shelFourth.insertItems(4, Arrays.asList(new Item(ItemColor.BLUE), new Item(ItemColor.BLUE), new Item(ItemColor.PINK), new Item(ItemColor.LIGHT_BLUE), new Item(ItemColor.PINK), new Item(ItemColor.PINK)));
+        assertFalse(CommonDiagonal.check(shelFourth));
     }
 }

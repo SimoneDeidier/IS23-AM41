@@ -34,10 +34,6 @@ public interface ClientController {
 
     String getPlayerNickname();
 
-    void disconnect();
-
-    void rejoinMatch();
-
     void rejoinedMatch();
 
     void invalidPlayer();
@@ -71,4 +67,16 @@ public interface ClientController {
     void closeConnection();
 
     void lobbyRestored();
+
+    void exit();
+
+    void fullLobby();
+
+    void cantRestoreLobby() throws IOException;
+
+    void alonePlayerWins();
+
+    void playerDisconnected(String nickname);
+
+    void playerReconnected(String nickane);
 }

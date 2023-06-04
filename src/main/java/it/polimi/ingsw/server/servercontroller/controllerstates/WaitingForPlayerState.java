@@ -52,9 +52,7 @@ public class WaitingForPlayerState implements GameState {
 
     public List<CommonTargetCard> generateRandomCommonCards(boolean onlyOneCommonCard,int maxPlayerNumber) {
         List<CommonTargetCard> list =new ArrayList<>();
-        //list.add(getRandomCommon(maxPlayerNumber));
-        //todo linea testing
-        list.add(new CommonDiagonal(maxPlayerNumber));
+        list.add(getRandomCommon(maxPlayerNumber));
         if(onlyOneCommonCard){
             return list;
         }
@@ -158,7 +156,9 @@ public class WaitingForPlayerState implements GameState {
             player.setShelf(new Shelf());
             player.setCommonTargetCardList(commonTargetCardList);
             try {
-                player.setPersonalTargetCard(generateRandomPersonal(playerList));
+                PersonalTargetCard personal=generateRandomPersonal(playerList);
+                System.out.println(personal.getPersonalNumber());
+                player.setPersonalTargetCard(personal);
             } catch (IOException | URISyntaxException e) {
                 throw new RuntimeException(e);
             }

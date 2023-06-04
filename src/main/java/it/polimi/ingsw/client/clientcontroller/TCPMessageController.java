@@ -16,6 +16,8 @@ public class TCPMessageController implements TCPMessageControllerInterface {
     private final ClientController controller;
     private static final int CLEAR_DELAY = 1000;
     private int clearUnanswered = 0;
+    private boolean closeClearThread = false;
+    private boolean wasIJustReconnected = false;
 
     public TCPMessageController(SerializeDeserialize serializeDeserialize) {
         this.serializeDeserialize = serializeDeserialize;
@@ -31,6 +33,7 @@ public class TCPMessageController implements TCPMessageControllerInterface {
             }
             case "Wait for Lobby" -> {
                 controller.waitForLobby();
+                stopClearThread();
             }
             case "Lobby Restored" -> {
                 controller.lobbyRestored();
@@ -42,17 +45,34 @@ public class TCPMessageController implements TCPMessageControllerInterface {
                 controller.invalidNickname();
             }
             case "Goodbye" -> {
-                closeConnection();
+                switch (message.getBody().getGoodbyeType()) {
+                    case 0 -> {
+                        controller.cantRestoreLobby();
+                    }
+                    case 1 -> {
+                        controller.alonePlayerWins();
+                    }
+                    case 2 -> {}
+                    default -> System.err.println("INCORRECT GOODBYE TCP MESSAGE!");
+                }
+                closeClient();
             }
             case "Get Parameters" -> {
                 controller.getParameters();
             }
             case "Your Target" -> {
+                System.err.println("PTCN: " + message.getBody().getPersonalCardNumber());
                 controller.setPersonalTargetCardNumber(message.getBody().getPersonalCardNumber());
                 controller.setCommonGoalList(message.getBody().getCommonTargetCardsName());
-                controller.loadGameScreen();
+                if(!wasIJustReconnected) {
+                    controller.loadGameScreen();
+                }
             }
             case "Update View" -> {
+                if(wasIJustReconnected) {
+                    controller.loadGameScreen();
+                    wasIJustReconnected = false;
+                }
                 controller.updateView(message.getBody().getNewView());
             }
             case "Lobby Created" -> {
@@ -70,7 +90,8 @@ public class TCPMessageController implements TCPMessageControllerInterface {
             case "New Msg" -> {
                 controller.receiveMessage(message.getBody().getText(), message.getBody().getSenderNickname(), message.getBody().getLocalDateTime());
             }
-            case "Joined" -> {
+            case "Rejoined" -> {
+                this.wasIJustReconnected = true;
                 controller.rejoinedMatch();
             }
             case "Invalid Player" -> {
@@ -78,6 +99,16 @@ public class TCPMessageController implements TCPMessageControllerInterface {
             }
             case "Check" -> {
                 clearUnanswered = 0;
+            }
+            case "Full Lobby" -> {
+                controller.fullLobby();
+                closeClient();
+            }
+            case "Player Disconnected" -> {
+                controller.playerDisconnected(message.getBody().getPlayerNickname());
+            }
+            case "Player Reconnected" -> {
+                controller.playerReconnected(message.getBody().getPlayerNickname());
             }
         }
     }
@@ -96,18 +127,14 @@ public class TCPMessageController implements TCPMessageControllerInterface {
         controller.startUserInterface(uiType);
     }
 
-    public void rejoinMatch() {
-        serializeDeserialize.rejoinMatch();
-    }
-
     public String getPlayerNickname() {
         return controller.getPlayerNickname();
     }
 
     public void startClearThread() {
+        closeClearThread = false;
         new Thread(() -> {
-            while(clearUnanswered < 5) {
-                System.out.println("MANDO UN PING AL SERVER");
+            while(clearUnanswered < 5 && !closeClearThread) {
                 printTCPMessage("Clear", null);
                 clearUnanswered++;
                 try {
@@ -115,10 +142,21 @@ public class TCPMessageController implements TCPMessageControllerInterface {
                 } catch (InterruptedException e) {
                     e.printStackTrace();
                 }
+                System.out.println("UNANSWERED CLEAR: " + clearUnanswered);
             }
-            System.out.println("SERVER DISCONNESSO!");
-            controller.serverNotResponding();
+            if(!closeClearThread) {
+                controller.serverNotResponding();
+            }
         }).start();
+    }
+
+    public void stopClearThread() {
+        this.closeClearThread = true;
+    }
+
+    public void closeClient() {
+        this.stopClearThread();
+        this.closeConnection();
     }
 
 }

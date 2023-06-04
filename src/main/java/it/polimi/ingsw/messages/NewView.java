@@ -21,6 +21,7 @@ public class NewView implements Serializable {
     private EndGameToken endGameToken;
     private Map<String, List<ScoringToken>> playersToTokens = new LinkedHashMap<>(4);
     private Map<String, List<ScoringToken>> commonsToTokens = new LinkedHashMap<>(4);
+    private boolean youAreTheLastUserAndYouAlreadyMadeYourMove;
 
 
     public String getActivePlayer() {
@@ -91,15 +92,15 @@ public class NewView implements Serializable {
         return playersToTokens;
     }
 
-    public void setPlayersToTokens(Map<String, List<ScoringToken>> playersToTokens) {
-        this.playersToTokens = playersToTokens;
-    }
-
     public Map<String, List<ScoringToken>> getCommonsToTokens() {
         return commonsToTokens;
     }
 
-    public void setCommonsToTokens(Map<String, List<ScoringToken>> commonsToTokens) {
-        this.commonsToTokens = commonsToTokens;
+    public boolean youAreTheLastUserAndYouAlreadyMadeYourMove() {
+        return youAreTheLastUserAndYouAlreadyMadeYourMove;
+    }
+
+    public void setYouAreTheLastUserAndYouAlreadyMadeYourMove(boolean youAreTheLastUserAndYouAlreadyMadeYourMove) {
+        this.youAreTheLastUserAndYouAlreadyMadeYourMove = youAreTheLastUserAndYouAlreadyMadeYourMove;
     }
 }

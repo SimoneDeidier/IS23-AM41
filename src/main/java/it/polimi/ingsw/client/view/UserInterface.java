@@ -13,7 +13,7 @@ import java.net.URISyntaxException;
 import java.time.LocalDateTime;
 import java.util.List;
 
-public interface UserInterface {
+public interface UserInterface extends Runnable {
 
     void run();
     void setClientController(ClientController clientController);
@@ -38,10 +38,6 @@ public interface UserInterface {
     void receiveMessage(String message, String sender, String localDateTime);
 
     void updateView(NewView newView) throws FileNotFoundException, URISyntaxException;
-
-    void disconnect();
-
-    void rejoinMatch();
 
     void exit();
 
@@ -78,4 +74,16 @@ public interface UserInterface {
     void serverNotResponding();
 
     void lobbyRestored();
+
+    void fullLobby();
+
+    void cantRestoreLobby() throws IOException;
+
+    void alonePlayerWins();
+
+    void playerDisconnected(String nickname);
+
+    void playerReconnected(String nickname);
+
+    void setTakeableItems(boolean[][] takeableItems);
 }

@@ -2,7 +2,6 @@ package it.polimi.ingsw.server.servercontroller;
 
 import com.google.gson.Gson;
 import com.google.gson.JsonObject;
-import it.polimi.ingsw.messages.TCPMessage;
 import it.polimi.ingsw.save.Save;
 import it.polimi.ingsw.messages.Body;
 import it.polimi.ingsw.messages.NewView;
@@ -16,6 +15,7 @@ import it.polimi.ingsw.server.model.tokens.ScoringToken;
 import it.polimi.ingsw.server.servercontroller.controllerstates.*;
 import it.polimi.ingsw.server.servercontroller.exceptions.*;
 
+import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.nio.file.Files;
@@ -33,13 +33,18 @@ public class GameController {
     private boolean onlyOneCommonCard = false;
     private Player activePlayer = null; //acts as a kind of turn
     private BoardFactory board;
+    private EndGameToken endGameToken= EndGameToken.getEndGameToken(); //todo add in UML (added because it's singleton, it needs to be reset after end of the game)
     private GameState state;
     private List<CommonTargetCard> commonTargetCardsList;
     private Map<String, TCPMessageController> nickToTCPMessageControllerMapping = new ConcurrentHashMap<>(4);
     private Map<String, Integer> nickToUnansweredCheck = new HashMap<>(4);
     private final Server server;
     private boolean gameOver;
-    private static final int THREAD_SLEEP = 1000;
+    private static final int THREAD_SLEEP_MILLISECONDS = 1000;
+    private static final int TIMER_DURATION_MILLISECONDS = 30000;
+    private Timer timer;
+    private boolean timerIsRunning = false;
+    private boolean lastConnectedUserMadeHisMove = false;
 
     private GameController(Server s) {
         this.state = new ServerInitState();
@@ -81,7 +86,6 @@ public class GameController {
     }
 
     public void executeMove(Body body) throws InvalidMoveException {
-        System.err.println("CALLED EXECUTE MOVE");
         if (checkMove(body)) {
             List<Item> items = getListItems(body);
             try { //inutile qui simo, ti convincerò
@@ -103,19 +107,26 @@ public class GameController {
 
             System.err.println("POST UPDATE SCORE");
             //Setting the next active player
-            int nextIndex=nextIndexCalc(playerList.indexOf(activePlayer));
-            while(nextIndex!=-1 && !playerList.get(nextIndex).isConnected())
-                nextIndex=nextIndexCalc(nextIndex);
-            System.err.println("POST NEXT INDEX CALC");
-            if(nextIndex!=-1)
-                activePlayer=playerList.get(nextIndex);
-            else {
-                activePlayer = null;
-                gameOver=true;
-            }
+            changeActivePlayer();
 
         }
         else throw new InvalidMoveException();
+    }
+
+    public void changeActivePlayer() {
+        int currentPlayerIndex=playerList.indexOf(activePlayer);
+        int nextIndex=nextIndexCalc(playerList.indexOf(activePlayer));
+        while(nextIndex!=-1 && !playerList.get(nextIndex).isConnected())
+            nextIndex=nextIndexCalc(nextIndex);
+        if(nextIndex!=-1) {
+            if(nextIndex==currentPlayerIndex)
+                lastConnectedUserMadeHisMove = true;
+            activePlayer = playerList.get(nextIndex);
+        }
+        else {
+            activePlayer = null;
+            gameOver=true;
+        }
     }
 
     public NewView getNewView(){
@@ -127,6 +138,7 @@ public class GameController {
             newView.setActivePlayer(getActivePlayer().getNickname());
             newView.setGameOver(false);
         }
+        newView.setYouAreTheLastUserAndYouAlreadyMadeYourMove(lastConnectedUserMadeHisMove);
         newView.setBoardItems(board.getBoardMatrix());
         newView.setBoardBitMask(board.getBitMask());
         newView.setEndGameToken(EndGameToken.getEndGameToken());
@@ -255,6 +267,12 @@ public class GameController {
         changeState(new ServerInitState());
         commonTargetCardsList = new ArrayList<>();
         nickToTCPMessageControllerMapping = new ConcurrentHashMap<>(4);
+        nickToUnansweredCheck = new HashMap<>(4);
+        gameOver=false;
+        lastConnectedUserMadeHisMove =false;
+        endGameToken.resetEndGameToken();
+        server.prepareServerForNewGame();
+        timerIsRunning=false;
     }
 
     public int checkNicknameAvailability(String nickname) {
@@ -288,7 +306,6 @@ public class GameController {
     }
 
     public boolean checkSavedGame(String nickname) {
-        //todo togliere il commento, funziona al 100%, c'è il commento solo per testare caso in cui non trova il nickname ma funziona!!
         try {
             String jsonContent = new String(Files.readAllBytes(Paths.get("src/main/java/it/polimi/ingsw/save/OldGame.json")));
             Gson gson = new Gson();
@@ -307,7 +324,7 @@ public class GameController {
         return false;
     }
 
-    public synchronized int presentation(String nickname) throws FirstPlayerException, CancelGameException, GameStartException, FullLobbyException, WaitForLobbyParametersException { //response to presentation
+    public synchronized int presentation(String nickname) throws FirstPlayerException, CancelGameException, GameStartException, FullLobbyException, WaitForLobbyParametersException, RejoinRequestException { //response to presentation
         int availableSlots = getAvailableSlot();
         if (availableSlots == -1) { //handling the first player
             if (checkSavedGame(nickname)) { //the first player is present in the saved game
@@ -316,16 +333,12 @@ public class GameController {
                 for (Player player : playerList) {
                     if (player.getNickname().equals(nickname)) {
                         player.setConnected(true);
-                        //todo starts ping towards that user
                     }
-                    //todo aggiungere giocatore alla lista di player tcp o rmi?
                 }
                 return 2;
             } else {
                 changeState(new WaitingForPlayerState()); //the first player is new
                 addPlayer(new Player(nickname));
-                System.err.println(playerList);
-                //todo Start ping towards first player
                 throw new FirstPlayerException();
             }
         }
@@ -333,6 +346,10 @@ public class GameController {
             throw new WaitForLobbyParametersException();
         }
         else if (availableSlots == 0) {  //No place for a new player
+            // check if the connection is from a disconnected user
+            if(checkForDisconnectedPlayer(nickname)) {
+                throw new RejoinRequestException();
+            }
             throw new FullLobbyException();
         }
 
@@ -344,7 +361,6 @@ public class GameController {
             }
             default -> {  //you're in! (case: 1)
                 addPlayer(new Player(nickname));
-                //todo starts ping towards that user
                 if (isGameReady()) {
                     throw new GameStartException();
                 }
@@ -365,22 +381,20 @@ public class GameController {
 
     public void disconnectAllUsers() throws RemoteException {
         for(String s : nickToTCPMessageControllerMapping.keySet()) {
-            nickToTCPMessageControllerMapping.get(s).printTCPMessage("Goodbye", null);
+            Body body = new Body();
+            body.setGoodbyeType(0);
+            nickToTCPMessageControllerMapping.get(s).printTCPMessage("Goodbye", body);
             nickToTCPMessageControllerMapping.get(s).closeConnection();
         }
         server.disconnectAllRMIUsers();
     }
 
     public void yourTarget() throws RemoteException {
-        System.err.println("YOUR TARGET");
-        System.err.println("UTENTI TCP: " + getNickToTCPMessageControllerMapping().keySet());
         for(String s : getNickToTCPMessageControllerMapping().keySet()) {
             Body body = new Body();
-            System.err.println("PLAYER LIST: " + playerList);
             for(Player p : playerList) {
                 if(Objects.equals(p.getNickname(), s)) {
                     body.setPersonalCardNumber(p.getPersonalTargetCard().getPersonalNumber());
-                    System.err.println("MANDO A: " + p.getNickname());
                     break;
                 }
             }
@@ -389,16 +403,10 @@ public class GameController {
             }
             getNickToTCPMessageControllerMapping().get(s).printTCPMessage("Your Target", body);
         }
-        List<String> commonList=new ArrayList<>();
-        System.out.println(commonTargetCardsList); //here is null
-        for(CommonTargetCard commonTargetCard: commonTargetCardsList){
-            commonList.add(commonTargetCard.getName());
-        }
-        server.sendCardsRMI(commonList);
+        server.sendCardsRMI();
     }
 
     public void updateView() throws RemoteException {
-        System.err.println("CALLED UPDATE VIEW");
         Body body = new Body();
         NewView newView = getNewView();
         body.setNewView(newView);
@@ -406,6 +414,10 @@ public class GameController {
             getNickToTCPMessageControllerMapping().get(s).printTCPMessage("Update View", body);
         }
         server.updateViewRMI(newView);
+
+        if(newView.isGameOver()){
+            prepareForNewGame();
+        }
     }
 
     public void peerToPeerMsg(String sender, String receiver, String text, String localDateTime) throws InvalidNicknameException, RemoteException {
@@ -415,7 +427,6 @@ public class GameController {
 
         // send the message to receiver
         if(nickToTCPMessageControllerMapping.containsKey(receiver)) {
-            System.err.println("Mando PTP MSG a " + receiver);
             Body body = new Body();
             body.setSenderNickname(sender);
             body.setText(text);
@@ -428,7 +439,6 @@ public class GameController {
 
         // send the message to the sender
         if(nickToTCPMessageControllerMapping.containsKey(sender)) {
-            System.err.println("Mando PTP MSG a " + sender);
             Body body = new Body();
             body.setSenderNickname(sender);
             body.setText(text);
@@ -442,7 +452,6 @@ public class GameController {
 
     public void broadcastMsg(String sender, String text, String localDateTime) throws RemoteException {
         for(String s : nickToTCPMessageControllerMapping.keySet()) {
-            System.err.println("MANDO BRD MSG A " + s);
             Body body = new Body();
             body.setSenderNickname(sender);
             body.setText(text);
@@ -453,7 +462,7 @@ public class GameController {
     }
 
 
-    public void intentionalDisconnectionUserTCP(TCPMessageController tcpMessageController) {
+    public void intentionalDisconnectionUserTCP(TCPMessageController tcpMessageController) throws RemoteException {
         String nickname = null;
         for(String s : nickToTCPMessageControllerMapping.keySet()) {
             if(nickToTCPMessageControllerMapping.get(s) == tcpMessageController) {
@@ -461,24 +470,16 @@ public class GameController {
                 break;
             }
         }
-        for(Player p : playerList) {
-            if(Objects.equals(p.getNickname(), nickname)) {
-                p.setConnected(false);
-                tcpMessageController.printTCPMessage("Goodbye", null);
-                return;
-            }
+        nickToTCPMessageControllerMapping.remove(nickname);
+        changePlayerConnectionStatus(nickname);
+        Body b = new Body();
+        b.setGoodbyeType(2);
+        tcpMessageController.printTCPMessage("Goodbye", b);
+        if(activePlayer.getNickname().equals(nickname)) {
+            changeActivePlayer();
+            updateView();
         }
-    }
-
-    public boolean checkReJoinRequest(String nickname) {
-        for(Player p : playerList) {
-            if(Objects.equals(p.getNickname(), nickname) && !p.isConnected()) {
-                p.setConnected(true);
-                return true;
-            }
-        }
-        return false;
-        // todo da fare in RMI
+        notifyOfDisconnectionAllUsers(nickname);
     }
 
     public void setBoard(BoardFactory b){
@@ -509,10 +510,6 @@ public class GameController {
         this.state = state;
     }
 
-    public void setCommonTargetCardsList(List<CommonTargetCard> commonTargetCardsList) {
-        this.commonTargetCardsList = commonTargetCardsList;
-    }
-
     public void setGameOver(boolean gameOver) {
         this.gameOver = gameOver;
     }
@@ -525,35 +522,100 @@ public class GameController {
     }
 
     public void startCheckThread() {
+        server.startCheckThreadRMI(); //RMI thread is different, located in server
         new Thread(() -> {
             while(true) {
-                for(String nickname : nickToTCPMessageControllerMapping.keySet()) {
-                    System.out.println("Mando check a " + nickname);
-                    nickToTCPMessageControllerMapping.get(nickname).printTCPMessage("Check", null);
-                    if(nickToUnansweredCheck.containsKey(nickname)) {
-                        nickToUnansweredCheck.put(nickname, nickToUnansweredCheck.get(nickname) + 1);
-                    }
-                    else {
-                        nickToUnansweredCheck.put(nickname, 1);
-                    }
-                    if(nickToUnansweredCheck.get(nickname) == 5) {
-                        System.out.println(nickname + " è disonnesso");
-                        for(Player p : playerList) {
-                            // todo qui bisogna fare il check se è nella fase di gioco o quando crea la lobby
-                            if(Objects.equals(p.getNickname(), nickname)) {
-                                p.setConnected(false);
+                synchronized (nickToTCPMessageControllerMapping) {
+                    for (String nickname : nickToTCPMessageControllerMapping.keySet()) {
+                        nickToTCPMessageControllerMapping.get(nickname).printTCPMessage("Check", null);
+                        if (nickToUnansweredCheck.containsKey(nickname)) {
+                            nickToUnansweredCheck.put(nickname, nickToUnansweredCheck.get(nickname) + 1);
+                        } else {
+                            nickToUnansweredCheck.put(nickname, 1);
+                        }
+                        if (nickToUnansweredCheck.get(nickname) == 5) {
+                            changePlayerConnectionStatus(nickname);
+                            if (state.getClass().equals(RunningGameState.class)) {
+                                notifyOfDisconnectionAllUsers(nickname);
+                            }
+                            if (state.getClass().equals(RunningGameState.class) && activePlayer.getNickname().equals(nickname)) {
+                                changeActivePlayer();
+                                try {
+                                    updateView();
+                                } catch (RemoteException e) {
+                                    e.printStackTrace();
+                                }
+                            } else if (getPlayerList().size() == 1 && getMaxPlayerNumber() == 0) {
+                                changeState(new ServerInitState());
+                                getPlayerList().clear();
                             }
                         }
                     }
                 }
-                // todo da fare RMI
+                if(state.getClass().equals(RunningGameState.class)
+                    && countConnectedUsers() <= 1 && !timerIsRunning){
+                    startTimer();
+                }
+                if(timerIsRunning && countConnectedUsers()>1){
+                    cancelTimer();
+                    timerIsRunning=false;
+                }
                 try {
-                    Thread.sleep(THREAD_SLEEP);
-                } catch (InterruptedException e) {
+                    Thread.sleep(THREAD_SLEEP_MILLISECONDS);
+                }
+                catch (InterruptedException e) {
                     e.printStackTrace();
                 }
             }
         }).start();
+    }
+
+    public void startTimer(){
+        this.timerIsRunning = true;
+        this.timer = new Timer();
+        timer.schedule(new TimerTask() {
+            @Override
+            public void run() {
+                if (countConnectedUsers() <= 1) {
+                    endGameForLackOfPlayers();
+                } else {
+                    cancelTimer();
+                }
+            }
+        }, TIMER_DURATION_MILLISECONDS);
+    }
+
+    public void endGameForLackOfPlayers() {
+        deleteSavedGame();
+        if(countConnectedUsers()==1) {
+            for (Player player : playerList) {
+                if (player.isConnected()) {
+                    if (nickToTCPMessageControllerMapping.containsKey(player.getNickname())) { //the last user is tcp
+                        Body body = new Body();
+                        body.setGoodbyeType(1);
+                        nickToTCPMessageControllerMapping.get(player.getNickname()).printTCPMessage("Goodbye", body);
+                        nickToTCPMessageControllerMapping.get(player.getNickname()).closeConnection();
+                    }
+                    server.disconnectLastRMIUser();
+                }
+            }
+        }
+        //there are no users remaining
+        prepareForNewGame();
+    }
+
+    public void cancelTimer(){
+        timerIsRunning=false;
+        timer.cancel();
+    }
+    public int countConnectedUsers(){
+        int connectedUsers=0;
+        for(Player player:playerList){
+            if(player.isConnected()){
+                connectedUsers++;
+            }
+        }
+        return connectedUsers;
     }
 
     public void resetUnansweredCheckCounter(TCPMessageController tcpMessageController) {
@@ -563,6 +625,62 @@ public class GameController {
                 break;
             }
         }
+    }
+
+    public int getMaxPlayerNumber() {
+        return maxPlayerNumber;
+    }
+
+    public GameState getState() {
+        return state;
+    }
+
+    public boolean didLastUserMadeHisMove() {
+        return lastConnectedUserMadeHisMove;
+    }
+    public void setLastConnectedUserMadeHisMove(boolean bool){
+        this.lastConnectedUserMadeHisMove = bool;
+    }
+
+    public boolean checkForDisconnectedPlayer(String nickname) {
+        for(Player p : playerList) {
+            if(!p.isConnected() && Objects.equals(p.getNickname(), nickname)) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    public void deleteSavedGame() {
+        try {
+            File file = new File("src/main/java/it/polimi/ingsw/save/OldGame.json");
+            file.delete();
+        }
+        catch (SecurityException | NullPointerException e) {
+            e.printStackTrace();
+        }
+    }
+
+    public void notifyOfDisconnectionAllUsers(String nickname) {
+        for(String user : nickToTCPMessageControllerMapping.keySet()) {
+            if(!Objects.equals(nickname, user)) {
+                Body b = new Body();
+                b.setPlayerNickname(nickname);
+                nickToTCPMessageControllerMapping.get(user).printTCPMessage("Player Disconnected", b);
+            }
+        }
+        server.notifyOfDisconnectionAllRMIUsers(nickname);
+    }
+
+    public void notifyOfReconnectionAllUsers(String nickname) {
+        for(String user : nickToTCPMessageControllerMapping.keySet()) {
+            if(!Objects.equals(nickname, user)) {
+                Body b = new Body();
+                b.setPlayerNickname(nickname);
+                nickToTCPMessageControllerMapping.get(user).printTCPMessage("Player Reconnected", b);
+            }
+        }
+        server.notifyOfReconnectionAllRMIUsers(nickname);
     }
 
 }
