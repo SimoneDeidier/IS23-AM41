@@ -49,18 +49,21 @@ public class Server implements InterfaceServer {
         try {
             stub = (InterfaceServer) UnicastRemoteObject.exportObject(obj, portRMI);
         } catch (RemoteException e) {
-            e.printStackTrace();
+            System.err.println(e.getMessage());
+            return;
         }
         Registry registry = null;
         try {
             registry = LocateRegistry.createRegistry(portRMI);
         } catch (RemoteException e) {
-            e.printStackTrace();
+            System.err.println(e.getMessage());
+            return;
         }
         try {
             registry.bind("serverInterface", stub);
         } catch (RemoteException | AlreadyBoundException e) {
-            e.printStackTrace();
+            System.err.println(e.getMessage());
+            return;
         }
         System.err.println("RMI server ready - listening on port " + portRMI + ".");
 
@@ -132,12 +135,13 @@ public class Server implements InterfaceServer {
             System.out.print("Please select a port number for the " + type + " server: ");
             input = in.nextInt();
         }while(input <= 1024 || input > 65535 || input == firstPort);
-        return input;
 
+        return input;
     }
 
     @Override
     public void presentation(InterfaceClient cl, String nickname) throws RemoteException {
+        //todo mettere try&catch per ogni risposta?
         try {
             switch(controller.presentation(nickname)) {
                 case 0 -> {  // you're joining but I need another nickname
@@ -179,6 +183,7 @@ public class Server implements InterfaceServer {
     }
 
     public void rejoinRequest(String nickname, InterfaceClient cl){
+        //todo mettere try&catch per ogni risposta?
         try {
             controller.changePlayerConnectionStatus(nickname);
             if (controller.didLastUserMadeHisMove()) { //updateView for everyone as soon as he connects because he needs to make a move right away
@@ -202,6 +207,7 @@ public class Server implements InterfaceServer {
 
     @Override
     public void sendParameters(InterfaceClient cl,int maxPlayerNumber, boolean onlyOneCommonCard) throws RemoteException {
+        //todo mettere try&catch per ogni risposta?
         if(controller.createLobby(maxPlayerNumber,onlyOneCommonCard))
             cl.lobbyCreated(true);
         else
@@ -210,6 +216,7 @@ public class Server implements InterfaceServer {
 
     @Override
     public void executeMove(Body move) throws RemoteException {
+        //todo mettere try&catch per ogni risposta?
         try {
             controller.executeMove(move);
             controller.updateView();
@@ -219,6 +226,7 @@ public class Server implements InterfaceServer {
     }
 
     public void updateViewRMI(NewView newView) {
+        //todo mettere try&catch per ogni risposta?
         for(InterfaceClient cl: clientMapRMI.values()){
             try {
                 cl.updateView(newView);
@@ -234,8 +242,8 @@ public class Server implements InterfaceServer {
         for(Map.Entry<String,InterfaceClient> entry : clientMapRMI.entrySet()){
             try {
                 entry.getValue().disconnectUser(0);
-            } catch (RemoteException e) {
-                //problem with communication with client, how do I handle it?
+            } catch (RemoteException ignored) {
+                //ignore the exception, I was disconnecting him anyway
             }
             clientMapRMI.remove(entry.getKey());
         }
@@ -257,12 +265,13 @@ public class Server implements InterfaceServer {
         }
     }
 
-    public boolean checkReceiver(String nickname) {
+    public boolean checkReceiverInRMI(String nickname) {
         return clientMapRMI.containsKey(nickname);
     }
 
     @Override
     public void peerToPeerMsgHandler(String sender, String receiver, String text, String localDateTime) throws RemoteException {
+        //todo mettere try&catch?
         try {
             controller.peerToPeerMsg(sender,receiver,text, localDateTime);
         } catch (InvalidNicknameException e) {
@@ -280,11 +289,13 @@ public class Server implements InterfaceServer {
 
     @Override
     public void broadcastMsgHandler(String sender, String text, String localDateTime) throws RemoteException {
+        //todo mettere try&catch?
         controller.broadcastMsg(sender,text, localDateTime);
     }
 
     @Override
     public void voluntaryDisconnection(String nickname) throws RemoteException {
+        //todo mettere try&catch?
         controller.notifyOfDisconnectionAllUsers(nickname);
         controller.changePlayerConnectionStatus(nickname);
         clientMapRMI.remove(nickname); //stops the ping from the server towards that user

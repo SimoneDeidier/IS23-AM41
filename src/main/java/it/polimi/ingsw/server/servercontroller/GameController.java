@@ -421,7 +421,7 @@ public class GameController {
     }
 
     public void peerToPeerMsg(String sender, String receiver, String text, String localDateTime) throws InvalidNicknameException, RemoteException {
-        if(!nickToTCPMessageControllerMapping.containsKey(receiver) && !server.checkReceiver(receiver)) {
+        if(!nickToTCPMessageControllerMapping.containsKey(receiver) && !server.checkReceiverInRMI(receiver)) {
             throw new InvalidNicknameException();
         }
 

@@ -49,8 +49,12 @@ public class ConnectionRMI extends UnicastRemoteObject implements InterfaceClien
         }
     }
 
-    public void presentation(String nickname) throws RemoteException {
-        stub.presentation(this, nickname);
+    public void presentation(String nickname) {
+        try {
+            stub.presentation(this, nickname);
+        } catch (RemoteException e) {
+            controller.serverNotResponding();
+        }
     }
 
     @Override
@@ -58,8 +62,12 @@ public class ConnectionRMI extends UnicastRemoteObject implements InterfaceClien
         controller.getParameters();
     }
 
-    public void sendParameters(int maxPlayerNumber, boolean onlyOneCommon) throws RemoteException {
-        stub.sendParameters(this, maxPlayerNumber, onlyOneCommon);
+    public void sendParameters(int maxPlayerNumber, boolean onlyOneCommon) {
+        try {
+            stub.sendParameters(this, maxPlayerNumber, onlyOneCommon);
+        } catch (RemoteException e) {
+            controller.serverNotResponding();
+        }
     }
 
     @Override
@@ -80,7 +88,7 @@ public class ConnectionRMI extends UnicastRemoteObject implements InterfaceClien
         try {
             controller.updateView(newView);
         } catch (FileNotFoundException | URISyntaxException e) {
-            throw new RuntimeException(e);
+            System.out.println("Unknown problem loading the game screen!");
         }
     }
 
@@ -163,8 +171,7 @@ public class ConnectionRMI extends UnicastRemoteObject implements InterfaceClien
         try {
             stub.peerToPeerMsgHandler(body.getSenderNickname(), body.getReceiverNickname(), body.getText(), body.getLocalDateTime());
         } catch (RemoteException e) {
-            System.out.println("Network error, we're sorry for the inconvenience, try restarting the client");
-            //todo dovrei anche chiudere il client?
+            controller.serverNotResponding();
         }
     }
 
@@ -172,7 +179,7 @@ public class ConnectionRMI extends UnicastRemoteObject implements InterfaceClien
         try {
             stub.broadcastMsgHandler(body.getSenderNickname(), body.getText(), body.getLocalDateTime());
         } catch (RemoteException e) {
-            System.out.println("Network error, we're sorry for the inconvenience, try restarting the client");
+            controller.serverNotResponding();
         }
     }
 
@@ -180,7 +187,7 @@ public class ConnectionRMI extends UnicastRemoteObject implements InterfaceClien
         try {
             stub.executeMove(body);
         } catch (RemoteException e) {
-            System.out.println("Network error, we're sorry for the inconvenience, try restarting the client");
+            controller.serverNotResponding();
         }
     }
 
@@ -201,7 +208,7 @@ public class ConnectionRMI extends UnicastRemoteObject implements InterfaceClien
                     controller.serverNotResponding();
                     break;
                 } catch (InterruptedException e) {
-                    System.out.println("Network error, we're sorry for the inconvenience, try restarting the client");
+                    //thread interrupted
                 }
             }
         }).start();
@@ -216,7 +223,7 @@ public class ConnectionRMI extends UnicastRemoteObject implements InterfaceClien
         try {
             stub.voluntaryDisconnection(controller.getPlayerNickname());
         } catch (RemoteException e) {
-            System.out.println("Network error, we're sorry for the inconvenience, try restarting the client");
+            controller.serverNotResponding();
         }
     }
 
