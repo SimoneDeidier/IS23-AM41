@@ -29,7 +29,7 @@ Students:
 |Simple rules|Done|100%||
 |Full rules|Done|100%||
 |TUI|Work in progress|75%|We are implementing some missing game screens|
-|GUI|Bug fixing|99%||
+|GUI|Bug fixing|99%|We are fixing some bugs in the GUI|
 |RMI|Done|100%||
 |TCP|Done|100%||
 |Multiple matches|Not implemented|0%|We chose to not implement this advanced feature|
