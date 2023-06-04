@@ -75,4 +75,8 @@ public interface ClientController {
     void cantRestoreLobby() throws IOException;
 
     void alonePlayerWins();
+
+    void playerDisconnected(String nickname);
+
+    void playerReconnected(String nickane);
 }

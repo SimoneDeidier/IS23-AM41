@@ -24,4 +24,6 @@ public interface InterfaceClient extends Remote {
     void check() throws RemoteException;
     void rejoinedMatch() throws RemoteException;
     void fullLobby() throws RemoteException;
+    void notificationForReconnection(String nickname) throws RemoteException;
+    void notificationForDisconnection(String nickname) throws RemoteException;
 }

@@ -5,6 +5,7 @@ import it.polimi.ingsw.server.model.items.Item;
 import it.polimi.ingsw.server.model.items.ItemColor;
 import it.polimi.ingsw.server.model.tokens.EndGameToken;
 import it.polimi.ingsw.server.model.tokens.ScoringToken;
+import javafx.animation.FadeTransition;
 import javafx.application.Platform;
 import javafx.event.EventHandler;
 import javafx.fxml.FXML;
@@ -13,6 +14,7 @@ import javafx.scene.Node;
 import javafx.scene.Scene;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextArea;
+import javafx.scene.effect.DropShadow;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.input.MouseEvent;
@@ -23,17 +25,14 @@ import javafx.scene.paint.Color;
 import javafx.scene.text.Text;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
+import javafx.util.Duration;
 
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.net.URISyntaxException;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
-import java.util.Random;
-
+import java.util.*;
 
 
 public class GameScreenController {
@@ -48,6 +47,12 @@ public class GameScreenController {
     private final static int SHELF_COL = 5;
     private final static double SHELF_ITEM_DIM = 41.0;
     private final static double SHELF_ITEM_OFFSET = 10.1;
+    private final static double TRANSITION_DURATION_EFF = 1000.0;
+    private final static long NOTIFY_DURATION = 3000;
+    private final static double OPACITY_LOW = 0.0;
+    private final static double OPACITY_HIGH = 0.9;
+    private final static double EFFECT_DIM = 43.0;
+    private final static Color EFFECT_COL = Color.rgb(84, 0, 255);
 
     private GraphicUserInterface gui;
     private Image personalGoalImage = null;
@@ -62,6 +67,9 @@ public class GameScreenController {
     private List<ScoringToken> playerTokens;
     private EndGameToken endGameToken = null;
     private String firstPlayer;
+    private List<String> disconnectedPlayersToShow = new ArrayList<>();
+    private boolean notifyIsOn = false;
+    private boolean[][] takeableItems = null;
 
     @FXML
     private Text playerText;
@@ -81,6 +89,10 @@ public class GameScreenController {
     private ImageView chairImageView;
     @FXML
     private ImageView endGameTokenImageView;
+    @FXML
+    private AnchorPane notificationAnchorPane;
+    @FXML
+    private Label notificationLabel;
 
     public void initialize() {
         chatVBox.setStyle("-fx-background-color: #442211;");
@@ -194,7 +206,9 @@ public class GameScreenController {
                         public void handle(MouseEvent mouseEvent) {
                             for(Node n : boardGridPane.getChildren()) {
                                 if(n == mouseEvent.getSource()) {
-                                    if(n.getOpacity() == 1.0) {
+                                    int row = GridPane.getRowIndex(n);
+                                    int col = GridPane.getColumnIndex(n);
+                                    if(n.getOpacity() == 1.0 && (takeableItems == null || takeableItems[row][col])) {
                                         addInSelected(n);
                                     }
                                     else {
@@ -347,7 +361,7 @@ public class GameScreenController {
             Image tmpImage = firstImgv.getImage();
             firstImgv.setImage(secondImgv.getImage());
             secondImgv.setImage(tmpImage);
-            gui.swapCols(swapCols);
+            gui.swapColsGUI(swapCols);
             swapCols = new ArrayList<>(2);
         }
     }
@@ -469,5 +483,88 @@ public class GameScreenController {
         Image tmp = oneImgv.getImage();
         oneImgv.setImage(twoImgv.getImage());
         twoImgv.setImage(tmp);
+    }
+
+    public void playerDisconnected(String nickname) {
+        if(!notifyIsOn) {
+            notifyIsOn = true;
+            Platform.runLater(() -> notificationLabel.setText(nickname + "\nhas disconnected!"));
+            FadeTransition fadeIn = new FadeTransition(Duration.millis(TRANSITION_DURATION_EFF), notificationAnchorPane);
+            fadeIn.setFromValue(OPACITY_LOW);
+            fadeIn.setToValue(OPACITY_HIGH);
+            fadeIn.play();
+            Timer timer = new Timer();
+            timer.schedule(new TimerTask() {
+                @Override
+                public void run() {
+                    FadeTransition fadeOut = new FadeTransition(Duration.millis(TRANSITION_DURATION_EFF), notificationAnchorPane);
+                    fadeOut.setFromValue(OPACITY_HIGH);
+                    fadeOut.setToValue(OPACITY_LOW);
+                    fadeOut.play();
+                    notifyIsOn = false;
+                    timer.cancel();
+                }
+            }, NOTIFY_DURATION);
+        }
+    }
+
+    public void playerReconnected(String nickname) {
+        if(!notifyIsOn) {
+            notifyIsOn = true;
+            Platform.runLater(() -> notificationLabel.setText(nickname + "\nhas reconnected!"));
+            FadeTransition fadeIn = new FadeTransition(Duration.millis(TRANSITION_DURATION_EFF), notificationAnchorPane);
+            fadeIn.setFromValue(OPACITY_LOW);
+            fadeIn.setToValue(OPACITY_HIGH);
+            fadeIn.play();
+            Timer timer = new Timer();
+            timer.schedule(new TimerTask() {
+                @Override
+                public void run() {
+                    FadeTransition fadeOut = new FadeTransition(Duration.millis(TRANSITION_DURATION_EFF), notificationAnchorPane);
+                    fadeOut.setFromValue(OPACITY_HIGH);
+                    fadeOut.setToValue(OPACITY_LOW);
+                    fadeOut.play();
+                    notifyIsOn = false;
+                    timer.cancel();
+                }
+            }, NOTIFY_DURATION);
+        }
+    }
+
+    public void setTakeableItems(boolean[][] takeableItems) {
+        this.takeableItems = takeableItems;
+        for(int i = 0; i < BOARD_DIM; i++) {
+            for(int j = 0; j < BOARD_DIM; j++) {
+                if(takeableItems[i][j]) {
+                    for(Node n : boardGridPane.getChildren()) {
+                        if(GridPane.getRowIndex(n) == i && GridPane.getColumnIndex(n) == j) {
+                            DropShadow takeableEff = new DropShadow();
+                            takeableEff.setWidth(EFFECT_DIM);
+                            takeableEff.setHeight(EFFECT_DIM);
+                            takeableEff.setColor(EFFECT_COL);
+                            n.setEffect(takeableEff);
+                        }
+                    }
+                }
+            }
+        }
+    }
+
+    public void openMenu() {
+        Platform.runLater(() -> {
+            FXMLLoader loader = new FXMLLoader(ClassLoader.getSystemResource("fxml/Menu.fxml"));
+            Stage stage = new Stage();
+            try {
+                stage.setScene(new Scene(loader.load()));
+            } catch (IOException e) {
+                throw new RuntimeException(e);
+            }
+            MenuController menuController = loader.getController();
+            menuController.setGui(gui);
+            menuController.setMenuStage(stage);
+            stage.setResizable(false);
+            stage.setTitle("My Shelfie - Main menu!");
+            stage.show();
+        });
     }
 }

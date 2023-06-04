@@ -289,7 +289,7 @@ class GameControllerTest {
     }
 
     @Test
-    void testPresentation() throws FullLobbyException, WaitForLobbyParametersException, GameStartException, CancelGameException, FirstPlayerException {
+    void testPresentation() throws FullLobbyException, WaitForLobbyParametersException, GameStartException, CancelGameException, FirstPlayerException, RejoinRequestException {
         controller.setState(new ServerInitState());
         //assertThrows(FirstPlayerException.class, () -> controller.presentation("DHSahDusahuiH"));
         //assertThrows(WaitForLobbyParametersException.class, () -> controller.presentation("Marco"));

@@ -421,7 +421,7 @@ public class GameController {
     }
 
     public void peerToPeerMsg(String sender, String receiver, String text, String localDateTime) throws InvalidNicknameException, RemoteException {
-        if(!nickToTCPMessageControllerMapping.containsKey(receiver) && !server.checkReceiver(receiver)) {
+        if(!nickToTCPMessageControllerMapping.containsKey(receiver) && !server.checkReceiverInRMI(receiver)) {
             throw new InvalidNicknameException();
         }
 
@@ -470,6 +470,7 @@ public class GameController {
                 break;
             }
         }
+        nickToTCPMessageControllerMapping.remove(nickname);
         changePlayerConnectionStatus(nickname);
         Body b = new Body();
         b.setGoodbyeType(2);
@@ -478,6 +479,7 @@ public class GameController {
             changeActivePlayer();
             updateView();
         }
+        notifyOfDisconnectionAllUsers(nickname);
     }
 
     public void setBoard(BoardFactory b){
@@ -523,33 +525,40 @@ public class GameController {
         server.startCheckThreadRMI(); //RMI thread is different, located in server
         new Thread(() -> {
             while(true) {
-                for(String nickname : nickToTCPMessageControllerMapping.keySet()) {
-                    nickToTCPMessageControllerMapping.get(nickname).printTCPMessage("Check", null);
-                    if(nickToUnansweredCheck.containsKey(nickname)) {
-                        nickToUnansweredCheck.put(nickname, nickToUnansweredCheck.get(nickname) + 1);
-                    }
-                    else {
-                        nickToUnansweredCheck.put(nickname, 1);
-                    }
-                    if(nickToUnansweredCheck.get(nickname) == 5) {
-                        changePlayerConnectionStatus(nickname);
-                        if(state.getClass().equals(RunningGameState.class) && activePlayer.getNickname().equals(nickname)) {
-                            changeActivePlayer();
-                            try {
-                                updateView();
-                            } catch (RemoteException e) {
-                                e.printStackTrace();
-                            }
+                synchronized (nickToTCPMessageControllerMapping) {
+                    for (String nickname : nickToTCPMessageControllerMapping.keySet()) {
+                        nickToTCPMessageControllerMapping.get(nickname).printTCPMessage("Check", null);
+                        if (nickToUnansweredCheck.containsKey(nickname)) {
+                            nickToUnansweredCheck.put(nickname, nickToUnansweredCheck.get(nickname) + 1);
+                        } else {
+                            nickToUnansweredCheck.put(nickname, 1);
                         }
-                        else if(getPlayerList().size() == 1 && getMaxPlayerNumber() == 0) {
-                            changeState(new ServerInitState());
-                            getPlayerList().clear();
+                        if (nickToUnansweredCheck.get(nickname) == 5) {
+                            changePlayerConnectionStatus(nickname);
+                            if (state.getClass().equals(RunningGameState.class)) {
+                                notifyOfDisconnectionAllUsers(nickname);
+                            }
+                            if (state.getClass().equals(RunningGameState.class) && activePlayer.getNickname().equals(nickname)) {
+                                changeActivePlayer();
+                                try {
+                                    updateView();
+                                } catch (RemoteException e) {
+                                    e.printStackTrace();
+                                }
+                            } else if (getPlayerList().size() == 1 && getMaxPlayerNumber() == 0) {
+                                changeState(new ServerInitState());
+                                getPlayerList().clear();
+                            }
                         }
                     }
                 }
                 if(state.getClass().equals(RunningGameState.class)
                     && countConnectedUsers() <= 1 && !timerIsRunning){
                     startTimer();
+                }
+                if(timerIsRunning && countConnectedUsers()>1){
+                    cancelTimer();
+                    timerIsRunning=false;
                 }
                 try {
                     Thread.sleep(THREAD_SLEEP_MILLISECONDS);
@@ -650,6 +659,28 @@ public class GameController {
         catch (SecurityException | NullPointerException e) {
             e.printStackTrace();
         }
+    }
+
+    public void notifyOfDisconnectionAllUsers(String nickname) {
+        for(String user : nickToTCPMessageControllerMapping.keySet()) {
+            if(!Objects.equals(nickname, user)) {
+                Body b = new Body();
+                b.setPlayerNickname(nickname);
+                nickToTCPMessageControllerMapping.get(user).printTCPMessage("Player Disconnected", b);
+            }
+        }
+        server.notifyOfDisconnectionAllRMIUsers(nickname);
+    }
+
+    public void notifyOfReconnectionAllUsers(String nickname) {
+        for(String user : nickToTCPMessageControllerMapping.keySet()) {
+            if(!Objects.equals(nickname, user)) {
+                Body b = new Body();
+                b.setPlayerNickname(nickname);
+                nickToTCPMessageControllerMapping.get(user).printTCPMessage("Player Reconnected", b);
+            }
+        }
+        server.notifyOfReconnectionAllRMIUsers(nickname);
     }
 
 }
