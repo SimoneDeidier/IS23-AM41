@@ -46,6 +46,7 @@ public class Server implements InterfaceServer {
         // START RMI SERVER
         InterfaceServer stub = null;
         Server obj =  new Server();
+        System.setProperty("java.rmi.server.hostname", "localhost");
         try {
             stub = (InterfaceServer) UnicastRemoteObject.exportObject(obj, portRMI);
         } catch (RemoteException e) {
@@ -142,6 +143,7 @@ public class Server implements InterfaceServer {
     @Override
     public void presentation(InterfaceClient cl, String nickname) throws RemoteException {
         //todo mettere try&catch per ogni risposta?
+        System.out.println("ARRIVATO UN PRESENTATION DA " + nickname);
         try {
             switch(controller.presentation(nickname)) {
                 case 0 -> {  // you're joining but I need another nickname
@@ -318,6 +320,7 @@ public class Server implements InterfaceServer {
     @Override
     public void clearRMI() throws RemoteException { //ping called from client to server
         //it's empty, we need to check on the other side for RemoteExceptions
+        System.out.println("ARRIVATO UN CLEAR");
     }
     public void startCheckThreadRMI() {
         new Thread(() -> {
