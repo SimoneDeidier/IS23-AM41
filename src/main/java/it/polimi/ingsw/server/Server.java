@@ -44,7 +44,7 @@ public class Server implements InterfaceServer {
 
 
         // START RMI SERVER
-        InterfaceServer stub =null;
+        InterfaceServer stub = null;
         Server obj =  new Server();
         try {
             stub = (InterfaceServer) UnicastRemoteObject.exportObject(obj, portRMI);
@@ -60,7 +60,7 @@ public class Server implements InterfaceServer {
             return;
         }
         try {
-            registry.bind("serverInterface", stub);
+            registry.bind("InterfaceServer", stub);
         } catch (RemoteException | AlreadyBoundException e) {
             System.err.println(e.getMessage());
             return;
