@@ -39,11 +39,15 @@ public class ConnectionRMI extends UnicastRemoteObject implements InterfaceClien
         try {
             // Getting the registry
             Registry registry = LocateRegistry.getRegistry(IP, PORT);
+            System.out.println("POST LOCATE REGISTRY: " + registry);
             // Looking up the registry for the remote object
-            stub = (InterfaceServer) registry.lookup("serverInterface");
+            stub = (InterfaceServer) registry.lookup("InterfaceServer");
+            System.out.println("POST STUB: " + stub);
             clientConnected=true;
             controller = new ClientControllerRMI(this);
+            System.out.println("POST CONTROLLER: " + clientConnected + " - " + controller);
             controller.startUserInterface(uiType);
+            System.out.println("POST START USER INTERFACE");
         } catch (Exception e) {
             System.out.println("Server is offline or unreachable");
         }
