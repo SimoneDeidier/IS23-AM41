@@ -211,7 +211,7 @@ public class GameScreenController {
                                     if(n.getOpacity() == 1.0 && (takeableItems == null || takeableItems[row][col])) {
                                         addInSelected(n);
                                     }
-                                    else {
+                                    else if(n.getOpacity() == 0.5) {
                                         removeFromSelected(n);
                                     }
                                     break;
