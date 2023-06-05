@@ -88,7 +88,7 @@ public class GameController {
     public void executeMove(Body body) throws InvalidMoveException {
         if (checkMove(body)) {
             List<Item> items = getListItems(body);
-            try { //inutile qui simo, ti convincerò
+            try {
                 activePlayer.getShelf().insertItems(body.getColumn(), items);
             } catch (Exception NotEnoughSpaceInColumnException) {
                 System.err.println("Not enough space in the column provided!");
