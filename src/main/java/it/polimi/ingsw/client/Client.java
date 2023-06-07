@@ -18,7 +18,7 @@ public class Client {
     private static Connection connection;
     private static String ipAddress = null;
     private final static int TCP_PORT = 8888;
-    private final static int RMI_PORT = 1099;
+    private final static int RMI_PORT = 1234;
     private static String connectionType;
     private static String uiType;
     private static boolean connectionOk = true;

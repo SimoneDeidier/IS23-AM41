@@ -176,7 +176,7 @@ public class GraphicUserInterface extends Application implements UserInterface, 
                     gameScreenController.setPersonalShelf(newView.getNicknameToShelfMap().get(playerNickname));
                     gameScreenController.setTokens(newView.getCommonsToTokens(), newView.getPlayersToTokens().get(playerNickname));
                     gameScreenController.setOtherPlayersParameters(newView.getNicknameToShelfMap(), newView.getNicknameToPointsMap(), playerNickname, newView.getPlayerList().get(0));
-                    gameScreenController.setYourTurnPane(this.isYourTurn);
+                    gameScreenController.setYourTurnPane(this.isYourTurn, newView.getActivePlayer());
                     if(newView.youAreTheLastUserAndYouAlreadyMadeYourMove()) {
                         // todo mostrare la cosa che dice il nome della funzione
                     }
@@ -361,8 +361,12 @@ public class GraphicUserInterface extends Application implements UserInterface, 
     }
 
     @Override
-    public void setTakeableItems(boolean[][] takeableItems) {
-        Platform.runLater(() -> gameScreenController.setTakeableItems(takeableItems));
+    public void setTakeableItems(boolean[][] takeableItems, boolean yourTurn) {
+        Platform.runLater(() -> {
+            if(yourTurn) {
+                gameScreenController.setTakeableItems(takeableItems);
+            }
+        });
     }
 
 }

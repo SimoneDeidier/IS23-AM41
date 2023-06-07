@@ -93,6 +93,8 @@ public class GameScreenController {
     private AnchorPane notificationAnchorPane;
     @FXML
     private Label notificationLabel;
+    @FXML
+    private Label turnLabel;
 
     public void initialize() {
         chatVBox.setStyle("-fx-background-color: #442211;");
@@ -345,9 +347,13 @@ public class GameScreenController {
         }
     }
 
-    public void setYourTurnPane(boolean set) {
-        turnAnchorPane.setVisible(set);
-        turnAnchorPane.setDisable(!set);
+    public void setYourTurnPane(boolean set, String name) {
+        if(set) {
+            turnLabel.setText("It's your turn!");
+        }
+        else {
+            turnLabel.setText("It's " + name + " turn!");
+        }
     }
 
     public void swapPickedItems(Node n) {

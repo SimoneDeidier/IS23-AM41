@@ -155,7 +155,8 @@ public class ClientControllerRMI implements ClientController, Serializable {
             }
         }
         userInterface.updateView(newView);
-        userInterface.setTakeableItems(takeableItems);
+        boolean yourTurn = Objects.equals(newView.getActivePlayer(), playerNickname);
+        userInterface.setTakeableItems(takeableItems, yourTurn);
     }
 
     @Override

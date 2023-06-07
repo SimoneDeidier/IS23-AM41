@@ -157,7 +157,8 @@ public class ClientControllerTCP implements ClientController {
             }
         }
         userInterface.updateView(newView);
-        userInterface.setTakeableItems(takeableItems);
+        boolean yourTurn = Objects.equals(newView.getActivePlayer(), playerNickname);
+        userInterface.setTakeableItems(takeableItems, yourTurn);
     }
 
     @Override

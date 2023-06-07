@@ -80,5 +80,5 @@ public interface UserInterface extends Runnable {
 
     void playerReconnected(String nickname);
 
-    void setTakeableItems(boolean[][] takeableItems);
+    void setTakeableItems(boolean[][] takeableItems, boolean yourTurn);
 }
