@@ -25,6 +25,7 @@ import javafx.scene.paint.Color;
 import javafx.scene.text.Text;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
+import javafx.stage.StageStyle;
 import javafx.util.Duration;
 
 import java.io.File;
@@ -347,12 +348,16 @@ public class GameScreenController {
         }
     }
 
-    public void setYourTurnPane(boolean set, String name) {
-        if(set) {
-            turnLabel.setText("It's your turn!");
+    public void setYourTurnPane(boolean set, String name, boolean waitForOtherPlayers) {
+        if(!waitForOtherPlayers) {
+            if (set) {
+                turnLabel.setText("It's your turn!");
+            } else {
+                turnLabel.setText("It's " + name + " turn!");
+            }
         }
         else {
-            turnLabel.setText("It's " + name + " turn!");
+            turnLabel.setText("");
         }
     }
 
@@ -573,4 +578,20 @@ public class GameScreenController {
             stage.show();
         });
     }
+
+    public void waitForOtherPlayers() {
+        Platform.runLater(() -> {
+            FXMLLoader loader = new FXMLLoader(ClassLoader.getSystemResource("fxml/LastUserAlreadyMadeYourMove.fxml"));
+            Stage stage = new Stage();
+            try {
+                stage.setScene(new Scene(loader.load()));
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+            stage.setTitle("My Shelfie - Wait for other players!");
+            stage.setResizable(false);
+            stage.show();
+        });
+    }
+
 }

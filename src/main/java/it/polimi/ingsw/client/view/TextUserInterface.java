@@ -1041,7 +1041,7 @@ public class TextUserInterface implements UserInterface{
     }
 
     @Override
-    public void setTakeableItems(boolean[][] takeableItems, boolean yourTurn) {
+    public void setTakeableItems(boolean[][] takeableItems, boolean yourTurn, boolean waitForOtherPlayers) {
 
     }
 

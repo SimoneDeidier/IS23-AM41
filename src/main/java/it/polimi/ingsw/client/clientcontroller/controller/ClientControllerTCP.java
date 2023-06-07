@@ -158,7 +158,7 @@ public class ClientControllerTCP implements ClientController {
         }
         userInterface.updateView(newView);
         boolean yourTurn = Objects.equals(newView.getActivePlayer(), playerNickname);
-        userInterface.setTakeableItems(takeableItems, yourTurn);
+        userInterface.setTakeableItems(takeableItems, yourTurn, newView.youAreTheLastUserAndYouAlreadyMadeYourMove());
     }
 
     @Override

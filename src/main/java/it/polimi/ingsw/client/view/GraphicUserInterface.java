@@ -18,6 +18,7 @@ import javafx.scene.input.KeyCombination;
 import javafx.scene.input.KeyEvent;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
+import javafx.stage.StageStyle;
 
 
 import java.io.FileNotFoundException;
@@ -176,9 +177,9 @@ public class GraphicUserInterface extends Application implements UserInterface, 
                     gameScreenController.setPersonalShelf(newView.getNicknameToShelfMap().get(playerNickname));
                     gameScreenController.setTokens(newView.getCommonsToTokens(), newView.getPlayersToTokens().get(playerNickname));
                     gameScreenController.setOtherPlayersParameters(newView.getNicknameToShelfMap(), newView.getNicknameToPointsMap(), playerNickname, newView.getPlayerList().get(0));
-                    gameScreenController.setYourTurnPane(this.isYourTurn, newView.getActivePlayer());
+                    gameScreenController.setYourTurnPane(this.isYourTurn, newView.getActivePlayer(), newView.youAreTheLastUserAndYouAlreadyMadeYourMove());
                     if(newView.youAreTheLastUserAndYouAlreadyMadeYourMove()) {
-                        // todo mostrare la cosa che dice il nome della funzione
+                        gameScreenController.waitForOtherPlayers();
                     }
                 }
                 else {
@@ -361,9 +362,9 @@ public class GraphicUserInterface extends Application implements UserInterface, 
     }
 
     @Override
-    public void setTakeableItems(boolean[][] takeableItems, boolean yourTurn) {
+    public void setTakeableItems(boolean[][] takeableItems, boolean yourTurn, boolean waitForOtherPlayers) {
         Platform.runLater(() -> {
-            if(yourTurn) {
+            if(yourTurn && !waitForOtherPlayers) {
                 gameScreenController.setTakeableItems(takeableItems);
             }
         });
