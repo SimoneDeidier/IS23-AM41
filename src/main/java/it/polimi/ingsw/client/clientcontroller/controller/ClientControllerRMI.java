@@ -293,4 +293,9 @@ public class ClientControllerRMI implements ClientController, Serializable {
         userInterface.playerReconnected(nickname);
     }
 
+    @Override
+    public void exitWithoutWaitingDisconnectFromServer() {
+
+    }
+
 }

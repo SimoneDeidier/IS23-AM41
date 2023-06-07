@@ -4,7 +4,6 @@ import it.polimi.ingsw.client.clientcontroller.controller.ClientController;
 import it.polimi.ingsw.client.view.controllers.EndGameScreenController;
 import it.polimi.ingsw.client.view.controllers.GameScreenController;
 import it.polimi.ingsw.client.view.controllers.LoginScreenController;
-import it.polimi.ingsw.client.view.controllers.MenuController;
 import it.polimi.ingsw.messages.NewView;
 import javafx.application.Application;
 import javafx.application.Platform;
@@ -18,7 +17,6 @@ import javafx.scene.input.KeyCombination;
 import javafx.scene.input.KeyEvent;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
-import javafx.stage.StageStyle;
 
 
 import java.io.FileNotFoundException;
@@ -52,6 +50,10 @@ public class GraphicUserInterface extends Application implements UserInterface, 
         loginScreenController.setGui(this);
         guiStage.setResizable(false);
         guiStage.setTitle("Welcome to My Shelfie!");
+        guiStage.setOnCloseRequest(e -> {
+            e.consume();
+            loginScreenController.exit(this);
+        });
         guiStage.show();
     }
 
@@ -368,6 +370,12 @@ public class GraphicUserInterface extends Application implements UserInterface, 
                 gameScreenController.setTakeableItems(takeableItems);
             }
         });
+    }
+
+    @Override
+    public void exitWithoutWaitingDisconnectFromServer() {
+        clientController.exitWithoutWaitingDisconnectFromServer();
+        guiStage.close();
     }
 
 }

@@ -294,4 +294,10 @@ public class ClientControllerTCP implements ClientController {
        userInterface.playerReconnected(nickname);
     }
 
+    @Override
+    public void exitWithoutWaitingDisconnectFromServer() {
+        tcpMessageController.stopClearThread();
+        tcpMessageController.closeClient();
+    }
+
 }
