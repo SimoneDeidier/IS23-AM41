@@ -40,6 +40,7 @@ public class TextUserInterface implements UserInterface{
 
     private NewView newView = new NewView();
     private boolean firstUpdateView;
+    private boolean[][] takeableItems;
 
     @Override
     public void run() {
@@ -89,7 +90,11 @@ public class TextUserInterface implements UserInterface{
 
         nickname = scanner.nextLine();
 
-        sendNickname(nickname);
+        if(nickname != null && nickname != "" && nickname.length() < 20){
+            sendNickname(nickname);
+        } else {
+            getNickname("The nickname you inserted is not valid. Insert your nickname:");
+        }
     }
 
     private void mainGamePage() {
@@ -132,7 +137,11 @@ public class TextUserInterface implements UserInterface{
                     for(int w=0; w<boardCol; w++) {
                         for (int k = 0; k < tileWidth-1; k++) {
                             if(boardBitMask[i][w] && !selectedBoardBitMask[i][w]){
-                                shelfBoxLine.append(itemToColour(boardItems[i][w]));
+                                if(this.takeableItems != null && this.takeableItems[i][w]){
+                                    shelfBoxLine.append(itemToColour(boardItems[i][w]));
+                                } else {
+                                    shelfBoxLine.append(itemToColour(boardItems[i][w]));//MA PIù GRIGINO
+                                }
                             } else {
                                 shelfBoxLine.append(" ");
                             }
@@ -158,7 +167,11 @@ public class TextUserInterface implements UserInterface{
                     for(int w=0; w<boardCol; w++) {
                         for (int k = 0; k < tileWidth-1; k++) {
                             if(boardBitMask[i][w] && !selectedBoardBitMask[i][w]){
-                                shelfBoxLine.append(itemToColour(boardItems[i][w]));
+                                if(this.takeableItems != null && this.takeableItems[i][w]){
+                                    shelfBoxLine.append(itemToColour(boardItems[i][w]));
+                                } else {
+                                    shelfBoxLine.append(itemToColour(boardItems[i][w]));//MA PIù GRIGINO
+                                }
                             } else {
                                 shelfBoxLine.append(" ");
                             }
@@ -196,7 +209,11 @@ public class TextUserInterface implements UserInterface{
                     for(int w=0; w<boardCol; w++) {
                         for (int k = 0; k < tileWidth-1; k++) {
                             if(boardBitMask[i][w] && !selectedBoardBitMask[i][w]){
-                                shelfBoxLine.append(itemToColour(boardItems[i][w]));
+                                if(this.takeableItems != null && this.takeableItems[i][w]){
+                                    shelfBoxLine.append(itemToColour(boardItems[i][w]));
+                                } else {
+                                    shelfBoxLine.append(itemToColour(boardItems[i][w]));//MA PIù GRIGINO
+                                }
                             } else {
                                 shelfBoxLine.append(" ");
                             }
@@ -223,7 +240,11 @@ public class TextUserInterface implements UserInterface{
                     for(int w=0; w<boardCol; w++) {
                         for (int k = 0; k < tileWidth-1; k++) {
                             if(boardBitMask[i][w] && !selectedBoardBitMask[i][w]){
-                                shelfBoxLine.append(itemToColour(boardItems[i][w]));
+                                if(this.takeableItems != null && this.takeableItems[i][w]){
+                                    shelfBoxLine.append(itemToColour(boardItems[i][w]));
+                                } else {
+                                    shelfBoxLine.append(itemToColour(boardItems[i][w]));//MA PIù GRIGINO
+                                }
                             } else {
                                 shelfBoxLine.append(" ");
                             }
@@ -389,14 +410,14 @@ public class TextUserInterface implements UserInterface{
         }
     }
 
-    private char itemToColour(Item item) {
+    private String itemToColour(Item item) {
         return switch (item.getColor()) {
-            case LIGHT_BLUE -> 'L';
-            case BLUE -> 'B';
-            case GREEN -> 'G';
-            case YELLOW -> 'Y';
-            case WHITE -> 'W';
-            case PINK -> 'P';
+                case LIGHT_BLUE -> "L";
+            case BLUE -> "B";
+            case GREEN -> "G";
+            case YELLOW -> "Y";
+            case WHITE -> "W";
+            case PINK -> "P";
         };
     }
 
@@ -1007,42 +1028,77 @@ public class TextUserInterface implements UserInterface{
 
     @Override
     public void serverNotResponding() {
+        List<String> textLines = new ArrayList<>();
 
+        // Add strings to the list
+        textLines.add("SERVER NOT RESPONDING");
+        textLines.add("Server is momentarily unreachable. Please, wait a few seconds and restart the client!");
+
+        standardTextPage(textLines);
+        System.out.println(drawHorizontalLine(sceneWidth));
     }
 
     @Override
     public void lobbyRestored() {
+        List<String> textLines = new ArrayList<>();
 
+        // Add strings to the list
+        textLines.add("Lobby has been restored! Please wait for the game start!");
+
+        standardTextPage(textLines);
+        System.out.println(drawHorizontalLine(sceneWidth));
     }
 
     @Override
     public void fullLobby() {
+        List<String> textLines = new ArrayList<>();
 
+        // Add strings to the list
+        textLines.add("The lobby is full! Close the client and retry later!");
+
+        standardTextPage(textLines);
+        System.out.println(drawHorizontalLine(sceneWidth));
     }
 
     @Override
     public void cantRestoreLobby() throws IOException {
+        List<String> textLines = new ArrayList<>();
 
+        // Add strings to the list
+        textLines.add("CAN'T RESTORE LOBBY");
+        textLines.add("A player that wasn't in the last lobby has tried to connect! Please, restart the client, a new lobby will be created!");
+
+        standardTextPage(textLines);
+        System.out.println(drawHorizontalLine(sceneWidth));
     }
 
     @Override
     public void alonePlayerWins() {
+        List<String> textLines = new ArrayList<>();
 
+        // Add strings to the list
+        textLines.add("YOU HAVE WON!!!");
+        textLines.add("All the other  players were disconnected for an excessive longer period! Restart the client to create a new lobby!");
+
+        standardTextPage(textLines);
+        System.out.println(drawHorizontalLine(sceneWidth));
     }
 
     @Override
     public void playerDisconnected(String nickname) {
-
+        //Non so come fare qui, non è molto fattibile in CLI per la questione dei thread e delle funzione che aspettano un input
     }
 
     @Override
     public void playerReconnected(String nickname) {
-
+        //same as above
     }
 
     @Override
     public void setTakeableItems(boolean[][] takeableItems, boolean yourTurn, boolean waitForOtherPlayers) {
-
+        if(yourTurn && !waitForOtherPlayers) {
+            this.takeableItems = takeableItems;
+        }
     }
 
     @Override
