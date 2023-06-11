@@ -892,17 +892,37 @@ public class TextUserInterface implements UserInterface{
     }
 
     private void gameOver() {
-        //Devo solo fare vedere pagina di gameover? E poi? Devo segnalare come cominciare una nuova partita? O cos'altro?
+        List<String> textLines = new ArrayList<>();
+
+        // Add strings to the list
+        textLines.add("GAME OVER!");
+        textLines.add("");
+        textLines.add("Press enter to exit!");
+
+        standardTextPage(textLines);
+        System.out.println(drawHorizontalLine(sceneWidth));
+
+        scanner = new Scanner(System.in);
+
+        if(scanner.hasNextLine()){
+            exit();
+        }
     }
 
     @Override
     public void exit() {
-        // chiude tutto ed esce
+        clientController.exit();
     }
 
     @Override
     public void rejoinedMatch() {
-        // da sistemare nel controller
+        List<String> textLines = new ArrayList<>();
+
+        // Add strings to the list
+        textLines.add("You have been rejoined to a lobby! Please wait for the game!");
+
+        standardTextPage(textLines);
+        System.out.print(drawHorizontalLine(sceneWidth));
     }
 
     @Override
@@ -1103,7 +1123,7 @@ public class TextUserInterface implements UserInterface{
 
     @Override
     public void exitWithoutWaitingDisconnectFromServer() {
-
+        clientController.exitWithoutWaitingDisconnectFromServer();
     }
 
 }
