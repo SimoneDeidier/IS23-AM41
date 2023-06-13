@@ -61,7 +61,6 @@ public class TCPMessageController implements TCPMessageControllerInterface {
                 controller.getParameters();
             }
             case "Your Target" -> {
-                System.err.println("PTCN: " + message.getBody().getPersonalCardNumber());
                 controller.setPersonalTargetCardNumber(message.getBody().getPersonalCardNumber());
                 controller.setCommonGoalList(message.getBody().getCommonTargetCardsName());
                 if(!wasIJustReconnected) {
@@ -142,7 +141,6 @@ public class TCPMessageController implements TCPMessageControllerInterface {
                 } catch (InterruptedException e) {
                     e.printStackTrace();
                 }
-                System.out.println("UNANSWERED CLEAR: " + clearUnanswered);
             }
             if(!closeClearThread) {
                 controller.serverNotResponding();

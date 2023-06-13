@@ -41,6 +41,7 @@ public class TextUserInterface implements UserInterface{
     private NewView newView = new NewView();
     private boolean firstUpdateView;
     private boolean[][] takeableItems;
+    private boolean closeTUI = false;
 
     @Override
     public void run() {
@@ -58,6 +59,9 @@ public class TextUserInterface implements UserInterface{
 
         if(scanner.hasNextLine()){
             getNickname("Insert your nickname");
+        }
+        while(!closeTUI) {
+
         }
     }
 
@@ -411,14 +415,17 @@ public class TextUserInterface implements UserInterface{
     }
 
     private String itemToColour(Item item) {
-        return switch (item.getColor()) {
+        if(item != null) {
+            return switch (item.getColor()) {
                 case LIGHT_BLUE -> "L";
-            case BLUE -> "B";
-            case GREEN -> "G";
-            case YELLOW -> "Y";
-            case WHITE -> "W";
-            case PINK -> "P";
-        };
+                case BLUE -> "B";
+                case GREEN -> "G";
+                case YELLOW -> "Y";
+                case WHITE -> "W";
+                case PINK -> "P";
+            };
+        }
+        return "";
     }
 
     private void tokensPage() {
@@ -734,9 +741,12 @@ public class TextUserInterface implements UserInterface{
 
     @Override
     public void getGameParameters() {
-        int numPlayers = getNumberOfPlayers();
-        int numCommons = getNumberOfCommon();
-        sendParameters(numPlayers, numCommons);
+        // TODO PACO IN TUTTI I METODI CHE VENGONO CHIAMATI DAL TCP MESSAGE CONTROLLER DEVI FARE COSI' CON IL THREAD A PARTE ALTRIMENTI BLOCCA TUTTO!!!
+        new Thread(() -> {
+            int numPlayers = getNumberOfPlayers();
+            int numCommons = getNumberOfCommon();
+            sendParameters(numPlayers, numCommons);
+        }).start();
     }
 
     private int getNumberOfPlayers() {
@@ -760,7 +770,7 @@ public class TextUserInterface implements UserInterface{
         while (!validInput) {
             try {
                 number = in.nextInt();
-                if(number < 1 || number > 4){
+                if(number < 2 || number > 4){
                     throw new Exception();
                 }
                 validInput = true;
@@ -812,6 +822,7 @@ public class TextUserInterface implements UserInterface{
     @Override
     public void sendNickname(String nickname) {
         clientController.sendNickname(nickname);
+        clientController.startClearThread();
     }
 
     @Override
@@ -888,7 +899,7 @@ public class TextUserInterface implements UserInterface{
         this.newView = newView;
         this.firstUpdateView = true;
 
-        mainGamePage();
+        new Thread(this::mainGamePage).start();
     }
 
     private void gameOver() {
@@ -912,6 +923,7 @@ public class TextUserInterface implements UserInterface{
     @Override
     public void exit() {
         clientController.exit();
+        closeTUI = true;
     }
 
     @Override
@@ -1124,6 +1136,7 @@ public class TextUserInterface implements UserInterface{
     @Override
     public void exitWithoutWaitingDisconnectFromServer() {
         clientController.exitWithoutWaitingDisconnectFromServer();
+        closeTUI = true;
     }
 
 }
