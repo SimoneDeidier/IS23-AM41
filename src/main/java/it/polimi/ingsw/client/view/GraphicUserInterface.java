@@ -112,7 +112,7 @@ public class GraphicUserInterface extends Application implements UserInterface, 
             gameScreenController.setGui(this);
             try {
                 gameScreenController.setPersonalTargetCard(personalTargetCardNumber);
-            } catch (URISyntaxException | FileNotFoundException e) {
+            } catch (URISyntaxException | IOException e) {
                 e.printStackTrace();
             }
             try {

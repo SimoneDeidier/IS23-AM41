@@ -27,6 +27,7 @@ import javafx.stage.Modality;
 import javafx.stage.Stage;
 import javafx.stage.StageStyle;
 import javafx.util.Duration;
+import org.apache.commons.io.FileUtils;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -110,8 +111,8 @@ public class GameScreenController {
         playerText.setText(text);
     }
 
-    public void setPersonalTargetCard(int personalNumber) throws URISyntaxException, FileNotFoundException {
-        File file = new File(ClassLoader.getSystemResource("images/personal/personal" + personalNumber + ".png").toURI());
+    public void setPersonalTargetCard(int personalNumber) throws URISyntaxException, IOException {
+        File file = getFileFromSystemResourceAsStream("src/main/java/it/polimi/ingsw/client/view/tempimgs/personal" + personalNumber +".png", "images/personal/personal" + personalNumber + ".png");
         FileInputStream fis = new FileInputStream(file);
         this.personalGoalImage = new Image(fis);
     }
@@ -195,7 +196,7 @@ public class GameScreenController {
         });
     }
 
-    public void setBoardItems(Item[][] board, boolean[][] bitMask) throws FileNotFoundException, URISyntaxException {
+    public void setBoardItems(Item[][] board, boolean[][] bitMask) throws IOException, URISyntaxException {
         this.boardMatrx = board;
         for(int i = 0; i < BOARD_DIM; i++) {
             for(int j = 0; j < BOARD_DIM; j++) {
@@ -228,28 +229,28 @@ public class GameScreenController {
         }
     }
 
-    public Image randomItemImageByColors(ItemColor color) throws URISyntaxException, FileNotFoundException {
+    public Image randomItemImageByColors(ItemColor color) throws URISyntaxException, IOException { // todo PROBLEMI
         Random random = new Random();
         int rand = random.nextInt(3);
         File file = null;
         switch (color) {
             case BLUE -> {
-                file = new File(ClassLoader.getSystemResource("images/items/b" + rand + ".png").toURI());
+                file = getFileFromSystemResourceAsStream("src/main/java/it/polimi/ingsw/client/view/tempimgs/b" + rand + ".png", "images/items/b" + rand + ".png");
             }
             case GREEN -> {
-                file = new File(ClassLoader.getSystemResource("images/items/g" + rand + ".png").toURI());
+                file = getFileFromSystemResourceAsStream("src/main/java/it/polimi/ingsw/client/view/tempimgs/g" + rand + ".png", "images/items/g" + rand + ".png");
             }
             case YELLOW -> {
-                file = new File(ClassLoader.getSystemResource("images/items/y" + rand + ".png").toURI());
+                file = getFileFromSystemResourceAsStream("src/main/java/it/polimi/ingsw/client/view/tempimgs/y" + rand + ".png", "images/items/y" + rand + ".png");
             }
             case WHITE -> {
-                file = new File(ClassLoader.getSystemResource("images/items/w" + rand + ".png").toURI());
+                file = getFileFromSystemResourceAsStream("src/main/java/it/polimi/ingsw/client/view/tempimgs/w" + rand + ".png", "images/items/w" + rand + ".png");
             }
             case PINK -> {
-                file = new File(ClassLoader.getSystemResource("images/items/p" + rand + ".png").toURI());
+                file = getFileFromSystemResourceAsStream("src/main/java/it/polimi/ingsw/client/view/tempimgs/p" + rand + ".png", "images/items/p" + rand + ".png");
             }
             case LIGHT_BLUE -> {
-                file = new File(ClassLoader.getSystemResource("images/items/lb" + rand + ".png").toURI());
+                file = getFileFromSystemResourceAsStream("src/main/java/it/polimi/ingsw/client/view/tempimgs/lb" + rand + ".png", "images/items/lb" + rand + ".png");
             }
         }
         FileInputStream fis = new FileInputStream(file);
@@ -385,7 +386,7 @@ public class GameScreenController {
         boardGridPane.getChildren().clear();
     }
 
-    public void setPersonalShelf(Item[][] shelf) throws FileNotFoundException, URISyntaxException {
+    public void setPersonalShelf(Item[][] shelf) throws IOException, URISyntaxException {
         for(int i = 0; i < SHELF_ROWS; i++) {
             for(int j = 0; j < SHELF_COL; j++) {
                 if(shelf[i][j] != null) {
@@ -592,6 +593,12 @@ public class GameScreenController {
             stage.setResizable(false);
             stage.show();
         });
+    }
+
+    public File getFileFromSystemResourceAsStream(String tempPathName, String fileToLoad) throws IOException {
+        File tmp = new File(tempPathName);
+        FileUtils.copyInputStreamToFile(Objects.requireNonNull(ClassLoader.getSystemResourceAsStream(fileToLoad)), tmp);
+        return tmp;
     }
 
 }

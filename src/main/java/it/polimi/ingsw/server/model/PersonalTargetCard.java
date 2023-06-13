@@ -12,6 +12,7 @@ import java.io.IOException;
 import java.io.Serializable;
 import java.net.URISyntaxException;
 import java.nio.charset.StandardCharsets;
+import java.util.Objects;
 
 public class PersonalTargetCard implements Serializable {
     int personalNumber;
@@ -32,7 +33,8 @@ public class PersonalTargetCard implements Serializable {
         this.personalNumber=personal;
 
         Gson gson = new Gson();
-        File jsonFile = new File(ClassLoader.getSystemResource("json/PersonalTargetCards.json").toURI());
+        File jsonFile = new File("src/main/java/it/polimi/ingsw/server/model/personalTargetCards.json");
+        FileUtils.copyInputStreamToFile(Objects.requireNonNull(ClassLoader.getSystemResourceAsStream("json/PersonalTargetCards.json")), jsonFile);
         String jsonString = FileUtils.readFileToString(jsonFile, StandardCharsets.UTF_8);
 
         JsonArray jsonArray = gson.fromJson(jsonString, JsonArray.class);
