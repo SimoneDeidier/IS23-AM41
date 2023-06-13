@@ -29,9 +29,8 @@ public class TextUserInterface implements UserInterface{
 
     private int personalTargetCardNumber;
     private String nickname;
-    private List<String> commonTargetGoals;
     private boolean chatOpen;
-    private List<String> chatList = new ArrayList<>();
+    private final List<String> chatList = new ArrayList<>();
 
     private boolean[][] selectedBoardBitMask = new boolean[9][9];
 
@@ -39,9 +38,8 @@ public class TextUserInterface implements UserInterface{
     private List<int[]> selectedItemsCoordinates = new ArrayList<>(3);
 
     private NewView newView = new NewView();
-    private boolean firstUpdateView;
     private boolean[][] takeableItems;
-    private boolean closeTUI = false;
+    private volatile boolean closeTUI = false;
 
     @Override
     public void run() {
@@ -60,8 +58,8 @@ public class TextUserInterface implements UserInterface{
         if(scanner.hasNextLine()){
             getNickname("Insert your nickname");
         }
-        while(!closeTUI) {
-
+        while (!closeTUI) {
+            Thread.onSpinWait();
         }
     }
 
@@ -94,7 +92,7 @@ public class TextUserInterface implements UserInterface{
 
         nickname = scanner.nextLine();
 
-        if(nickname != null && nickname != "" && nickname.length() < 20){
+        if(nickname != null && !nickname.equals("") && nickname.length() < 20){
             sendNickname(nickname);
         } else {
             getNickname("The nickname you inserted is not valid. Insert your nickname:");
@@ -133,8 +131,9 @@ public class TextUserInterface implements UserInterface{
         }
 
         for(int i=0; i<boardRow; i++){
+            String repeat = " ".repeat(shelfCol * tileWidth + 1 + spaceBetweenBoardAndShelf);
             if(i==0){
-                printContentLine(drawHorizontalLine(boardCol*tileWidth+1) + " ".repeat(shelfCol*tileWidth+1+spaceBetweenBoardAndShelf));
+                printContentLine(drawHorizontalLine(boardCol*tileWidth+1) + repeat);
                 for(int j=0; j<2; j++){
                     StringBuilder shelfBoxLine = new StringBuilder();
                     shelfBoxLine.append("|");
@@ -156,14 +155,14 @@ public class TextUserInterface implements UserInterface{
                         String selectedCardsText = "Your selected cards:";
                         printContentLine(shelfBoxLine + " ".repeat(spaceBetweenBoardAndShelf) + selectedCardsText + " ".repeat(shelfCol*tileWidth+1-selectedCardsText.length()));
                     } else {
-                        printContentLine(shelfBoxLine + " ".repeat(shelfCol*tileWidth+1+spaceBetweenBoardAndShelf));
+                        printContentLine(shelfBoxLine + repeat);
                     }
                 }
             } else if(i==1) {
                 if(isYourTurn()){
                     printContentLine(drawHorizontalLine(boardCol*tileWidth+1) + " ".repeat(10+tileWidth) + drawHorizontalLine(3*tileWidth+1) + " ".repeat(tileWidth));
                 } else {
-                    printContentLine(drawHorizontalLine(boardCol * tileWidth + 1) + " ".repeat(shelfCol * tileWidth + 1 + spaceBetweenBoardAndShelf));
+                    printContentLine(drawHorizontalLine(boardCol * tileWidth + 1) + repeat);
                 }
                 for(int j=0; j<2; j++){
                     StringBuilder shelfBoxLine = new StringBuilder();
@@ -198,14 +197,14 @@ public class TextUserInterface implements UserInterface{
                         shelfBoxLine.append(" ".repeat(tileWidth));
                         printContentLine(shelfBoxLine.toString());
                     } else {
-                        printContentLine(shelfBoxLine + " ".repeat(shelfCol * tileWidth + 1 + spaceBetweenBoardAndShelf));
+                        printContentLine(shelfBoxLine + repeat);
                     }
                 }
             } else if(i==2) {
                 if(isYourTurn()){
                     printContentLine(drawHorizontalLine(boardCol*tileWidth+1) + " ".repeat(10+tileWidth) + drawHorizontalLine(3*tileWidth+1) + " ".repeat(tileWidth));
                 } else {
-                    printContentLine(drawHorizontalLine(boardCol*tileWidth+1) + " ".repeat(shelfCol*tileWidth+1+spaceBetweenBoardAndShelf));
+                    printContentLine(drawHorizontalLine(boardCol*tileWidth+1) + repeat);
                 }
                 for(int j=0; j<2; j++){
                     StringBuilder shelfBoxLine = new StringBuilder();
@@ -230,7 +229,8 @@ public class TextUserInterface implements UserInterface{
                     } else {
                         shelfBoxLine.append(" ".repeat(spaceBetweenBoardAndShelf));
                         shelfBoxLine.append("|");
-                        shelfBoxLine.append(" ".repeat((shelfCol*tileWidth-1)/2 - shelfTopString.length()/2) + shelfTopString + " ".repeat((shelfCol*tileWidth-1)/2 - shelfTopString.length()/2));
+                        String repeat1 = " ".repeat((shelfCol * tileWidth - 1) / 2 - shelfTopString.length() / 2);
+                        shelfBoxLine.append(repeat1).append(shelfTopString).append(repeat1);
                         shelfBoxLine.append("|");
                         printContentLine(shelfBoxLine.toString());
                     }
@@ -326,12 +326,12 @@ public class TextUserInterface implements UserInterface{
             case "/select" -> {
                 if(isYourTurn()) {
                     if(getPositionPickedSize()<3) {
-                        int el[] = new int[2];
+                        int[] el = new int[2];
                         System.out.print("Insert the row coordinate (from 0 to 8) of the tile you want to select: ");
-                        el[0] = in.nextInt();
+                        el[0] = in.nextInt();   // TODO PACO QUI DEVI CONTROLLARE CHE L'UTENTE NON METTE TIPO UNA LETTERA!!!
                         System.out.print("Insert the column coordinate (from 0 to 8) of the tile you want to select: ");
                         el[1] = in.nextInt();
-                        if(boardBitMask[el[0]][el[1]] == true && selectedBoardBitMask[el[0]][el[1]] == false){
+                        if(boardBitMask[el[0]][el[1]] && !selectedBoardBitMask[el[0]][el[1]]){
                             selectedBoardBitMask[el[0]][el[1]] = true;
                             selectedItems.add(boardItems[el[0]][el[1]]);
                             selectedItemsCoordinates.add(el);
@@ -425,7 +425,7 @@ public class TextUserInterface implements UserInterface{
                 case PINK -> "P";
             };
         }
-        return "";
+        return " ";
     }
 
     private void tokensPage() {
@@ -497,11 +497,11 @@ public class TextUserInterface implements UserInterface{
         }
 
         printContentLine(drawHorizontalLine(shelfCol*tileWidth+1));
-        StringBuilder shelfBoxLine_top = new StringBuilder();
-        shelfBoxLine_top.append("|");
-        shelfBoxLine_top.append(" ".repeat((shelfCol*tileWidth-1)/2 - nickname.length()/2) + nickname + " ".repeat((shelfCol*tileWidth-1)/2 - nickname.length()/2));
-        shelfBoxLine_top.append("|");
-        printContentLine(shelfBoxLine_top.toString());
+        String repeat = " ".repeat((shelfCol * tileWidth - 1) / 2 - nickname.length() / 2);
+        String shelfBoxLine_top = "|" +
+                repeat + nickname + repeat +
+                "|";
+        printContentLine(shelfBoxLine_top);
         for(int i=0; i<shelfRow; i++){
             printContentLine(drawHorizontalLine(shelfCol*tileWidth+1));
             for(int j=0; j<2; j++){
@@ -548,44 +548,28 @@ public class TextUserInterface implements UserInterface{
         textLines.add(" ");
         this.newView.getCommonsToTokens().forEach((key, value) -> {
             switch (key) {
-                case "CommonSixGroupsOfTwo":
-                    textLines.add("Six groups each containing at least 2 tiles of the same type (not necessarily in the depicted shape). The tiles of one group can be different from those of another group.");
-                    break;
-                case "CommonDiagonal":
-                    textLines.add("Five tiles of the same type forming a diagonal.");
-                    break;
-                case "CommonEightSame":
-                    textLines.add("Eight tiles of the same type. There’s no restriction about the position of these tiles.");
-                    break;
-                case "CommonFourCorners":
-                    textLines.add("Four tiles of the same type in the four corners of the bookshelf.");
-                    break;
-                case "CommonFourGroupsOfFour":
-                    textLines.add("Four groups each containing at least 4 tiles of the same type (not necessarily in the depicted shape). The tiles of one group can be different from those of another group.");
-                    break;
-                case "CommonFourRows":
-                    textLines.add("Four lines each formed by 5 tiles of maximum three different types. One line can show the same or a different combination of another line.");
-                    break;
-                case "CommonStairway":
-                    textLines.add("Five columns of increasing or decreasing height. Starting from the first column on the left or on the right, each next column must be made of exactly one more tile. Tiles can be of any type.");
-                    break;
-                case "CommonThreeColumns":
-                    textLines.add("Three columns each formed by 6 tiles of maximum three different types. One column can show the same or a different combination of another column.");
-                    break;
-                case "CommonTwoColumns":
-                    textLines.add("Two columns each formed by 6 different types of tiles.");
-                    break;
-                case "CommonTwoRows":
-                    textLines.add("Two lines each formed by 5 different types of tiles. One line can show the same or a different combination of the other line.");
-                    break;
-                case "CommonTwoSquares":
-                    textLines.add("Two groups each containing 4 tiles of the same type in a 2x2 square. The tiles of one square can be different from those of the other square.");
-                    break;
-                case "CommonX":
-                    textLines.add("Five tiles of the same type forming an X.");
-                    break;
-                default:
-                    textLines.add("NO COMMON TARGET CARD SET");
+                case "CommonSixGroupsOfTwo" ->
+                        textLines.add("Six groups each containing at least 2 tiles of the same type (not necessarily in the depicted shape). The tiles of one group can be different from those of another group.");
+                case "CommonDiagonal" -> textLines.add("Five tiles of the same type forming a diagonal.");
+                case "CommonEightSame" ->
+                        textLines.add("Eight tiles of the same type. There’s no restriction about the position of these tiles.");
+                case "CommonFourCorners" ->
+                        textLines.add("Four tiles of the same type in the four corners of the bookshelf.");
+                case "CommonFourGroupsOfFour" ->
+                        textLines.add("Four groups each containing at least 4 tiles of the same type (not necessarily in the depicted shape). The tiles of one group can be different from those of another group.");
+                case "CommonFourRows" ->
+                        textLines.add("Four lines each formed by 5 tiles of maximum three different types. One line can show the same or a different combination of another line.");
+                case "CommonStairway" ->
+                        textLines.add("Five columns of increasing or decreasing height. Starting from the first column on the left or on the right, each next column must be made of exactly one more tile. Tiles can be of any type.");
+                case "CommonThreeColumns" ->
+                        textLines.add("Three columns each formed by 6 tiles of maximum three different types. One column can show the same or a different combination of another column.");
+                case "CommonTwoColumns" -> textLines.add("Two columns each formed by 6 different types of tiles.");
+                case "CommonTwoRows" ->
+                        textLines.add("Two lines each formed by 5 different types of tiles. One line can show the same or a different combination of the other line.");
+                case "CommonTwoSquares" ->
+                        textLines.add("Two groups each containing 4 tiles of the same type in a 2x2 square. The tiles of one square can be different from those of the other square.");
+                case "CommonX" -> textLines.add("Five tiles of the same type forming an X.");
+                default -> textLines.add("NO COMMON TARGET CARD SET");
             }
         });
         textLines.add(" ");
@@ -621,9 +605,10 @@ public class TextUserInterface implements UserInterface{
         StringBuilder shelfBoxLine_top = new StringBuilder();
         for (Map.Entry<String, Item[][]> entry : this.newView.getNicknameToShelfMap().entrySet()) {
             String nickname = entry.getKey();
-            if(nickname != this.nickname) {
+            if(!Objects.equals(nickname, this.nickname)) {
                 shelfBoxLine_top.append("|");
-                shelfBoxLine_top.append(" ".repeat((shelfCol * tileWidth - 1) / 2 - nickname.length() / 2) + nickname + " ".repeat((shelfCol * tileWidth - 1) / 2 - nickname.length() / 2));
+                String repeat = " ".repeat((shelfCol * tileWidth - 1) / 2 - nickname.length() / 2);
+                shelfBoxLine_top.append(repeat).append(nickname).append(repeat);
                 shelfBoxLine_top.append("|");
                 shelfBoxLine_top.append(" ".repeat(5));
             }
@@ -635,7 +620,7 @@ public class TextUserInterface implements UserInterface{
                 for(int j=0; j<2; j++){
                     StringBuilder shelfBoxLine = new StringBuilder();
                     for (Map.Entry<String, Item[][]> entry : this.newView.getNicknameToShelfMap().entrySet()) {
-                        if(nickname != this.nickname) {
+                        if(nickname != this.nickname) { // TODO PACO QUI C'È QUALCOSA CHE NON VA
                             Item[][] shelfItems = entry.getValue();
                             shelfBoxLine.append("|");
                             for (int w = 0; w < shelfCol; w++) {
@@ -729,9 +714,7 @@ public class TextUserInterface implements UserInterface{
     }
 
     private String drawHorizontalLine(int width) {
-        StringBuilder line = new StringBuilder();
-        line.append("-".repeat(Math.max(0, width)));
-        return line.toString();
+        return "-".repeat(Math.max(0, width));
     }
 
     @Override
@@ -873,7 +856,6 @@ public class TextUserInterface implements UserInterface{
     public void loadGameScreen(int personalTargetCardNumber, String nickname, List<String> commonTargetGoals) {
         this.personalTargetCardNumber = personalTargetCardNumber;
         this.nickname = nickname;
-        this.commonTargetGoals = commonTargetGoals;
     }
 
     @Override
@@ -897,7 +879,6 @@ public class TextUserInterface implements UserInterface{
         }
         this.isYourTurn = Objects.equals(newView.getActivePlayer(), this.nickname);
         this.newView = newView;
-        this.firstUpdateView = true;
 
         new Thread(this::mainGamePage).start();
     }

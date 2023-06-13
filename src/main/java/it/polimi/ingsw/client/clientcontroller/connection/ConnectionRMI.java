@@ -200,11 +200,9 @@ public class ConnectionRMI extends UnicastRemoteObject implements InterfaceClien
         new Thread(() -> {
             while (clientConnected) {
                 try {
-                    System.out.println("Pingo il server");
                     stub.clearRMI();
                     Thread.sleep(CLEAR_DELAY_MILLISECONDS);
                 } catch (RemoteException e) {
-                    System.out.println("Server crashato!");
                     controller.serverNotResponding();
                     break;
                 } catch (InterruptedException e) {
