@@ -2,14 +2,27 @@ package it.polimi.ingsw.server.model.commons;
 
 import it.polimi.ingsw.server.model.Shelf;
 
+/**
+ * CommonThreeColumnsClass represents a specific CommonTargetCard in the game
+ */
 public class CommonThreeColumns extends CommonTargetCard {
 
     private final static int MAX_DIFFERENT_COLORS_IN_COLUMNS = 3;
     private final static int NUMBER_OF_COLUMNS_FOR_CONDITION = 3;
+
+    /**
+     * Constructor is provided to set the correct name to the instance created
+     * @param maxPlayerNumber is needed to allocate the correct number of ScoringTokens, that varies according to the number of players
+     */
     public CommonThreeColumns(int maxPlayerNumber) {
         super(maxPlayerNumber);
         this.name="CommonThreeColumns";
     }
+
+    /**
+     * The override of the method check modifies the function in order to verify the specific CommonTargetCard
+     * @return true if the condition is satisfied, false otherwise
+     */
     @Override
     public boolean check(Shelf shelf) {
 

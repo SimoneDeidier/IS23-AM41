@@ -5,8 +5,14 @@ import it.polimi.ingsw.server.model.items.ItemsBag;
 
 import java.io.Serializable;
 
+/**
+ * Represents a Board, it has a bitmask specific for when the maxPlayerNumber is three
+ */
 public class ThreePlayersBoard extends BoardFactory {
 
+    /**
+     * Creates the board, resetting the itemsBag since it's a singleton, inherited from a previous match played on the server
+     */
     public ThreePlayersBoard() {
         this.itemsBag = ItemsBag.getItemsBag();
         itemsBag.resetItemsBag();
@@ -20,6 +26,11 @@ public class ThreePlayersBoard extends BoardFactory {
         }
     }
 
+    /**
+     * Along with the TwoPlayerBoard's bitMask created by super.createBitMask(),
+     * it adds valid slots for when the maxPlayerNumber is three
+     * @return a bitMask valid during three players' matches
+     */
     @Override
     public boolean[][] createBitMask() {
         boolean[][] bitMask = super.createBitMask();

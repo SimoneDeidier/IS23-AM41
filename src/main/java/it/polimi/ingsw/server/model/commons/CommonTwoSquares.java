@@ -3,14 +3,26 @@ package it.polimi.ingsw.server.model.commons;
 import it.polimi.ingsw.server.model.items.Item;
 import it.polimi.ingsw.server.model.Shelf;
 
+/**
+ * CommonTwoSquaresClass represents a specific CommonTargetCard in the game
+ */
 public class CommonTwoSquares extends CommonTargetCard {
 
     private final static int SQUARES_NEEDED = 2;
 
+    /**
+     * Constructor is provided to set the correct name to the instance created
+     * @param maxPlayerNumber is needed to allocate the correct number of ScoringTokens, that varies according to the number of players
+     */
     public CommonTwoSquares(int maxPlayerNumber) {
         super(maxPlayerNumber);
         this.name="CommonTwoSquares";
     }
+
+    /**
+     * The override of the method check modifies the function in order to verify the specific CommonTargetCard
+     * @return true if the condition is satisfied, false otherwise
+     */
     @Override
     public boolean check(Shelf shelf) {
 
