@@ -15,4 +15,13 @@ class EndGameTokenTest {
         endGameToken.resetEndGameToken();
         assertTrue(endGameToken.isTakeable());
     }
+
+    @Test
+    void testGetTakenBy(){
+        EndGameToken endGameToken= EndGameToken.getEndGameToken();
+        endGameToken.resetEndGameToken();
+        endGameToken.setTakenBy("Marco");
+        assertEquals("Marco",endGameToken.getTakenBy());
+
+    }
 }
