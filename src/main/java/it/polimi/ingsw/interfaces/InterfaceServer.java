@@ -2,13 +2,14 @@ package it.polimi.ingsw.interfaces;
 
 import it.polimi.ingsw.messages.Body;
 
+import java.io.IOException;
 import java.rmi.Remote;
 import java.rmi.RemoteException;
 
 public interface InterfaceServer extends Remote {
     //What the client can call from the server
 
-    void presentation(InterfaceClient cl, String nickname) throws RemoteException;
+    void presentation(InterfaceClient cl, String nickname) throws IOException;
     void sendParameters(InterfaceClient cl,int maxPlayerNumber,boolean onlyOneCommonCard) throws RemoteException;
     void executeMove(Body move) throws RemoteException;
     void clearRMI() throws RemoteException;

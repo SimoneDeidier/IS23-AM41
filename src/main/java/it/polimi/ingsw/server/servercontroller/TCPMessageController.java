@@ -7,6 +7,7 @@ import it.polimi.ingsw.server.model.Player;
 import it.polimi.ingsw.server.model.commons.CommonTargetCard;
 import it.polimi.ingsw.server.servercontroller.exceptions.*;
 
+import java.io.IOException;
 import java.net.Socket;
 import java.rmi.RemoteException;
 import java.util.Objects;
@@ -24,7 +25,7 @@ public class TCPMessageController implements TCPMessageControllerInterface {
     }
 
     @Override
-    public void readTCPMessage(TCPMessage message) throws RemoteException {
+    public void readTCPMessage(TCPMessage message) throws IOException {
         String header = message.getHeader();
         switch (header) {
             case "Presentation" -> {
@@ -145,7 +146,8 @@ public class TCPMessageController implements TCPMessageControllerInterface {
         return this.socket;
     }
 
-    public void closeConnection() {
+    public void closeConnection() throws IOException {
+        System.out.println("CHIAMO LA CLOSE CONNECTION SU SERIALIZE");
         serializeDeserialize.closeConnection();
     }
 

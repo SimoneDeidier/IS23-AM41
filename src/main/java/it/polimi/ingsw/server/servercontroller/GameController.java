@@ -379,7 +379,7 @@ public class GameController {
         changeState(new RunningGameState());
     }
 
-    public void disconnectAllUsers() throws RemoteException {
+    public void disconnectAllUsers() throws IOException {
         for(String s : nickToTCPMessageControllerMapping.keySet()) {
             Body body = new Body();
             body.setGoodbyeType(0);
@@ -534,6 +534,12 @@ public class GameController {
                             nickToUnansweredCheck.put(nickname, 1);
                         }
                         if (nickToUnansweredCheck.get(nickname) == 5) {
+                            try {
+                                nickToTCPMessageControllerMapping.get(nickname).closeConnection();
+                            } catch (IOException e) {
+                                e.printStackTrace();
+                            }
+                            nickToTCPMessageControllerMapping.remove(nickname);
                             changePlayerConnectionStatus(nickname);
                             if (state.getClass().equals(RunningGameState.class)) {
                                 notifyOfDisconnectionAllUsers(nickname);
@@ -549,7 +555,6 @@ public class GameController {
                                 changeState(new ServerInitState());
                                 getPlayerList().clear();
                             }
-                            nickToTCPMessageControllerMapping.get(nickname).closeConnection();
                         }
                     }
                 }
@@ -578,7 +583,11 @@ public class GameController {
             @Override
             public void run() {
                 if (countConnectedUsers() <= 1) {
-                    endGameForLackOfPlayers();
+                    try {
+                        endGameForLackOfPlayers();
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                    }
                 } else {
                     cancelTimer();
                 }
@@ -586,7 +595,7 @@ public class GameController {
         }, TIMER_DURATION_MILLISECONDS);
     }
 
-    public void endGameForLackOfPlayers() {
+    public void endGameForLackOfPlayers() throws IOException {
         deleteSavedGame();
         if(countConnectedUsers()==1) {
             for (Player player : playerList) {

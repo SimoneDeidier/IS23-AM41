@@ -32,10 +32,7 @@ public class SocketManager implements Runnable {
                     serializeDeserialize.deserialize(inMsg);
                 }
             }
-            socketInput.close();
-            socketOutput.close();
-            socket.close();
-            System.out.println("Socket close correctly - port: " + socket.getPort() + ".");
+
         }
         catch (IOException e) {
             System.err.println(e.getMessage());
@@ -46,8 +43,12 @@ public class SocketManager implements Runnable {
         return socketOutput;
     }
 
-    public void closeConnection() {
+    public void closeConnection() throws IOException {
         this.closeConnection = true;
+        socketInput.close();
+        socketOutput.close();
+        socket.close();
+        System.out.println("Socket close correctly - port: " + socket.getPort() + ".");
     }
 
     public Socket getSocket() {

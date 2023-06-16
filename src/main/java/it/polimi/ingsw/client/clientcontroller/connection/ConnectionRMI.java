@@ -54,6 +54,8 @@ public class ConnectionRMI extends UnicastRemoteObject implements InterfaceClien
             stub.presentation(this, nickname);
         } catch (RemoteException e) {
             controller.serverNotResponding();
+        } catch (IOException e) {
+            e.printStackTrace();
         }
     }
 

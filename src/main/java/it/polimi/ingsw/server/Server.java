@@ -144,7 +144,7 @@ public class Server implements InterfaceServer {
     }
 
     @Override
-    public void presentation(InterfaceClient cl, String nickname) throws RemoteException {
+    public void presentation(InterfaceClient cl, String nickname) throws IOException {
         try {
             switch(controller.presentation(nickname)) {
                 case 0 -> {  // you're joining but I need another nickname
