@@ -33,7 +33,7 @@ public class GameController {
     private boolean onlyOneCommonCard = false;
     private Player activePlayer = null; //acts as a kind of turn
     private BoardFactory board;
-    private EndGameToken endGameToken= EndGameToken.getEndGameToken(); //todo add in UML (added because it's singleton, it needs to be reset after end of the game)
+    private final EndGameToken endGameToken= EndGameToken.getEndGameToken(); //todo add in UML (added because it's singleton, it needs to be reset after end of the game)
     private GameState state;
     private List<CommonTargetCard> commonTargetCardsList;
     private Map<String, TCPMessageController> nickToTCPMessageControllerMapping = new ConcurrentHashMap<>(4);
@@ -41,7 +41,7 @@ public class GameController {
     private final Server server;
     private boolean gameOver;
     private static final int THREAD_SLEEP_MILLISECONDS = 1000;
-    private static final int TIMER_DURATION_MILLISECONDS = 30000;
+    private static final int TIMER_DURATION_MILLISECONDS = 3000000;
     private Timer timer;
     private boolean timerIsRunning = false;
     private boolean lastConnectedUserMadeHisMove = false;
@@ -379,6 +379,7 @@ public class GameController {
         changeState(new RunningGameState());
     }
 
+
     public void disconnectAllUsers() throws IOException {
         for(String s : nickToTCPMessageControllerMapping.keySet()) {
             Body body = new Body();
@@ -389,7 +390,7 @@ public class GameController {
         server.disconnectAllRMIUsers();
     }
 
-    public void yourTarget() throws RemoteException {
+    public void yourTarget() {
         for(String s : getNickToTCPMessageControllerMapping().keySet()) {
             Body body = new Body();
             for(Player p : playerList) {
@@ -420,7 +421,7 @@ public class GameController {
         }
     }
 
-    public void peerToPeerMsg(String sender, String receiver, String text, String localDateTime) throws InvalidNicknameException, RemoteException {
+    public void peerToPeerMsg(String sender, String receiver, String text, String localDateTime) throws InvalidNicknameException {
         if(!nickToTCPMessageControllerMapping.containsKey(receiver) && !server.checkReceiverInRMI(receiver)) {
             throw new InvalidNicknameException();
         }
@@ -450,7 +451,7 @@ public class GameController {
         }
     }
 
-    public void broadcastMsg(String sender, String text, String localDateTime) throws RemoteException {
+    public void broadcastMsg(String sender, String text, String localDateTime) {
         for(String s : nickToTCPMessageControllerMapping.keySet()) {
             Body body = new Body();
             body.setSenderNickname(sender);

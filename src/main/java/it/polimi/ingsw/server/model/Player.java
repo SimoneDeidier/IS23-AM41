@@ -12,6 +12,9 @@ import java.net.URISyntaxException;
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * Class Player handles, at the end of a player's turn, the calculation of his new score
+ */
 public class Player implements Serializable {
     private final String nickname;
     private boolean connected;
@@ -23,6 +26,10 @@ public class Player implements Serializable {
     private List<CommonTargetCard> commonTargetCardList;
     private PersonalTargetCard personalTargetCard;
 
+    /**
+     * Constrcutor for Player makes sure the connected attribute is set to true, as the player is connecting right now
+     * @param nickname is passed by the Player during the connection
+     */
     public Player(String nickname) {
         this.nickname = nickname;
         endGameToken = null;
@@ -30,14 +37,25 @@ public class Player implements Serializable {
         this.connected = true;
     }
 
+    /**
+     * @return the player's nickname
+     */
     public String getNickname() {
         return nickname;
     }
 
+    /**
+     * @return the player's shelf
+     */
     public Shelf getShelf() {
         return shelf;
     }
 
+    /**
+     * handles the operation to update the score a Player
+     * after the server receives and executes on the model a move from the active player at the moment.
+     * It doesn't pass it back as an argument, it updates the Player's attribute "playerScore"
+     */
     public void updateScore() {
         try {
             playerScore = 0;
@@ -49,35 +67,34 @@ public class Player implements Serializable {
             try {
                 playerScore += shelf.calculateAdjacentItemsPoints();
             }
-            catch (EmptyShelfException e) {
-                System.out.println("EMPTY SHELF EXCEPTION");
-                System.out.println("Player: " + nickname);
+            catch (EmptyShelfException ignored) {
             }
             finally {
-                System.err.println("POST ADJACENT");
                 for(CommonTargetCard commonTargetCard:commonTargetCardList){
-                    System.err.println("CHECK COMMON " + commonTargetCard.getName());
                     if (commonTargetCard.check(shelf)) {
                         ScoringToken scoringToken=commonTargetCard.assignToken(this); //assignToken verifies the player doesn't already have obtained a token from that same commonTargetCard
                         if(scoringToken!=null){
                             scoringTokenList.add(scoringToken);
                         }
                     }
-                    System.err.println("END COMMON " + commonTargetCard.getName());
                 }
-                System.err.println("POST COMMONS");
                 for (ScoringToken token : scoringTokenList) {
                     if (token != null) {
                         playerScore += token.getValue();
                     }
                 }
-                System.err.println("POST UPDATE");
             }
         }
         catch (URISyntaxException | IOException e) {
             throw new RuntimeException(e);
         }
     }
+
+    /**
+     * when a Player is awarded a EndGameToken, it is set as his attribute and this method also occupies of setting the player's
+     * nickname in the takenBy attribute of EndGameToken
+     * @param endGameToken
+     */
     public void setEndGameToken(EndGameToken endGameToken) {
         this.endGameToken = endGameToken;
         EndGameToken.getEndGameToken().setTakenBy(nickname);
