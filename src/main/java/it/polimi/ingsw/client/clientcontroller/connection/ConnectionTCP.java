@@ -72,7 +72,9 @@ public class ConnectionTCP implements Connection {
         socketOut.close();
         socketIn.close();
         try {
+            System.out.println("CHIUDO LA SOCKET");
             socket.close();
+            System.out.println("SOCKET CHIUSA");
         }
         catch (IOException e) {
             e.printStackTrace();

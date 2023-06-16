@@ -549,6 +549,7 @@ public class GameController {
                                 changeState(new ServerInitState());
                                 getPlayerList().clear();
                             }
+                            nickToTCPMessageControllerMapping.get(nickname).closeConnection();
                         }
                     }
                 }
