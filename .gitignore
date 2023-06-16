@@ -26,3 +26,7 @@ Thumbs.db
 
 # Ignore save files
 src/main/java/it/polimi/ingsw/save/OldGame.json
+
+# Ignore debug files
+src/main/java/it/polimi/ingsw/client/view/tempimgs/*.png
+src/main/java/it/polimi/ingsw/server/model/*.json
