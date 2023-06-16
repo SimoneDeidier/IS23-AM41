@@ -249,8 +249,9 @@ public class ConnectionRMI extends UnicastRemoteObject implements InterfaceClien
     public void setClientConnected(boolean clientConnected) {
         this.clientConnected = clientConnected;
     }
+
     @Override
-    public void closeRMI() {
+    public void closeConnection() {
         System.exit(0);
     }
 }

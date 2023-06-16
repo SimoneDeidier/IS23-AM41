@@ -3,7 +3,6 @@ package it.polimi.ingsw.client.clientcontroller.connection;
 import it.polimi.ingsw.client.clientcontroller.SerializeDeserialize;
 
 import java.io.*;
-import java.net.ConnectException;
 import java.net.Socket;
 import java.net.URISyntaxException;
 import java.util.NoSuchElementException;
@@ -24,7 +23,9 @@ public class ConnectionTCP implements Connection {
     public ConnectionTCP(String ip, int port) throws IOException {
         this.IP = ip;
         this.PORT = port;
+        System.out.println("PRE SOCKET");
         this.socket = new Socket(ip, port);
+        System.out.println("POST SOCKET");
         this.socketIn = new Scanner(socket.getInputStream());
         this.socketOut = new PrintWriter(socket.getOutputStream(), true);
         this.serializeDeserialize = new SerializeDeserialize(this);
@@ -61,15 +62,11 @@ public class ConnectionTCP implements Connection {
         }
     }
 
-    @Override
-    public void closeRMI() {
-        //useless in TCP
-    }
-
     public PrintWriter getSocketOut() {
         return socketOut;
     }
 
+    @Override
     public void closeConnection() {
         this.closeConnection = true;
         socketOut.close();

@@ -38,6 +38,7 @@ public class Client {
         switch (connectionType) {
             case "tcp" -> {
                 try {
+                    System.out.println("PRVO CONNESSIONE");
                     connection = new ConnectionTCP(ipAddress, TCP_PORT);
                 }
                 catch (IOException e) {
@@ -54,6 +55,7 @@ public class Client {
             default -> System.err.println("Wrong parameter, restart client...");
         }
         if(connectionOk) {
+            System.out.println("CONNESSIONE OK");
             if (!parseUiType(args)) {
                 System.out.println("Select UI type: ");
                 uiType = stdin.nextLine();
@@ -68,7 +70,7 @@ public class Client {
             System.out.println("Server is momentarily unreachable, please retry later!");
         }
         try {
-            connection.closeRMI();
+            connection.closeConnection();
         }
         catch (NullPointerException e) {
             System.out.println("Connection never opened!");
@@ -96,7 +98,7 @@ public class Client {
         for(int i = 0; i < args.length - 1; i++) {
             String cmd = args[i];
             String par = args[i + 1];
-            if(Objects.equals(cmd, "--ipaddr") && (par.matches("[0-9]+") || Objects.equals(par, "localhost"))) {
+            if(Objects.equals(cmd, "--ipaddr") && (par.matches("[0-9][0-9.]*[0-9]+") || Objects.equals(par, "localhost"))) {
                 ipAddress = par;
                 return true;
             }
