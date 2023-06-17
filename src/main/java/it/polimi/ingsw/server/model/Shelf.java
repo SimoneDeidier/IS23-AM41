@@ -8,18 +8,28 @@ import it.polimi.ingsw.server.model.items.ItemColor;
 import java.io.Serializable;
 import java.util.List;
 
+/**
+ * Class Shelf occupies of calculating the points for adjacent items
+ */
 public class Shelf implements Serializable {
 
     private final static int ROWS = 6;
     private final static int COLUMNS = 5;
-
     private int shelfPoints;
     private Item[][] shelfMatrix;
 
+    /**
+     * Constructor builds a new matrix of items
+     */
     public Shelf() {
         shelfMatrix = new Item[ROWS][COLUMNS];
     }
 
+    /**
+     * is the function that handles the calculation of points the player should get for adjacent items in his shelf
+     * @return how many points the player should get from this feature
+     * @throws EmptyShelfException if the function is called on a player's empty shelf
+     */
     public int calculateAdjacentItemsPoints() throws EmptyShelfException {
         int totalPoints = 0, row, count = 0;
         boolean[][] bitMask = new boolean[ROWS][COLUMNS];
@@ -63,6 +73,14 @@ public class Shelf implements Serializable {
         }
     }
 
+    /**
+     * is a recursive function used during the calculation of points of calculateAdjacentItemsPoints function
+     * @param bitMask is a mask of bit placed above the shelf
+     * @param visited is a mask of bit placed above the shelf to help the algorithm remember which slots he has already visited
+     * @param row represents the row in the shelf the function should consider
+     * @param col represents the column in the shelf the function should consider
+     * @return how many item of one color he found to be adjacent
+     */
     public int exploreGraph(boolean[][] bitMask, boolean[][] visited, int row, int col) {
         int val = 0;
 
@@ -80,6 +98,11 @@ public class Shelf implements Serializable {
         return val;
     }
 
+    /**
+     * is a function used during the calculation of points of calculateAdjacentItemsPoints function
+     * @param adjacentTiles is the number of item of one color that are adjacent
+     * @return how many points should be added based on how many item were adjacent
+     */
     public int decodePoints(int adjacentTiles) {
         if(adjacentTiles == 3) {
             return 2;
@@ -96,6 +119,10 @@ public class Shelf implements Serializable {
         else return 0;
     }
 
+    /**
+     * checks whether a shelf is full
+     * @return true if a shelf is full, false otherwise
+     */
     public boolean isFull(){
         for(int i = 0; i < COLUMNS; i++) {
             if(shelfMatrix[0][i] == null) { // check only top of the matrix
@@ -105,6 +132,13 @@ public class Shelf implements Serializable {
         return true;
 
     }
+
+    /**
+     * inserts a list of items in a column of the shelf
+     * @param column is the column where the items should be inserted
+     * @param items is the list of items to be inserted
+     * @throws NotEnoughSpaceInColumnException if there isn't enough space in a column to insert the amount of items in the list
+     */
     public void insertItems(int column, List<Item> items) throws NotEnoughSpaceInColumnException {
         int freeSpace = 0;
 
@@ -122,11 +156,20 @@ public class Shelf implements Serializable {
         }
     }
 
+    /**
+     * @param row the row where we select the item
+     * @param col the column where we select the item
+     * @return the item at the coordinates row and col
+     */
     public Item getItemByCoordinates(int row, int col) {
         return shelfMatrix[row][col];
     }
 
 
+    /**
+     * @param col is the column where we want to check how many slots are left
+     * @return the amount of free slots in the selected column
+     */
     public int freeSpaces(int col){
         int res = ROWS;
 
@@ -139,6 +182,9 @@ public class Shelf implements Serializable {
         return 0;
     }
 
+    /**
+     * sets the points the player has made with the adjacent items rule in the variable shelfPoints
+     */
     public void setShelfPoints(){
         try {
             this.shelfPoints = this.calculateAdjacentItemsPoints();
@@ -148,15 +194,30 @@ public class Shelf implements Serializable {
         }
     }
 
+    /**
+     * @return the points the player has made with the adjacent items rule in the variable shelfPoints
+     */
     public int getShelfPoints() {
         this.setShelfPoints();
         return this.shelfPoints;
     }
 
-    public void setShelfItem(int r, int c, Item i) {
-        this.shelfMatrix[r][c] = i;
+    /**
+     * Used for test purposes
+     * @param row the row where we want to set the item
+     * @param column the column where we want to set the item
+     * @param item is the item we want to set
+     */
+    public void setShelfItem(int row, int column, Item item) {
+        this.shelfMatrix[row][column] = item;
     }
 
+    /**
+     * check whether a column has enough free space available to execute a move
+     * @param numberOfItemsPicked is the number of items that was picked by a player
+     * @param column is the column we are checking the condition for
+     * @return true is there is enough space in the column, false otherwise
+     */
     public boolean checkColumn(int numberOfItemsPicked, int column) {
         if (column < 0 || column > COLUMNS)
             return false;
@@ -165,10 +226,17 @@ public class Shelf implements Serializable {
         return true;
     }
 
+    /**
+     * @return the shelf matrix
+     */
     public Item[][] getShelfMatrix() {
         return shelfMatrix;
     }
 
+    /**
+     * used when the controller is restoring a previous game
+     * @param shelfMatrix is the shelfMatrix of the previous game, that now will be set as the current shelfMatrix
+     */
     public void setShelfMatrix(Item[][] shelfMatrix){
         this.shelfMatrix=shelfMatrix;
     }

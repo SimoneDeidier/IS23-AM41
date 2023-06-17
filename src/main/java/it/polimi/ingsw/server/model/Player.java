@@ -100,22 +100,38 @@ public class Player implements Serializable {
         EndGameToken.getEndGameToken().setTakenBy(nickname);
     }
 
+    /**
+     * @param board is set as the new Player's board
+     */
     public void setBoard(BoardFactory board) {
         this.board = board;
     }
 
+    /**
+     * @param commonTargetCardList is set as the new Player's commonTargetCardList
+     */
     public void setCommonTargetCardList(List<CommonTargetCard> commonTargetCardList) {
         this.commonTargetCardList = commonTargetCardList;
     }
 
+    /**
+     * @param shelf is set as the new Player's shelf
+     */
     public void setShelf(Shelf shelf) {
         this.shelf = shelf;
     }
 
+    /**
+     * @param personalTargetCard is set as the new Player's personalTargetCard
+     */
     public void setPersonalTargetCard(PersonalTargetCard personalTargetCard) {
         this.personalTargetCard = personalTargetCard;
     }
 
+    /**
+     * when a player gets assigned a scoringToken, it is passed to him via this fucntion
+     * @param scoringToken is added to the player's scoringTokenList
+     */
     public void addScoringToken(ScoringToken scoringToken) {
         if( scoringToken != null ) {
             this.scoringTokenList.add(scoringToken);
@@ -123,49 +139,92 @@ public class Player implements Serializable {
         }
     }
 
+    /**
+     * For testing purposes
+     * @param i selects the scoringToken in the position i of the scoringTokenList arrayList of player and then that scoringToken is returned
+     */
     public ScoringToken getScoringToken(int i){
         return scoringTokenList.get(i);
     }
 
+    /**
+     * @param connected is used to set the Player's attribute value
+     */
     public void setConnected(boolean connected) {
         this.connected = connected;
     }
 
+    /**
+     * @return the player's attribute connected
+     */
     public boolean isConnected() {
         return connected;
     }
 
+    /**
+     * @return the current player's score
+     */
     public int getPlayerScore() {
         return this.playerScore;
     }
 
+    /**
+     * @return the player's personalTargetCard
+     */
     public PersonalTargetCard getPersonalTargetCard() {
         return personalTargetCard;
     }
 
+    /**
+     * is used to check whether a column chosen is valid, during the execution of a move for a player
+     * @param numberOfItemsPicked is needed in order to check if the slots available in the column are enough
+     * @param column represents which column was picked
+     * @return true if the move can be executed, false otherwise
+     */
     public boolean checkColumnChosen(int numberOfItemsPicked, int column) {
         return shelf.checkColumn(numberOfItemsPicked,column);
     }
+
+    /**
+     * @return the player's commonTargetCardList
+     */
     public List<CommonTargetCard> getCommonTargetCardList() {
         return commonTargetCardList;
     }
 
+    /**
+     * @return the player's board
+     */
     public BoardFactory getBoard() {
         return board;
     }
 
+    /**
+     * @return the player's scoringTokenList
+     */
     public List<ScoringToken> getScoringTokenList() {
         return scoringTokenList;
     }
 
+    /**
+     * @return true if a player was assigned a EndGameToken, false otherwise
+     */
     public boolean hasEndGameToken(){
         return endGameToken != null;
     }
 
+    /**
+     * used when a game is being restored to a previous state
+     * @param playerScore is used to restore the player's previous score
+     */
     public void setPlayerScore(int playerScore) {
         this.playerScore = playerScore;
     }
 
+    /**
+     * used when a game is being restored to a previous state
+     * @param scoringTokenList is used to restore the player's previous scoringTokenList
+     */
     public void setScoringTokenList(List<ScoringToken> scoringTokenList) {
         this.scoringTokenList = scoringTokenList;
     }

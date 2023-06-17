@@ -26,7 +26,7 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
 public class Server implements InterfaceServer {
-    private static final String IP_ADDRESS_IN_USE = "localhost";
+    private static final String IP_ADDRESS_IN_USE = "169.254.74.67";
 
     private static int portRMI;
     private static int portTCP;
