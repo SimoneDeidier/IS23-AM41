@@ -109,6 +109,8 @@ public class TextUserInterface implements UserInterface{
 
         int spaceBetweenBoardAndShelf = 10;
 
+        boolean validInput = false;
+
         boolean[][] boardBitMask = this.newView.getBoardBitMask();
         Item[][] boardItems = this.newView.getBoardItems();
         Item[][] shelfItems = this.newView.getNicknameToShelfMap().get(this.nickname);
@@ -116,14 +118,14 @@ public class TextUserInterface implements UserInterface{
 
         String shelfTopString = "My Shelf!";
 
+        String chairHolder = "";
+
         System.out.println(drawHorizontalLine(sceneWidth));
-        printContentLine(this.nickname + " -- Total Points: " + totalPoints);
-        System.out.println("|" + " ".repeat(sceneWidth - 2) + "|");
         if(Objects.equals(this.newView.getPlayerList().get(0), nickname)) {
-            printContentLine("You are the holder of the chair!" );
-        } else {
-            System.out.println("|" + " ".repeat(sceneWidth - 2) + "|");
+            chairHolder = "  --  You are the holder of the chair!";
         }
+        printContentLine(this.nickname + " -- Total Points: " + totalPoints + chairHolder);
+        System.out.println("|" + " ".repeat(sceneWidth - 2) + "|");
         if(isYourTurn()){
             printContentLine("It's your turn");
         } else {
@@ -133,9 +135,21 @@ public class TextUserInterface implements UserInterface{
         for(int i=0; i<boardRow; i++){
             String repeat = " ".repeat(shelfCol * tileWidth + 1 + spaceBetweenBoardAndShelf);
             if(i==0){
-                printContentLine(drawHorizontalLine(boardCol*tileWidth+1) + repeat);
+                StringBuilder BoardColNumbers = new StringBuilder();
+                for(int n=0; n<9; n++){
+                    BoardColNumbers.append(" ".repeat(4));
+                    BoardColNumbers.append(n);
+                    BoardColNumbers.append(" ".repeat(3));
+                }
+                printContentLine(BoardColNumbers + " ".repeat(shelfCol*tileWidth+1+spaceBetweenBoardAndShelf));
+                printContentLine(drawHorizontalLine(boardCol*tileWidth+1) + " ".repeat(shelfCol*tileWidth+1+spaceBetweenBoardAndShelf));
                 for(int j=0; j<2; j++){
                     StringBuilder shelfBoxLine = new StringBuilder();
+                    if(j==0){
+                        shelfBoxLine.append(i);
+                    } else {
+                        shelfBoxLine.append(" ");
+                    }
                     shelfBoxLine.append("|");
                     for(int w=0; w<boardCol; w++) {
                         for (int k = 0; k < tileWidth-1; k++) {
@@ -166,6 +180,11 @@ public class TextUserInterface implements UserInterface{
                 }
                 for(int j=0; j<2; j++){
                     StringBuilder shelfBoxLine = new StringBuilder();
+                    if(j==0){
+                        shelfBoxLine.append(i);
+                    } else {
+                        shelfBoxLine.append(" ");
+                    }
                     shelfBoxLine.append("|");
                     for(int w=0; w<boardCol; w++) {
                         for (int k = 0; k < tileWidth-1; k++) {
@@ -208,6 +227,11 @@ public class TextUserInterface implements UserInterface{
                 }
                 for(int j=0; j<2; j++){
                     StringBuilder shelfBoxLine = new StringBuilder();
+                    if(j==0){
+                        shelfBoxLine.append(i);
+                    } else {
+                        shelfBoxLine.append(" ");
+                    }
                     shelfBoxLine.append("|");
                     for(int w=0; w<boardCol; w++) {
                         for (int k = 0; k < tileWidth-1; k++) {
@@ -237,9 +261,25 @@ public class TextUserInterface implements UserInterface{
 
                 }
             } else {
-                printContentLine(drawHorizontalLine(boardCol*tileWidth+1) + " ".repeat(10) + drawHorizontalLine(shelfCol*tileWidth+1));
+                if(i==3){
+                    StringBuilder ShelfColNumbers = new StringBuilder();
+                    for(int n=0; n<5; n++){
+                        ShelfColNumbers.append("-".repeat(4));
+                        ShelfColNumbers.append(n);
+                        ShelfColNumbers.append("-".repeat(3));
+                    }
+                    ShelfColNumbers.append("-");
+                    printContentLine(drawHorizontalLine(boardCol*tileWidth+1) + " ".repeat(10) + ShelfColNumbers);
+                } else {
+                    printContentLine(drawHorizontalLine(boardCol*tileWidth+1) + " ".repeat(10) + drawHorizontalLine(shelfCol*tileWidth+1));
+                }
                 for(int j=0; j<2; j++){
                     StringBuilder shelfBoxLine = new StringBuilder();
+                    if(j==0){
+                        shelfBoxLine.append(i);
+                    } else {
+                        shelfBoxLine.append(" ");
+                    }
                     shelfBoxLine.append("|");
                     for(int w=0; w<boardCol; w++) {
                         for (int k = 0; k < tileWidth-1; k++) {
@@ -327,10 +367,27 @@ public class TextUserInterface implements UserInterface{
                 if(isYourTurn()) {
                     if(getPositionPickedSize()<3) {
                         int[] el = new int[2];
-                        System.out.print("Insert the row coordinate (from 0 to 8) of the tile you want to select: ");
-                        el[0] = in.nextInt();   // TODO PACO QUI DEVI CONTROLLARE CHE L'UTENTE NON METTE TIPO UNA LETTERA!!!
-                        System.out.print("Insert the column coordinate (from 0 to 8) of the tile you want to select: ");
-                        el[1] = in.nextInt();
+                        while (!validInput) {
+                            try {
+                                System.out.print("Insert the row coordinate (from 0 to 8) of the tile you want to select: ");
+                                el[0] = in.nextInt();
+                                validInput = true;
+                            } catch (InputMismatchException e) {
+                                System.out.print("Invalid input! Insert the row coordinate (from 0 to 8) of the tile you want to select: ");
+                                in.nextLine(); // Clear the invalid input from the scanner
+                            }
+                        }
+                        validInput = false;
+                        while (!validInput) {
+                            try {
+                                System.out.print("Insert the column coordinate (from 0 to 8) of the tile you want to select: ");
+                                el[1] = in.nextInt();
+                                validInput = true;
+                            } catch (InputMismatchException e) {
+                                System.out.print("Invalid input! Insert the column coordinate (from 0 to 8) of the tile you want to select: ");
+                                in.nextLine(); // Clear the invalid input from the scanner
+                            }
+                        }
                         if(boardBitMask[el[0]][el[1]] && !selectedBoardBitMask[el[0]][el[1]]){
                             selectedBoardBitMask[el[0]][el[1]] = true;
                             selectedItems.add(boardItems[el[0]][el[1]]);
@@ -417,12 +474,12 @@ public class TextUserInterface implements UserInterface{
     private String itemToColour(Item item) {
         if(item != null) {
             return switch (item.getColor()) {
-                case LIGHT_BLUE -> "L";
-                case BLUE -> "B";
-                case GREEN -> "G";
-                case YELLOW -> "Y";
-                case WHITE -> "W";
-                case PINK -> "P";
+                case LIGHT_BLUE -> "\u001B[46mL\u001B[0m";
+                case BLUE -> "\u001B[44mB\u001B[0m";
+                case GREEN -> "\u001B[42mG\u001B[0m";
+                case YELLOW -> "\u001B[43mY\u001B[0m";
+                case WHITE -> "\u001B[47mW\u001B[0m";
+                case PINK -> "\u001B[45mP\u001B[0m";
             };
         }
         return " ";
@@ -620,7 +677,8 @@ public class TextUserInterface implements UserInterface{
                 for(int j=0; j<2; j++){
                     StringBuilder shelfBoxLine = new StringBuilder();
                     for (Map.Entry<String, Item[][]> entry : this.newView.getNicknameToShelfMap().entrySet()) {
-                        if(nickname != this.nickname) { // TODO PACO QUI C'È QUALCOSA CHE NON VA
+                        String nickname = entry.getKey();
+                        if(!Objects.equals(nickname, this.nickname)) {
                             Item[][] shelfItems = entry.getValue();
                             shelfBoxLine.append("|");
                             for (int w = 0; w < shelfCol; w++) {
@@ -681,9 +739,6 @@ public class TextUserInterface implements UserInterface{
         String message = in.nextLine();
         while(!message.equals("/back")) {
             sendMessage(message);
-            System.out.println("You: " + message);
-            message = in.nextLine();
-            chatList.add("You: " + message);
         }
             this.chatOpen = false;
             mainGamePage();
@@ -691,12 +746,19 @@ public class TextUserInterface implements UserInterface{
 
     private void printContentLine(String text) {
         StringBuilder lineContent = new StringBuilder();
-        if(text.length()%2!=0){
+        int count=0;
+        for (int i = 0; i < text.length(); i++) {
+            if (text.charAt(i) == '[') {
+                count++;
+            }
+        }
+        int text_lenght = text.length() - (count/2 * 9);
+        if(text_lenght % 2 != 0){
             text = text + " ";
         }
-        lineContent.append(" ".repeat(Math.max(0, (sceneWidth - text.length() - 2) / 2)));
+        lineContent.append(" ".repeat(Math.max(0, (sceneWidth - text_lenght - 2) / 2)));
         String contentLine = "|" + lineContent + text + lineContent + "|";
-        System.out.println(contentLine);
+        System.out.println(contentLine + text_lenght + " " + text.length());
     }
 
     private void drawEmptyLines(int contentLines) {
@@ -719,12 +781,13 @@ public class TextUserInterface implements UserInterface{
 
     @Override
     public void setClientController(ClientController clientController) {
-        TextUserInterface.clientController = clientController;
+        new Thread(() -> {
+            TextUserInterface.clientController = clientController;
+        }).start();
     }
 
     @Override
     public void getGameParameters() {
-        // TODO PACO IN TUTTI I METODI CHE VENGONO CHIAMATI DAL TCP MESSAGE CONTROLLER DEVI FARE COSI' CON IL THREAD A PARTE ALTRIMENTI BLOCCA TUTTO!!!
         new Thread(() -> {
             int numPlayers = getNumberOfPlayers();
             int numCommons = getNumberOfCommon();
@@ -810,7 +873,9 @@ public class TextUserInterface implements UserInterface{
 
     @Override
     public void invalidNickname() {
-        getNickname("The username is already used, please insert another nickname!");
+        new Thread(() -> {
+            getNickname("The username is already used, please insert another nickname!");
+        }).start();
     }
 
     @Override
@@ -820,14 +885,15 @@ public class TextUserInterface implements UserInterface{
 
     @Override
     public void nicknameAccepted() {
+        new Thread(() -> {
+            List<String> textLines = new ArrayList<>();
 
-        List<String> textLines = new ArrayList<>();
+            // Add strings to the list
+            textLines.add("You are in a lobby! Please wait for the game start!");
 
-        // Add strings to the list
-        textLines.add("You are in a lobby! Please wait for the game start!");
-
-        standardTextPage(textLines);
-        System.out.print(drawHorizontalLine(sceneWidth));
+            standardTextPage(textLines);
+            System.out.print(drawHorizontalLine(sceneWidth));
+        }).start();
     }
 
     @Override
@@ -843,19 +909,23 @@ public class TextUserInterface implements UserInterface{
 
     @Override
     public void waitForLobby() {
-        List<String> textLines = new ArrayList<>();
+        new Thread(() -> {
+            List<String> textLines = new ArrayList<>();
 
-        // Add strings to the list
-        textLines.add("Someone is trying to create a lobby, please retry in a few seconds!");
+            // Add strings to the list
+            textLines.add("Someone is trying to create a lobby, please retry in a few seconds!");
 
-        standardTextPage(textLines);
-        System.out.print(drawHorizontalLine(sceneWidth));
+            standardTextPage(textLines);
+            System.out.print(drawHorizontalLine(sceneWidth));
+        }).start();
     }
 
     @Override
     public void loadGameScreen(int personalTargetCardNumber, String nickname, List<String> commonTargetGoals) {
-        this.personalTargetCardNumber = personalTargetCardNumber;
-        this.nickname = nickname;
+        new Thread(() -> {
+            this.personalTargetCardNumber = personalTargetCardNumber;
+            this.nickname = nickname;
+        }).start();
     }
 
     @Override
@@ -920,10 +990,12 @@ public class TextUserInterface implements UserInterface{
 
     @Override
     public void invalidPlayer() {
-        String completeChatLine = "ERROR: You tried to send a personal message to an user that doesn't exist";
-        if(this.chatOpen){
-            System.out.println(completeChatLine);
-        }
+        new Thread(() -> {
+            String completeChatLine = "ERROR: You tried to send a personal message to an user that doesn't exist";
+            if(this.chatOpen){
+                System.out.println(completeChatLine);
+            }
+        }).start();
     }
 
     @Override
@@ -957,8 +1029,8 @@ public class TextUserInterface implements UserInterface{
 
     @Override
     public int getSwapColIndex(Node n) {
-        // NO CLI
-        return 0;
+            // NO CLI
+            return 0;
     }
 
     @Override
@@ -991,29 +1063,33 @@ public class TextUserInterface implements UserInterface{
 
     @Override
     public void wrongReceiver() {
-        String completeChatLine = "ERROR: You inserted a wrong nickname to send a personal message!";
-        if(this.chatOpen){
-            System.out.println(completeChatLine);
-        }
+        new Thread(() -> {
+            String completeChatLine = "ERROR: You inserted a wrong nickname to send a personal message!";
+            if(this.chatOpen){
+                System.out.println(completeChatLine);
+            }
+        }).start();
     }
 
     @Override
     public void wrongParameters() {
-        List<String> textLines = new ArrayList<>();
+        new Thread(() -> {
+            List<String> textLines = new ArrayList<>();
 
-        // Add strings to the list
-        textLines.add("Either the number of players or the number of common target cards is not acceptable.");
-        textLines.add("Press enter to choose new parameters.");
+            // Add strings to the list
+            textLines.add("Either the number of players or the number of common target cards is not acceptable.");
+            textLines.add("Press enter to choose new parameters.");
 
-        standardTextPage(textLines);
+            standardTextPage(textLines);
 
-        System.out.print("Your input: ");
+            System.out.print("Your input: ");
 
-        scanner = new Scanner(System.in);
+            scanner = new Scanner(System.in);
 
-        if(scanner.hasNextLine()){
-            getGameParameters();
-        }
+            if(scanner.hasNextLine()){
+                getGameParameters();
+            }
+        }).start();
     }
 
     @Override
@@ -1028,38 +1104,43 @@ public class TextUserInterface implements UserInterface{
 
     @Override
     public void playerRestored() {
+        new Thread(() -> {
+            List<String> textLines = new ArrayList<>();
 
-        List<String> textLines = new ArrayList<>();
+            // Add strings to the list
+            textLines.add("The player has been restored from a previous saved game.");
+            textLines.add("You are now in a lobby waiting to play.");
 
-        // Add strings to the list
-        textLines.add("The player has been restored from a previous saved game.");
-        textLines.add("You are now in a lobby waiting to play.");
-
-        standardTextPage(textLines);
-        System.out.println(drawHorizontalLine(sceneWidth));
+            standardTextPage(textLines);
+            System.out.println(drawHorizontalLine(sceneWidth));
+        }).start();
     }
 
     @Override
     public void serverNotResponding() {
-        List<String> textLines = new ArrayList<>();
+        new Thread(() -> {
+            List<String> textLines = new ArrayList<>();
 
-        // Add strings to the list
-        textLines.add("SERVER NOT RESPONDING");
-        textLines.add("Server is momentarily unreachable. Please, wait a few seconds and restart the client!");
+            // Add strings to the list
+            textLines.add("SERVER NOT RESPONDING");
+            textLines.add("Server is momentarily unreachable. Please, wait a few seconds and restart the client!");
 
-        standardTextPage(textLines);
-        System.out.println(drawHorizontalLine(sceneWidth));
+            standardTextPage(textLines);
+            System.out.println(drawHorizontalLine(sceneWidth));
+        }).start();
     }
 
     @Override
     public void lobbyRestored() {
-        List<String> textLines = new ArrayList<>();
+        new Thread(() -> {
+            List<String> textLines = new ArrayList<>();
 
-        // Add strings to the list
-        textLines.add("Lobby has been restored! Please wait for the game start!");
+            // Add strings to the list
+            textLines.add("Lobby has been restored! Please wait for the game start!");
 
-        standardTextPage(textLines);
-        System.out.println(drawHorizontalLine(sceneWidth));
+            standardTextPage(textLines);
+            System.out.println(drawHorizontalLine(sceneWidth));
+        }).start();
     }
 
     @Override
@@ -1075,43 +1156,53 @@ public class TextUserInterface implements UserInterface{
 
     @Override
     public void cantRestoreLobby() throws IOException {
-        List<String> textLines = new ArrayList<>();
+        new Thread(() -> {
+            List<String> textLines = new ArrayList<>();
 
-        // Add strings to the list
-        textLines.add("CAN'T RESTORE LOBBY");
-        textLines.add("A player that wasn't in the last lobby has tried to connect! Please, restart the client, a new lobby will be created!");
+            // Add strings to the list
+            textLines.add("CAN'T RESTORE LOBBY");
+            textLines.add("A player that wasn't in the last lobby has tried to connect! Please, restart the client, a new lobby will be created!");
 
-        standardTextPage(textLines);
-        System.out.println(drawHorizontalLine(sceneWidth));
+            standardTextPage(textLines);
+            System.out.println(drawHorizontalLine(sceneWidth));
+        }).start();
     }
 
     @Override
     public void alonePlayerWins() {
-        List<String> textLines = new ArrayList<>();
+        new Thread(() -> {
+            List<String> textLines = new ArrayList<>();
 
-        // Add strings to the list
-        textLines.add("YOU HAVE WON!!!");
-        textLines.add("All the other  players were disconnected for an excessive longer period! Restart the client to create a new lobby!");
+            // Add strings to the list
+            textLines.add("YOU HAVE WON!!!");
+            textLines.add("All the other  players were disconnected for an excessive longer period! Restart the client to create a new lobby!");
 
-        standardTextPage(textLines);
-        System.out.println(drawHorizontalLine(sceneWidth));
+            standardTextPage(textLines);
+            System.out.println(drawHorizontalLine(sceneWidth));
+        }).start();
     }
 
     @Override
     public void playerDisconnected(String nickname) {
+        new Thread(() -> {
         //Non so come fare qui, non è molto fattibile in CLI per la questione dei thread e delle funzione che aspettano un input
+        }).start();
     }
 
     @Override
     public void playerReconnected(String nickname) {
-        //same as above
+        new Thread(() -> {
+            //same as above
+        }).start();
     }
 
     @Override
     public void setTakeableItems(boolean[][] takeableItems, boolean yourTurn, boolean waitForOtherPlayers) {
-        if(yourTurn && !waitForOtherPlayers) {
-            this.takeableItems = takeableItems;
-        }
+        new Thread(() -> {
+            if(yourTurn && !waitForOtherPlayers) {
+                this.takeableItems = takeableItems;
+            }
+        }).start();
     }
 
     @Override
