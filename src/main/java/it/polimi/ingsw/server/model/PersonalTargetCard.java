@@ -6,6 +6,7 @@ import com.google.gson.JsonObject;
 import it.polimi.ingsw.server.model.items.Item;
 import it.polimi.ingsw.server.model.items.ItemColor;
 import org.apache.commons.io.FileUtils;
+import org.apache.commons.io.IOUtils;
 
 import java.io.File;
 import java.io.IOException;
@@ -45,9 +46,7 @@ public class PersonalTargetCard implements Serializable {
         this.personalNumber=personal;
 
         Gson gson = new Gson();
-        File jsonFile = new File("src/main/java/it/polimi/ingsw/server/model/personalTargetCards.json");
-        FileUtils.copyInputStreamToFile(Objects.requireNonNull(ClassLoader.getSystemResourceAsStream("json/PersonalTargetCards.json")), jsonFile);
-        String jsonString = FileUtils.readFileToString(jsonFile, StandardCharsets.UTF_8);
+        String jsonString = IOUtils.toString(Objects.requireNonNull(ClassLoader.getSystemResourceAsStream("json/PersonalTargetCards.json")), StandardCharsets.UTF_8);
 
         JsonArray jsonArray = gson.fromJson(jsonString, JsonArray.class);
 

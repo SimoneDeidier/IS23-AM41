@@ -10,6 +10,7 @@ import it.polimi.ingsw.server.model.items.ItemColor;
 import it.polimi.ingsw.server.model.tokens.ScoringToken;
 import javafx.scene.Node;
 import org.apache.commons.io.FileUtils;
+import org.apache.commons.io.IOUtils;
 
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -524,15 +525,9 @@ public class TextUserInterface implements UserInterface{
         Item[][] shelfItems = new Item[6][5];
 
         Gson gson = new Gson();
-        File jsonFile = null;
-        try {
-            jsonFile = new File(ClassLoader.getSystemResource("json/PersonalTargetCards.json").toURI());
-        } catch (URISyntaxException e) {
-            System.err.println("Could not load a resource from a JSON file, please restart the game!");
-        }
         String jsonString = null;
         try {
-            jsonString = FileUtils.readFileToString(jsonFile, StandardCharsets.UTF_8);
+            jsonString = IOUtils.toString(Objects.requireNonNull(ClassLoader.getSystemResourceAsStream("json/PersonalTargetCards.json")), StandardCharsets.UTF_8);
         } catch (IOException e) {
             System.err.println("Could not load a resource from a JSON file, please restart the game!");
         }

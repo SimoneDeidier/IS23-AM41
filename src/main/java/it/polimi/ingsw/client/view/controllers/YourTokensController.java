@@ -13,6 +13,7 @@ import java.io.FileNotFoundException;
 import java.net.URISyntaxException;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 
 public class YourTokensController {
 
@@ -27,9 +28,7 @@ public class YourTokensController {
 
     public void setupTokens(List<ScoringToken> list, EndGameToken endGameToken) throws URISyntaxException, FileNotFoundException {
         if(endGameToken != null) {
-            File file = new File(ClassLoader.getSystemResource("images/tokens/endgametoken.jpg").toURI());
-            FileInputStream fis = new FileInputStream(file);
-            ImageView egtImgv = new ImageView(new Image(fis));
+            ImageView egtImgv = new ImageView(new Image(Objects.requireNonNull(ClassLoader.getSystemResourceAsStream("images/tokens/endgametoken.jpg"))));
             egtImgv.setFitHeight(TOKEN_DIM);
             egtImgv.setFitWidth(TOKEN_DIM);
             egtImgv.setTranslateX(TOKEN_OFFSET);
@@ -37,9 +36,7 @@ public class YourTokensController {
         }
         int count = 0;
         for(ScoringToken s : list) {
-            File file = new File(ClassLoader.getSystemResource("images/tokens/scoring" + s.getValue() + ".jpg").toURI());
-            FileInputStream fis = new FileInputStream(file);
-            ImageView scoringImgv = new ImageView(new Image(fis));
+            ImageView scoringImgv = new ImageView(new Image(Objects.requireNonNull(ClassLoader.getSystemResourceAsStream("images/tokens/scoring" + s.getValue() + ".jpg"))));
             scoringImgv.setFitHeight(TOKEN_DIM);
             scoringImgv.setFitWidth(TOKEN_DIM);
             scoringImgv.setTranslateX(TOKEN_OFFSET);

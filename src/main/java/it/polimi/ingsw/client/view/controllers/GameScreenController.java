@@ -112,9 +112,7 @@ public class GameScreenController {
     }
 
     public void setPersonalTargetCard(int personalNumber) throws URISyntaxException, IOException {
-        File file = getFileFromSystemResourceAsStream("src/main/java/it/polimi/ingsw/client/view/tempimgs/personal" + personalNumber +".png", "images/personal/personal" + personalNumber + ".png");
-        FileInputStream fis = new FileInputStream(file);
-        this.personalGoalImage = new Image(fis);
+        this.personalGoalImage = new Image(Objects.requireNonNull(ClassLoader.getSystemResourceAsStream("images/personal/personal" + personalNumber + ".png")));
     }
 
     public void showPersonalTargetCard() {
@@ -232,29 +230,28 @@ public class GameScreenController {
     public Image randomItemImageByColors(ItemColor color) throws URISyntaxException, IOException { // todo PROBLEMI
         Random random = new Random();
         int rand = random.nextInt(3);
-        File file = null;
+        Image img = null;
         switch (color) {
             case BLUE -> {
-                file = getFileFromSystemResourceAsStream("src/main/java/it/polimi/ingsw/client/view/tempimgs/b" + rand + ".png", "images/items/b" + rand + ".png");
+                img = new Image(Objects.requireNonNull(ClassLoader.getSystemResourceAsStream("images/items/b" + rand + ".png")));
             }
             case GREEN -> {
-                file = getFileFromSystemResourceAsStream("src/main/java/it/polimi/ingsw/client/view/tempimgs/g" + rand + ".png", "images/items/g" + rand + ".png");
+                img = new Image(Objects.requireNonNull(ClassLoader.getSystemResourceAsStream("images/items/g" + rand + ".png")));
             }
             case YELLOW -> {
-                file = getFileFromSystemResourceAsStream("src/main/java/it/polimi/ingsw/client/view/tempimgs/y" + rand + ".png", "images/items/y" + rand + ".png");
+                img = new Image(Objects.requireNonNull(ClassLoader.getSystemResourceAsStream("images/items/y" + rand + ".png")));
             }
             case WHITE -> {
-                file = getFileFromSystemResourceAsStream("src/main/java/it/polimi/ingsw/client/view/tempimgs/w" + rand + ".png", "images/items/w" + rand + ".png");
+                img = new Image(Objects.requireNonNull(ClassLoader.getSystemResourceAsStream("images/items/w" + rand + ".png")));
             }
             case PINK -> {
-                file = getFileFromSystemResourceAsStream("src/main/java/it/polimi/ingsw/client/view/tempimgs/p" + rand + ".png", "images/items/p" + rand + ".png");
+                img = new Image(Objects.requireNonNull(ClassLoader.getSystemResourceAsStream("images/items/p" + rand + ".png")));
             }
             case LIGHT_BLUE -> {
-                file = getFileFromSystemResourceAsStream("src/main/java/it/polimi/ingsw/client/view/tempimgs/lb" + rand + ".png", "images/items/lb" + rand + ".png");
+                img = new Image(Objects.requireNonNull(ClassLoader.getSystemResourceAsStream("images/items/lb" + rand + ".png")));
             }
         }
-        FileInputStream fis = new FileInputStream(file);
-        return new Image(fis);
+        return img;
     }
 
     public void setOtherPlayersParameters(Map<String, Item[][]> nicknameToShelfMap, Map<String, Integer> nicknameToPointsMap, String playerNickname, String firstPlayer) {
@@ -321,9 +318,7 @@ public class GameScreenController {
     public void setupPlayerShelf() throws URISyntaxException, FileNotFoundException {
         for(int i = 0; i < SHELF_ROWS; i++) {
             for(int j = 0; j < SHELF_COL; j++) {
-                File file = new File(ClassLoader.getSystemResource("images/items/b0.png").toURI());
-                FileInputStream fis = new FileInputStream(file);
-                Image img = new Image(fis);
+                Image img = new Image(Objects.requireNonNull(ClassLoader.getSystemResourceAsStream("images/items/b0.png")));
                 ImageView imgv = new ImageView(img);
                 imgv.setFitWidth(SHELF_ITEM_DIM);
                 imgv.setFitHeight(SHELF_ITEM_DIM);
@@ -593,12 +588,6 @@ public class GameScreenController {
             stage.setResizable(false);
             stage.show();
         });
-    }
-
-    public File getFileFromSystemResourceAsStream(String tempPathName, String fileToLoad) throws IOException {
-        File tmp = new File(tempPathName);
-        FileUtils.copyInputStreamToFile(Objects.requireNonNull(ClassLoader.getSystemResourceAsStream(fileToLoad)), tmp);
-        return tmp;
     }
 
 }
