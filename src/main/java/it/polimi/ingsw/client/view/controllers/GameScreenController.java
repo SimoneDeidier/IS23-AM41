@@ -1,7 +1,6 @@
 package it.polimi.ingsw.client.view.controllers;
 
 import it.polimi.ingsw.client.view.GraphicUserInterface;
-import it.polimi.ingsw.server.model.Player;
 import it.polimi.ingsw.server.model.items.Item;
 import it.polimi.ingsw.server.model.items.ItemColor;
 import it.polimi.ingsw.server.model.tokens.EndGameToken;
@@ -16,7 +15,6 @@ import javafx.scene.Scene;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextArea;
 import javafx.scene.effect.DropShadow;
-import javafx.scene.effect.Effect;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.input.MouseEvent;
@@ -25,10 +23,11 @@ import javafx.scene.layout.GridPane;
 import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
 import javafx.scene.text.Text;
-import javafx.scene.text.TextAlignment;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
+import javafx.stage.StageStyle;
 import javafx.util.Duration;
+import org.apache.commons.io.FileUtils;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -96,6 +95,8 @@ public class GameScreenController {
     private AnchorPane notificationAnchorPane;
     @FXML
     private Label notificationLabel;
+    @FXML
+    private Label turnLabel;
 
     public void initialize() {
         chatVBox.setStyle("-fx-background-color: #442211;");
@@ -110,10 +111,8 @@ public class GameScreenController {
         playerText.setText(text);
     }
 
-    public void setPersonalTargetCard(int personalNumber) throws URISyntaxException, FileNotFoundException {
-        File file = new File(ClassLoader.getSystemResource("images/personal/personal" + personalNumber + ".png").toURI());
-        FileInputStream fis = new FileInputStream(file);
-        this.personalGoalImage = new Image(fis);
+    public void setPersonalTargetCard(int personalNumber) throws URISyntaxException, IOException {
+        this.personalGoalImage = new Image(Objects.requireNonNull(ClassLoader.getSystemResourceAsStream("images/personal/personal" + personalNumber + ".png")));
     }
 
     public void showPersonalTargetCard() {
@@ -128,7 +127,7 @@ public class GameScreenController {
                 stage.setTitle("My Shelfie - Your Personal Goal!");
                 stage.show();
             } catch (IOException e) {
-                throw new RuntimeException(e);
+                System.err.println("A crash occurred when loading the scene, please restart the software!");
             }
         });
     }
@@ -151,7 +150,7 @@ public class GameScreenController {
                 stage.setTitle("My Shelfie - Common goals!");
                 stage.show();
             } catch (IOException | URISyntaxException e) {
-                e.printStackTrace();
+                System.err.println("A crash occurred when loading the scene, please restart the software!");
             }
         });
     }
@@ -177,7 +176,7 @@ public class GameScreenController {
                 stage.setTitle("My Shelfie - Other players!");
                 stage.show();
             } catch (IOException | URISyntaxException e) {
-                throw new RuntimeException(e);
+                System.err.println("A crash occurred when loading the scene, please restart the software!");
             }
         });
     }
@@ -195,7 +194,7 @@ public class GameScreenController {
         });
     }
 
-    public void setBoardItems(Item[][] board, boolean[][] bitMask) throws FileNotFoundException, URISyntaxException {
+    public void setBoardItems(Item[][] board, boolean[][] bitMask) throws IOException, URISyntaxException {
         this.boardMatrx = board;
         for(int i = 0; i < BOARD_DIM; i++) {
             for(int j = 0; j < BOARD_DIM; j++) {
@@ -214,7 +213,7 @@ public class GameScreenController {
                                     if(n.getOpacity() == 1.0 && (takeableItems == null || takeableItems[row][col])) {
                                         addInSelected(n);
                                     }
-                                    else {
+                                    else if(n.getOpacity() == 0.5) {
                                         removeFromSelected(n);
                                     }
                                     break;
@@ -228,32 +227,31 @@ public class GameScreenController {
         }
     }
 
-    public Image randomItemImageByColors(ItemColor color) throws URISyntaxException, FileNotFoundException {
+    public Image randomItemImageByColors(ItemColor color) throws URISyntaxException, IOException { // todo PROBLEMI
         Random random = new Random();
         int rand = random.nextInt(3);
-        File file = null;
+        Image img = null;
         switch (color) {
             case BLUE -> {
-                file = new File(ClassLoader.getSystemResource("images/items/b" + rand + ".png").toURI());
+                img = new Image(Objects.requireNonNull(ClassLoader.getSystemResourceAsStream("images/items/b" + rand + ".png")));
             }
             case GREEN -> {
-                file = new File(ClassLoader.getSystemResource("images/items/g" + rand + ".png").toURI());
+                img = new Image(Objects.requireNonNull(ClassLoader.getSystemResourceAsStream("images/items/g" + rand + ".png")));
             }
             case YELLOW -> {
-                file = new File(ClassLoader.getSystemResource("images/items/y" + rand + ".png").toURI());
+                img = new Image(Objects.requireNonNull(ClassLoader.getSystemResourceAsStream("images/items/y" + rand + ".png")));
             }
             case WHITE -> {
-                file = new File(ClassLoader.getSystemResource("images/items/w" + rand + ".png").toURI());
+                img = new Image(Objects.requireNonNull(ClassLoader.getSystemResourceAsStream("images/items/w" + rand + ".png")));
             }
             case PINK -> {
-                file = new File(ClassLoader.getSystemResource("images/items/p" + rand + ".png").toURI());
+                img = new Image(Objects.requireNonNull(ClassLoader.getSystemResourceAsStream("images/items/p" + rand + ".png")));
             }
             case LIGHT_BLUE -> {
-                file = new File(ClassLoader.getSystemResource("images/items/lb" + rand + ".png").toURI());
+                img = new Image(Objects.requireNonNull(ClassLoader.getSystemResourceAsStream("images/items/lb" + rand + ".png")));
             }
         }
-        FileInputStream fis = new FileInputStream(file);
-        return new Image(fis);
+        return img;
     }
 
     public void setOtherPlayersParameters(Map<String, Item[][]> nicknameToShelfMap, Map<String, Integer> nicknameToPointsMap, String playerNickname, String firstPlayer) {
@@ -320,9 +318,7 @@ public class GameScreenController {
     public void setupPlayerShelf() throws URISyntaxException, FileNotFoundException {
         for(int i = 0; i < SHELF_ROWS; i++) {
             for(int j = 0; j < SHELF_COL; j++) {
-                File file = new File(ClassLoader.getSystemResource("images/items/b0.png").toURI());
-                FileInputStream fis = new FileInputStream(file);
-                Image img = new Image(fis);
+                Image img = new Image(Objects.requireNonNull(ClassLoader.getSystemResourceAsStream("images/items/b0.png")));
                 ImageView imgv = new ImageView(img);
                 imgv.setFitWidth(SHELF_ITEM_DIM);
                 imgv.setFitHeight(SHELF_ITEM_DIM);
@@ -348,9 +344,17 @@ public class GameScreenController {
         }
     }
 
-    public void setYourTurnPane(boolean set) {
-        turnAnchorPane.setVisible(set);
-        turnAnchorPane.setDisable(!set);
+    public void setYourTurnPane(boolean set, String name, boolean waitForOtherPlayers) {
+        if(!waitForOtherPlayers) {
+            if (set) {
+                turnLabel.setText("It's your turn!");
+            } else {
+                turnLabel.setText("It's " + name + " turn!");
+            }
+        }
+        else {
+            turnLabel.setText("");
+        }
     }
 
     public void swapPickedItems(Node n) {
@@ -364,7 +368,7 @@ public class GameScreenController {
             Image tmpImage = firstImgv.getImage();
             firstImgv.setImage(secondImgv.getImage());
             secondImgv.setImage(tmpImage);
-            gui.swapCols(swapCols);
+            gui.swapColsGUI(swapCols);
             swapCols = new ArrayList<>(2);
         }
     }
@@ -377,7 +381,7 @@ public class GameScreenController {
         boardGridPane.getChildren().clear();
     }
 
-    public void setPersonalShelf(Item[][] shelf) throws FileNotFoundException, URISyntaxException {
+    public void setPersonalShelf(Item[][] shelf) throws IOException, URISyntaxException {
         for(int i = 0; i < SHELF_ROWS; i++) {
             for(int j = 0; j < SHELF_COL; j++) {
                 if(shelf[i][j] != null) {
@@ -406,7 +410,7 @@ public class GameScreenController {
             try {
                 incorrectMoveStage.setScene(new Scene(loader.load()));
             } catch (IOException e) {
-                e.printStackTrace();
+                System.err.println("A crash occurred when loading the scene, please restart the software!");
             }
             incorrectMoveStage.setTitle("INCORRECT MOVE!");
             incorrectMoveStage.setResizable(false);
@@ -422,7 +426,7 @@ public class GameScreenController {
             try {
                 wrongReceiverStage.setScene(new Scene(loader.load()));
             } catch (IOException e) {
-                e.printStackTrace();
+                System.err.println("A crash occurred when loading the scene, please restart the software!");
             }
             wrongReceiverStage.setTitle("WRONG RECEIVER!");
             wrongReceiverStage.setResizable(false);
@@ -443,13 +447,13 @@ public class GameScreenController {
             try {
                 yourTokensStage.setScene(new Scene(loader.load()));
             } catch (IOException e) {
-                e.printStackTrace();
+                System.err.println("A crash occurred when loading the scene, please restart the software!");
             }
             YourTokensController yourTokensController = loader.getController();
             try {
                 yourTokensController.setupTokens(playerTokens, endGameToken);
             } catch (URISyntaxException | FileNotFoundException e) {
-                e.printStackTrace();
+                System.err.println("A crash occurred when loading the scene, please restart the software!");
             }
             yourTokensStage.setTitle("My Shelfie - Your tokens!");
             yourTokensStage.setResizable(false);
@@ -560,7 +564,7 @@ public class GameScreenController {
             try {
                 stage.setScene(new Scene(loader.load()));
             } catch (IOException e) {
-                throw new RuntimeException(e);
+                System.err.println("A crash occurred when loading the scene, please restart the software!");
             }
             MenuController menuController = loader.getController();
             menuController.setGui(gui);
@@ -570,4 +574,20 @@ public class GameScreenController {
             stage.show();
         });
     }
+
+    public void waitForOtherPlayers() {
+        Platform.runLater(() -> {
+            FXMLLoader loader = new FXMLLoader(ClassLoader.getSystemResource("fxml/LastUserAlreadyMadeYourMove.fxml"));
+            Stage stage = new Stage();
+            try {
+                stage.setScene(new Scene(loader.load()));
+            } catch (IOException e) {
+                System.err.println("A crash occurred when loading the scene, please restart the software!");
+            }
+            stage.setTitle("My Shelfie - Wait for other players!");
+            stage.setResizable(false);
+            stage.show();
+        });
+    }
+
 }

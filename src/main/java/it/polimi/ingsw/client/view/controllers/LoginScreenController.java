@@ -50,6 +50,7 @@ public class LoginScreenController {
     private GraphicUserInterface gui = null;
     private List<Integer> players = Arrays.asList(2, 3, 4);
     private List<Integer> commons = Arrays.asList(1, 2);
+    private boolean nicknameSetted = false;
     private static final int MAX_NICKNAME = 20;
 
     public void setNickname() {
@@ -60,11 +61,13 @@ public class LoginScreenController {
                     text = text.substring(0, MAX_NICKNAME);
                 }
                 gui.sendNickname(text);
+
             }
         }
     }
 
     public void getGameParameters() {
+        nicknameSetted = true;
         changePane(nicknameAnchorPane, parametersAnchorPane);
         playersChoiceBox.getItems().addAll(players);
         commonsChoiceBox.getItems().addAll(commons);
@@ -90,6 +93,7 @@ public class LoginScreenController {
     }
 
     public void nicknameAccepted() {
+        nicknameSetted = true;
         changePane(nicknameAnchorPane, waitAnchorPane);
     }
 
@@ -128,7 +132,7 @@ public class LoginScreenController {
             try {
                 wrongParametersStage.setScene(new Scene(loader.load()));
             } catch (IOException e) {
-                e.printStackTrace();
+                System.err.println("A crash occurred when loading the scene, please restart the software!");
             }
             wrongParametersStage.setTitle("WRONG PARAMETERS!");
             wrongParametersStage.setResizable(false);
@@ -147,6 +151,15 @@ public class LoginScreenController {
 
     public void fullLobby() {
         changePane(nicknameAnchorPane, fullLobbyAnchorPane);
+    }
+
+    public void exit(GraphicUserInterface gui) {
+        if(nicknameSetted) {
+            gui.exit();
+        }
+        else {
+            gui.exitWithoutWaitingDisconnectFromServer();
+        }
     }
 
 }

@@ -12,6 +12,6 @@ public interface SerializeDeserializeInterface {
 
     void serialize(TCPMessage message);
 
-    void closeConnection();
+    void closeConnection() throws IOException;
 
 }

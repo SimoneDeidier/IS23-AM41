@@ -144,18 +144,18 @@
           <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
         </rowConstraints>
       </GridPane>
-      <AnchorPane fx:id="turnAnchorPane" disable="true" layoutX="785.0" layoutY="35.0" style="-fx-border-color: black;" visible="false" AnchorPane.leftAnchor="785.0" AnchorPane.topAnchor="27.0">
+      <AnchorPane fx:id="turnAnchorPane" layoutX="785.0" layoutY="35.0" style="-fx-border-color: black;" AnchorPane.leftAnchor="689.0" AnchorPane.topAnchor="27.0">
          <children>
-            <ImageView fitHeight="43.0" fitWidth="115.0" pickOnBounds="true" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+            <ImageView fitHeight="43.0" fitWidth="293.0" pickOnBounds="true" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
                <image>
                   <Image url="@../images/chat_background.jpg" />
                </image>
             </ImageView>
-            <Text fill="WHITE" strokeType="OUTSIDE" strokeWidth="0.0" text="It's your turn!" AnchorPane.bottomAnchor="12.0" AnchorPane.leftAnchor="17.0" AnchorPane.rightAnchor="16.0" AnchorPane.topAnchor="13.0">
+            <Label fx:id="turnLabel" alignment="CENTER" text="It's your turn!" textAlignment="CENTER" textFill="WHITE" AnchorPane.bottomAnchor="11.0" AnchorPane.leftAnchor="15.0" AnchorPane.rightAnchor="15.0" AnchorPane.topAnchor="11.0">
                <font>
                   <Font size="15.0" />
                </font>
-            </Text>
+            </Label>
          </children>
       </AnchorPane>
       <ImageView fx:id="endGameTokenImageView" fitHeight="69.0" fitWidth="69.0" layoutX="501.0" layoutY="474.0" pickOnBounds="true" preserveRatio="true" rotate="9.0" AnchorPane.bottomAnchor="177.0" AnchorPane.leftAnchor="501.0">

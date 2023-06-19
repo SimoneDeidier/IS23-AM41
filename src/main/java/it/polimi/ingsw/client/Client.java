@@ -16,7 +16,7 @@ import java.util.Scanner;
 public class Client {
 
     private static Connection connection;
-    private final static String IP = "localhost";
+    private static String ipAddress = null;
     private final static int TCP_PORT = 8888;
     private final static int RMI_PORT = 1234;
     private static String connectionType;
@@ -31,10 +31,14 @@ public class Client {
             System.out.println("Select connection type: ");
             connectionType = stdin.nextLine();
         }
+        if(!parseIPAddress(args)) {
+            System.out.println("Insert the server's IP address: ");
+            ipAddress = stdin.nextLine();
+        }
         switch (connectionType) {
             case "tcp" -> {
                 try {
-                    connection = new ConnectionTCP(IP, TCP_PORT);
+                    connection = new ConnectionTCP(ipAddress, TCP_PORT);
                 }
                 catch (IOException e) {
                     connectionOk = false;
@@ -42,7 +46,7 @@ public class Client {
             }
             case "rmi" -> {
                 try {
-                    connection = new ConnectionRMI(RMI_PORT,IP);
+                    connection = new ConnectionRMI(RMI_PORT, ipAddress);
                 } catch (RemoteException e) {
                     connectionOk = false;
                 }
@@ -64,7 +68,7 @@ public class Client {
             System.out.println("Server is momentarily unreachable, please retry later!");
         }
         try {
-            connection.closeRMI();
+            connection.closeConnection();
         }
         catch (NullPointerException e) {
             System.out.println("Connection never opened!");
@@ -86,6 +90,18 @@ public class Client {
         } catch (Exception e) {
             System.err.println(e.getMessage());
         }
+    }
+
+    public static boolean parseIPAddress(String[] args) {
+        for(int i = 0; i < args.length - 1; i++) {
+            String cmd = args[i];
+            String par = args[i + 1];
+            if(Objects.equals(cmd, "--ipaddr") && (par.matches("[0-9][0-9.]*[0-9]+") || Objects.equals(par, "localhost"))) {
+                ipAddress = par;
+                return true;
+            }
+        }
+        return false;
     }
 
     public static boolean parseConnectionType(String[] args) {

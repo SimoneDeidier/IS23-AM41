@@ -4,7 +4,6 @@ import it.polimi.ingsw.client.clientcontroller.controller.ClientController;
 import it.polimi.ingsw.client.view.controllers.EndGameScreenController;
 import it.polimi.ingsw.client.view.controllers.GameScreenController;
 import it.polimi.ingsw.client.view.controllers.LoginScreenController;
-import it.polimi.ingsw.client.view.controllers.MenuController;
 import it.polimi.ingsw.messages.NewView;
 import javafx.application.Application;
 import javafx.application.Platform;
@@ -51,6 +50,10 @@ public class GraphicUserInterface extends Application implements UserInterface, 
         loginScreenController.setGui(this);
         guiStage.setResizable(false);
         guiStage.setTitle("Welcome to My Shelfie!");
+        guiStage.setOnCloseRequest(e -> {
+            e.consume();
+            loginScreenController.exit(this);
+        });
         guiStage.show();
     }
 
@@ -67,9 +70,7 @@ public class GraphicUserInterface extends Application implements UserInterface, 
     @Override
     public void sendNickname(String nickname) {
         clientController.sendNickname(nickname);
-        System.out.println("NICKNAME SENDED");
         clientController.startClearThread();
-        System.out.println("STARTED CLEAR THREAD");
     }
 
     @Override
@@ -105,25 +106,25 @@ public class GraphicUserInterface extends Application implements UserInterface, 
             try {
                 guiStage.setScene(new Scene(loader.load()));
             } catch (IOException e) {
-                e.printStackTrace();
+                System.err.println("A crash occurred when loading the scene, please restart the software!");
             }
             gameScreenController = loader.getController();
             gameScreenController.setGui(this);
             try {
                 gameScreenController.setPersonalTargetCard(personalTargetCardNumber);
-            } catch (URISyntaxException | FileNotFoundException e) {
-                e.printStackTrace();
+            } catch (URISyntaxException | IOException e) {
+                System.err.println("A crash occurred when loading the scene, please restart the software!");
             }
             try {
                 gameScreenController.setCommonTargetCard(commonTargetGoals);
             }
             catch (URISyntaxException | FileNotFoundException e) {
-                throw new RuntimeException(e);
+                System.err.println("A crash occurred when loading the scene, please restart the software!");
             }
             try {
                 gameScreenController.setupPlayerShelf();
             } catch (URISyntaxException | FileNotFoundException e) {
-                e.printStackTrace();
+                System.err.println("A crash occurred when loading the scene, please restart the software!");
             }
             guiStage.getScene().addEventFilter(KeyEvent.KEY_PRESSED, new EventHandler<>() {
                 final KeyCombination keyCombination = new KeyCodeCombination(KeyCode.ESCAPE);
@@ -178,9 +179,9 @@ public class GraphicUserInterface extends Application implements UserInterface, 
                     gameScreenController.setPersonalShelf(newView.getNicknameToShelfMap().get(playerNickname));
                     gameScreenController.setTokens(newView.getCommonsToTokens(), newView.getPlayersToTokens().get(playerNickname));
                     gameScreenController.setOtherPlayersParameters(newView.getNicknameToShelfMap(), newView.getNicknameToPointsMap(), playerNickname, newView.getPlayerList().get(0));
-                    gameScreenController.setYourTurnPane(this.isYourTurn);
+                    gameScreenController.setYourTurnPane(this.isYourTurn, newView.getActivePlayer(), newView.youAreTheLastUserAndYouAlreadyMadeYourMove());
                     if(newView.youAreTheLastUserAndYouAlreadyMadeYourMove()) {
-                        // todo mostrare la cosa che dice il nome della funzione
+                        gameScreenController.waitForOtherPlayers();
                     }
                 }
                 else {
@@ -195,7 +196,7 @@ public class GraphicUserInterface extends Application implements UserInterface, 
                     guiStage.show();
                 }
             } catch (URISyntaxException | IOException e) {
-                e.printStackTrace();
+                System.err.println("A crash occurred when loading the scene, please restart the software!");
             }
         });
     }
@@ -240,7 +241,7 @@ public class GraphicUserInterface extends Application implements UserInterface, 
     }
 
     @Override
-    public void swapCols(List<Node> list) {
+    public void swapColsGUI(List<Node> list) {
         clientController.swapCols(list);
     }
 
@@ -250,7 +251,7 @@ public class GraphicUserInterface extends Application implements UserInterface, 
     }
 
     @Override
-    public void swapCols(int col1, int col2) {
+    public void swapColsTUI(int col1, int col2) {
         // NO IN GUI
     }
 
@@ -292,7 +293,7 @@ public class GraphicUserInterface extends Application implements UserInterface, 
             try {
                 stage.setScene(new Scene(loader.load()));
             } catch (IOException e) {
-                e.printStackTrace();
+                System.err.println("A crash occurred when loading the scene, please restart the software!");
             }
             stage.setTitle("My Shelfie - Server not responding!");
             stage.setResizable(false);
@@ -321,7 +322,7 @@ public class GraphicUserInterface extends Application implements UserInterface, 
             try {
                 stage.setScene(new Scene(loader.load()));
             } catch (IOException e) {
-                e.printStackTrace();
+                System.err.println("A crash occurred when loading the scene, please restart the software!");
             }
             stage.setResizable(false);
             stage.setTitle("My Shelfie - Can't restore lobby!");
@@ -339,7 +340,7 @@ public class GraphicUserInterface extends Application implements UserInterface, 
             try {
                 stage.setScene(new Scene(loader.load()));
             } catch (IOException e) {
-                e.printStackTrace();
+                System.err.println("A crash occurred when loading the scene, please restart the software!");
             }
             stage.setResizable(false);
             stage.setTitle("My Shelfie - You have won!!!");
@@ -363,8 +364,18 @@ public class GraphicUserInterface extends Application implements UserInterface, 
     }
 
     @Override
-    public void setTakeableItems(boolean[][] takeableItems) {
-        Platform.runLater(() -> gameScreenController.setTakeableItems(takeableItems));
+    public void setTakeableItems(boolean[][] takeableItems, boolean yourTurn, boolean waitForOtherPlayers) {
+        Platform.runLater(() -> {
+            if(yourTurn && !waitForOtherPlayers) {
+                gameScreenController.setTakeableItems(takeableItems);
+            }
+        });
+    }
+
+    @Override
+    public void exitWithoutWaitingDisconnectFromServer() {
+        clientController.exitWithoutWaitingDisconnectFromServer();
+        guiStage.close();
     }
 
 }

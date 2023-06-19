@@ -44,10 +44,10 @@ public class ClientControllerTCP implements ClientController {
         userInterfaceThread.start();
         try {
             userInterfaceThread.join();
-            System.err.println("JOINED THE GUI THREAD");
+            System.err.println("JOINED THE VIEW THREAD");
         }
         catch (InterruptedException e) {
-            e.printStackTrace();
+            System.err.println("The UI thread could not be closed, please kill the task and restart the client!");
         }
     }
 
@@ -157,7 +157,8 @@ public class ClientControllerTCP implements ClientController {
             }
         }
         userInterface.updateView(newView);
-        userInterface.setTakeableItems(takeableItems);
+        boolean yourTurn = Objects.equals(newView.getActivePlayer(), playerNickname);
+        userInterface.setTakeableItems(takeableItems, yourTurn, newView.youAreTheLastUserAndYouAlreadyMadeYourMove());
     }
 
     @Override
@@ -291,6 +292,12 @@ public class ClientControllerTCP implements ClientController {
     @Override
     public void playerReconnected(String nickname) {
        userInterface.playerReconnected(nickname);
+    }
+
+    @Override
+    public void exitWithoutWaitingDisconnectFromServer() {
+        tcpMessageController.stopClearThread();
+        tcpMessageController.closeClient();
     }
 
 }

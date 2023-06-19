@@ -103,9 +103,7 @@ public class CommonGoalController {
     }
 
     public Image getCommonImageByName(String name) throws URISyntaxException, FileNotFoundException {
-        File file = new File(ClassLoader.getSystemResource("images/commons/" + name + ".jpg").toURI());
-        FileInputStream fis = new FileInputStream(file);
-        return new Image(fis);
+        return new Image(Objects.requireNonNull(ClassLoader.getSystemResourceAsStream("images/commons/" + name + ".jpg")));
     }
 
     public Image getMaxTokenValueByCardNumber(String name, Map<String, List<ScoringToken>> map) throws URISyntaxException, FileNotFoundException {
@@ -125,9 +123,7 @@ public class CommonGoalController {
                     }
                 }
                 if(max != -1) {
-                    File file = new File(ClassLoader.getSystemResource("images/tokens/scoring" + max + ".jpg").toURI());
-                    FileInputStream fis = new FileInputStream(file);
-                    return new Image(fis);
+                    return new Image(Objects.requireNonNull(ClassLoader.getSystemResourceAsStream("images/tokens/scoring" + max + ".jpg")));
                 }
             }
         }

@@ -3,14 +3,27 @@ package it.polimi.ingsw.server.model.commons;
 import it.polimi.ingsw.server.model.items.ItemColor;
 import it.polimi.ingsw.server.model.Shelf;
 
+/**
+ * CommonFourGroupsOfFourClass represents a specific CommonTargetCard in the game
+ */
 public class CommonFourGroupsOfFour extends CommonTargetCard {
 
     private final static int NUMBER_OF_GROUPS_NEEDED = 4;
     private final static int NUMBER_OF_TILES_NEEDED_IN_GROUPS = 4;
+
+    /**
+     * Constructor is provided to set the correct name to the instance created
+     * @param maxPlayerNumber is needed to allocate the correct number of ScoringTokens, that varies according to the number of players
+     */
     public CommonFourGroupsOfFour(int maxPlayerNumber) {
         super(maxPlayerNumber);
         this.name="CommonFourGroupsOfFour";
     }
+
+    /**
+     * The override of the method check modifies the function in order to verify the specific CommonTargetCard
+     * @return true if the condition is satisfied, false otherwise
+     */
     @Override
     public boolean check(Shelf shelf) {
         int count = 0;

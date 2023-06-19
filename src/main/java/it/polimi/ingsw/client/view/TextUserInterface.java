@@ -10,6 +10,7 @@ import it.polimi.ingsw.server.model.items.ItemColor;
 import it.polimi.ingsw.server.model.tokens.ScoringToken;
 import javafx.scene.Node;
 import org.apache.commons.io.FileUtils;
+import org.apache.commons.io.IOUtils;
 
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -29,9 +30,8 @@ public class TextUserInterface implements UserInterface{
 
     private int personalTargetCardNumber;
     private String nickname;
-    private List<String> commonTargetGoals;
     private boolean chatOpen;
-    private List<String> chatList = new ArrayList<>();
+    private final List<String> chatList = new ArrayList<>();
 
     private boolean[][] selectedBoardBitMask = new boolean[9][9];
 
@@ -39,7 +39,8 @@ public class TextUserInterface implements UserInterface{
     private List<int[]> selectedItemsCoordinates = new ArrayList<>(3);
 
     private NewView newView = new NewView();
-    private boolean firstUpdateView;
+    private boolean[][] takeableItems;
+    private volatile boolean closeTUI = false;
 
     @Override
     public void run() {
@@ -57,6 +58,9 @@ public class TextUserInterface implements UserInterface{
 
         if(scanner.hasNextLine()){
             getNickname("Insert your nickname");
+        }
+        while (!closeTUI) {
+            Thread.onSpinWait();
         }
     }
 
@@ -89,7 +93,11 @@ public class TextUserInterface implements UserInterface{
 
         nickname = scanner.nextLine();
 
-        sendNickname(nickname);
+        if(nickname != null && !nickname.equals("") && nickname.length() < 20){
+            sendNickname(nickname);
+        } else {
+            getNickname("The nickname you inserted is not valid. Insert your nickname:");
+        }
     }
 
     private void mainGamePage() {
@@ -102,6 +110,8 @@ public class TextUserInterface implements UserInterface{
 
         int spaceBetweenBoardAndShelf = 10;
 
+        boolean validInput = false;
+
         boolean[][] boardBitMask = this.newView.getBoardBitMask();
         Item[][] boardItems = this.newView.getBoardItems();
         Item[][] shelfItems = this.newView.getNicknameToShelfMap().get(this.nickname);
@@ -109,14 +119,14 @@ public class TextUserInterface implements UserInterface{
 
         String shelfTopString = "My Shelf!";
 
+        String chairHolder = "";
+
         System.out.println(drawHorizontalLine(sceneWidth));
-        printContentLine(this.nickname + " -- Total Points: " + totalPoints);
-        System.out.println("|" + " ".repeat(sceneWidth - 2) + "|");
         if(Objects.equals(this.newView.getPlayerList().get(0), nickname)) {
-            printContentLine("You are the holder of the chair!" );
-        } else {
-            System.out.println("|" + " ".repeat(sceneWidth - 2) + "|");
+            chairHolder = "  --  You are the holder of the chair!";
         }
+        printContentLine(this.nickname + " -- Total Points: " + totalPoints + chairHolder);
+        System.out.println("|" + " ".repeat(sceneWidth - 2) + "|");
         if(isYourTurn()){
             printContentLine("It's your turn");
         } else {
@@ -124,15 +134,32 @@ public class TextUserInterface implements UserInterface{
         }
 
         for(int i=0; i<boardRow; i++){
+            String repeat = " ".repeat(shelfCol * tileWidth + 1 + spaceBetweenBoardAndShelf);
             if(i==0){
+                StringBuilder BoardColNumbers = new StringBuilder();
+                for(int n=0; n<9; n++){
+                    BoardColNumbers.append(" ".repeat(4));
+                    BoardColNumbers.append(n);
+                    BoardColNumbers.append(" ".repeat(3));
+                }
+                printContentLine(BoardColNumbers + " ".repeat(shelfCol*tileWidth+1+spaceBetweenBoardAndShelf));
                 printContentLine(drawHorizontalLine(boardCol*tileWidth+1) + " ".repeat(shelfCol*tileWidth+1+spaceBetweenBoardAndShelf));
                 for(int j=0; j<2; j++){
                     StringBuilder shelfBoxLine = new StringBuilder();
+                    if(j==0){
+                        shelfBoxLine.append(i);
+                    } else {
+                        shelfBoxLine.append(" ");
+                    }
                     shelfBoxLine.append("|");
                     for(int w=0; w<boardCol; w++) {
                         for (int k = 0; k < tileWidth-1; k++) {
                             if(boardBitMask[i][w] && !selectedBoardBitMask[i][w]){
-                                shelfBoxLine.append(itemToColour(boardItems[i][w]));
+                                if(this.takeableItems != null && this.takeableItems[i][w]){
+                                    shelfBoxLine.append(itemToColour(boardItems[i][w]));
+                                } else {
+                                    shelfBoxLine.append(itemToColour(boardItems[i][w]));//MA PIù GRIGINO
+                                }
                             } else {
                                 shelfBoxLine.append(" ");
                             }
@@ -143,22 +170,31 @@ public class TextUserInterface implements UserInterface{
                         String selectedCardsText = "Your selected cards:";
                         printContentLine(shelfBoxLine + " ".repeat(spaceBetweenBoardAndShelf) + selectedCardsText + " ".repeat(shelfCol*tileWidth+1-selectedCardsText.length()));
                     } else {
-                        printContentLine(shelfBoxLine + " ".repeat(shelfCol*tileWidth+1+spaceBetweenBoardAndShelf));
+                        printContentLine(shelfBoxLine + repeat);
                     }
                 }
             } else if(i==1) {
                 if(isYourTurn()){
                     printContentLine(drawHorizontalLine(boardCol*tileWidth+1) + " ".repeat(10+tileWidth) + drawHorizontalLine(3*tileWidth+1) + " ".repeat(tileWidth));
                 } else {
-                    printContentLine(drawHorizontalLine(boardCol * tileWidth + 1) + " ".repeat(shelfCol * tileWidth + 1 + spaceBetweenBoardAndShelf));
+                    printContentLine(drawHorizontalLine(boardCol * tileWidth + 1) + repeat);
                 }
                 for(int j=0; j<2; j++){
                     StringBuilder shelfBoxLine = new StringBuilder();
+                    if(j==0){
+                        shelfBoxLine.append(i);
+                    } else {
+                        shelfBoxLine.append(" ");
+                    }
                     shelfBoxLine.append("|");
                     for(int w=0; w<boardCol; w++) {
                         for (int k = 0; k < tileWidth-1; k++) {
                             if(boardBitMask[i][w] && !selectedBoardBitMask[i][w]){
-                                shelfBoxLine.append(itemToColour(boardItems[i][w]));
+                                if(this.takeableItems != null && this.takeableItems[i][w]){
+                                    shelfBoxLine.append(itemToColour(boardItems[i][w]));
+                                } else {
+                                    shelfBoxLine.append(itemToColour(boardItems[i][w]));//MA PIù GRIGINO
+                                }
                             } else {
                                 shelfBoxLine.append(" ");
                             }
@@ -181,22 +217,31 @@ public class TextUserInterface implements UserInterface{
                         shelfBoxLine.append(" ".repeat(tileWidth));
                         printContentLine(shelfBoxLine.toString());
                     } else {
-                        printContentLine(shelfBoxLine + " ".repeat(shelfCol * tileWidth + 1 + spaceBetweenBoardAndShelf));
+                        printContentLine(shelfBoxLine + repeat);
                     }
                 }
             } else if(i==2) {
                 if(isYourTurn()){
                     printContentLine(drawHorizontalLine(boardCol*tileWidth+1) + " ".repeat(10+tileWidth) + drawHorizontalLine(3*tileWidth+1) + " ".repeat(tileWidth));
                 } else {
-                    printContentLine(drawHorizontalLine(boardCol*tileWidth+1) + " ".repeat(shelfCol*tileWidth+1+spaceBetweenBoardAndShelf));
+                    printContentLine(drawHorizontalLine(boardCol*tileWidth+1) + repeat);
                 }
                 for(int j=0; j<2; j++){
                     StringBuilder shelfBoxLine = new StringBuilder();
+                    if(j==0){
+                        shelfBoxLine.append(i);
+                    } else {
+                        shelfBoxLine.append(" ");
+                    }
                     shelfBoxLine.append("|");
                     for(int w=0; w<boardCol; w++) {
                         for (int k = 0; k < tileWidth-1; k++) {
                             if(boardBitMask[i][w] && !selectedBoardBitMask[i][w]){
-                                shelfBoxLine.append(itemToColour(boardItems[i][w]));
+                                if(this.takeableItems != null && this.takeableItems[i][w]){
+                                    shelfBoxLine.append(itemToColour(boardItems[i][w]));
+                                } else {
+                                    shelfBoxLine.append(itemToColour(boardItems[i][w]));//MA PIù GRIGINO
+                                }
                             } else {
                                 shelfBoxLine.append(" ");
                             }
@@ -209,21 +254,42 @@ public class TextUserInterface implements UserInterface{
                     } else {
                         shelfBoxLine.append(" ".repeat(spaceBetweenBoardAndShelf));
                         shelfBoxLine.append("|");
-                        shelfBoxLine.append(" ".repeat((shelfCol*tileWidth-1)/2 - shelfTopString.length()/2) + shelfTopString + " ".repeat((shelfCol*tileWidth-1)/2 - shelfTopString.length()/2));
+                        String repeat1 = " ".repeat((shelfCol * tileWidth - 1) / 2 - shelfTopString.length() / 2);
+                        shelfBoxLine.append(repeat1).append(shelfTopString).append(repeat1);
                         shelfBoxLine.append("|");
                         printContentLine(shelfBoxLine.toString());
                     }
 
                 }
             } else {
-                printContentLine(drawHorizontalLine(boardCol*tileWidth+1) + " ".repeat(10) + drawHorizontalLine(shelfCol*tileWidth+1));
+                if(i==3){
+                    StringBuilder ShelfColNumbers = new StringBuilder();
+                    for(int n=0; n<5; n++){
+                        ShelfColNumbers.append("-".repeat(4));
+                        ShelfColNumbers.append(n);
+                        ShelfColNumbers.append("-".repeat(3));
+                    }
+                    ShelfColNumbers.append("-");
+                    printContentLine(drawHorizontalLine(boardCol*tileWidth+1) + " ".repeat(10) + ShelfColNumbers);
+                } else {
+                    printContentLine(drawHorizontalLine(boardCol*tileWidth+1) + " ".repeat(10) + drawHorizontalLine(shelfCol*tileWidth+1));
+                }
                 for(int j=0; j<2; j++){
                     StringBuilder shelfBoxLine = new StringBuilder();
+                    if(j==0){
+                        shelfBoxLine.append(i);
+                    } else {
+                        shelfBoxLine.append(" ");
+                    }
                     shelfBoxLine.append("|");
                     for(int w=0; w<boardCol; w++) {
                         for (int k = 0; k < tileWidth-1; k++) {
                             if(boardBitMask[i][w] && !selectedBoardBitMask[i][w]){
-                                shelfBoxLine.append(itemToColour(boardItems[i][w]));
+                                if(this.takeableItems != null && this.takeableItems[i][w]){
+                                    shelfBoxLine.append(itemToColour(boardItems[i][w]));
+                                } else {
+                                    shelfBoxLine.append(itemToColour(boardItems[i][w]));//MA PIù GRIGINO
+                                }
                             } else {
                                 shelfBoxLine.append(" ");
                             }
@@ -277,7 +343,7 @@ public class TextUserInterface implements UserInterface{
                     if(first < getPositionPickedSize() && second < getPositionPickedSize() && first != second){
                         Collections.swap(selectedItems, first, second);
                         Collections.swap(selectedItemsCoordinates, first, second);
-                        swapCols(first, second);
+                        swapColsTUI(first, second);
                         mainGamePage();
                     } else {
                         tileNotAvailable();
@@ -301,12 +367,29 @@ public class TextUserInterface implements UserInterface{
             case "/select" -> {
                 if(isYourTurn()) {
                     if(getPositionPickedSize()<3) {
-                        int el[] = new int[2];
-                        System.out.print("Insert the row coordinate (from 0 to 8) of the tile you want to select: ");
-                        el[0] = in.nextInt();
-                        System.out.print("Insert the column coordinate (from 0 to 8) of the tile you want to select: ");
-                        el[1] = in.nextInt();
-                        if(boardBitMask[el[0]][el[1]] == true && selectedBoardBitMask[el[0]][el[1]] == false){
+                        int[] el = new int[2];
+                        while (!validInput) {
+                            try {
+                                System.out.print("Insert the row coordinate (from 0 to 8) of the tile you want to select: ");
+                                el[0] = in.nextInt();
+                                validInput = true;
+                            } catch (InputMismatchException e) {
+                                System.out.print("Invalid input! Insert the row coordinate (from 0 to 8) of the tile you want to select: ");
+                                in.nextLine(); // Clear the invalid input from the scanner
+                            }
+                        }
+                        validInput = false;
+                        while (!validInput) {
+                            try {
+                                System.out.print("Insert the column coordinate (from 0 to 8) of the tile you want to select: ");
+                                el[1] = in.nextInt();
+                                validInput = true;
+                            } catch (InputMismatchException e) {
+                                System.out.print("Invalid input! Insert the column coordinate (from 0 to 8) of the tile you want to select: ");
+                                in.nextLine(); // Clear the invalid input from the scanner
+                            }
+                        }
+                        if(boardBitMask[el[0]][el[1]] && !selectedBoardBitMask[el[0]][el[1]]){
                             selectedBoardBitMask[el[0]][el[1]] = true;
                             selectedItems.add(boardItems[el[0]][el[1]]);
                             selectedItemsCoordinates.add(el);
@@ -389,15 +472,18 @@ public class TextUserInterface implements UserInterface{
         }
     }
 
-    private char itemToColour(Item item) {
-        return switch (item.getColor()) {
-            case LIGHT_BLUE -> 'L';
-            case BLUE -> 'B';
-            case GREEN -> 'G';
-            case YELLOW -> 'Y';
-            case WHITE -> 'W';
-            case PINK -> 'P';
-        };
+    private String itemToColour(Item item) {
+        if(item != null) {
+            return switch (item.getColor()) {
+                case LIGHT_BLUE -> "\u001B[46mL\u001B[0m";
+                case BLUE -> "\u001B[44mB\u001B[0m";
+                case GREEN -> "\u001B[42mG\u001B[0m";
+                case YELLOW -> "\u001B[43mY\u001B[0m";
+                case WHITE -> "\u001B[47mW\u001B[0m";
+                case PINK -> "\u001B[45mP\u001B[0m";
+            };
+        }
+        return " ";
     }
 
     private void tokensPage() {
@@ -439,17 +525,11 @@ public class TextUserInterface implements UserInterface{
         Item[][] shelfItems = new Item[6][5];
 
         Gson gson = new Gson();
-        File jsonFile = null;
-        try {
-            jsonFile = new File(ClassLoader.getSystemResource("json/PersonalTargetCards.json").toURI());
-        } catch (URISyntaxException e) {
-            throw new RuntimeException(e);
-        }
         String jsonString = null;
         try {
-            jsonString = FileUtils.readFileToString(jsonFile, StandardCharsets.UTF_8);
+            jsonString = IOUtils.toString(Objects.requireNonNull(ClassLoader.getSystemResourceAsStream("json/PersonalTargetCards.json")), StandardCharsets.UTF_8);
         } catch (IOException e) {
-            throw new RuntimeException(e);
+            System.err.println("Could not load a resource from a JSON file, please restart the game!");
         }
 
         JsonArray jsonArray = gson.fromJson(jsonString, JsonArray.class);
@@ -469,11 +549,11 @@ public class TextUserInterface implements UserInterface{
         }
 
         printContentLine(drawHorizontalLine(shelfCol*tileWidth+1));
-        StringBuilder shelfBoxLine_top = new StringBuilder();
-        shelfBoxLine_top.append("|");
-        shelfBoxLine_top.append(" ".repeat((shelfCol*tileWidth-1)/2 - nickname.length()/2) + nickname + " ".repeat((shelfCol*tileWidth-1)/2 - nickname.length()/2));
-        shelfBoxLine_top.append("|");
-        printContentLine(shelfBoxLine_top.toString());
+        String repeat = " ".repeat((shelfCol * tileWidth - 1) / 2 - nickname.length() / 2);
+        String shelfBoxLine_top = "|" +
+                repeat + nickname + repeat +
+                "|";
+        printContentLine(shelfBoxLine_top);
         for(int i=0; i<shelfRow; i++){
             printContentLine(drawHorizontalLine(shelfCol*tileWidth+1));
             for(int j=0; j<2; j++){
@@ -520,44 +600,28 @@ public class TextUserInterface implements UserInterface{
         textLines.add(" ");
         this.newView.getCommonsToTokens().forEach((key, value) -> {
             switch (key) {
-                case "CommonSixGroupsOfTwo":
-                    textLines.add("Six groups each containing at least 2 tiles of the same type (not necessarily in the depicted shape). The tiles of one group can be different from those of another group.");
-                    break;
-                case "CommonDiagonal":
-                    textLines.add("Five tiles of the same type forming a diagonal.");
-                    break;
-                case "CommonEightSame":
-                    textLines.add("Eight tiles of the same type. There’s no restriction about the position of these tiles.");
-                    break;
-                case "CommonFourCorners":
-                    textLines.add("Four tiles of the same type in the four corners of the bookshelf.");
-                    break;
-                case "CommonFourGroupsOfFour":
-                    textLines.add("Four groups each containing at least 4 tiles of the same type (not necessarily in the depicted shape). The tiles of one group can be different from those of another group.");
-                    break;
-                case "CommonFourRows":
-                    textLines.add("Four lines each formed by 5 tiles of maximum three different types. One line can show the same or a different combination of another line.");
-                    break;
-                case "CommonStairway":
-                    textLines.add("Five columns of increasing or decreasing height. Starting from the first column on the left or on the right, each next column must be made of exactly one more tile. Tiles can be of any type.");
-                    break;
-                case "CommonThreeColumns":
-                    textLines.add("Three columns each formed by 6 tiles of maximum three different types. One column can show the same or a different combination of another column.");
-                    break;
-                case "CommonTwoColumns":
-                    textLines.add("Two columns each formed by 6 different types of tiles.");
-                    break;
-                case "CommonTwoRows":
-                    textLines.add("Two lines each formed by 5 different types of tiles. One line can show the same or a different combination of the other line.");
-                    break;
-                case "CommonTwoSquares":
-                    textLines.add("Two groups each containing 4 tiles of the same type in a 2x2 square. The tiles of one square can be different from those of the other square.");
-                    break;
-                case "CommonX":
-                    textLines.add("Five tiles of the same type forming an X.");
-                    break;
-                default:
-                    textLines.add("NO COMMON TARGET CARD SET");
+                case "CommonSixGroupsOfTwo" ->
+                        textLines.add("Six groups each containing at least 2 tiles of the same type (not necessarily in the depicted shape). The tiles of one group can be different from those of another group.");
+                case "CommonDiagonal" -> textLines.add("Five tiles of the same type forming a diagonal.");
+                case "CommonEightSame" ->
+                        textLines.add("Eight tiles of the same type. There’s no restriction about the position of these tiles.");
+                case "CommonFourCorners" ->
+                        textLines.add("Four tiles of the same type in the four corners of the bookshelf.");
+                case "CommonFourGroupsOfFour" ->
+                        textLines.add("Four groups each containing at least 4 tiles of the same type (not necessarily in the depicted shape). The tiles of one group can be different from those of another group.");
+                case "CommonFourRows" ->
+                        textLines.add("Four lines each formed by 5 tiles of maximum three different types. One line can show the same or a different combination of another line.");
+                case "CommonStairway" ->
+                        textLines.add("Five columns of increasing or decreasing height. Starting from the first column on the left or on the right, each next column must be made of exactly one more tile. Tiles can be of any type.");
+                case "CommonThreeColumns" ->
+                        textLines.add("Three columns each formed by 6 tiles of maximum three different types. One column can show the same or a different combination of another column.");
+                case "CommonTwoColumns" -> textLines.add("Two columns each formed by 6 different types of tiles.");
+                case "CommonTwoRows" ->
+                        textLines.add("Two lines each formed by 5 different types of tiles. One line can show the same or a different combination of the other line.");
+                case "CommonTwoSquares" ->
+                        textLines.add("Two groups each containing 4 tiles of the same type in a 2x2 square. The tiles of one square can be different from those of the other square.");
+                case "CommonX" -> textLines.add("Five tiles of the same type forming an X.");
+                default -> textLines.add("NO COMMON TARGET CARD SET");
             }
         });
         textLines.add(" ");
@@ -593,9 +657,10 @@ public class TextUserInterface implements UserInterface{
         StringBuilder shelfBoxLine_top = new StringBuilder();
         for (Map.Entry<String, Item[][]> entry : this.newView.getNicknameToShelfMap().entrySet()) {
             String nickname = entry.getKey();
-            if(nickname != this.nickname) {
+            if(!Objects.equals(nickname, this.nickname)) {
                 shelfBoxLine_top.append("|");
-                shelfBoxLine_top.append(" ".repeat((shelfCol * tileWidth - 1) / 2 - nickname.length() / 2) + nickname + " ".repeat((shelfCol * tileWidth - 1) / 2 - nickname.length() / 2));
+                String repeat = " ".repeat((shelfCol * tileWidth - 1) / 2 - nickname.length() / 2);
+                shelfBoxLine_top.append(repeat).append(nickname).append(repeat);
                 shelfBoxLine_top.append("|");
                 shelfBoxLine_top.append(" ".repeat(5));
             }
@@ -607,7 +672,8 @@ public class TextUserInterface implements UserInterface{
                 for(int j=0; j<2; j++){
                     StringBuilder shelfBoxLine = new StringBuilder();
                     for (Map.Entry<String, Item[][]> entry : this.newView.getNicknameToShelfMap().entrySet()) {
-                        if(nickname != this.nickname) {
+                        String nickname = entry.getKey();
+                        if(!Objects.equals(nickname, this.nickname)) {
                             Item[][] shelfItems = entry.getValue();
                             shelfBoxLine.append("|");
                             for (int w = 0; w < shelfCol; w++) {
@@ -668,9 +734,6 @@ public class TextUserInterface implements UserInterface{
         String message = in.nextLine();
         while(!message.equals("/back")) {
             sendMessage(message);
-            System.out.println("You: " + message);
-            message = in.nextLine();
-            chatList.add("You: " + message);
         }
             this.chatOpen = false;
             mainGamePage();
@@ -678,12 +741,19 @@ public class TextUserInterface implements UserInterface{
 
     private void printContentLine(String text) {
         StringBuilder lineContent = new StringBuilder();
-        if(text.length()%2!=0){
+        int count=0;
+        for (int i = 0; i < text.length(); i++) {
+            if (text.charAt(i) == '[') {
+                count++;
+            }
+        }
+        int text_lenght = text.length() - (count/2 * 9);
+        if(text_lenght % 2 != 0){
             text = text + " ";
         }
-        lineContent.append(" ".repeat(Math.max(0, (sceneWidth - text.length() - 2) / 2)));
+        lineContent.append(" ".repeat(Math.max(0, (sceneWidth - text_lenght - 2) / 2)));
         String contentLine = "|" + lineContent + text + lineContent + "|";
-        System.out.println(contentLine);
+        System.out.println(contentLine + text_lenght + " " + text.length());
     }
 
     private void drawEmptyLines(int contentLines) {
@@ -701,21 +771,23 @@ public class TextUserInterface implements UserInterface{
     }
 
     private String drawHorizontalLine(int width) {
-        StringBuilder line = new StringBuilder();
-        line.append("-".repeat(Math.max(0, width)));
-        return line.toString();
+        return "-".repeat(Math.max(0, width));
     }
 
     @Override
     public void setClientController(ClientController clientController) {
-        TextUserInterface.clientController = clientController;
+        new Thread(() -> {
+            TextUserInterface.clientController = clientController;
+        }).start();
     }
 
     @Override
     public void getGameParameters() {
-        int numPlayers = getNumberOfPlayers();
-        int numCommons = getNumberOfCommon();
-        sendParameters(numPlayers, numCommons);
+        new Thread(() -> {
+            int numPlayers = getNumberOfPlayers();
+            int numCommons = getNumberOfCommon();
+            sendParameters(numPlayers, numCommons);
+        }).start();
     }
 
     private int getNumberOfPlayers() {
@@ -739,7 +811,7 @@ public class TextUserInterface implements UserInterface{
         while (!validInput) {
             try {
                 number = in.nextInt();
-                if(number < 1 || number > 4){
+                if(number < 2 || number > 4){
                     throw new Exception();
                 }
                 validInput = true;
@@ -791,11 +863,14 @@ public class TextUserInterface implements UserInterface{
     @Override
     public void sendNickname(String nickname) {
         clientController.sendNickname(nickname);
+        clientController.startClearThread();
     }
 
     @Override
     public void invalidNickname() {
-        getNickname("The username is already used, please insert another nickname!");
+        new Thread(() -> {
+            getNickname("The username is already used, please insert another nickname!");
+        }).start();
     }
 
     @Override
@@ -805,14 +880,15 @@ public class TextUserInterface implements UserInterface{
 
     @Override
     public void nicknameAccepted() {
+        new Thread(() -> {
+            List<String> textLines = new ArrayList<>();
 
-        List<String> textLines = new ArrayList<>();
+            // Add strings to the list
+            textLines.add("You are in a lobby! Please wait for the game start!");
 
-        // Add strings to the list
-        textLines.add("You are in a lobby! Please wait for the game start!");
-
-        standardTextPage(textLines);
-        System.out.print(drawHorizontalLine(sceneWidth));
+            standardTextPage(textLines);
+            System.out.print(drawHorizontalLine(sceneWidth));
+        }).start();
     }
 
     @Override
@@ -828,20 +904,23 @@ public class TextUserInterface implements UserInterface{
 
     @Override
     public void waitForLobby() {
-        List<String> textLines = new ArrayList<>();
+        new Thread(() -> {
+            List<String> textLines = new ArrayList<>();
 
-        // Add strings to the list
-        textLines.add("Someone is trying to create a lobby, please retry in a few seconds!");
+            // Add strings to the list
+            textLines.add("Someone is trying to create a lobby, please retry in a few seconds!");
 
-        standardTextPage(textLines);
-        System.out.print(drawHorizontalLine(sceneWidth));
+            standardTextPage(textLines);
+            System.out.print(drawHorizontalLine(sceneWidth));
+        }).start();
     }
 
     @Override
     public void loadGameScreen(int personalTargetCardNumber, String nickname, List<String> commonTargetGoals) {
-        this.personalTargetCardNumber = personalTargetCardNumber;
-        this.nickname = nickname;
-        this.commonTargetGoals = commonTargetGoals;
+        new Thread(() -> {
+            this.personalTargetCardNumber = personalTargetCardNumber;
+            this.nickname = nickname;
+        }).start();
     }
 
     @Override
@@ -865,31 +944,53 @@ public class TextUserInterface implements UserInterface{
         }
         this.isYourTurn = Objects.equals(newView.getActivePlayer(), this.nickname);
         this.newView = newView;
-        this.firstUpdateView = true;
 
-        mainGamePage();
+        new Thread(this::mainGamePage).start();
     }
 
     private void gameOver() {
-        //Devo solo fare vedere pagina di gameover? E poi? Devo segnalare come cominciare una nuova partita? O cos'altro?
+        List<String> textLines = new ArrayList<>();
+
+        // Add strings to the list
+        textLines.add("GAME OVER!");
+        textLines.add("");
+        textLines.add("Press enter to exit!");
+
+        standardTextPage(textLines);
+        System.out.println(drawHorizontalLine(sceneWidth));
+
+        scanner = new Scanner(System.in);
+
+        if(scanner.hasNextLine()){
+            exit();
+        }
     }
 
     @Override
     public void exit() {
-        // chiude tutto ed esce
+        clientController.exit();
+        closeTUI = true;
     }
 
     @Override
     public void rejoinedMatch() {
-        // da sistemare nel controller
+        List<String> textLines = new ArrayList<>();
+
+        // Add strings to the list
+        textLines.add("You have been rejoined to a lobby! Please wait for the game!");
+
+        standardTextPage(textLines);
+        System.out.print(drawHorizontalLine(sceneWidth));
     }
 
     @Override
     public void invalidPlayer() {
-        String completeChatLine = "ERROR: You tried to send a personal message to an user that doesn't exist";
-        if(this.chatOpen){
-            System.out.println(completeChatLine);
-        }
+        new Thread(() -> {
+            String completeChatLine = "ERROR: You tried to send a personal message to an user that doesn't exist";
+            if(this.chatOpen){
+                System.out.println(completeChatLine);
+            }
+        }).start();
     }
 
     @Override
@@ -917,18 +1018,18 @@ public class TextUserInterface implements UserInterface{
     }
 
     @Override
-    public void swapCols(List<Node> list) {
+    public void swapColsGUI(List<Node> list) {
         // NO CLI
     }
 
     @Override
     public int getSwapColIndex(Node n) {
-        // NO CLI
-        return 0;
+            // NO CLI
+            return 0;
     }
 
     @Override
-    public void swapCols(int col1, int col2) {
+    public void swapColsTUI(int col1, int col2) {
         clientController.swapCols(col1, col2);
     }
 
@@ -957,29 +1058,33 @@ public class TextUserInterface implements UserInterface{
 
     @Override
     public void wrongReceiver() {
-        String completeChatLine = "ERROR: You inserted a wrong nickname to send a personal message!";
-        if(this.chatOpen){
-            System.out.println(completeChatLine);
-        }
+        new Thread(() -> {
+            String completeChatLine = "ERROR: You inserted a wrong nickname to send a personal message!";
+            if(this.chatOpen){
+                System.out.println(completeChatLine);
+            }
+        }).start();
     }
 
     @Override
     public void wrongParameters() {
-        List<String> textLines = new ArrayList<>();
+        new Thread(() -> {
+            List<String> textLines = new ArrayList<>();
 
-        // Add strings to the list
-        textLines.add("Either the number of players or the number of common target cards is not acceptable.");
-        textLines.add("Press enter to choose new parameters.");
+            // Add strings to the list
+            textLines.add("Either the number of players or the number of common target cards is not acceptable.");
+            textLines.add("Press enter to choose new parameters.");
 
-        standardTextPage(textLines);
+            standardTextPage(textLines);
 
-        System.out.print("Your input: ");
+            System.out.print("Your input: ");
 
-        scanner = new Scanner(System.in);
+            scanner = new Scanner(System.in);
 
-        if(scanner.hasNextLine()){
-            getGameParameters();
-        }
+            if(scanner.hasNextLine()){
+                getGameParameters();
+            }
+        }).start();
     }
 
     @Override
@@ -994,55 +1099,111 @@ public class TextUserInterface implements UserInterface{
 
     @Override
     public void playerRestored() {
+        new Thread(() -> {
+            List<String> textLines = new ArrayList<>();
 
+            // Add strings to the list
+            textLines.add("The player has been restored from a previous saved game.");
+            textLines.add("You are now in a lobby waiting to play.");
+
+            standardTextPage(textLines);
+            System.out.println(drawHorizontalLine(sceneWidth));
+        }).start();
+    }
+
+    @Override
+    public void serverNotResponding() {
+        new Thread(() -> {
+            List<String> textLines = new ArrayList<>();
+
+            // Add strings to the list
+            textLines.add("SERVER NOT RESPONDING");
+            textLines.add("Server is momentarily unreachable. Please, wait a few seconds and restart the client!");
+
+            standardTextPage(textLines);
+            System.out.println(drawHorizontalLine(sceneWidth));
+        }).start();
+    }
+
+    @Override
+    public void lobbyRestored() {
+        new Thread(() -> {
+            List<String> textLines = new ArrayList<>();
+
+            // Add strings to the list
+            textLines.add("Lobby has been restored! Please wait for the game start!");
+
+            standardTextPage(textLines);
+            System.out.println(drawHorizontalLine(sceneWidth));
+        }).start();
+    }
+
+    @Override
+    public void fullLobby() {
         List<String> textLines = new ArrayList<>();
 
         // Add strings to the list
-        textLines.add("The player has been restored from a previous saved game.");
-        textLines.add("You are now in a lobby waiting to play.");
+        textLines.add("The lobby is full! Close the client and retry later!");
 
         standardTextPage(textLines);
         System.out.println(drawHorizontalLine(sceneWidth));
     }
 
     @Override
-    public void serverNotResponding() {
-
-    }
-
-    @Override
-    public void lobbyRestored() {
-
-    }
-
-    @Override
-    public void fullLobby() {
-
-    }
-
-    @Override
     public void cantRestoreLobby() throws IOException {
+        new Thread(() -> {
+            List<String> textLines = new ArrayList<>();
 
+            // Add strings to the list
+            textLines.add("CAN'T RESTORE LOBBY");
+            textLines.add("A player that wasn't in the last lobby has tried to connect! Please, restart the client, a new lobby will be created!");
+
+            standardTextPage(textLines);
+            System.out.println(drawHorizontalLine(sceneWidth));
+        }).start();
     }
 
     @Override
     public void alonePlayerWins() {
+        new Thread(() -> {
+            List<String> textLines = new ArrayList<>();
 
+            // Add strings to the list
+            textLines.add("YOU HAVE WON!!!");
+            textLines.add("All the other  players were disconnected for an excessive longer period! Restart the client to create a new lobby!");
+
+            standardTextPage(textLines);
+            System.out.println(drawHorizontalLine(sceneWidth));
+        }).start();
     }
 
     @Override
     public void playerDisconnected(String nickname) {
-
+        new Thread(() -> {
+        //Non so come fare qui, non è molto fattibile in CLI per la questione dei thread e delle funzione che aspettano un input
+        }).start();
     }
 
     @Override
     public void playerReconnected(String nickname) {
-
+        new Thread(() -> {
+            //same as above
+        }).start();
     }
 
     @Override
-    public void setTakeableItems(boolean[][] takeableItems) {
+    public void setTakeableItems(boolean[][] takeableItems, boolean yourTurn, boolean waitForOtherPlayers) {
+        new Thread(() -> {
+            if(yourTurn && !waitForOtherPlayers) {
+                this.takeableItems = takeableItems;
+            }
+        }).start();
+    }
 
+    @Override
+    public void exitWithoutWaitingDisconnectFromServer() {
+        clientController.exitWithoutWaitingDisconnectFromServer();
+        closeTUI = true;
     }
 
 }

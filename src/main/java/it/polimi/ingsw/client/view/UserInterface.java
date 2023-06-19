@@ -2,15 +2,11 @@ package it.polimi.ingsw.client.view;
 
 import it.polimi.ingsw.client.clientcontroller.controller.ClientController;
 import it.polimi.ingsw.messages.NewView;
-import it.polimi.ingsw.server.model.Player;
-import it.polimi.ingsw.server.model.items.Item;
-import it.polimi.ingsw.server.servercontroller.GameController;
 import javafx.scene.Node;
 
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.net.URISyntaxException;
-import java.time.LocalDateTime;
 import java.util.List;
 
 public interface UserInterface extends Runnable {
@@ -53,11 +49,10 @@ public interface UserInterface extends Runnable {
 
     int getPositionPickedSize();
 
-    void swapCols(List<Node> list);
+    void swapColsGUI(List<Node> list); //todo Perchè in interfaccia se sono una per ognuna delle due grafiche? (Prima era metodo overloaded ma secondo me comunque non ha senso)
+    void swapColsTUI(int col1, int col2);
 
     int getSwapColIndex(Node n);
-
-    void swapCols(int col1, int col2);
 
     void incorrectMove();
 
@@ -85,5 +80,7 @@ public interface UserInterface extends Runnable {
 
     void playerReconnected(String nickname);
 
-    void setTakeableItems(boolean[][] takeableItems);
+    void setTakeableItems(boolean[][] takeableItems, boolean yourTurn, boolean waitForOtherPlayers);
+
+    void exitWithoutWaitingDisconnectFromServer();
 }

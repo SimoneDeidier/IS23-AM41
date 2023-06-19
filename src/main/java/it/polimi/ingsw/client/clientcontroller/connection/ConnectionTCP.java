@@ -3,7 +3,6 @@ package it.polimi.ingsw.client.clientcontroller.connection;
 import it.polimi.ingsw.client.clientcontroller.SerializeDeserialize;
 
 import java.io.*;
-import java.net.ConnectException;
 import java.net.Socket;
 import java.net.URISyntaxException;
 import java.util.NoSuchElementException;
@@ -44,11 +43,18 @@ public class ConnectionTCP implements Connection {
                     try {
                         serializeDeserialize.deserialize(inMsg);
                     } catch (IOException | URISyntaxException e) {
-                        e.printStackTrace();
+                        System.err.println("An unknown exception was thrown. If the problem persists, please restart the client!");
                     }
                 }
             }
-            System.out.println("I'M OUT THE TCP THREAD");
+            socketOut.close();
+            socketIn.close();
+            try {
+                socket.close();
+            }
+            catch (IOException e) {
+                System.err.println("The socket could not be closed, please kill the task and restart the client!");
+            }
         });
         socketReader.start();
         serializeDeserialize.startUserInterface(uiType);
@@ -57,29 +63,17 @@ public class ConnectionTCP implements Connection {
             System.err.println("JOINED THE SOCKET THREAD");
         }
         catch (InterruptedException e) {
-            e.printStackTrace();
+            System.err.println("The socket thread could not be terminated, please kill the task and restart the client!");
         }
-    }
-
-    @Override
-    public void closeRMI() {
-        //useless in TCP
     }
 
     public PrintWriter getSocketOut() {
         return socketOut;
     }
 
+    @Override
     public void closeConnection() {
         this.closeConnection = true;
-        socketOut.close();
-        socketIn.close();
-        try {
-            socket.close();
-        }
-        catch (IOException e) {
-            e.printStackTrace();
-        }
     }
 
 }

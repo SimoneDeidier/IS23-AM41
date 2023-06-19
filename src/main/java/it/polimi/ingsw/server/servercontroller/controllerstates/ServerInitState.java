@@ -12,10 +12,7 @@ import it.polimi.ingsw.server.model.Player;
 import it.polimi.ingsw.server.model.tokens.EndGameToken;
 import it.polimi.ingsw.server.servercontroller.GameController;
 
-import java.io.FileNotFoundException;
-import java.io.FileReader;
-import java.io.IOException;
-import java.io.Serializable;
+import java.io.*;
 import java.nio.file.NoSuchFileException;
 import java.util.ArrayList;
 import java.util.List;
@@ -64,7 +61,8 @@ public class ServerInitState implements GameState {
     @Override
     public void setupPlayers(List<Player> playerList, List<CommonTargetCard> commonTargetCardList, BoardFactory board, GameController controller) {
         Gson gson = new Gson();
-        try (FileReader reader = new FileReader("src/main/java/it/polimi/ingsw/save/OldGame.json")) {
+        File file = new File(System.getProperty("user.dir"), "savings.json");
+        try (FileReader reader = new FileReader(file)) {
             Save save = gson.fromJson(reader, Save.class);
             controller.setLastTurn(save.isLastTurn());
             controller.setMaxPlayerNumber(save.getMaxPlayerPlayer());

@@ -33,7 +33,7 @@ public class GameController {
     private boolean onlyOneCommonCard = false;
     private Player activePlayer = null; //acts as a kind of turn
     private BoardFactory board;
-    private EndGameToken endGameToken= EndGameToken.getEndGameToken(); //todo add in UML (added because it's singleton, it needs to be reset after end of the game)
+    private final EndGameToken endGameToken= EndGameToken.getEndGameToken(); //todo add in UML (added because it's singleton, it needs to be reset after end of the game)
     private GameState state;
     private List<CommonTargetCard> commonTargetCardsList;
     private Map<String, TCPMessageController> nickToTCPMessageControllerMapping = new ConcurrentHashMap<>(4);
@@ -41,7 +41,7 @@ public class GameController {
     private final Server server;
     private boolean gameOver;
     private static final int THREAD_SLEEP_MILLISECONDS = 1000;
-    private static final int TIMER_DURATION_MILLISECONDS = 30000;
+    private static final int TIMER_DURATION_MILLISECONDS = 3000000;
     private Timer timer;
     private boolean timerIsRunning = false;
     private boolean lastConnectedUserMadeHisMove = false;
@@ -88,7 +88,7 @@ public class GameController {
     public void executeMove(Body body) throws InvalidMoveException {
         if (checkMove(body)) {
             List<Item> items = getListItems(body);
-            try { //inutile qui simo, ti convincerò
+            try {
                 activePlayer.getShelf().insertItems(body.getColumn(), items);
             } catch (Exception NotEnoughSpaceInColumnException) {
                 System.err.println("Not enough space in the column provided!");
@@ -184,10 +184,10 @@ public class GameController {
         save.setBoardBitMask(board.getBitMask());
         save.setMaxPlayerPlayer(maxPlayerNumber);
         Gson gson= new Gson();
-        try (FileWriter writer = new FileWriter("src/main/java/it/polimi/ingsw/save/OldGame.json")) {
+        try (FileWriter writer = new FileWriter(new File(System.getProperty("user.dir"), "savings.json"))) {
             gson.toJson(save, writer);
         } catch (IOException e) {
-            e.printStackTrace();
+            System.err.println("Writing to the JSON save file was not possible, the desired resource could not be accessed!");
         }
     }
 
@@ -307,7 +307,8 @@ public class GameController {
 
     public boolean checkSavedGame(String nickname) {
         try {
-            String jsonContent = new String(Files.readAllBytes(Paths.get("src/main/java/it/polimi/ingsw/save/OldGame.json")));
+            File save = new File(System.getProperty("user.dir"), "savings.json");
+            String jsonContent = new String(Files.readAllBytes(save.toPath()));
             Gson gson = new Gson();
             JsonObject jsonObject = gson.fromJson(jsonContent, JsonObject.class);
             if (!jsonObject.get("gameOver").getAsBoolean()) {
@@ -379,7 +380,8 @@ public class GameController {
         changeState(new RunningGameState());
     }
 
-    public void disconnectAllUsers() throws RemoteException {
+
+    public void disconnectAllUsers() throws IOException {
         for(String s : nickToTCPMessageControllerMapping.keySet()) {
             Body body = new Body();
             body.setGoodbyeType(0);
@@ -389,7 +391,7 @@ public class GameController {
         server.disconnectAllRMIUsers();
     }
 
-    public void yourTarget() throws RemoteException {
+    public void yourTarget() {
         for(String s : getNickToTCPMessageControllerMapping().keySet()) {
             Body body = new Body();
             for(Player p : playerList) {
@@ -420,8 +422,8 @@ public class GameController {
         }
     }
 
-    public void peerToPeerMsg(String sender, String receiver, String text, String localDateTime) throws InvalidNicknameException, RemoteException {
-        if(!nickToTCPMessageControllerMapping.containsKey(receiver) && !server.checkReceiver(receiver)) {
+    public void peerToPeerMsg(String sender, String receiver, String text, String localDateTime) throws InvalidNicknameException {
+        if(!nickToTCPMessageControllerMapping.containsKey(receiver) && !server.checkReceiverInRMI(receiver)) {
             throw new InvalidNicknameException();
         }
 
@@ -450,7 +452,7 @@ public class GameController {
         }
     }
 
-    public void broadcastMsg(String sender, String text, String localDateTime) throws RemoteException {
+    public void broadcastMsg(String sender, String text, String localDateTime) {
         for(String s : nickToTCPMessageControllerMapping.keySet()) {
             Body body = new Body();
             body.setSenderNickname(sender);
@@ -534,6 +536,12 @@ public class GameController {
                             nickToUnansweredCheck.put(nickname, 1);
                         }
                         if (nickToUnansweredCheck.get(nickname) == 5) {
+                            try {
+                                nickToTCPMessageControllerMapping.get(nickname).closeConnection();
+                            } catch (IOException e) {
+                                System.err.println("Socket connection could not be closed with the inactive" +  nickname + " user!");
+                            }
+                            nickToTCPMessageControllerMapping.remove(nickname);
                             changePlayerConnectionStatus(nickname);
                             if (state.getClass().equals(RunningGameState.class)) {
                                 notifyOfDisconnectionAllUsers(nickname);
@@ -543,7 +551,7 @@ public class GameController {
                                 try {
                                     updateView();
                                 } catch (RemoteException e) {
-                                    e.printStackTrace();
+                                    System.err.println("A RemoteException was thrown, the UpdateView message could not be sent to one or more users after the user on duty had logged off due to inactivity!");
                                 }
                             } else if (getPlayerList().size() == 1 && getMaxPlayerNumber() == 0) {
                                 changeState(new ServerInitState());
@@ -564,7 +572,7 @@ public class GameController {
                     Thread.sleep(THREAD_SLEEP_MILLISECONDS);
                 }
                 catch (InterruptedException e) {
-                    e.printStackTrace();
+                    System.err.println("Il thread di ping è stato interrotto improvvisamente!");
                 }
             }
         }).start();
@@ -577,7 +585,11 @@ public class GameController {
             @Override
             public void run() {
                 if (countConnectedUsers() <= 1) {
-                    endGameForLackOfPlayers();
+                    try {
+                        endGameForLackOfPlayers();
+                    } catch (IOException e) {
+                        System.err.println("The game could not be ended due to a lack of players!");
+                    }
                 } else {
                     cancelTimer();
                 }
@@ -585,7 +597,7 @@ public class GameController {
         }, TIMER_DURATION_MILLISECONDS);
     }
 
-    public void endGameForLackOfPlayers() {
+    public void endGameForLackOfPlayers() throws IOException {
         deleteSavedGame();
         if(countConnectedUsers()==1) {
             for (Player player : playerList) {
@@ -653,11 +665,11 @@ public class GameController {
 
     public void deleteSavedGame() {
         try {
-            File file = new File("src/main/java/it/polimi/ingsw/save/OldGame.json");
-            file.delete();
+            File save = new File(System.getProperty("user.dir"), "savings.json");
+            save.delete();
         }
         catch (SecurityException | NullPointerException e) {
-            e.printStackTrace();
+            System.err.println("The old JSON saving could not be deleted!");
         }
     }
 

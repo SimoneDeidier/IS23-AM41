@@ -12,6 +12,7 @@ import javafx.scene.text.Text;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
+import java.io.IOException;
 import java.net.URISyntaxException;
 import java.util.ArrayList;
 import java.util.List;
@@ -86,10 +87,8 @@ public class OtherPlayersController {
     }
 
 
-    public void setParameters(Map<String, Item[][]> nickToShelf, Map<String, Integer> nickToPoints, String playerNick) throws URISyntaxException, FileNotFoundException {
-        File shelfFile = new File(ClassLoader.getSystemResource("images/shelf1.png").toURI());
-        FileInputStream fis = new FileInputStream(shelfFile);
-        Image shelf = new Image(fis);
+    public void setParameters(Map<String, Item[][]> nickToShelf, Map<String, Integer> nickToPoints, String playerNick) throws URISyntaxException, IOException {
+        Image shelf = new Image(Objects.requireNonNull(ClassLoader.getSystemResourceAsStream("images/shelf1.png")));
         switch (nickToShelf.size()) {
             case 2 -> {
                 for(String s : nickToShelf.keySet()) {

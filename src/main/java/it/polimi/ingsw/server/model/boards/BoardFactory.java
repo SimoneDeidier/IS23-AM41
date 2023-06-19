@@ -8,6 +8,11 @@ import it.polimi.ingsw.server.model.exceptions.NullItemPickedException;
 import java.io.Serializable;
 import java.util.List;
 
+
+/**
+ * Class that represents the abstract concept of a Board, providing nearly all the methods for the boards,
+ * since only the bitmask is different among the three different boards
+ */
 public abstract class BoardFactory implements Serializable {
 
     protected final static int ROWS = 9;
@@ -17,23 +22,43 @@ public abstract class BoardFactory implements Serializable {
     protected ItemsBag itemsBag;
 
 
+    /**
+     * @param i represents the line of the element sought
+     * @param j represents the column of the element sought
+     * @return the boolean in the position (i,j) in the bitMask
+     */
     public boolean getBitMaskElement(int i,int j) {
         return bitMask[i][j];
     }
 
+    /**
+     * @param i represents the line of the element sought
+     * @param j represents the column of the element sought
+     * @return the Item in the position (i,j) in the boardMatrix
+     */
     public Item getBoardMatrixElement(int i,int j){
         if(i<ROWS && i>=0 && j<COLUMNS && j>=0)
             return boardMatrix[i][j];
         return null;
     }
 
+    /**
+     * @return the number of rows of the board, used to parameterize the code
+     */
     public int getBoardNumberOfRows(){
         return ROWS;
     }
+
+    /**
+     * @return the number of columns of the board, used to parameterize the code
+     */
     public int getBoardNumberOfColumns(){
         return COLUMNS;
     }
 
+    /**
+     * Fills the board, placing items where the bitMask says it's a valid position but there is no Item at the moment
+     */
     public  void refillBoard() {
 
         for (int i = 0; i < ROWS; i++) {
@@ -50,6 +75,11 @@ public abstract class BoardFactory implements Serializable {
         }
     }
 
+    /**
+     * Starts the creation of the bitMask with the TwoPlayerBoard bitMask.
+     * The bitMask for three or four players starts from this one to add more valid positions to their bitmask
+     * @return TwoPlayerBoard's bitMask
+     */
     public boolean[][] createBitMask() {
         boolean[][] bitMask = new boolean[ROWS][COLUMNS];
 
@@ -83,6 +113,14 @@ public abstract class BoardFactory implements Serializable {
         return bitMask;
     }
 
+    /**
+     * Called during the procedure for executing a Player's move
+     * @param x represents the line of the element sought
+     * @param y represents the column of the element sought
+     * @return the Item picked
+     * @throws NullItemPickedException if in the BoardMatrix the element is null
+     * @throws InvalidBoardPositionException if in the bitMask the element is null
+     */
     public Item pickItem(int x, int y) throws NullItemPickedException, InvalidBoardPositionException {
         //check server-side of the validity of the move
         if (!bitMask[x][y]) {
@@ -96,6 +134,11 @@ public abstract class BoardFactory implements Serializable {
         return item;
     }
 
+    /**
+     * Server-side check for the validity of the move according to the game's rules
+     * @param list contains the positions of the Items a Player wants to pick
+     * @return true if the move is valid, false otherwise
+     */
     public boolean checkMove(List<int[]> list){
         int size = list.size();
         if(size < 1 || size>3) {
@@ -117,6 +160,12 @@ public abstract class BoardFactory implements Serializable {
         return checkInLine(list);
     }
 
+    /**
+     * Used during checkMove to check if all the elements have a free side
+     * @param i represents the line of the element sought
+     * @param j represents the column of the element sought
+     * @return true if the element in position i,j has at least one free sides, false otherwise
+     */
     public boolean hasFreeSide(int i,int j){
         //Check up
         if(i>0 && getBoardMatrixElement(i-1,j)==null){
@@ -135,6 +184,12 @@ public abstract class BoardFactory implements Serializable {
 
     }
 
+    /**
+     * Used to check whether a position on the board, containing an item, has all free slots around it
+     * @param i represents the line of the element sought
+     * @param j represents the column of the element sought
+     * @return true if the Item in position i,j has all free sides, false otherwise
+     */
     public boolean itemHasAllFreeSide(int i,int j){
         if(i==0){
             if(j==0){
@@ -168,6 +223,11 @@ public abstract class BoardFactory implements Serializable {
                 && getBoardMatrixElement(i,j-1)==null && getBoardMatrixElement(i,j+1)==null;
     }
 
+    /**
+     * Used during CheckMove to make sure that all picked element are in a straight line
+     * @param list contains the positions of the Items a Player wants to pick
+     * @return true if all the items are in a straight line, false otherwise
+     */
     public boolean checkInLine(List<int[]> list){
         int x1=list.get(0)[0],y1=list.get(0)[1];
         if(list.size()==2){
@@ -203,22 +263,44 @@ public abstract class BoardFactory implements Serializable {
 
     }
 
+    /**
+     * Used for testing purposes to simulate different borderline scenarios
+     * @param item the Item we want to be set
+     * @param i represents the line where we want to set the Item
+     * @param j represents the column where we want to set the Item
+     */
     public void setBoardMatrixElement(Item item,int i,int j){
         boardMatrix[i][j]=item;
     }
 
+    /**
+     * Used for backup and testing purposes
+     * @return the boardMatrix of the Board
+     */
     public Item[][] getBoardMatrix() {
         return boardMatrix;
     }
 
+    /**
+     * Used for backup and testing purposes
+     * @return the bitMask of the Board
+     */
     public boolean[][] getBitMask() {
         return bitMask;
     }
 
+    /**
+     * Used for backup and testing purposes
+     * @param boardMatrix, the specific boardMatrix to be set in the Board
+     */
     public void setBoardMatrix(Item[][] boardMatrix) {
         this.boardMatrix = boardMatrix;
     }
 
+    /**
+     * Used for backup and testing purposes
+     * @param bitMask, the specific bitMask to be set in the Board
+     */
     public void setBitMask(boolean[][] bitMask) {
         this.bitMask = bitMask;
     }

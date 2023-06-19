@@ -6,13 +6,20 @@ import com.google.gson.JsonObject;
 import it.polimi.ingsw.server.model.items.Item;
 import it.polimi.ingsw.server.model.items.ItemColor;
 import org.apache.commons.io.FileUtils;
+import org.apache.commons.io.IOUtils;
 
 import java.io.File;
 import java.io.IOException;
 import java.io.Serializable;
 import java.net.URISyntaxException;
 import java.nio.charset.StandardCharsets;
+import java.util.Objects;
 
+/**
+ * Class PersonalTargetCard represents a card each player gets, stating where he should put Item of a given color
+ * in order to score additional points
+ * For each color we have the row and the column a item of the certain color should be inserted to successfully acquire points
+ */
 public class PersonalTargetCard implements Serializable {
     int personalNumber;
     final int pinkRow;
@@ -28,11 +35,18 @@ public class PersonalTargetCard implements Serializable {
     final int greenRow;
     final int greenCol;
 
+    /**
+     * The constructor for a personalTargetCard looks in the json personalTargetCards.json for setting the corresponding rows and columns
+     * to the different colors
+     * @param personal represents according to which personal in the game the attributes should be set accordingly
+     * @throws IOException if any problem happens during the reading of the file
+     * @throws URISyntaxException if any problem happens during the reading of the file
+     */
     public PersonalTargetCard(int personal) throws IOException, URISyntaxException {
+        this.personalNumber=personal;
+
         Gson gson = new Gson();
-        File jsonFile = new File(ClassLoader.getSystemResource("json/PersonalTargetCards.json").toURI());
-        String jsonString = FileUtils.readFileToString(jsonFile, StandardCharsets.UTF_8);
-        personalNumber=personal;
+        String jsonString = IOUtils.toString(Objects.requireNonNull(ClassLoader.getSystemResourceAsStream("json/PersonalTargetCards.json")), StandardCharsets.UTF_8);
 
         JsonArray jsonArray = gson.fromJson(jsonString, JsonArray.class);
 

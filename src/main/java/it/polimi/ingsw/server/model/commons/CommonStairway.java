@@ -2,38 +2,49 @@ package it.polimi.ingsw.server.model.commons;
 
 import it.polimi.ingsw.server.model.Shelf;
 
+/**
+ * CommonStairwayClass represents a specific CommonTargetCard in the game
+ */
 public class CommonStairway extends CommonTargetCard {
+
+    /**
+     * Constructor is provided to set the correct name to the instance created
+     * @param maxPlayerNumber is needed to allocate the correct number of ScoringTokens, that varies according to the number of players
+     */
     public CommonStairway(int maxPlayerNumber) {
         super(maxPlayerNumber);
         this.name="CommonStairway";
     }
+
+    /**
+     * The override of the method check modifies the function in order to verify the specific CommonTargetCard
+     * @return true if the condition is satisfied, false otherwise
+     */
     @Override
     public boolean check(Shelf shelf) {
-
+        boolean first = true, second = true, third = true, fourth = true, check = true;
         int[] columnSpaces = new int[COLUMNS];
 
         for (int col = 0; col < COLUMNS; col++) {
             columnSpaces[col] = shelf.freeSpaces(col);
         }
-
-        if (columnSpaces[0] == 0 || columnSpaces[0] == 1) {
-            //decrementing case staircase: left to right
-            for (int col = 1; col < COLUMNS; col++) {
-                if (columnSpaces[col] - 1 != columnSpaces[col - 1]) {
-                    return false;
-                }
+        //check which of the four possible diagonals
+        for (int col = 0; col < COLUMNS; col++) {
+            if (columnSpaces[col] > col) {
+                first = false;
             }
-            return true;
-        } else if (columnSpaces[COLUMNS - 1] == 0 || columnSpaces[COLUMNS - 1] == 1) {
-            //decrementing case staircase: right to left
-            for (int col = COLUMNS - 2; col >= 0; col--) {
-                if (columnSpaces[col] - 1 != columnSpaces[col + 1]) {
-                    return false;
-                }
+            if (columnSpaces[col] > col + 1) {
+                second = false;
             }
-            return true;
+            if (columnSpaces[col] > ROWS - 2 - col) {
+                third = false;
+            }
+            if (columnSpaces[col] > ROWS - 1 - col) {
+                fourth = false;
+            }
         }
-        return false;
+
+        return first || second || third || fourth;
     }
 }
 

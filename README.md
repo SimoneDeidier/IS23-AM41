@@ -28,8 +28,8 @@ Students:
 |:-:|:-:|:-:|:-:|
 |Simple rules|Done|100%||
 |Full rules|Done|100%||
-|TUI|Work in progress|75%|We are implementing some missing game screens|
-|GUI|Bug fixing|99%|We are fixing some bugs in the GUI|
+|TUI|Work in progress|95%|We are refining some game screens|
+|GUI|Done|100%||
 |RMI|Done|100%||
 |TCP|Done|100%||
 |Multiple matches|Not implemented|0%|We chose to not implement this advanced feature|
@@ -37,7 +37,7 @@ Students:
 |Disconnection resilience|Done|100%||
 |Chat|Done|100%||
 
-* *Latest update: 04/06/2023*
+* *Latest update: 20/06/2023*
 
 ## Unified Modeling Language
 
@@ -54,11 +54,13 @@ During this course, we will have to review some documents of other's groups. Our
 
 All the code from the *Model classes* and the most important from the *Server-Controller classes* has been tested with ***JUnit***, a powerful suite for the code testing and validation. Our test coverage:
 
-* Number of tests: **40.109** - *all passed*
+* Number of tests: **40.110** - *all passed*
 
 |*MVC* Classes|Class coverage|Method coverage|Lines of code coverage|
 |:-:|:-:|:-:|:-:|
-|Model|100%|99%|93%|
-|Server-Controller|29%|40%|23%|
+|Model|100%|100%|93%|
+|Server-Controller|29%|40%|22%|
 
-* *Latest update: 04/06/2023*
+![Screenshot od the tests](readme-resources/tests.png)
+
+* *Latest update: 20/06/2023*

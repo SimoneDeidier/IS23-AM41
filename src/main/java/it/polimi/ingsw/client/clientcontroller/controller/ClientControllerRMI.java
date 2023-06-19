@@ -51,18 +51,14 @@ public class ClientControllerRMI implements ClientController, Serializable {
             userInterfaceThread.join();
             System.err.println("JOINED THE VIEW THREAD");
         } catch (InterruptedException e) {
-            throw new RuntimeException(e);
+            System.err.println("The UI thread could not be closed, please kill the task!");
         }
     }
 
     @Override
     public void sendNickname(String nickname) {
         this.playerNickname = nickname;
-        try {
-            connectionRMI.presentation(nickname);
-        } catch (RemoteException e) {
-            System.out.println("Network error, we're sorry for the inconvenience, try restarting the client");
-        }
+        connectionRMI.presentation(nickname);
     }
 
     @Override
@@ -77,11 +73,7 @@ public class ClientControllerRMI implements ClientController, Serializable {
 
     @Override
     public void sendParameters(int numPlayers, int numCommons) {
-        try {
-            connectionRMI.sendParameters(numPlayers,numCommons==1);
-        } catch (RemoteException e) {
-            System.out.println("Network error, we're sorry for the inconvenience, try restarting the client");
-        }
+        connectionRMI.sendParameters(numPlayers,numCommons==1);
     }
 
     @Override
@@ -163,7 +155,8 @@ public class ClientControllerRMI implements ClientController, Serializable {
             }
         }
         userInterface.updateView(newView);
-        userInterface.setTakeableItems(takeableItems);
+        boolean yourTurn = Objects.equals(newView.getActivePlayer(), playerNickname);
+        userInterface.setTakeableItems(takeableItems, yourTurn, newView.youAreTheLastUserAndYouAlreadyMadeYourMove());
     }
 
     @Override
@@ -173,7 +166,6 @@ public class ClientControllerRMI implements ClientController, Serializable {
 
     @Override
     public void rejoinedMatch() {
-        System.out.println("Called rejoined in controller");
         try { //restarting the ping to the server
             connectionRMI.setClientConnected(true);
             connectionRMI.startClearThread();
@@ -299,6 +291,11 @@ public class ClientControllerRMI implements ClientController, Serializable {
     @Override
     public void playerReconnected(String nickname) {
         userInterface.playerReconnected(nickname);
+    }
+
+    @Override
+    public void exitWithoutWaitingDisconnectFromServer() {
+
     }
 
 }

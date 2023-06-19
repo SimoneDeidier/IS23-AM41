@@ -40,7 +40,7 @@ public class ConnectionRMI extends UnicastRemoteObject implements InterfaceClien
             // Getting the registry
             Registry registry = LocateRegistry.getRegistry(IP, PORT);
             // Looking up the registry for the remote object
-            stub = (InterfaceServer) registry.lookup("serverInterface");
+            stub = (InterfaceServer) registry.lookup("InterfaceServer");
             clientConnected=true;
             controller = new ClientControllerRMI(this);
             controller.startUserInterface(uiType);
@@ -49,8 +49,14 @@ public class ConnectionRMI extends UnicastRemoteObject implements InterfaceClien
         }
     }
 
-    public void presentation(String nickname) throws RemoteException {
-        stub.presentation(this, nickname);
+    public void presentation(String nickname) {
+        try {
+            stub.presentation(this, nickname);
+        } catch (RemoteException e) {
+            controller.serverNotResponding();
+        } catch (IOException e) {
+            System.err.println("An unknown exception was thrown. If the problem persists, please restart the client!");
+        }
     }
 
     @Override
@@ -58,8 +64,12 @@ public class ConnectionRMI extends UnicastRemoteObject implements InterfaceClien
         controller.getParameters();
     }
 
-    public void sendParameters(int maxPlayerNumber, boolean onlyOneCommon) throws RemoteException {
-        stub.sendParameters(this, maxPlayerNumber, onlyOneCommon);
+    public void sendParameters(int maxPlayerNumber, boolean onlyOneCommon) {
+        try {
+            stub.sendParameters(this, maxPlayerNumber, onlyOneCommon);
+        } catch (RemoteException e) {
+            controller.serverNotResponding();
+        }
     }
 
     @Override
@@ -73,14 +83,14 @@ public class ConnectionRMI extends UnicastRemoteObject implements InterfaceClien
             try {
                 controller.loadGameScreen();
             } catch (IOException e) {
-                throw new RuntimeException(e);
+                System.err.println("A crash occurred when loading the scene, please restart the software!");
             }
             wasIJustReconnected=false;
         }
         try {
             controller.updateView(newView);
         } catch (FileNotFoundException | URISyntaxException e) {
-            throw new RuntimeException(e);
+            System.out.println("Unknown problem loading the game screen!");
         }
     }
 
@@ -93,7 +103,7 @@ public class ConnectionRMI extends UnicastRemoteObject implements InterfaceClien
                 try {
                     controller.cantRestoreLobby();
                 } catch (IOException e) {
-                    throw new RuntimeException(e);
+                    System.err.println("A crash occurred when loading the scene, please restart the software!");
                 }
             }
             case 1 -> {
@@ -133,7 +143,7 @@ public class ConnectionRMI extends UnicastRemoteObject implements InterfaceClien
                 try {
                     controller.loadGameScreen();
                 } catch (IOException e) {
-                    throw new RuntimeException(e);
+                    System.err.println("A crash occurred when loading the scene, please restart the software!");
                 }
             }
             alreadySetMyCards=true;
@@ -163,7 +173,7 @@ public class ConnectionRMI extends UnicastRemoteObject implements InterfaceClien
         try {
             stub.peerToPeerMsgHandler(body.getSenderNickname(), body.getReceiverNickname(), body.getText(), body.getLocalDateTime());
         } catch (RemoteException e) {
-            System.out.println("Network error, we're sorry for the inconvenience, try restarting the client");
+            controller.serverNotResponding();
         }
     }
 
@@ -171,7 +181,7 @@ public class ConnectionRMI extends UnicastRemoteObject implements InterfaceClien
         try {
             stub.broadcastMsgHandler(body.getSenderNickname(), body.getText(), body.getLocalDateTime());
         } catch (RemoteException e) {
-            System.out.println("Network error, we're sorry for the inconvenience, try restarting the client");
+            controller.serverNotResponding();
         }
     }
 
@@ -179,7 +189,7 @@ public class ConnectionRMI extends UnicastRemoteObject implements InterfaceClien
         try {
             stub.executeMove(body);
         } catch (RemoteException e) {
-            System.out.println("Network error, we're sorry for the inconvenience, try restarting the client");
+            controller.serverNotResponding();
         }
     }
 
@@ -192,15 +202,13 @@ public class ConnectionRMI extends UnicastRemoteObject implements InterfaceClien
         new Thread(() -> {
             while (clientConnected) {
                 try {
-                    System.out.println("Pingo il server");
                     stub.clearRMI();
                     Thread.sleep(CLEAR_DELAY_MILLISECONDS);
                 } catch (RemoteException e) {
-                    System.out.println("Server crashato!");
                     controller.serverNotResponding();
                     break;
                 } catch (InterruptedException e) {
-                    System.out.println("Network error, we're sorry for the inconvenience, try restarting the client");
+                    //thread interrupted
                 }
             }
         }).start();
@@ -215,7 +223,7 @@ public class ConnectionRMI extends UnicastRemoteObject implements InterfaceClien
         try {
             stub.voluntaryDisconnection(controller.getPlayerNickname());
         } catch (RemoteException e) {
-            System.out.println("Network error, we're sorry for the inconvenience, try restarting the client");
+            controller.serverNotResponding();
         }
     }
 
@@ -243,8 +251,9 @@ public class ConnectionRMI extends UnicastRemoteObject implements InterfaceClien
     public void setClientConnected(boolean clientConnected) {
         this.clientConnected = clientConnected;
     }
+
     @Override
-    public void closeRMI() {
+    public void closeConnection() {
         System.exit(0);
     }
 }

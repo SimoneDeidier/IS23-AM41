@@ -5,6 +5,7 @@ import it.polimi.ingsw.interfaces.SerializeDeserializeInterface;
 import it.polimi.ingsw.messages.TCPMessage;
 import it.polimi.ingsw.server.model.Player;
 
+import java.io.IOException;
 import java.rmi.RemoteException;
 
 public class SerializeDeserialize implements SerializeDeserializeInterface {
@@ -18,7 +19,7 @@ public class SerializeDeserialize implements SerializeDeserializeInterface {
         this.socketManager = socketManager;
     }
 
-    public void deserialize(String input) throws RemoteException {
+    public void deserialize(String input) throws IOException {
         TCPMessage inputMsg = gson.fromJson(input, TCPMessage.class);
         tcpMessageController.readTCPMessage(inputMsg);
     }
@@ -29,7 +30,7 @@ public class SerializeDeserialize implements SerializeDeserializeInterface {
         socketManager.getSocketOutput().flush();
     }
 
-    public void closeConnection() {
+    public void closeConnection() throws IOException {
         socketManager.closeConnection();
     }
 
