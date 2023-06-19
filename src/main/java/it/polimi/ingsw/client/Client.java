@@ -38,7 +38,6 @@ public class Client {
         switch (connectionType) {
             case "tcp" -> {
                 try {
-                    System.out.println("PRVO CONNESSIONE");
                     connection = new ConnectionTCP(ipAddress, TCP_PORT);
                 }
                 catch (IOException e) {
@@ -55,7 +54,6 @@ public class Client {
             default -> System.err.println("Wrong parameter, restart client...");
         }
         if(connectionOk) {
-            System.out.println("CONNESSIONE OK");
             if (!parseUiType(args)) {
                 System.out.println("Select UI type: ");
                 uiType = stdin.nextLine();

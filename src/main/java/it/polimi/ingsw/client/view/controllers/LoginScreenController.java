@@ -132,7 +132,7 @@ public class LoginScreenController {
             try {
                 wrongParametersStage.setScene(new Scene(loader.load()));
             } catch (IOException e) {
-                e.printStackTrace();
+                System.err.println("A crash occurred when loading the scene, please restart the software!");
             }
             wrongParametersStage.setTitle("WRONG PARAMETERS!");
             wrongParametersStage.setResizable(false);

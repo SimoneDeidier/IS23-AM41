@@ -31,7 +31,6 @@ public class SerializeDeserialize implements SerializeDeserializeInterface {
     }
 
     public void closeConnection() throws IOException {
-        System.out.println("CHIAMO LA CLOSE CONNECTION DA SOCKET MANAGER");
         socketManager.closeConnection();
     }
 

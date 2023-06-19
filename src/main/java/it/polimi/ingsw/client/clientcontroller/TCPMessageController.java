@@ -139,7 +139,7 @@ public class TCPMessageController implements TCPMessageControllerInterface {
                 try {
                     Thread.sleep(CLEAR_DELAY);
                 } catch (InterruptedException e) {
-                    e.printStackTrace();
+                    System.err.println("Ping thread was unexpectedly terminated, this could cause problems during the game!");
                 }
             }
             if(!closeClearThread) {

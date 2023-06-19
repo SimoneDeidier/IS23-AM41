@@ -147,7 +147,6 @@ public class TCPMessageController implements TCPMessageControllerInterface {
     }
 
     public void closeConnection() throws IOException {
-        System.out.println("CHIAMO LA CLOSE CONNECTION SU SERIALIZE");
         serializeDeserialize.closeConnection();
     }
 

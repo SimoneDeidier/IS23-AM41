@@ -55,7 +55,7 @@ public class ConnectionRMI extends UnicastRemoteObject implements InterfaceClien
         } catch (RemoteException e) {
             controller.serverNotResponding();
         } catch (IOException e) {
-            e.printStackTrace();
+            System.err.println("An unknown exception was thrown. If the problem persists, please restart the client!");
         }
     }
 

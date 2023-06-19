@@ -152,7 +152,7 @@ public class GameScreenController {
                 stage.setTitle("My Shelfie - Common goals!");
                 stage.show();
             } catch (IOException | URISyntaxException e) {
-                e.printStackTrace();
+                System.err.println("A crash occurred when loading the scene, please restart the software!");
             }
         });
     }
@@ -415,7 +415,7 @@ public class GameScreenController {
             try {
                 incorrectMoveStage.setScene(new Scene(loader.load()));
             } catch (IOException e) {
-                e.printStackTrace();
+                System.err.println("A crash occurred when loading the scene, please restart the software!");
             }
             incorrectMoveStage.setTitle("INCORRECT MOVE!");
             incorrectMoveStage.setResizable(false);
@@ -431,7 +431,7 @@ public class GameScreenController {
             try {
                 wrongReceiverStage.setScene(new Scene(loader.load()));
             } catch (IOException e) {
-                e.printStackTrace();
+                System.err.println("A crash occurred when loading the scene, please restart the software!");
             }
             wrongReceiverStage.setTitle("WRONG RECEIVER!");
             wrongReceiverStage.setResizable(false);
@@ -452,13 +452,13 @@ public class GameScreenController {
             try {
                 yourTokensStage.setScene(new Scene(loader.load()));
             } catch (IOException e) {
-                e.printStackTrace();
+                System.err.println("A crash occurred when loading the scene, please restart the software!");
             }
             YourTokensController yourTokensController = loader.getController();
             try {
                 yourTokensController.setupTokens(playerTokens, endGameToken);
             } catch (URISyntaxException | FileNotFoundException e) {
-                e.printStackTrace();
+                System.err.println("A crash occurred when loading the scene, please restart the software!");
             }
             yourTokensStage.setTitle("My Shelfie - Your tokens!");
             yourTokensStage.setResizable(false);
@@ -587,7 +587,7 @@ public class GameScreenController {
             try {
                 stage.setScene(new Scene(loader.load()));
             } catch (IOException e) {
-                e.printStackTrace();
+                System.err.println("A crash occurred when loading the scene, please restart the software!");
             }
             stage.setTitle("My Shelfie - Wait for other players!");
             stage.setResizable(false);

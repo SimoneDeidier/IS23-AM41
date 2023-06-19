@@ -187,7 +187,7 @@ public class GameController {
         try (FileWriter writer = new FileWriter("src/main/java/it/polimi/ingsw/save/OldGame.json")) {
             gson.toJson(save, writer);
         } catch (IOException e) {
-            e.printStackTrace();
+            System.err.println("There was a problem opening the saving JSON, check that there are no write errors and/or the file is not corrupt!");
         }
     }
 
@@ -538,7 +538,7 @@ public class GameController {
                             try {
                                 nickToTCPMessageControllerMapping.get(nickname).closeConnection();
                             } catch (IOException e) {
-                                e.printStackTrace();
+                                System.err.println("Socket connection could not be closed with the inactive" +  nickname + " user!");
                             }
                             nickToTCPMessageControllerMapping.remove(nickname);
                             changePlayerConnectionStatus(nickname);
@@ -550,7 +550,7 @@ public class GameController {
                                 try {
                                     updateView();
                                 } catch (RemoteException e) {
-                                    e.printStackTrace();
+                                    System.err.println("A RemoteException was thrown, the UpdateView message could not be sent to one or more users after the user on duty had logged off due to inactivity!");
                                 }
                             } else if (getPlayerList().size() == 1 && getMaxPlayerNumber() == 0) {
                                 changeState(new ServerInitState());
@@ -571,7 +571,7 @@ public class GameController {
                     Thread.sleep(THREAD_SLEEP_MILLISECONDS);
                 }
                 catch (InterruptedException e) {
-                    e.printStackTrace();
+                    System.err.println("Il thread di ping è stato interrotto improvvisamente!");
                 }
             }
         }).start();
@@ -587,7 +587,7 @@ public class GameController {
                     try {
                         endGameForLackOfPlayers();
                     } catch (IOException e) {
-                        e.printStackTrace();
+                        System.err.println("The game could not be ended due to a lack of players!");
                     }
                 } else {
                     cancelTimer();
@@ -668,7 +668,7 @@ public class GameController {
             file.delete();
         }
         catch (SecurityException | NullPointerException e) {
-            e.printStackTrace();
+            System.err.println("The old JSON saving could not be deleted!");
         }
     }
 

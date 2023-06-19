@@ -4,6 +4,7 @@ import java.io.IOException;
 import java.io.PrintWriter;
 import java.net.Socket;
 import java.util.List;
+import java.util.NoSuchElementException;
 import java.util.Objects;
 import java.util.Scanner;
 
@@ -27,12 +28,21 @@ public class SocketManager implements Runnable {
             socketInput = new Scanner(socket.getInputStream());
             socketOutput = new PrintWriter(socket.getOutputStream());
             while(!closeConnection) {
-                String inMsg = socketInput.nextLine();
+                String inMsg = null;
+                try {
+                    inMsg = socketInput.nextLine();
+                }
+                catch (NoSuchElementException | IllegalStateException e) {
+                    closeConnection();
+                }
                 if(inMsg != null) {
                     serializeDeserialize.deserialize(inMsg);
                 }
             }
-
+            socketInput.close();
+            socketOutput.close();
+            socket.close();
+            System.out.println("Socket close correctly - port: " + socket.getPort() + ".");
         }
         catch (IOException e) {
             System.err.println(e.getMessage());
@@ -45,10 +55,6 @@ public class SocketManager implements Runnable {
 
     public void closeConnection() throws IOException {
         this.closeConnection = true;
-        socketInput.close();
-        socketOutput.close();
-        socket.close();
-        System.out.println("Socket close correctly - port: " + socket.getPort() + ".");
     }
 
     public Socket getSocket() {

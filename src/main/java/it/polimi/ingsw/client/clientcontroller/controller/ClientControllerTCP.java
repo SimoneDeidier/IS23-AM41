@@ -47,7 +47,7 @@ public class ClientControllerTCP implements ClientController {
             System.err.println("JOINED THE VIEW THREAD");
         }
         catch (InterruptedException e) {
-            e.printStackTrace();
+            System.err.println("The UI thread could not be closed, please kill the task and restart the client!");
         }
     }
 

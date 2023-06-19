@@ -106,14 +106,14 @@ public class GraphicUserInterface extends Application implements UserInterface, 
             try {
                 guiStage.setScene(new Scene(loader.load()));
             } catch (IOException e) {
-                e.printStackTrace();
+                System.err.println("A crash occurred when loading the scene, please restart the software!");
             }
             gameScreenController = loader.getController();
             gameScreenController.setGui(this);
             try {
                 gameScreenController.setPersonalTargetCard(personalTargetCardNumber);
             } catch (URISyntaxException | IOException e) {
-                e.printStackTrace();
+                System.err.println("A crash occurred when loading the scene, please restart the software!");
             }
             try {
                 gameScreenController.setCommonTargetCard(commonTargetGoals);
@@ -124,7 +124,7 @@ public class GraphicUserInterface extends Application implements UserInterface, 
             try {
                 gameScreenController.setupPlayerShelf();
             } catch (URISyntaxException | FileNotFoundException e) {
-                e.printStackTrace();
+                System.err.println("A crash occurred when loading the scene, please restart the software!");
             }
             guiStage.getScene().addEventFilter(KeyEvent.KEY_PRESSED, new EventHandler<>() {
                 final KeyCombination keyCombination = new KeyCodeCombination(KeyCode.ESCAPE);
@@ -196,7 +196,7 @@ public class GraphicUserInterface extends Application implements UserInterface, 
                     guiStage.show();
                 }
             } catch (URISyntaxException | IOException e) {
-                e.printStackTrace();
+                System.err.println("A crash occurred when loading the scene, please restart the software!");
             }
         });
     }
@@ -293,7 +293,7 @@ public class GraphicUserInterface extends Application implements UserInterface, 
             try {
                 stage.setScene(new Scene(loader.load()));
             } catch (IOException e) {
-                e.printStackTrace();
+                System.err.println("A crash occurred when loading the scene, please restart the software!");
             }
             stage.setTitle("My Shelfie - Server not responding!");
             stage.setResizable(false);
@@ -322,7 +322,7 @@ public class GraphicUserInterface extends Application implements UserInterface, 
             try {
                 stage.setScene(new Scene(loader.load()));
             } catch (IOException e) {
-                e.printStackTrace();
+                System.err.println("A crash occurred when loading the scene, please restart the software!");
             }
             stage.setResizable(false);
             stage.setTitle("My Shelfie - Can't restore lobby!");
@@ -340,7 +340,7 @@ public class GraphicUserInterface extends Application implements UserInterface, 
             try {
                 stage.setScene(new Scene(loader.load()));
             } catch (IOException e) {
-                e.printStackTrace();
+                System.err.println("A crash occurred when loading the scene, please restart the software!");
             }
             stage.setResizable(false);
             stage.setTitle("My Shelfie - You have won!!!");

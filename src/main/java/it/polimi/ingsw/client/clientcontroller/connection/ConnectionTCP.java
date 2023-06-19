@@ -23,9 +23,7 @@ public class ConnectionTCP implements Connection {
     public ConnectionTCP(String ip, int port) throws IOException {
         this.IP = ip;
         this.PORT = port;
-        System.out.println("PRE SOCKET");
         this.socket = new Socket(ip, port);
-        System.out.println("POST SOCKET");
         this.socketIn = new Scanner(socket.getInputStream());
         this.socketOut = new PrintWriter(socket.getOutputStream(), true);
         this.serializeDeserialize = new SerializeDeserialize(this);
@@ -45,11 +43,18 @@ public class ConnectionTCP implements Connection {
                     try {
                         serializeDeserialize.deserialize(inMsg);
                     } catch (IOException | URISyntaxException e) {
-                        e.printStackTrace();
+                        System.err.println("An unknown exception was thrown. If the problem persists, please restart the client!");
                     }
                 }
             }
-            System.out.println("I'M OUT THE TCP THREAD");
+            socketOut.close();
+            socketIn.close();
+            try {
+                socket.close();
+            }
+            catch (IOException e) {
+                System.err.println("The socket could not be closed, please kill the task and restart the client!");
+            }
         });
         socketReader.start();
         serializeDeserialize.startUserInterface(uiType);
@@ -58,7 +63,7 @@ public class ConnectionTCP implements Connection {
             System.err.println("JOINED THE SOCKET THREAD");
         }
         catch (InterruptedException e) {
-            e.printStackTrace();
+            System.err.println("The socket thread could not be terminated, please kill the task and restart the client!");
         }
     }
 
@@ -69,16 +74,6 @@ public class ConnectionTCP implements Connection {
     @Override
     public void closeConnection() {
         this.closeConnection = true;
-        socketOut.close();
-        socketIn.close();
-        try {
-            System.out.println("CHIUDO LA SOCKET");
-            socket.close();
-            System.out.println("SOCKET CHIUSA");
-        }
-        catch (IOException e) {
-            e.printStackTrace();
-        }
     }
 
 }
