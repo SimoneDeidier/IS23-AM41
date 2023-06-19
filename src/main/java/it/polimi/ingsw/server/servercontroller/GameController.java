@@ -184,10 +184,10 @@ public class GameController {
         save.setBoardBitMask(board.getBitMask());
         save.setMaxPlayerPlayer(maxPlayerNumber);
         Gson gson= new Gson();
-        try (FileWriter writer = new FileWriter("src/main/java/it/polimi/ingsw/save/OldGame.json")) {
+        try (FileWriter writer = new FileWriter(new File(System.getProperty("user.dir"), "savings.json"))) {
             gson.toJson(save, writer);
         } catch (IOException e) {
-            System.err.println("There was a problem opening the saving JSON, check that there are no write errors and/or the file is not corrupt!");
+            System.err.println("Writing to the JSON save file was not possible, the desired resource could not be accessed!");
         }
     }
 
@@ -307,7 +307,8 @@ public class GameController {
 
     public boolean checkSavedGame(String nickname) {
         try {
-            String jsonContent = new String(Files.readAllBytes(Paths.get("src/main/java/it/polimi/ingsw/save/OldGame.json")));
+            File save = new File(System.getProperty("user.dir"), "savings.json");
+            String jsonContent = new String(Files.readAllBytes(save.toPath()));
             Gson gson = new Gson();
             JsonObject jsonObject = gson.fromJson(jsonContent, JsonObject.class);
             if (!jsonObject.get("gameOver").getAsBoolean()) {
@@ -664,8 +665,8 @@ public class GameController {
 
     public void deleteSavedGame() {
         try {
-            File file = new File("src/main/java/it/polimi/ingsw/save/OldGame.json");
-            file.delete();
+            File save = new File(System.getProperty("user.dir"), "savings.json");
+            save.delete();
         }
         catch (SecurityException | NullPointerException e) {
             System.err.println("The old JSON saving could not be deleted!");
