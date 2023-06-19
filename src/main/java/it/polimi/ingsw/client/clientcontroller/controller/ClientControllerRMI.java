@@ -51,7 +51,7 @@ public class ClientControllerRMI implements ClientController, Serializable {
             userInterfaceThread.join();
             System.err.println("JOINED THE VIEW THREAD");
         } catch (InterruptedException e) {
-            throw new RuntimeException(e);
+            System.err.println("The UI thread could not be closed, please kill the task!");
         }
     }
 

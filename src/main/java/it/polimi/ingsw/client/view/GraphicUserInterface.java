@@ -119,7 +119,7 @@ public class GraphicUserInterface extends Application implements UserInterface, 
                 gameScreenController.setCommonTargetCard(commonTargetGoals);
             }
             catch (URISyntaxException | FileNotFoundException e) {
-                throw new RuntimeException(e);
+                System.err.println("A crash occurred when loading the scene, please restart the software!");
             }
             try {
                 gameScreenController.setupPlayerShelf();

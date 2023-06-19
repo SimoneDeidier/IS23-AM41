@@ -83,7 +83,7 @@ public class ConnectionRMI extends UnicastRemoteObject implements InterfaceClien
             try {
                 controller.loadGameScreen();
             } catch (IOException e) {
-                throw new RuntimeException(e);
+                System.err.println("A crash occurred when loading the scene, please restart the software!");
             }
             wasIJustReconnected=false;
         }
@@ -103,7 +103,7 @@ public class ConnectionRMI extends UnicastRemoteObject implements InterfaceClien
                 try {
                     controller.cantRestoreLobby();
                 } catch (IOException e) {
-                    throw new RuntimeException(e);
+                    System.err.println("A crash occurred when loading the scene, please restart the software!");
                 }
             }
             case 1 -> {
@@ -143,7 +143,7 @@ public class ConnectionRMI extends UnicastRemoteObject implements InterfaceClien
                 try {
                     controller.loadGameScreen();
                 } catch (IOException e) {
-                    throw new RuntimeException(e);
+                    System.err.println("A crash occurred when loading the scene, please restart the software!");
                 }
             }
             alreadySetMyCards=true;

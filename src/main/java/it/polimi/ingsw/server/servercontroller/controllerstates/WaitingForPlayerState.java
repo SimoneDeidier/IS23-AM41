@@ -158,7 +158,7 @@ public class WaitingForPlayerState implements GameState {
             try {
                 player.setPersonalTargetCard(generateRandomPersonal(playerList));
             } catch (IOException | URISyntaxException e) {
-                throw new RuntimeException(e);
+                System.err.println("It was not possible to set the personal target card to player " + player + " due to a reading error from the JSON!");
             }
         }
         Collections.shuffle(playerList);

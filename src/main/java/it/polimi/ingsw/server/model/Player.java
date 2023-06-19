@@ -86,7 +86,7 @@ public class Player implements Serializable {
             }
         }
         catch (URISyntaxException | IOException e) {
-            throw new RuntimeException(e);
+            System.err.println("When updating the score of the player on duty, an error occurred when reading from a JSON!");
         }
     }
 

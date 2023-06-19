@@ -129,7 +129,7 @@ public class GameScreenController {
                 stage.setTitle("My Shelfie - Your Personal Goal!");
                 stage.show();
             } catch (IOException e) {
-                throw new RuntimeException(e);
+                System.err.println("A crash occurred when loading the scene, please restart the software!");
             }
         });
     }
@@ -178,7 +178,7 @@ public class GameScreenController {
                 stage.setTitle("My Shelfie - Other players!");
                 stage.show();
             } catch (IOException | URISyntaxException e) {
-                throw new RuntimeException(e);
+                System.err.println("A crash occurred when loading the scene, please restart the software!");
             }
         });
     }
@@ -569,7 +569,7 @@ public class GameScreenController {
             try {
                 stage.setScene(new Scene(loader.load()));
             } catch (IOException e) {
-                throw new RuntimeException(e);
+                System.err.println("A crash occurred when loading the scene, please restart the software!");
             }
             MenuController menuController = loader.getController();
             menuController.setGui(gui);

@@ -528,13 +528,13 @@ public class TextUserInterface implements UserInterface{
         try {
             jsonFile = new File(ClassLoader.getSystemResource("json/PersonalTargetCards.json").toURI());
         } catch (URISyntaxException e) {
-            throw new RuntimeException(e);
+            System.err.println("Could not load a resource from a JSON file, please restart the game!");
         }
         String jsonString = null;
         try {
             jsonString = FileUtils.readFileToString(jsonFile, StandardCharsets.UTF_8);
         } catch (IOException e) {
-            throw new RuntimeException(e);
+            System.err.println("Could not load a resource from a JSON file, please restart the game!");
         }
 
         JsonArray jsonArray = gson.fromJson(jsonString, JsonArray.class);
