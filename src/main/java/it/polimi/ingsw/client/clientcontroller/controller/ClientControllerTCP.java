@@ -79,13 +79,13 @@ public class ClientControllerTCP implements ClientController {
     }
 
     @Override
-    public void nicknameAccepted() {
-        userInterface.nicknameAccepted();
+    public void nicknameAccepted(int nPlayers, List<String> lobby) {
+        userInterface.nicknameAccepted(nPlayers, lobby);
     }
 
     @Override
-    public void lobbyCreated() {
-        userInterface.lobbyCreated();
+    public void lobbyCreated(int nPlayers, List<String> lobby) {
+        userInterface.lobbyCreated(nPlayers, lobby);
     }
 
     @Override

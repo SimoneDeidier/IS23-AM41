@@ -1,17 +1,11 @@
 package it.polimi.ingsw.client.clientcontroller.controller;
 
-import it.polimi.ingsw.client.clientcontroller.connection.Connection;
 import it.polimi.ingsw.messages.NewView;
-import it.polimi.ingsw.server.model.Player;
-import it.polimi.ingsw.server.model.items.Item;
-import javafx.fxml.FXML;
 import javafx.scene.Node;
-import javafx.scene.control.TextField;
 
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.net.URISyntaxException;
-import java.time.LocalDateTime;
 import java.util.List;
 
 public interface ClientController {
@@ -21,11 +15,11 @@ public interface ClientController {
     void getParameters();
     void invalidNickname();
     void sendParameters(int numPlayers, int numCommons);
-    void nicknameAccepted();
-    void lobbyCreated();
+    void nicknameAccepted(int nPlayers, List<String> lobby);
+    void lobbyCreated(int nPlayers, List<String> lobby);
     void waitForLobby();
     void setPersonalTargetCardNumber(int personalTargetCardNumber);
-    void  setCommonGoalList(List<String> commonGoalsNameList);
+    void setCommonGoalList(List<String> commonGoalsNameList);
     void loadGameScreen() throws IOException;
     void sendMessage(String message);
     void receiveMessage(String message, String sender, String localDateTime);

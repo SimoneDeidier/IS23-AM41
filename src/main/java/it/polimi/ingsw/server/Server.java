@@ -176,15 +176,30 @@ public class Server implements InterfaceServer {
                 }
                 case 1 -> { //joined a "new" game
                     clientMapRMI.put(nickname,cl); //starts the ping towards that user
-                    cl.confirmConnection(false);
+                    int nPlayers = controller.getMaxPlayerNumber();
+                    List<String> lobby = new ArrayList<>();
+                    for(Player p : controller.getPlayerList()) {
+                        lobby.add(p.getNickname());
+                    }
+                    cl.confirmConnection(false, nPlayers, lobby);
                 }
                 case 2 ->{ //first player joining a "restored" game
                     clientMapRMI.put(nickname,cl); //starts the ping towards that user
-                    cl.lobbyCreated(false);
+                    int nPlayers = controller.getMaxPlayerNumber();
+                    List<String> lobby = new ArrayList<>();
+                    for(Player p : controller.getPlayerList()) {
+                        lobby.add(p.getNickname());
+                    }
+                    cl.lobbyCreated(false, nPlayers, lobby);
                 }
                 case 3 -> { //joining a restored game
                     clientMapRMI.put(nickname,cl); //starts the ping towards that user
-                    cl.confirmConnection(true);
+                    int nPlayers = controller.getMaxPlayerNumber();
+                    List<String> lobby = new ArrayList<>();
+                    for(Player p : controller.getPlayerList()) {
+                        lobby.add(p.getNickname());
+                    }
+                    cl.confirmConnection(true, nPlayers, lobby);
                 }
             }
         } catch (CancelGameException e) { //the game is being canceled because a restoring of a saved game failed
@@ -238,10 +253,17 @@ public class Server implements InterfaceServer {
 
     @Override
     public void sendParameters(InterfaceClient cl,int maxPlayerNumber, boolean onlyOneCommonCard) throws RemoteException {
-        if(controller.createLobby(maxPlayerNumber,onlyOneCommonCard))
-            cl.lobbyCreated(true);
-        else
+        if(controller.createLobby(maxPlayerNumber,onlyOneCommonCard)) {
+            int nPlayers = controller.getMaxPlayerNumber();
+            List<String> lobby = new ArrayList<>();
+            for(Player p : controller.getPlayerList()) {
+                lobby.add(p.getNickname());
+            }
+            cl.lobbyCreated(true, nPlayers, lobby);
+        }
+        else {
             cl.askParametersAgain();
+        }
     }
 
     @Override

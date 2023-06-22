@@ -84,13 +84,13 @@ public class GraphicUserInterface extends Application implements UserInterface, 
     }
 
     @Override
-    public void nicknameAccepted() {
-        loginScreenController.nicknameAccepted();
+    public void nicknameAccepted(int nPlayers, List<String> lobby) {
+        loginScreenController.nicknameAccepted(nPlayers, lobby);
     }
 
     @Override
-    public void lobbyCreated() {
-        loginScreenController.lobbyCreated();
+    public void lobbyCreated(int nPlayers, List<String> lobby) {
+        loginScreenController.lobbyCreated(nPlayers, lobby);
     }
 
     @Override

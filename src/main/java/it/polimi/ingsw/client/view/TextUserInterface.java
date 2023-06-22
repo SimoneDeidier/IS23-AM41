@@ -9,10 +9,8 @@ import it.polimi.ingsw.server.model.items.Item;
 import it.polimi.ingsw.server.model.items.ItemColor;
 import it.polimi.ingsw.server.model.tokens.ScoringToken;
 import javafx.scene.Node;
-import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.IOUtils;
 
-import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.net.URISyntaxException;
@@ -879,7 +877,7 @@ public class TextUserInterface implements UserInterface{
     }
 
     @Override
-    public void nicknameAccepted() {
+    public void nicknameAccepted(int nPlayers, List<String> lobby) {
         new Thread(() -> {
             List<String> textLines = new ArrayList<>();
 
@@ -892,7 +890,7 @@ public class TextUserInterface implements UserInterface{
     }
 
     @Override
-    public void lobbyCreated() {
+    public void lobbyCreated(int nPlayers, List<String> lobby) {
         List<String> textLines = new ArrayList<>();
 
         // Add strings to the list

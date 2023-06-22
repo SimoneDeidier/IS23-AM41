@@ -29,7 +29,8 @@ public class TCPMessageController implements TCPMessageControllerInterface {
         String header = message.getHeader();
         switch (header) {
             case "Nickname Accepted" -> {
-                controller.nicknameAccepted();
+                Body body = message.getBody();
+                controller.nicknameAccepted(body.getNumberOfPlayers(), body.getLobby());
             }
             case "Wait for Lobby" -> {
                 controller.waitForLobby();
@@ -75,7 +76,8 @@ public class TCPMessageController implements TCPMessageControllerInterface {
                 controller.updateView(message.getBody().getNewView());
             }
             case "Lobby Created" -> {
-                controller.lobbyCreated();
+                Body body = message.getBody();
+                controller.lobbyCreated(body.getNumberOfPlayers(), body.getLobby());
             }
             case "Wrong Parameters" -> {
                 controller.wrongParameters();

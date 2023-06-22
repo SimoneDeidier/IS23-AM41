@@ -21,6 +21,7 @@ public class Body implements Serializable {
     private String localDateTime;
     private List<String> commonTargetCardsName = new ArrayList<>(2);
     private int goodbyeType;
+    private List<String> lobby = new ArrayList<>(4);
 
     public String getPlayerNickname() {
         return playerNickname;
@@ -120,5 +121,9 @@ public class Body implements Serializable {
 
     public void setGoodbyeType(int goodbyeType) {
         this.goodbyeType = goodbyeType;
+    }
+
+    public List<String> getLobby() {
+        return lobby;
     }
 }

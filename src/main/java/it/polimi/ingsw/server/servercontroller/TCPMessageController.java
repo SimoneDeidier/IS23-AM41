@@ -33,7 +33,12 @@ public class TCPMessageController implements TCPMessageControllerInterface {
                 try {
                     switch(gameController.presentation(nickname)) {
                         case 1 -> { //joined a "new" game
-                            printTCPMessage("Nickname Accepted", null);
+                            Body body = new Body();
+                            body.setNumberOfPlayers(gameController.getMaxPlayerNumber());
+                            for(Player p : gameController.getPlayerList()) {
+                                body.getLobby().add(p.getNickname());
+                            }
+                            printTCPMessage("Nickname Accepted", body);
                             gameController.putNickToSocketMapping(nickname, this);
                         } case 3 -> { //joined a "restored" game
                             printTCPMessage("Player Restored", null);
@@ -93,7 +98,12 @@ public class TCPMessageController implements TCPMessageControllerInterface {
                 int players = message.getBody().getNumberOfPlayers();
                 boolean isOnlyOneCommon =  message.getBody().isOnlyOneCommon();
                 if(gameController.createLobby(players, isOnlyOneCommon)) {
-                    printTCPMessage("Lobby Created", null);
+                    Body body = new Body();
+                    body.setNumberOfPlayers(gameController.getMaxPlayerNumber());
+                    for(Player p : gameController.getPlayerList()) {
+                        body.getLobby().add(p.getNickname());
+                    }
+                    printTCPMessage("Lobby Created", body);
                 }
                 else {
                     printTCPMessage("Wrong Parameters", null);

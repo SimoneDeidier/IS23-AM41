@@ -11,7 +11,6 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.Serializable;
 import java.net.URISyntaxException;
-import java.rmi.NoSuchObjectException;
 import java.rmi.RemoteException;
 import java.rmi.registry.LocateRegistry;
 import java.rmi.registry.Registry;
@@ -115,12 +114,12 @@ public class ConnectionRMI extends UnicastRemoteObject implements InterfaceClien
     }
 
     @Override
-    public void confirmConnection(boolean typeOfLobby) throws RemoteException {
+    public void confirmConnection(boolean typeOfLobby, int nPlayers, List<String> lobby) throws RemoteException {
         startClearThread();
         if (typeOfLobby) {
             controller.playerRestored();
         } else {
-            controller.nicknameAccepted();
+            controller.nicknameAccepted(nPlayers, lobby);
         }
     }
 
@@ -151,10 +150,10 @@ public class ConnectionRMI extends UnicastRemoteObject implements InterfaceClien
     }
 
     @Override
-    public void lobbyCreated(boolean typeOfGame) throws RemoteException {
+    public void lobbyCreated(boolean typeOfGame, int nPlayers, List<String> lobby) throws RemoteException {
         startClearThread();
         if (typeOfGame)
-            controller.lobbyCreated();
+            controller.lobbyCreated(nPlayers, lobby);
         else
             controller.lobbyRestored();
     }

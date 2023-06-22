@@ -21,9 +21,9 @@ public interface UserInterface extends Runnable {
 
     void sendParameters(int numPlayers, int numCommons);
 
-    void nicknameAccepted();
+    void nicknameAccepted(int nPlayers, List<String> lobby);
 
-    void lobbyCreated();
+    void lobbyCreated(int nPlayers, List<String> lobby);
 
     void waitForLobby();
 
