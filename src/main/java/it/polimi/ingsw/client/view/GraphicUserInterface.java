@@ -378,4 +378,14 @@ public class GraphicUserInterface extends Application implements UserInterface, 
         guiStage.close();
     }
 
+    @Override
+    public void userConnected(String nickname) {
+        loginScreenController.userConnected(nickname);
+    }
+
+    @Override
+    public void disconnectedFromLobby(String nickname) {
+        loginScreenController.disconnectedFromLobby(nickname);
+    }
+
 }

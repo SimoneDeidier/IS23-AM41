@@ -26,4 +26,8 @@ public interface InterfaceClient extends Remote {
     void fullLobby() throws RemoteException;
     void notificationForReconnection(String nickname) throws RemoteException;
     void notificationForDisconnection(String nickname) throws RemoteException;
+
+    void notifyConnectedUser(String nickname);
+
+    void disconnectedFromLobby(String nickname);
 }

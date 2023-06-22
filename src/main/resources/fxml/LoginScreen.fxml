@@ -64,7 +64,7 @@
                   <Image url="@../images/chat_background.jpg" />
                </image>
             </ImageView>
-            <Label fx:id="lobbyLabel" text="You are in a lobby! Max number of players:" textAlignment="CENTER" textFill="WHITE" AnchorPane.leftAnchor="193.0" AnchorPane.topAnchor="13.0">
+            <Label fx:id="lobbyLabel" alignment="CENTER" text="You are in a lobby! Max number of players:" textFill="WHITE" AnchorPane.leftAnchor="145.0" AnchorPane.rightAnchor="145.0" AnchorPane.topAnchor="13.0">
                <font>
                   <Font size="17.0" />
                </font>

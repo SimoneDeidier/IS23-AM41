@@ -10,6 +10,7 @@ import it.polimi.ingsw.server.servercontroller.GameController;
 import it.polimi.ingsw.server.servercontroller.SocketManager;
 import it.polimi.ingsw.server.servercontroller.controllerstates.RunningGameState;
 import it.polimi.ingsw.server.servercontroller.controllerstates.ServerInitState;
+import it.polimi.ingsw.server.servercontroller.controllerstates.WaitingForPlayerState;
 import it.polimi.ingsw.server.servercontroller.exceptions.*;
 
 import java.io.IOException;
@@ -182,6 +183,7 @@ public class Server implements InterfaceServer {
                         lobby.add(p.getNickname());
                     }
                     cl.confirmConnection(false, nPlayers, lobby);
+                    controller.notifyOfConnectedUser(nickname);
                 }
                 case 2 ->{ //first player joining a "restored" game
                     clientMapRMI.put(nickname,cl); //starts the ping towards that user
@@ -386,6 +388,9 @@ public class Server implements InterfaceServer {
                                 controller.getPlayerList().clear();
                             }
                             clientMapRMI.remove(nickname);
+                            if(controller.getState().getClass().equals(WaitingForPlayerState.class)) {
+                                controller.notifyOfDisconnectionFromLobby(nickname);
+                            }
                             break;
                         }
                         Thread.sleep(CHECK_DELAY_MILLISECONDS);
@@ -430,6 +435,20 @@ public class Server implements InterfaceServer {
                 clientMapRMI.get(user).notificationForReconnection(nickname);
             } catch (RemoteException ignored) {
             }
+        }
+    }
+
+    public void notifyOfConnectedUser(String nickname) {
+        for(String s : clientMapRMI.keySet()) {
+            if(!Objects.equals(s, nickname)) {
+                clientMapRMI.get(s).notifyConnectedUser(nickname);
+            }
+        }
+    }
+
+    public void notifyOfDisconnectionFromLobby(String nickname) {
+        for(String s : clientMapRMI.keySet()) {
+            clientMapRMI.get(s).disconnectedFromLobby(nickname);
         }
     }
 }

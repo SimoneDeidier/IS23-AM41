@@ -75,4 +75,8 @@ public interface ClientController {
     void playerReconnected(String nickane);
 
     void exitWithoutWaitingDisconnectFromServer();
+
+    void userConnected(String playerNickname);
+
+    void disconnectedFromLobby(String playerNickname);
 }

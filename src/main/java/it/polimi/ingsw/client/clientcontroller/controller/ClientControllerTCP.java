@@ -300,4 +300,14 @@ public class ClientControllerTCP implements ClientController {
         tcpMessageController.closeClient();
     }
 
+    @Override
+    public void userConnected(String playerNickname) {
+        userInterface.userConnected(playerNickname);
+    }
+
+    @Override
+    public void disconnectedFromLobby(String playerNickname) {
+        userInterface.disconnectedFromLobby(playerNickname);
+    }
+
 }

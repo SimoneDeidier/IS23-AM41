@@ -184,4 +184,30 @@ public class LoginScreenController {
         }
     }
 
+    public void userConnected(String nickname) {
+        Platform.runLater(() -> {
+            String text = lobbyLabel.getText();
+            StringBuilder stringBuilder = new StringBuilder(text);
+            stringBuilder.append(" - ").append(nickname).append("\n");
+            lobbyLabel.setText(stringBuilder.toString());
+        });
+    }
+
+    public void disconnectedFromLobby(String nickname) {
+        Platform.runLater(() ->{
+            String text = lobbyLabel.getText();
+            String[] lines = text.split("\n");
+            StringBuilder stringBuilder = new StringBuilder();
+            for(String line : lines) {
+                if(!line.contains(nickname)) {
+                    stringBuilder.append(line).append("\n");
+                }
+                else {
+                    stringBuilder.append(line).append(" - DISCONNECTED! \n");
+                }
+            }
+            lobbyLabel.setText(stringBuilder.toString());
+        });
+    }
+
 }

@@ -255,4 +255,15 @@ public class ConnectionRMI extends UnicastRemoteObject implements InterfaceClien
     public void closeConnection() {
         System.exit(0);
     }
+
+    @Override
+    public void notifyConnectedUser(String nickname) {
+        controller.userConnected(nickname);
+    }
+
+    @Override
+    public void disconnectedFromLobby(String nickname) {
+        controller.disconnectedFromLobby(nickname);
+    }
+
 }

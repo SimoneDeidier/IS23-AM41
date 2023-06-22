@@ -83,4 +83,8 @@ public interface UserInterface extends Runnable {
     void setTakeableItems(boolean[][] takeableItems, boolean yourTurn, boolean waitForOtherPlayers);
 
     void exitWithoutWaitingDisconnectFromServer();
+
+    void userConnected(String nickname);
+
+    void disconnectedFromLobby(String nickname);
 }

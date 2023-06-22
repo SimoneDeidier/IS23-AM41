@@ -557,6 +557,9 @@ public class GameController {
                                 changeState(new ServerInitState());
                                 getPlayerList().clear();
                             }
+                            else if(state.getClass().equals(WaitingForPlayerState.class)) {
+                                notifyOfDisconnectionFromLobby(nickname);
+                            }
                         }
                     }
                 }
@@ -693,6 +696,26 @@ public class GameController {
             }
         }
         server.notifyOfReconnectionAllRMIUsers(nickname);
+    }
+
+    public void notifyOfConnectedUser(String nickname) {
+        for(String s : nickToTCPMessageControllerMapping.keySet()) {
+            if(!Objects.equals(s, nickname)) {
+                Body b = new Body();
+                b.setPlayerNickname(nickname);
+                nickToTCPMessageControllerMapping.get(s).printTCPMessage("User Connected", b);
+            }
+        }
+        server.notifyOfConnectedUser(nickname);
+    }
+
+    public void notifyOfDisconnectionFromLobby(String nickname) {
+        for(String s : nickToTCPMessageControllerMapping.keySet()) {
+            Body b = new Body();
+            b.setPlayerNickname(nickname);
+            nickToTCPMessageControllerMapping.get(s).printTCPMessage("Disconnected From Lobby", b);
+        }
+        server.notifyOfDisconnectionFromLobby(nickname);
     }
 
 }

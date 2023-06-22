@@ -1204,5 +1204,15 @@ public class TextUserInterface implements UserInterface{
         closeTUI = true;
     }
 
+    @Override
+    public void userConnected(String nickname) {
+
+    }
+
+    @Override
+    public void disconnectedFromLobby(String nickname) {
+
+    }
+
 }
 
