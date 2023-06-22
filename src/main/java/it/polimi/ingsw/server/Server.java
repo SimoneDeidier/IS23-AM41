@@ -26,10 +26,10 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
 public class Server implements InterfaceServer {
-    private static final String IP_ADDRESS_IN_USE = "169.254.74.67";
 
     private static int portRMI;
     private static int portTCP;
+    private static String ipAddress;
     private final Map<String,InterfaceClient> clientMapRMI = new ConcurrentHashMap<>();
     private final GameController controller = GameController.getGameController(this);
     private static final int CHECK_DELAY_MILLISECONDS = 5000;
@@ -43,12 +43,15 @@ public class Server implements InterfaceServer {
             portTCP = setPortNumber("TCP", portRMI);
         }
 
+        if(!parseIpAddress(args)) {
+            ipAddress = setIpAddress();
+        }
 
         // START RMI SERVER
-        InterfaceServer stub = null;
+        InterfaceServer stub;
         Server obj =  new Server();
 
-        System.setProperty("java.rmi.server.hostname", IP_ADDRESS_IN_USE);
+        System.setProperty("java.rmi.server.hostname", ipAddress.toLowerCase());
 
         try {
             stub = (InterfaceServer) UnicastRemoteObject.exportObject(obj, portRMI);
@@ -72,28 +75,26 @@ public class Server implements InterfaceServer {
         System.err.println("RMI server ready - listening on port " + portRMI + ".");
 
         // START TCP SERVER
-        ExecutorService executor = Executors.newCachedThreadPool();
-        ServerSocket serverSocket;
-        try {
-            serverSocket = new ServerSocket(portTCP);
-        }
-        catch (IOException e) {
-            System.err.println(e.getMessage());
-            return;
-        }
-        System.err.println("TCP Server ready - listening on port " + portTCP + ".");
-        while(true) {
-            try {
-                Socket socket = serverSocket.accept();
-                executor.submit(new SocketManager(socket));
+        try (ExecutorService executor = Executors.newCachedThreadPool()) {
+            try (ServerSocket serverSocket = new ServerSocket(portTCP)) {
+                System.err.println("TCP Server ready - listening on port " + portTCP + ".");
+                while (true) {
+                    try {
+                        Socket socket = serverSocket.accept();
+                        executor.submit(new SocketManager(socket));
+                    } catch (IOException e) {
+                        System.err.println(e.getMessage());
+                        break;
+                    }
+                }
+                System.out.println("Server socket was closed - server shutting down.");
+                executor.shutdown();
             }
             catch (IOException e) {
                 System.err.println(e.getMessage());
-                break;
+                return;
             }
         }
-        System.out.println("Server socket was closed - server shutting down.");
-        executor.shutdown();
         System.out.println("All threads are joined - server shutting down.");
 
     }
@@ -104,7 +105,7 @@ public class Server implements InterfaceServer {
         boolean tcpOK = false;
 
         for(int i = 0; i < args.length - 1; i++) {
-            if(Objects.equals(args[i], "-r") && args[i+1].matches("[0-9]+")) {
+            if((Objects.equals(args[i], "-r") || Objects.equals(args[i], "--rmi")) && args[i+1].matches("[0-9]+")) {
                 int parsed = Integer.parseInt(args[i+1]);
                 if(parsed <= 1024 || parsed > 65535 || (tcpOK && (parsed == portTCP))) {
                     System.out.println("Invalid port number.");
@@ -113,7 +114,7 @@ public class Server implements InterfaceServer {
                 portRMI = parsed;
                 rmiOK = true;
             }
-            if(Objects.equals(args[i], "-t") && args[i+1].matches("[0-9]+")) {
+            if((Objects.equals(args[i], "-t") || Objects.equals(args[i], "--tcp")) && args[i+1].matches("[0-9]+")) {
                 int parsed = Integer.parseInt(args[i+1]);
                 if(parsed <= 1024 || parsed > 65535 || (rmiOK && (parsed == portRMI))) {
                     System.out.println("Invalid port number.");
@@ -130,8 +131,19 @@ public class Server implements InterfaceServer {
 
     }
 
-    public static int setPortNumber(String type, int firstPort) {
+    public static boolean parseIpAddress(String[] args) {
+        for(int i = 0; i < args.length - 1; i++) {
+            String cmd = args[i];
+            String par = args[i + 1];
+            if(Objects.equals(cmd, "--ipaddr") && (par.matches("[0-9][0-9.]*[0-9]+") || par.equalsIgnoreCase("localhost"))) {
+                ipAddress = par;
+                return true;
+            }
+        }
+        return false;
+    }
 
+    public static int setPortNumber(String type, int firstPort) {
         int input;
         Scanner in = new Scanner(System.in);
 
@@ -139,6 +151,18 @@ public class Server implements InterfaceServer {
             System.out.print("Please select a port number for the " + type + " server: ");
             input = in.nextInt();
         }while(input <= 1024 || input > 65535 || input == firstPort);
+
+        return input;
+    }
+
+    public static String setIpAddress() {
+        String input;
+        Scanner in = new Scanner(System.in);
+
+        do {
+            System.out.println("Please insert the IP address of the server: ");
+            input = in.nextLine();
+        } while(!input.matches("[0-9][0-9.]*[0-9]+") && !input.equalsIgnoreCase("localhost"));
 
         return input;
     }

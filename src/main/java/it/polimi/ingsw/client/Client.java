@@ -16,9 +16,8 @@ import java.util.Scanner;
 public class Client {
 
     private static Connection connection;
-    private static String ipAddress = null;
-    private final static int TCP_PORT = 8888;
-    private final static int RMI_PORT = 1234;
+    private static String ipAddress;
+    private static int portNumber;
     private static String connectionType;
     private static String uiType;
     private static boolean connectionOk = true;
@@ -28,17 +27,27 @@ public class Client {
         drawLogo();
         Scanner stdin = new Scanner(System.in);
         if(!parseConnectionType(args)) {
-            System.out.println("Select connection type: ");
-            connectionType = stdin.nextLine();
+            do {
+                System.out.println("Select connection type: ");
+                connectionType = stdin.nextLine();
+            } while(!connectionType.equalsIgnoreCase("tcp") && !connectionType.equalsIgnoreCase("rmi"));
         }
         if(!parseIPAddress(args)) {
-            System.out.println("Insert the server's IP address: ");
-            ipAddress = stdin.nextLine();
+            do {
+                System.out.println("Insert the server's IP address: ");
+                ipAddress = stdin.nextLine();
+            } while(!ipAddress.matches("[0-9][0-9.]*[0-9]+") && !ipAddress.equalsIgnoreCase("localhost"));
         }
-        switch (connectionType) {
+        if(!parsePortNumber(args)) {
+            do {
+                System.out.println("Insert the server's port number: ");
+                portNumber = stdin.nextInt();
+            } while(portNumber <= 1024 || portNumber > 65535);
+        }
+        switch (connectionType.toLowerCase()) {
             case "tcp" -> {
                 try {
-                    connection = new ConnectionTCP(ipAddress, TCP_PORT);
+                    connection = new ConnectionTCP(ipAddress, portNumber);
                 }
                 catch (IOException e) {
                     connectionOk = false;
@@ -46,7 +55,7 @@ public class Client {
             }
             case "rmi" -> {
                 try {
-                    connection = new ConnectionRMI(RMI_PORT, ipAddress);
+                    connection = new ConnectionRMI(portNumber, ipAddress);
                 } catch (RemoteException e) {
                     connectionOk = false;
                 }
@@ -55,10 +64,12 @@ public class Client {
         }
         if(connectionOk) {
             if (!parseUiType(args)) {
-                System.out.println("Select UI type: ");
-                uiType = stdin.nextLine();
+                do {
+                    System.out.println("Select UI type: ");
+                    uiType = stdin.nextLine();
+                } while(!uiType.equalsIgnoreCase("tui") && !uiType.equalsIgnoreCase("gui"));
             }
-            switch (uiType) {
+            switch (uiType.toLowerCase()) {
                 case "tui" -> connection.startConnection("tui");
                 case "gui" -> connection.startConnection("gui");
                 default -> System.err.println("Wrong parameter, restart client...");
@@ -96,7 +107,7 @@ public class Client {
         for(int i = 0; i < args.length - 1; i++) {
             String cmd = args[i];
             String par = args[i + 1];
-            if(Objects.equals(cmd, "--ipaddr") && (par.matches("[0-9][0-9.]*[0-9]+") || Objects.equals(par, "localhost"))) {
+            if(Objects.equals(cmd, "--ipaddr") && (par.matches("[0-9][0-9.]*[0-9]+") || par.equalsIgnoreCase("localhost"))) {
                 ipAddress = par;
                 return true;
             }
@@ -108,7 +119,7 @@ public class Client {
         for(int i = 0; i < args.length - 1; i++) {
             String cmd = args[i];
             String par = args[i+1];
-            if(Objects.equals(cmd, "-c") && (Objects.equals(par, "tcp") || Objects.equals(par, "rmi"))) {
+            if((Objects.equals(cmd, "-c") || Objects.equals(cmd, "--conn")) && (par.equalsIgnoreCase("tcp") || par.equalsIgnoreCase("rmi"))) {
                 connectionType = par;
                 return true;
             }
@@ -120,8 +131,20 @@ public class Client {
         for(int i = 0; i < args.length - 1; i++) {
             String cmd = args[i];
             String par = args[i+1];
-            if(Objects.equals(cmd, "-u") && (Objects.equals(par, "tui") || Objects.equals(par, "gui"))) {
+            if((Objects.equals(cmd, "-u") || Objects.equals(cmd, "--ui")) && (par.equalsIgnoreCase("tui") || par.equalsIgnoreCase("gui"))) {
                 uiType = par;
+                return true;
+            }
+        }
+        return false;
+    }
+
+    public static boolean parsePortNumber(String[] args) {
+        for(int i = 0; i < args.length - 1; i++) {
+            String cmd = args[i];
+            String par = args[i+1];
+            if((Objects.equals(cmd, "-p") || Objects.equals(cmd, "--port")) && (Integer.parseInt(par) > 1024 && Integer.parseInt(par) <= 65535)) {
+                portNumber = Integer.parseInt(par);
                 return true;
             }
         }
