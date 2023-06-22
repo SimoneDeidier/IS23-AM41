@@ -114,4 +114,4 @@ java -jar MyShelfie-CLIENT.jar -c tcp -u gui --ipaddr 192.168.1.12 -p 8888
 
 * *This command starts the client with Graphical User Interface, which will try to establish a connection to the server with IP address 192.168.1.12 via a TCP connection on port 8888.*
 
-> *Please, note that all values to commands are case insensitive (e.g. the software detects both command ```--ipaddr LOCALHOST``` and ```--ipaddr localhost``` without problems), while all commands are only accepted in lower case (command ```--PORT``` is not recognised, while W```--port``` is).*
+> *Please, note that all values to commands are case insensitive (e.g. the software detects both command ```--ipaddr LOCALHOST``` and ```--ipaddr localhost``` without problems), while all commands are only accepted in lower case (command ```--PORT``` is not recognised, while ```--port``` is).*
