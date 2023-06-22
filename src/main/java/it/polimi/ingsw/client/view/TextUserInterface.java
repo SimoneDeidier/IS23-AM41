@@ -19,6 +19,9 @@ import java.net.URISyntaxException;
 import java.nio.charset.StandardCharsets;
 import java.util.*;
 
+/**
+ * Handles the TUI of the game
+ */
 public class TextUserInterface implements UserInterface{
 
     private static ClientController clientController;
@@ -42,6 +45,9 @@ public class TextUserInterface implements UserInterface{
     private boolean[][] takeableItems;
     private volatile boolean closeTUI = false;
 
+    /**
+     * Starting method to run the TUI
+     */
     @Override
     public void run() {
         List<String> textLines = new ArrayList<>();
@@ -64,6 +70,10 @@ public class TextUserInterface implements UserInterface{
         }
     }
 
+    /**
+     * Creates a standard TUI page including only the text provided
+     * @param textLines The list of lines to display on the page..
+     */
     private void standardTextPage(List<String> textLines) {
         System.out.println(drawHorizontalLine(sceneWidth));
 
@@ -76,6 +86,10 @@ public class TextUserInterface implements UserInterface{
         drawEmptyLines(textLines.size());
     }
 
+    /**
+     * Ask the user for the nickname and send it to the sendNickname() method
+     * @param text Text to display on the page to ask for the nickname
+     */
     private void getNickname(String text) {
 
         String nickname;
@@ -100,6 +114,9 @@ public class TextUserInterface implements UserInterface{
         }
     }
 
+    /**
+     * Display the main game page with the board and the user's shelf
+     */
     private void mainGamePage() {
 
         int boardCol = 9;
@@ -430,6 +447,9 @@ public class TextUserInterface implements UserInterface{
 
     }
 
+    /**
+     * Warns the user, displaying it on screen, that the input inserted is either wrong or forbidden
+     */
     private void forbiddenInput() {
         List<String> textLines = new ArrayList<>();
 
@@ -451,6 +471,9 @@ public class TextUserInterface implements UserInterface{
         }
     }
 
+    /**
+     * Warns the user that the tile selected is not actually available, or it doesn't exist
+     */
     private void tileNotAvailable() {
         List<String> textLines = new ArrayList<>();
 
@@ -472,6 +495,10 @@ public class TextUserInterface implements UserInterface{
         }
     }
 
+    /**
+     * Convert an item to the corresponding text and color to display on screen
+     * @param item Item to convert into a string
+     */
     private String itemToColour(Item item) {
         if(item != null) {
             return switch (item.getColor()) {
@@ -486,6 +513,9 @@ public class TextUserInterface implements UserInterface{
         return " ";
     }
 
+    /**
+     * Display the tokens earned by the user throughout the game
+     */
     private void tokensPage() {
         List<String> textLines = new ArrayList<>();
         boolean tokenFound=false;
@@ -515,6 +545,9 @@ public class TextUserInterface implements UserInterface{
         }
     }
 
+    /**
+     * Display the personal goal card assigned to the user
+     */
     private void personalGoalsPage() {
         int shelfCol = 5;
         int shelfRow = 6;
@@ -592,6 +625,9 @@ public class TextUserInterface implements UserInterface{
         }
     }
 
+    /**
+     * Display the common card goals of the current game
+     */
     private void commonGoalsPage() {
         List<String> textLines = new ArrayList<>();
 
@@ -600,29 +636,44 @@ public class TextUserInterface implements UserInterface{
         textLines.add(" ");
         this.newView.getCommonsToTokens().forEach((key, value) -> {
             switch (key) {
-                case "CommonSixGroupsOfTwo" ->
-                        textLines.add("Six groups each containing at least 2 tiles of the same type (not necessarily in the depicted shape). The tiles of one group can be different from those of another group.");
+                case "CommonSixGroupsOfTwo" -> {
+                    textLines.add("Six groups each containing at least 2 tiles of the same type (not necessarily in the depicted shape).");
+                    textLines.add("The tiles of one group can be different from those of another group.");
+                }
                 case "CommonDiagonal" -> textLines.add("Five tiles of the same type forming a diagonal.");
                 case "CommonEightSame" ->
                         textLines.add("Eight tiles of the same type. There’s no restriction about the position of these tiles.");
                 case "CommonFourCorners" ->
                         textLines.add("Four tiles of the same type in the four corners of the bookshelf.");
-                case "CommonFourGroupsOfFour" ->
-                        textLines.add("Four groups each containing at least 4 tiles of the same type (not necessarily in the depicted shape). The tiles of one group can be different from those of another group.");
-                case "CommonFourRows" ->
-                        textLines.add("Four lines each formed by 5 tiles of maximum three different types. One line can show the same or a different combination of another line.");
-                case "CommonStairway" ->
-                        textLines.add("Five columns of increasing or decreasing height. Starting from the first column on the left or on the right, each next column must be made of exactly one more tile. Tiles can be of any type.");
-                case "CommonThreeColumns" ->
-                        textLines.add("Three columns each formed by 6 tiles of maximum three different types. One column can show the same or a different combination of another column.");
+                case "CommonFourGroupsOfFour" -> {
+                    textLines.add("Four groups each containing at least 4 tiles of the same type (not necessarily in the depicted shape).");
+                    textLines.add("The tiles of one group can be different from those of another group.");
+                }
+                case "CommonFourRows" -> {
+                    textLines.add("Four lines each formed by 5 tiles of maximum three different types.");
+                    textLines.add("One line can show the same or a different combination of another line.");
+                }
+                case "CommonStairway" -> {
+                    textLines.add("Five columns of increasing or decreasing height. Starting from the first column on the left or on the right,");
+                    textLines.add("each next column must be made of exactly one more tile. Tiles can be of any type.");
+                }
+                case "CommonThreeColumns" -> {
+                    textLines.add("Three columns each formed by 6 tiles of maximum three different types.");
+                    textLines.add("One column can show the same or a different combination of another column.");
+                }
                 case "CommonTwoColumns" -> textLines.add("Two columns each formed by 6 different types of tiles.");
-                case "CommonTwoRows" ->
-                        textLines.add("Two lines each formed by 5 different types of tiles. One line can show the same or a different combination of the other line.");
-                case "CommonTwoSquares" ->
-                        textLines.add("Two groups each containing 4 tiles of the same type in a 2x2 square. The tiles of one square can be different from those of the other square.");
+                case "CommonTwoRows" -> {
+                    textLines.add("Two lines each formed by 5 different types of tiles.");
+                    textLines.add("One line can show the same or a different combination of the other line.");
+                }
+                case "CommonTwoSquares" -> {
+                    textLines.add("Two groups each containing 4 tiles of the same type in a 2x2 square.");
+                    textLines.add("The tiles of one square can be different from those of the other square.");
+                }
                 case "CommonX" -> textLines.add("Five tiles of the same type forming an X.");
                 default -> textLines.add("NO COMMON TARGET CARD SET");
             }
+            textLines.add(" ");
         });
         textLines.add(" ");
         textLines.add("Press enter to go back");
@@ -639,6 +690,9 @@ public class TextUserInterface implements UserInterface{
         }
     }
 
+    /**
+     * Display the shelfs of the other players
+     */
     private void otherPlayersPage() {
 
         int shelfCol = 5;
@@ -713,6 +767,9 @@ public class TextUserInterface implements UserInterface{
         }
     }
 
+    /**
+     * Display the chat of the game
+     */
     private void chat() {
         this.chatOpen = true;
         int chatSize;
@@ -727,18 +784,26 @@ public class TextUserInterface implements UserInterface{
             System.out.println(chatList.get(j));
         }
         if(chatSize == 0){
-            System.out.println("The chat seems to be empty, be the first to write something!");
+            System.out.println("The chat seems to be empty, be the first to write something! Or type /back to go back to the main page.");
+        } else {
+            System.out.println();
+            System.out.println("Type your message or type /back to go back to the main page.");
         }
-
         Scanner in = new Scanner(System.in);
         String message = in.nextLine();
         while(!message.equals("/back")) {
             sendMessage(message);
+            in = new Scanner(System.in);
+            message = in.nextLine();
         }
             this.chatOpen = false;
             mainGamePage();
     }
 
+    /**
+     * Print a line of content centred with the lateral bars used in standard pages
+     *  @param text string of content to centre
+     */
     private void printContentLine(String text) {
         StringBuilder lineContent = new StringBuilder();
         int count=0;
@@ -756,6 +821,10 @@ public class TextUserInterface implements UserInterface{
         System.out.println(contentLine + text_lenght + " " + text.length());
     }
 
+    /**
+     * Print as many empty lines as needed to vertically centre the content
+     * @param contentLines number of content lines to centre
+     */
     private void drawEmptyLines(int contentLines) {
         //Center content
         StringBuilder line = new StringBuilder();
@@ -770,10 +839,18 @@ public class TextUserInterface implements UserInterface{
         }
     }
 
+    /**
+     * Prints an horizontal line
+     * @param width width of the line to print
+     */
     private String drawHorizontalLine(int width) {
         return "-".repeat(Math.max(0, width));
     }
 
+    /**
+     * Set the clientController
+     * @param clientController provide the clientController to be set
+     */
     @Override
     public void setClientController(ClientController clientController) {
         new Thread(() -> {
@@ -781,6 +858,9 @@ public class TextUserInterface implements UserInterface{
         }).start();
     }
 
+    /**
+     * Ask the first user for the game parameters: number of players and number of common target cards
+     */
     @Override
     public void getGameParameters() {
         new Thread(() -> {
@@ -790,6 +870,9 @@ public class TextUserInterface implements UserInterface{
         }).start();
     }
 
+    /**
+     * Ask the first user for the number of players
+     */
     private int getNumberOfPlayers() {
 
         boolean validInput = false;
@@ -825,6 +908,9 @@ public class TextUserInterface implements UserInterface{
         return number;
     }
 
+    /**
+     * Ask the first user for the number of common target cards
+     */
     private int getNumberOfCommon() {
 
         boolean validInput = false;
@@ -860,12 +946,19 @@ public class TextUserInterface implements UserInterface{
         return number;
     }
 
+    /**
+     * Send the nickname to the client controller
+     * @param nickname the nickname to send to the client controller
+     */
     @Override
     public void sendNickname(String nickname) {
         clientController.sendNickname(nickname);
         clientController.startClearThread();
     }
 
+    /**
+     * Warn the user that the name is already in use
+     */
     @Override
     public void invalidNickname() {
         new Thread(() -> {
@@ -873,24 +966,35 @@ public class TextUserInterface implements UserInterface{
         }).start();
     }
 
+    /**
+     * Send the parameters to the client controller
+     * @param numPlayers the number of players
+     * @param numCommons the number of common target cards
+     */
     @Override
     public void sendParameters(int numPlayers, int numCommons) {
         clientController.sendParameters(numPlayers, numCommons);
     }
 
+    /**
+     * Tells the user that the nickname has been accepted and that he's in the lobby
+     */
     @Override
     public void nicknameAccepted() {
         new Thread(() -> {
             List<String> textLines = new ArrayList<>();
 
             // Add strings to the list
-            textLines.add("You are in a lobby! Please wait for the game start!");
+            textLines.add("Nickname accepted. You are in a lobby! Please wait for the game start!");
 
             standardTextPage(textLines);
             System.out.print(drawHorizontalLine(sceneWidth));
         }).start();
     }
 
+    /**
+     * Tells the user that a lobby was created and that the game will start soon.
+     */
     @Override
     public void lobbyCreated() {
         List<String> textLines = new ArrayList<>();
@@ -902,6 +1006,9 @@ public class TextUserInterface implements UserInterface{
         System.out.print(drawHorizontalLine(sceneWidth));
     }
 
+    /**
+     * Tells the user that someone else is trying to create a lobby and to retry in a few seconds
+     */
     @Override
     public void waitForLobby() {
         new Thread(() -> {
@@ -915,6 +1022,12 @@ public class TextUserInterface implements UserInterface{
         }).start();
     }
 
+    /**
+     * Save data useful for the game to start
+     * @param personalTargetCardNumber the number of the personal target card picked for the user
+     * @param nickname the nickname of the user
+     * @param commonTargetGoals list of strings with the common target goals
+     */
     @Override
     public void loadGameScreen(int personalTargetCardNumber, String nickname, List<String> commonTargetGoals) {
         new Thread(() -> {
@@ -923,11 +1036,21 @@ public class TextUserInterface implements UserInterface{
         }).start();
     }
 
+    /**
+     * Send a message from the chat to the client controller
+     * @param message message to send to the client controller
+     */
     @Override
     public void sendMessage(String message) {
         clientController.sendMessage(message);
     }
 
+    /**
+     * Receive a message from the chat and save it to display in the chat
+     * @param message message received
+     * @param sender nickname of the person that sent the message
+     * @param localDateTime date and time of when the message was sent
+     */
     @Override
     public void receiveMessage(String message, String sender, String localDateTime) {
         String completeChatLine = sender + " at " + localDateTime + ": " + message;
@@ -937,17 +1060,26 @@ public class TextUserInterface implements UserInterface{
         this.chatList.add(completeChatLine);
     }
 
+    /**
+     * Receive all the data necessary to update the text user interface
+     * @param newView NewView object containing all the updated data for the interface
+     */
     @Override
     public void updateView(NewView newView) throws FileNotFoundException, URISyntaxException {
-        if(newView.isGameOver()){
-            gameOver();
-        }
-        this.isYourTurn = Objects.equals(newView.getActivePlayer(), this.nickname);
-        this.newView = newView;
+        new Thread(() -> {
+            if(newView.isGameOver()){
+                gameOver();
+            }
+            this.isYourTurn = Objects.equals(newView.getActivePlayer(), this.nickname);
+            this.newView = newView;
 
-        new Thread(this::mainGamePage).start();
+            new Thread(this::mainGamePage).start();
+        }).start();
     }
 
+    /**
+     * Tells the user that the game is over
+     */
     private void gameOver() {
         List<String> textLines = new ArrayList<>();
 
@@ -966,12 +1098,18 @@ public class TextUserInterface implements UserInterface{
         }
     }
 
+    /**
+     * Calls the exit method from the client controller to end the game
+     */
     @Override
     public void exit() {
         clientController.exit();
         closeTUI = true;
     }
 
+    /**
+     * Tells the user that he rejoined a game he left before
+     */
     @Override
     public void rejoinedMatch() {
         List<String> textLines = new ArrayList<>();
@@ -983,6 +1121,9 @@ public class TextUserInterface implements UserInterface{
         System.out.print(drawHorizontalLine(sceneWidth));
     }
 
+    /**
+     * Warns the user that he tried to send a message to a non existant user
+     */
     @Override
     public void invalidPlayer() {
         new Thread(() -> {
@@ -993,11 +1134,19 @@ public class TextUserInterface implements UserInterface{
         }).start();
     }
 
+    /**
+     * returns the isYourTurn parameter that determines if it is the user turn or not
+     * @return boolean referring to the user turn
+     */
     @Override
     public boolean isYourTurn() {
         return isYourTurn;
     }
 
+    /**
+     * Send the column where to put the selected items for the move to the client controller
+     * @param col column to send to the client controller
+     */
     @Override
     public void sendMove(int col) {
         // passa al controller la colonna
@@ -1005,15 +1154,20 @@ public class TextUserInterface implements UserInterface{
         clientController.sendMove(col);
     }
 
+    /**
+     * Send to the controller the coordinates of the element chosen by the user
+     * @param el coordinates of the element picked
+     */
     @Override
     public void insertInPositionPicked(int[] el) {
-        // passi al controller le coordinate di un elemento scelto
         clientController.insertInPositionPicked(el);
     }
 
+    /**
+     * Checks if the user has already picked the maximum amount of items for the move
+     */
     @Override
     public int getPositionPickedSize() {
-        // check se ha già scelto o meno
         return clientController.getPositionPickedSize();
     }
 
@@ -1028,11 +1182,19 @@ public class TextUserInterface implements UserInterface{
             return 0;
     }
 
+    /**
+     * Swap the order of two selected items
+     * @param col1 first column to swap
+     * @param col2 second column to swap
+     */
     @Override
     public void swapColsTUI(int col1, int col2) {
         clientController.swapCols(col1, col2);
     }
 
+    /**
+     * Warns the user that his move is incorrect and that the board has been reset to the previous state
+     */
     @Override
     public void incorrectMove() {
         this.selectedBoardBitMask = new boolean[9][9];
@@ -1056,6 +1218,9 @@ public class TextUserInterface implements UserInterface{
         }
     }
 
+    /**
+     * Warns the user that he tried to send a personal message to a non-existent user
+     */
     @Override
     public void wrongReceiver() {
         new Thread(() -> {
@@ -1066,6 +1231,9 @@ public class TextUserInterface implements UserInterface{
         }).start();
     }
 
+    /**
+     * Warns the user that he provided parameters that are not acceptable for the game
+     */
     @Override
     public void wrongParameters() {
         new Thread(() -> {
@@ -1087,16 +1255,28 @@ public class TextUserInterface implements UserInterface{
         }).start();
     }
 
+    /**
+     * Send the column selected to the client controller to check if there's enough space to insert the items the user selected
+     * @param col column to check
+     * @return boolean telling if the column has enough space or not
+     */
     @Override
     public boolean columnHasEnoughSpace(int col) {
         return clientController.columnHasEnoughSpace(col);
     }
 
+    /**
+     * Send to the controller the column of the selected items that the user wants to remove
+     * @param col column where to remove the item
+     */
     @Override
     public void removeInPositionPicked(int col) {
         clientController.removeInPositionPicked(col);
     }
 
+    /**
+     * Tells the user that he's been restored from a previous saved game and that he's now waiting in the lobby
+     */
     @Override
     public void playerRestored() {
         new Thread(() -> {
@@ -1111,6 +1291,9 @@ public class TextUserInterface implements UserInterface{
         }).start();
     }
 
+    /**
+     * Warns the user that the server is not responding
+     */
     @Override
     public void serverNotResponding() {
         new Thread(() -> {
@@ -1125,6 +1308,9 @@ public class TextUserInterface implements UserInterface{
         }).start();
     }
 
+    /**
+     * Tells the user that the lobby has been restored.
+     */
     @Override
     public void lobbyRestored() {
         new Thread(() -> {
@@ -1138,6 +1324,9 @@ public class TextUserInterface implements UserInterface{
         }).start();
     }
 
+    /**
+     * Warns the user that the lobby is full, and to close the client and try again
+     */
     @Override
     public void fullLobby() {
         List<String> textLines = new ArrayList<>();
@@ -1149,6 +1338,9 @@ public class TextUserInterface implements UserInterface{
         System.out.println(drawHorizontalLine(sceneWidth));
     }
 
+    /**
+     * Warns the user that the lobby cannot be restored because a player that wasn't in the lobby tried to join
+     */
     @Override
     public void cantRestoreLobby() throws IOException {
         new Thread(() -> {
@@ -1163,6 +1355,9 @@ public class TextUserInterface implements UserInterface{
         }).start();
     }
 
+    /**
+     * Congratulate the user for the win because all the other players left for too much time
+     */
     @Override
     public void alonePlayerWins() {
         new Thread(() -> {
@@ -1177,20 +1372,62 @@ public class TextUserInterface implements UserInterface{
         }).start();
     }
 
+    /**
+     * Tells the user that a user disconnected from the game
+     * @param nickname nickname of the user that disconnected
+     */
     @Override
     public void playerDisconnected(String nickname) {
         new Thread(() -> {
-        //Non so come fare qui, non è molto fattibile in CLI per la questione dei thread e delle funzione che aspettano un input
+            List<String> textLines = new ArrayList<>();
+
+            // Add strings to the list
+            textLines.add(nickname + " has disconnected from the game");
+            textLines.add("");
+            textLines.add("Press enter to go back!");
+
+            standardTextPage(textLines);
+            System.out.println(drawHorizontalLine(sceneWidth));
+
+            scanner = new Scanner(System.in);
+
+            if(scanner.hasNextLine()){
+                mainGamePage();
+            }
         }).start();
     }
 
+    /**
+     * Tells the user that a user reconnected to the game
+     * @param nickname nickname of the user that reconnected
+     */
     @Override
     public void playerReconnected(String nickname) {
         new Thread(() -> {
-            //same as above
+            List<String> textLines = new ArrayList<>();
+
+            // Add strings to the list
+            textLines.add(nickname + " has reconnected to the game");
+            textLines.add("");
+            textLines.add("Press enter to go back!");
+
+            standardTextPage(textLines);
+            System.out.println(drawHorizontalLine(sceneWidth));
+
+            scanner = new Scanner(System.in);
+
+            if(scanner.hasNextLine()){
+                mainGamePage();
+            }
         }).start();
     }
 
+    /**
+     * Register which parameters are takeable on the board
+     * @param takeableItems a bitmask of the takeable items on the board
+     * @param yourTurn a boolean telling if it is the user turn or not
+     * @param waitForOtherPlayers a boolean about other players turns
+     */
     @Override
     public void setTakeableItems(boolean[][] takeableItems, boolean yourTurn, boolean waitForOtherPlayers) {
         new Thread(() -> {
@@ -1200,6 +1437,9 @@ public class TextUserInterface implements UserInterface{
         }).start();
     }
 
+    /**
+     * Calls the client controller method to exit from the game without disconnecting from the server
+     */
     @Override
     public void exitWithoutWaitingDisconnectFromServer() {
         clientController.exitWithoutWaitingDisconnectFromServer();
