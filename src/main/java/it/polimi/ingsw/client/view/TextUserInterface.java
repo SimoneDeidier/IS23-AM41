@@ -24,25 +24,70 @@ import java.util.*;
  */
 public class TextUserInterface implements UserInterface{
 
+    /**
+     * This attribute holds the client controller
+     */
     private static ClientController clientController;
+    /**
+     * This attribute keep track if it is the user turn or not
+     */
     private boolean isYourTurn = false;
+    /**
+     * Scanner attribute to scan for input
+     */
     private Scanner scanner;
 
+    /**
+     * This attribute define the width of the scene displayed on the terminal
+     */
     private final int sceneWidth = 150;
+    /**
+     * This attribute define the height of the scene displayed on the terminal
+     */
     private final int sceneHeight = 35;
 
+    /**
+     * This attribute holds the number of the personal target card assigned to the user
+     */
     private int personalTargetCardNumber;
+    /**
+     * This attribute holds the nickname of the user
+     */
     private String nickname;
+    /**
+     * This attribute keep track if the chat is open or not
+     */
     private boolean chatOpen;
+    /**
+     * This attribute keep a record of all the messages received or sent into the chat
+     */
     private final List<String> chatList = new ArrayList<>();
 
+    /**
+     * This attribute keeps track of the position of the items on the board selected by the user
+     */
     private boolean[][] selectedBoardBitMask = new boolean[9][9];
 
+    /**
+     * This attribute define a list with the items selected by the user
+     */
     private List<Item> selectedItems = new ArrayList<>(3);
+    /**
+     * This attribute keeps track of the coordinates of the selected items
+     */
     private List<int[]> selectedItemsCoordinates = new ArrayList<>(3);
 
+    /**
+     * This attribute holds the last view provided by the controller
+     */
     private NewView newView = new NewView();
+    /**
+     * This attribute keeps track of the items that are takeable on the board
+     */
     private boolean[][] takeableItems;
+    /**
+     * This attribute keeps track if the TUI has been closed or not
+     */
     private volatile boolean closeTUI = false;
 
     /**
@@ -50,6 +95,9 @@ public class TextUserInterface implements UserInterface{
      */
     @Override
     public void run() {
+        /**
+         * This attribute holds an arraylist of the text lines to display
+         */
         List<String> textLines = new ArrayList<>();
 
         // Add strings to the list
@@ -92,8 +140,14 @@ public class TextUserInterface implements UserInterface{
      */
     private void getNickname(String text) {
 
+        /**
+         * This attribute holds the nickname provided by the user input
+         */
         String nickname;
 
+        /**
+         * This attribute holds an arraylist of the text lines to display
+         */
         List<String> textLines = new ArrayList<>();
 
         // Add strings to the list
@@ -119,23 +173,53 @@ public class TextUserInterface implements UserInterface{
      */
     private void mainGamePage() {
 
+        /**
+         * Number of columns in the board
+         */
         int boardCol = 9;
+        /**
+         * Number of rows in the board
+         */
         int boardRow = 9;
+        /**
+         * Number of columns in the shelf
+         */
         int shelfCol = 5;
 
+        /**
+         * Width of a tile
+         */
         int tileWidth = 8;
 
+        /**
+         * Space between the board and the shelf in the main page tui
+         */
         int spaceBetweenBoardAndShelf = 10;
 
+        /**
+         * Flag used for input validation
+         */
         boolean validInput = false;
 
+        /**
+         * Bitmask of the usable items on the board
+         */
         boolean[][] boardBitMask = this.newView.getBoardBitMask();
         Item[][] boardItems = this.newView.getBoardItems();
         Item[][] shelfItems = this.newView.getNicknameToShelfMap().get(this.nickname);
+        /**
+         * Total points scored by the user so far
+         */
         int totalPoints = this.newView.getNicknameToPointsMap().get(this.nickname);
 
+        /**
+         * String holding the topshelf title
+         */
         String shelfTopString = "My Shelf!";
 
+        /**
+         * String holding the name of the chairholder
+         */
         String chairHolder = "";
 
         System.out.println(drawHorizontalLine(sceneWidth));
@@ -153,6 +237,9 @@ public class TextUserInterface implements UserInterface{
         for(int i=0; i<boardRow; i++){
             String repeat = " ".repeat(shelfCol * tileWidth + 1 + spaceBetweenBoardAndShelf);
             if(i==0){
+                /**
+                 * Interface line builder
+                 */
                 StringBuilder BoardColNumbers = new StringBuilder();
                 for(int n=0; n<9; n++){
                     BoardColNumbers.append(" ".repeat(4));
@@ -162,6 +249,9 @@ public class TextUserInterface implements UserInterface{
                 printContentLine(BoardColNumbers + " ".repeat(shelfCol*tileWidth+1+spaceBetweenBoardAndShelf));
                 printContentLine(drawHorizontalLine(boardCol*tileWidth+1) + " ".repeat(shelfCol*tileWidth+1+spaceBetweenBoardAndShelf));
                 for(int j=0; j<2; j++){
+                    /**
+                     * Interface line builder
+                     */
                     StringBuilder shelfBoxLine = new StringBuilder();
                     if(j==0){
                         shelfBoxLine.append(i);
@@ -197,6 +287,9 @@ public class TextUserInterface implements UserInterface{
                     printContentLine(drawHorizontalLine(boardCol * tileWidth + 1) + repeat);
                 }
                 for(int j=0; j<2; j++){
+                    /**
+                     * Interface line builder
+                     */
                     StringBuilder shelfBoxLine = new StringBuilder();
                     if(j==0){
                         shelfBoxLine.append(i);
@@ -244,6 +337,9 @@ public class TextUserInterface implements UserInterface{
                     printContentLine(drawHorizontalLine(boardCol*tileWidth+1) + repeat);
                 }
                 for(int j=0; j<2; j++){
+                    /**
+                     * Interface line builder
+                     */
                     StringBuilder shelfBoxLine = new StringBuilder();
                     if(j==0){
                         shelfBoxLine.append(i);
@@ -280,6 +376,9 @@ public class TextUserInterface implements UserInterface{
                 }
             } else {
                 if(i==3){
+                    /**
+                     * Interface line builder
+                     */
                     StringBuilder ShelfColNumbers = new StringBuilder();
                     for(int n=0; n<5; n++){
                         ShelfColNumbers.append("-".repeat(4));
@@ -292,6 +391,9 @@ public class TextUserInterface implements UserInterface{
                     printContentLine(drawHorizontalLine(boardCol*tileWidth+1) + " ".repeat(10) + drawHorizontalLine(shelfCol*tileWidth+1));
                 }
                 for(int j=0; j<2; j++){
+                    /**
+                     * Interface line builder
+                     */
                     StringBuilder shelfBoxLine = new StringBuilder();
                     if(j==0){
                         shelfBoxLine.append(i);
@@ -343,6 +445,9 @@ public class TextUserInterface implements UserInterface{
 
         System.out.print("Your input: ");
 
+        /**
+         * Scanner for user input
+         */
         Scanner in = new Scanner(System.in);
         String command = in.nextLine();
         switch (command) {
@@ -451,6 +556,9 @@ public class TextUserInterface implements UserInterface{
      * Warns the user, displaying it on screen, that the input inserted is either wrong or forbidden
      */
     private void forbiddenInput() {
+        /**
+         * This attribute holds an arraylist of the text lines to display
+         */
         List<String> textLines = new ArrayList<>();
 
         // Add strings to the list
@@ -475,6 +583,9 @@ public class TextUserInterface implements UserInterface{
      * Warns the user that the tile selected is not actually available, or it doesn't exist
      */
     private void tileNotAvailable() {
+        /**
+         * This attribute holds an arraylist of the text lines to display
+         */
         List<String> textLines = new ArrayList<>();
 
         // Add strings to the list
@@ -517,7 +628,13 @@ public class TextUserInterface implements UserInterface{
      * Display the tokens earned by the user throughout the game
      */
     private void tokensPage() {
+        /**
+         * This attribute holds an arraylist of the text lines to display
+         */
         List<String> textLines = new ArrayList<>();
+        /**
+         * This attribute keeps track if there's at least one token assigned to the user
+         */
         boolean tokenFound=false;
 
         // Add strings to the list
@@ -549,12 +666,20 @@ public class TextUserInterface implements UserInterface{
      * Display the personal goal card assigned to the user
      */
     private void personalGoalsPage() {
+        /**
+         * Number of columns of the shelf
+         */
         int shelfCol = 5;
+        /**
+         * Number of rows of the shelf
+         */
         int shelfRow = 6;
 
+        /**
+         * Width of a shelf tile
+         */
         int tileWidth = 8;
 
-        String nickname = this.nickname;
         Item[][] shelfItems = new Item[6][5];
 
         Gson gson = new Gson();
@@ -582,14 +707,17 @@ public class TextUserInterface implements UserInterface{
         }
 
         printContentLine(drawHorizontalLine(shelfCol*tileWidth+1));
-        String repeat = " ".repeat((shelfCol * tileWidth - 1) / 2 - nickname.length() / 2);
+        String repeat = " ".repeat((shelfCol * tileWidth - 1) / 2 - this.nickname.length() / 2);
         String shelfBoxLine_top = "|" +
-                repeat + nickname + repeat +
+                repeat + this.nickname + repeat +
                 "|";
         printContentLine(shelfBoxLine_top);
         for(int i=0; i<shelfRow; i++){
             printContentLine(drawHorizontalLine(shelfCol*tileWidth+1));
             for(int j=0; j<2; j++){
+                /**
+                 * Interface line builder
+                 */
                 StringBuilder shelfBoxLine = new StringBuilder();
                 shelfBoxLine.append("|");
                 for(int w=0; w<shelfCol; w++) {
@@ -629,6 +757,9 @@ public class TextUserInterface implements UserInterface{
      * Display the common card goals of the current game
      */
     private void commonGoalsPage() {
+        /**
+         * This attribute holds an arraylist of the text lines to display
+         */
         List<String> textLines = new ArrayList<>();
 
         // Add strings to the list
@@ -695,11 +826,23 @@ public class TextUserInterface implements UserInterface{
      */
     private void otherPlayersPage() {
 
+        /**
+         * Number of columns of the shelf
+         */
         int shelfCol = 5;
+        /**
+         * Number of rows of the shelf
+         */
         int shelfRow = 6;
 
+        /**
+         * Width of a shelft tile
+         */
         int tileWidth = 8;
-        int mapSize = this.newView.getNicknameToShelfMap().size()-1;
+        /**
+         * Number of other players
+         */
+        int otherPlayersNumber = this.newView.getNicknameToShelfMap().size()-1;
 
         System.out.println(drawHorizontalLine(sceneWidth));
 
@@ -707,7 +850,10 @@ public class TextUserInterface implements UserInterface{
             printContentLine("");
         }
 
-        printContentLine((drawHorizontalLine(shelfCol*tileWidth+1)+" ".repeat(5)).repeat(mapSize));
+        printContentLine((drawHorizontalLine(shelfCol*tileWidth+1)+" ".repeat(5)).repeat(otherPlayersNumber));
+        /**
+         * Interface line builder
+         */
         StringBuilder shelfBoxLine_top = new StringBuilder();
         for (Map.Entry<String, Item[][]> entry : this.newView.getNicknameToShelfMap().entrySet()) {
             String nickname = entry.getKey();
@@ -722,8 +868,11 @@ public class TextUserInterface implements UserInterface{
         printContentLine(shelfBoxLine_top.toString());
 
             for(int i=0; i<shelfRow; i++){
-                printContentLine((drawHorizontalLine(shelfCol*tileWidth+1)+" ".repeat(5)).repeat(mapSize));
+                printContentLine((drawHorizontalLine(shelfCol*tileWidth+1)+" ".repeat(5)).repeat(otherPlayersNumber));
                 for(int j=0; j<2; j++){
+                    /**
+                     * Interface line builder
+                     */
                     StringBuilder shelfBoxLine = new StringBuilder();
                     for (Map.Entry<String, Item[][]> entry : this.newView.getNicknameToShelfMap().entrySet()) {
                         String nickname = entry.getKey();
@@ -746,7 +895,7 @@ public class TextUserInterface implements UserInterface{
                     printContentLine(shelfBoxLine.toString());
                 }
             }
-        printContentLine((drawHorizontalLine(shelfCol*tileWidth+1)+" ".repeat(5)).repeat(mapSize));
+        printContentLine((drawHorizontalLine(shelfCol*tileWidth+1)+" ".repeat(5)).repeat(otherPlayersNumber));
 
         for(int i=0; i<3; i++){
             printContentLine("");
@@ -772,6 +921,9 @@ public class TextUserInterface implements UserInterface{
      */
     private void chat() {
         this.chatOpen = true;
+        /**
+         * Number of messages sent on the chat
+         */
         int chatSize;
         chatSize = this.chatList.size();
         printContentLine(drawHorizontalLine(this.sceneWidth));
@@ -789,10 +941,15 @@ public class TextUserInterface implements UserInterface{
             System.out.println();
             System.out.println("Type your message or type /back to go back to the main page.");
         }
+        /**
+         * Scanner for user input
+         */
         Scanner in = new Scanner(System.in);
         String message = in.nextLine();
         while(!message.equals("/back")) {
-            sendMessage(message);
+            if(message != ""){
+                sendMessage(message);
+            }
             in = new Scanner(System.in);
             message = in.nextLine();
         }
@@ -805,13 +962,22 @@ public class TextUserInterface implements UserInterface{
      *  @param text string of content to centre
      */
     private void printContentLine(String text) {
+        /**
+         * Interface line builder
+         */
         StringBuilder lineContent = new StringBuilder();
+        /**
+         * Flag counter to distinguish number of blocks
+         */
         int count=0;
         for (int i = 0; i < text.length(); i++) {
             if (text.charAt(i) == '[') {
                 count++;
             }
         }
+        /**
+         * Actual lenght of the text without characters to give the text a back color
+         */
         int text_lenght = text.length() - (count/2 * 9);
         if(text_lenght % 2 != 0){
             text = text + " ";
@@ -826,14 +992,17 @@ public class TextUserInterface implements UserInterface{
      * @param contentLines number of content lines to centre
      */
     private void drawEmptyLines(int contentLines) {
-        //Center content
+        /**
+         * Interface line builder
+         */
         StringBuilder line = new StringBuilder();
         line.append(" ".repeat((sceneWidth - 2)));
 
-        // Calculate the number of empty lines above and below the content
+        /**
+         * Number of necessary empty lines
+         */
         int emptyLines = (sceneHeight - contentLines) / 2;
 
-        // Print empty lines above/below the content
         for (int i = 0; i < emptyLines; i++) {
             System.out.println("|" + line + "|");
         }
@@ -864,7 +1033,13 @@ public class TextUserInterface implements UserInterface{
     @Override
     public void getGameParameters() {
         new Thread(() -> {
+            /**
+             * Number of players
+             */
             int numPlayers = getNumberOfPlayers();
+            /**
+             * Number of common target cards
+             */
             int numCommons = getNumberOfCommon();
             sendParameters(numPlayers, numCommons);
         }).start();
@@ -875,10 +1050,19 @@ public class TextUserInterface implements UserInterface{
      */
     private int getNumberOfPlayers() {
 
+        /**
+         * Attribute to keep track if the input is valid or not
+         */
         boolean validInput = false;
 
+        /**
+         * Number of players received by the user
+         */
         int number=0;
 
+        /**
+         * This attribute holds an arraylist of the text lines to display
+         */
         List<String> textLines = new ArrayList<>();
 
         // Add strings to the list
@@ -889,6 +1073,9 @@ public class TextUserInterface implements UserInterface{
 
         System.out.print("Your input: ");
 
+        /**
+         * Scanner for user input
+         */
         Scanner in = new Scanner(System.in);
 
         while (!validInput) {
@@ -913,10 +1100,19 @@ public class TextUserInterface implements UserInterface{
      */
     private int getNumberOfCommon() {
 
+        /**
+         * Attribute to keep track if the input is valid or not
+         */
         boolean validInput = false;
 
+        /**
+         * Number of common target cards received by the user
+         */
         int number=0;
 
+        /**
+         * This attribute holds an arraylist of the text lines to display
+         */
         List<String> textLines = new ArrayList<>();
 
         // Add strings to the list
@@ -927,6 +1123,9 @@ public class TextUserInterface implements UserInterface{
 
         System.out.print("Your input: ");
 
+        /**
+         * Scanner for user input
+         */
         Scanner in = new Scanner(System.in);
 
         while (!validInput) {
@@ -982,6 +1181,9 @@ public class TextUserInterface implements UserInterface{
     @Override
     public void nicknameAccepted() {
         new Thread(() -> {
+            /**
+             * This attribute holds an arraylist of the text lines to display
+             */
             List<String> textLines = new ArrayList<>();
 
             // Add strings to the list
@@ -997,6 +1199,9 @@ public class TextUserInterface implements UserInterface{
      */
     @Override
     public void lobbyCreated() {
+        /**
+         * This attribute holds an arraylist of the text lines to display
+         */
         List<String> textLines = new ArrayList<>();
 
         // Add strings to the list
@@ -1012,6 +1217,9 @@ public class TextUserInterface implements UserInterface{
     @Override
     public void waitForLobby() {
         new Thread(() -> {
+            /**
+             * This attribute holds an arraylist of the text lines to display
+             */
             List<String> textLines = new ArrayList<>();
 
             // Add strings to the list
@@ -1053,6 +1261,9 @@ public class TextUserInterface implements UserInterface{
      */
     @Override
     public void receiveMessage(String message, String sender, String localDateTime) {
+        /**
+         * String that holds the formatted chat line
+         */
         String completeChatLine = sender + " at " + localDateTime + ": " + message;
         if(this.chatOpen){
             System.out.println(completeChatLine);
@@ -1081,6 +1292,9 @@ public class TextUserInterface implements UserInterface{
      * Tells the user that the game is over
      */
     private void gameOver() {
+        /**
+         * This attribute holds an arraylist of the text lines to display
+         */
         List<String> textLines = new ArrayList<>();
 
         // Add strings to the list
@@ -1112,6 +1326,9 @@ public class TextUserInterface implements UserInterface{
      */
     @Override
     public void rejoinedMatch() {
+        /**
+         * This attribute holds an arraylist of the text lines to display
+         */
         List<String> textLines = new ArrayList<>();
 
         // Add strings to the list
@@ -1127,6 +1344,9 @@ public class TextUserInterface implements UserInterface{
     @Override
     public void invalidPlayer() {
         new Thread(() -> {
+            /**
+             * String that holds the error to display as a chat line
+             */
             String completeChatLine = "ERROR: You tried to send a personal message to an user that doesn't exist";
             if(this.chatOpen){
                 System.out.println(completeChatLine);
@@ -1149,8 +1369,6 @@ public class TextUserInterface implements UserInterface{
      */
     @Override
     public void sendMove(int col) {
-        // passa al controller la colonna
-        // il controller in automatico manda la mossa
         clientController.sendMove(col);
     }
 
@@ -1201,6 +1419,9 @@ public class TextUserInterface implements UserInterface{
         this.selectedItems = new ArrayList<>(3);
         this.selectedItemsCoordinates = new ArrayList<>(3);
 
+        /**
+         * This attribute holds an arraylist of the text lines to display
+         */
         List<String> textLines = new ArrayList<>();
 
         // Add strings to the list
@@ -1224,6 +1445,9 @@ public class TextUserInterface implements UserInterface{
     @Override
     public void wrongReceiver() {
         new Thread(() -> {
+            /**
+             * String that holds the error to display as a chat line
+             */
             String completeChatLine = "ERROR: You inserted a wrong nickname to send a personal message!";
             if(this.chatOpen){
                 System.out.println(completeChatLine);
@@ -1237,6 +1461,9 @@ public class TextUserInterface implements UserInterface{
     @Override
     public void wrongParameters() {
         new Thread(() -> {
+            /**
+             * This attribute holds an arraylist of the text lines to display
+             */
             List<String> textLines = new ArrayList<>();
 
             // Add strings to the list
@@ -1280,6 +1507,9 @@ public class TextUserInterface implements UserInterface{
     @Override
     public void playerRestored() {
         new Thread(() -> {
+            /**
+             * This attribute holds an arraylist of the text lines to display
+             */
             List<String> textLines = new ArrayList<>();
 
             // Add strings to the list
@@ -1297,6 +1527,9 @@ public class TextUserInterface implements UserInterface{
     @Override
     public void serverNotResponding() {
         new Thread(() -> {
+            /**
+             * This attribute holds an arraylist of the text lines to display
+             */
             List<String> textLines = new ArrayList<>();
 
             // Add strings to the list
@@ -1314,6 +1547,9 @@ public class TextUserInterface implements UserInterface{
     @Override
     public void lobbyRestored() {
         new Thread(() -> {
+            /**
+             * This attribute holds an arraylist of the text lines to display
+             */
             List<String> textLines = new ArrayList<>();
 
             // Add strings to the list
@@ -1329,6 +1565,9 @@ public class TextUserInterface implements UserInterface{
      */
     @Override
     public void fullLobby() {
+        /**
+         * This attribute holds an arraylist of the text lines to display
+         */
         List<String> textLines = new ArrayList<>();
 
         // Add strings to the list
@@ -1344,6 +1583,9 @@ public class TextUserInterface implements UserInterface{
     @Override
     public void cantRestoreLobby() throws IOException {
         new Thread(() -> {
+            /**
+             * This attribute holds an arraylist of the text lines to display
+             */
             List<String> textLines = new ArrayList<>();
 
             // Add strings to the list
@@ -1361,6 +1603,9 @@ public class TextUserInterface implements UserInterface{
     @Override
     public void alonePlayerWins() {
         new Thread(() -> {
+            /**
+             * This attribute holds an arraylist of the text lines to display
+             */
             List<String> textLines = new ArrayList<>();
 
             // Add strings to the list
@@ -1379,6 +1624,9 @@ public class TextUserInterface implements UserInterface{
     @Override
     public void playerDisconnected(String nickname) {
         new Thread(() -> {
+            /**
+             * This attribute holds an arraylist of the text lines to display
+             */
             List<String> textLines = new ArrayList<>();
 
             // Add strings to the list
@@ -1404,6 +1652,9 @@ public class TextUserInterface implements UserInterface{
     @Override
     public void playerReconnected(String nickname) {
         new Thread(() -> {
+            /**
+             * This attribute holds an arraylist of the text lines to display
+             */
             List<String> textLines = new ArrayList<>();
 
             // Add strings to the list
