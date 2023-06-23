@@ -441,14 +441,20 @@ public class Server implements InterfaceServer {
     public void notifyOfConnectedUser(String nickname) {
         for(String s : clientMapRMI.keySet()) {
             if(!Objects.equals(s, nickname)) {
-                clientMapRMI.get(s).notifyConnectedUser(nickname);
+                try {
+                    clientMapRMI.get(s).notifyConnectedUser(nickname);
+                } catch (RemoteException ignored) {
+                }
             }
         }
     }
 
     public void notifyOfDisconnectionFromLobby(String nickname) {
         for(String s : clientMapRMI.keySet()) {
-            clientMapRMI.get(s).disconnectedFromLobby(nickname);
+            try {
+                clientMapRMI.get(s).disconnectedFromLobby(nickname);
+            } catch (RemoteException ignored) {
+            }
         }
     }
 }

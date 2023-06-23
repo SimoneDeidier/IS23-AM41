@@ -262,7 +262,7 @@ public class ConnectionRMI extends UnicastRemoteObject implements InterfaceClien
     }
 
     @Override
-    public void disconnectedFromLobby(String nickname) {
+    public void disconnectedFromLobby(String nickname) throws RemoteException {
         controller.disconnectedFromLobby(nickname);
     }
 
