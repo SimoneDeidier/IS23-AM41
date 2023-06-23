@@ -85,10 +85,20 @@ public class TextUserInterface implements UserInterface{
      * This attribute keeps track of the items that are takeable on the board
      */
     private boolean[][] takeableItems;
+
     /**
      * This attribute keeps track if the TUI has been closed or not
      */
     private volatile boolean closeTUI = false;
+
+    /**
+     * String containing the current error to display
+     */
+    private String CommunicationText = "";
+    /**
+     * This attribute keeps track if the user is currently on the main game page
+     */
+    private boolean onMainGamePage = true;
 
     /**
      * Starting method to run the TUI
@@ -222,17 +232,27 @@ public class TextUserInterface implements UserInterface{
          */
         String chairHolder = "";
 
+        /**
+         * String holding the current turn situation
+         */
+        String currentTurn;
+
+        onMainGamePage = true;
+
         System.out.println(drawHorizontalLine(sceneWidth));
         if(Objects.equals(this.newView.getPlayerList().get(0), nickname)) {
             chairHolder = "  --  You are the holder of the chair!";
         }
-        printContentLine(this.nickname + " -- Total Points: " + totalPoints + chairHolder);
-        System.out.println("|" + " ".repeat(sceneWidth - 2) + "|");
         if(isYourTurn()){
-            printContentLine("It's your turn");
+            currentTurn = " -- It's your turn";
         } else {
-            printContentLine("Current turn: " + this.newView.getActivePlayer());
+            currentTurn = " -- Current turn: " + this.newView.getActivePlayer();
         }
+        printContentLine(this.nickname + " -- Total Points: " + totalPoints + chairHolder + currentTurn);
+        System.out.println("|" + " ".repeat(sceneWidth - 2) + "|");
+        printContentLine("\u001B[31m" + CommunicationText + "\u001B[0m");
+        CommunicationText = "";
+
 
         for(int i=0; i<boardRow; i++){
             String repeat = " ".repeat(shelfCol * tileWidth + 1 + spaceBetweenBoardAndShelf);
@@ -448,20 +468,35 @@ public class TextUserInterface implements UserInterface{
         /**
          * Scanner for user input
          */
-        Scanner in = new Scanner(System.in);
-        String command = in.nextLine();
+        scanner = new Scanner(System.in);
+        String command = scanner.nextLine();
         switch (command) {
-            case "/tokens" -> tokensPage();
-            case "/personal" -> personalGoalsPage();
-            case "/common" -> commonGoalsPage();
-            case "/other" -> otherPlayersPage();
-            case "/chat" -> chat();
+            case "/tokens" -> {
+                onMainGamePage = false;
+                tokensPage();
+            }
+            case "/personal" -> {
+                onMainGamePage = false;
+                personalGoalsPage();
+            }
+            case "/common" -> {
+                onMainGamePage = false;
+                commonGoalsPage();
+            }
+            case "/other" -> {
+                onMainGamePage = false;
+                otherPlayersPage();
+            }
+            case "/chat" -> {
+                onMainGamePage = false;
+                chat();
+            }
             case "/swap" -> {
                 if(isYourTurn()) {
                     System.out.print("Insert the index (0, 1 or 2) of the first column you want to swap: ");
-                    int first = in.nextInt();
+                    int first = scanner.nextInt();
                     System.out.print("Insert the index (0, 1 or 2) of the second column you want to swap: ");
-                    int second = in.nextInt();
+                    int second = scanner.nextInt();
                     if(first < getPositionPickedSize() && second < getPositionPickedSize() && first != second){
                         Collections.swap(selectedItems, first, second);
                         Collections.swap(selectedItemsCoordinates, first, second);
@@ -477,10 +512,15 @@ public class TextUserInterface implements UserInterface{
             case "/column" -> {
                 if(isYourTurn()) {
                     System.out.print("Insert the index of the column you want to insert the tiles into: ");
-                    int column = in.nextInt();
-                    if(columnHasEnoughSpace(column)){
-                        System.out.println("**************************************** Mossa inviata");
-                        sendMove(column);
+                    int column = scanner.nextInt();
+                    if(column >= 0 && column < 5){
+                        if(columnHasEnoughSpace(column)){
+                            sendMove(column);
+                        } else {
+                            forbiddenInput();
+                        }
+                    } else {
+                        forbiddenInput();
                     }
                 } else {
                     forbiddenInput();
@@ -493,22 +533,22 @@ public class TextUserInterface implements UserInterface{
                         while (!validInput) {
                             try {
                                 System.out.print("Insert the row coordinate (from 0 to 8) of the tile you want to select: ");
-                                el[0] = in.nextInt();
+                                el[0] = scanner.nextInt();
                                 validInput = true;
                             } catch (InputMismatchException e) {
                                 System.out.print("Invalid input! Insert the row coordinate (from 0 to 8) of the tile you want to select: ");
-                                in.nextLine(); // Clear the invalid input from the scanner
+                                scanner.nextLine(); // Clear the invalid input from the scanner
                             }
                         }
                         validInput = false;
                         while (!validInput) {
                             try {
                                 System.out.print("Insert the column coordinate (from 0 to 8) of the tile you want to select: ");
-                                el[1] = in.nextInt();
+                                el[1] = scanner.nextInt();
                                 validInput = true;
                             } catch (InputMismatchException e) {
                                 System.out.print("Invalid input! Insert the column coordinate (from 0 to 8) of the tile you want to select: ");
-                                in.nextLine(); // Clear the invalid input from the scanner
+                                scanner.nextLine(); // Clear the invalid input from the scanner
                             }
                         }
                         if(boardBitMask[el[0]][el[1]] && !selectedBoardBitMask[el[0]][el[1]]){
@@ -529,7 +569,7 @@ public class TextUserInterface implements UserInterface{
                 if(isYourTurn()) {
                     if(getPositionPickedSize()>0) {
                         System.out.print("Insert the index (0, 1 or 2) of the item you want to remove: ");
-                        int itemToRemove = in.nextInt();
+                        int itemToRemove = scanner.nextInt();
                         if(selectedItems.size()>itemToRemove){
                             int[] el = selectedItemsCoordinates.get(itemToRemove);
                             selectedItemsCoordinates.remove(itemToRemove);
@@ -556,54 +596,17 @@ public class TextUserInterface implements UserInterface{
      * Warns the user, displaying it on screen, that the input inserted is either wrong or forbidden
      */
     private void forbiddenInput() {
-        /**
-         * This attribute holds an arraylist of the text lines to display
-         */
-        List<String> textLines = new ArrayList<>();
 
-        // Add strings to the list
-        textLines.add("You inserted an input that is either wrong or forbidden for you at the moment. Try again.");
-        textLines.add(" ");
-        textLines.add(" ");
-        textLines.add("Press enter to go back");
-
-
-        standardTextPage(textLines);
-
-        System.out.print(drawHorizontalLine(sceneWidth));
-
-        scanner = new Scanner(System.in);
-
-        if(scanner.hasNextLine()){
-            mainGamePage();
-        }
+        CommunicationText = "You inserted an input that is either wrong or forbidden for you at the moment. Try again.";
+        mainGamePage();
     }
 
     /**
      * Warns the user that the tile selected is not actually available, or it doesn't exist
      */
     private void tileNotAvailable() {
-        /**
-         * This attribute holds an arraylist of the text lines to display
-         */
-        List<String> textLines = new ArrayList<>();
-
-        // Add strings to the list
-        textLines.add("You selected a tile that doesn't exist...");
-        textLines.add(" ");
-        textLines.add(" ");
-        textLines.add("Press enter to go back");
-
-
-        standardTextPage(textLines);
-
-        System.out.print(drawHorizontalLine(sceneWidth));
-
-        scanner = new Scanner(System.in);
-
-        if(scanner.hasNextLine()){
-            mainGamePage();
-        }
+        CommunicationText = "You selected a tile that doesn't exist...";
+        mainGamePage();
     }
 
     /**
@@ -944,14 +947,14 @@ public class TextUserInterface implements UserInterface{
         /**
          * Scanner for user input
          */
-        Scanner in = new Scanner(System.in);
-        String message = in.nextLine();
+        scanner = new Scanner(System.in);
+        String message = scanner.nextLine();
         while(!message.equals("/back")) {
             if(message != ""){
                 sendMessage(message);
             }
-            in = new Scanner(System.in);
-            message = in.nextLine();
+            scanner = new Scanner(System.in);
+            message = scanner.nextLine();
         }
             this.chatOpen = false;
             mainGamePage();
@@ -984,7 +987,7 @@ public class TextUserInterface implements UserInterface{
         }
         lineContent.append(" ".repeat(Math.max(0, (sceneWidth - text_lenght - 2) / 2)));
         String contentLine = "|" + lineContent + text + lineContent + "|";
-        System.out.println(contentLine + text_lenght + " " + text.length());
+        System.out.println(contentLine);
     }
 
     /**
@@ -1076,11 +1079,11 @@ public class TextUserInterface implements UserInterface{
         /**
          * Scanner for user input
          */
-        Scanner in = new Scanner(System.in);
+        scanner = new Scanner(System.in);
 
         while (!validInput) {
             try {
-                number = in.nextInt();
+                number = scanner.nextInt();
                 if(number < 2 || number > 4){
                     throw new Exception();
                 }
@@ -1088,7 +1091,7 @@ public class TextUserInterface implements UserInterface{
             } catch (Exception e) {
                 System.out.println("Invalid input! Please enter an integer from 2 to 4.");
                 System.out.print("Your input: ");
-                in.nextLine(); // Clear the invalid input from the scanner
+                scanner.nextLine(); // Clear the invalid input from the scanner
             }
         }
 
@@ -1126,11 +1129,11 @@ public class TextUserInterface implements UserInterface{
         /**
          * Scanner for user input
          */
-        Scanner in = new Scanner(System.in);
+        scanner = new Scanner(System.in);
 
         while (!validInput) {
             try {
-                number = in.nextInt();
+                number = scanner.nextInt();
                 if(number < 1 || number > 2){
                     throw new Exception();
                 }
@@ -1138,7 +1141,7 @@ public class TextUserInterface implements UserInterface{
             } catch (Exception e) {
                 System.out.println("Invalid input! Please enter an integer from 1 to 2.");
                 System.out.print("Your input: ");
-                in.nextLine(); // Clear the invalid input from the scanner
+                scanner.nextLine(); // Clear the invalid input from the scanner
             }
         }
 
@@ -1283,8 +1286,9 @@ public class TextUserInterface implements UserInterface{
             }
             this.isYourTurn = Objects.equals(newView.getActivePlayer(), this.nickname);
             this.newView = newView;
-
-            new Thread(this::mainGamePage).start();
+            if(onMainGamePage){
+                mainGamePage();
+            }
         }).start();
     }
 
@@ -1419,24 +1423,8 @@ public class TextUserInterface implements UserInterface{
         this.selectedItems = new ArrayList<>(3);
         this.selectedItemsCoordinates = new ArrayList<>(3);
 
-        /**
-         * This attribute holds an arraylist of the text lines to display
-         */
-        List<String> textLines = new ArrayList<>();
-
-        // Add strings to the list
-        textLines.add("Your move is incorrect, the board has been reset to the previous state.");
-        textLines.add("");
-        textLines.add("Press enter to go back!");
-
-        standardTextPage(textLines);
-        System.out.println(drawHorizontalLine(sceneWidth));
-
-        scanner = new Scanner(System.in);
-
-        if(scanner.hasNextLine()){
-            mainGamePage();
-        }
+        CommunicationText = "Your move is incorrect, the board has been reset to the previous state.";
+        mainGamePage();
     }
 
     /**
@@ -1624,24 +1612,8 @@ public class TextUserInterface implements UserInterface{
     @Override
     public void playerDisconnected(String nickname) {
         new Thread(() -> {
-            /**
-             * This attribute holds an arraylist of the text lines to display
-             */
-            List<String> textLines = new ArrayList<>();
-
-            // Add strings to the list
-            textLines.add(nickname + " has disconnected from the game");
-            textLines.add("");
-            textLines.add("Press enter to go back!");
-
-            standardTextPage(textLines);
-            System.out.println(drawHorizontalLine(sceneWidth));
-
-            scanner = new Scanner(System.in);
-
-            if(scanner.hasNextLine()){
-                mainGamePage();
-            }
+            CommunicationText = nickname + " has disconnected from the game";
+            mainGamePage();
         }).start();
     }
 
@@ -1652,24 +1624,8 @@ public class TextUserInterface implements UserInterface{
     @Override
     public void playerReconnected(String nickname) {
         new Thread(() -> {
-            /**
-             * This attribute holds an arraylist of the text lines to display
-             */
-            List<String> textLines = new ArrayList<>();
-
-            // Add strings to the list
-            textLines.add(nickname + " has reconnected to the game");
-            textLines.add("");
-            textLines.add("Press enter to go back!");
-
-            standardTextPage(textLines);
-            System.out.println(drawHorizontalLine(sceneWidth));
-
-            scanner = new Scanner(System.in);
-
-            if(scanner.hasNextLine()){
-                mainGamePage();
-            }
+            CommunicationText = nickname + " has reconnected to the game";
+            mainGamePage();
         }).start();
     }
 
