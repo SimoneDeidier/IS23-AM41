@@ -1598,7 +1598,7 @@ public class TextUserInterface implements UserInterface{
 
             // Add strings to the list
             textLines.add("YOU HAVE WON!!!");
-            textLines.add("All the other  players were disconnected for an excessive longer period! Restart the client to create a new lobby!");
+            textLines.add("All the other players were disconnected for an excessive amount of time! Restart the client to create a new lobby!");
 
             standardTextPage(textLines);
             System.out.println(drawHorizontalLine(sceneWidth));

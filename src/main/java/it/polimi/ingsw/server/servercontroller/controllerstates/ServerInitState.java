@@ -13,37 +13,70 @@ import it.polimi.ingsw.server.model.tokens.EndGameToken;
 import it.polimi.ingsw.server.servercontroller.GameController;
 
 import java.io.*;
-import java.nio.file.NoSuchFileException;
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * a state the controller is in before that any player joins the game. Leaves this state right after the first player correctly joins the macth
+ */
 public class ServerInitState implements GameState {
 
+    /**
+     * @param maxPlayerNumber the max number of players allowed in the game
+     * @param playerList the list of Players currently in the game, with their connection status at the moment
+     * @return -1, to let the controller know the game is in this state
+     */
     @Override
     public int getAvailableSlot(int maxPlayerNumber, List<Player> playerList) {
         return -1;
     }
+
+    /**
+     * won't be called during this state
+     * @param playerList the list of Players currently in the game, with their connection status at the moment
+     * @param maxPlayerNumber the max number of players allowed in the game
+     * @return false, a symbolic value
+     */
     @Override
     public boolean isGameReady(List<Player> playerList, int maxPlayerNumber){
-        //Never will be called here
         return false;
     }
 
+    /**
+     * @param nickname is the nickname to be checked
+     * @param playerList the list of Players currently in the game, with their connection status at the moment
+     * @return 0, to let the controller know the game is in this state
+     */
     @Override
     public int checkNicknameAvailability(String nickname,List<Player> playerList){
         return 0;
     }
 
+    /**
+     * won't be called during this state
+     * @param player is the Player that needs to be added
+     * @param playerList the list of Players currently in the game, with their connection status at the moment
+     */
     @Override
     public void addPlayer(Player player, List<Player> playerList) {
-        //Never will be called here
     }
 
+    /**
+     * starts creating the ArrayList for the CommmontargetCard list
+     * @param isOnlyOneCommon is whether the game should have one or two CommonTargetCard (one if true, two otherwise)
+     * @param maxPlayerNumber the max number of players allowed in the game
+     * @return a new Arraylist
+     */
     @Override
     public List<CommonTargetCard> setupCommonList(boolean isOnlyOneCommon, int maxPlayerNumber) {
         return new ArrayList<>();
     }
 
+    /**
+     * handles the creation of the right Board based on the number of players allowed in the game
+     * @param maxPlayerNumber the max number of players allowed in the game
+     * @return
+     */
     @Override
     public BoardFactory setupBoard(int maxPlayerNumber) {
         if(maxPlayerNumber==2)
@@ -54,10 +87,22 @@ public class ServerInitState implements GameState {
 
     }
 
+    /**
+     * checks whether the Board needs to be refilled, won't be called during this state
+     * @param boardFactory the Board in the current game
+     */
     @Override
     public void boardNeedsRefill(BoardFactory boardFactory) {
     }
 
+    /**
+     * In case the first player that connects to the game provides a nickname that belongs to a previous valid server save, this function
+     * handles the recreation of all that is present in the file
+     * @param playerList the list of Players currently in the game, with their connection status at the moment
+     * @param commonTargetCardList the list of CommonTargetCard for the current game
+     * @param board the Board of the current game
+     * @param controller the reference to the GameController
+     */
     @Override
     public void setupPlayers(List<Player> playerList, List<CommonTargetCard> commonTargetCardList, BoardFactory board, GameController controller) {
         Gson gson = new Gson();
@@ -158,7 +203,6 @@ public class ServerInitState implements GameState {
                         player.setEndGameToken(EndGameToken.getEndGameToken());
                     }
                     Shelf newShelf = new Shelf();
-                    ;
                     newShelf.setShelfMatrix(save.getNicknameToShelfMap().get(nickname));
                     player.setShelf(newShelf);
                     player.setScoringTokenList(save.getNicknameToScoringTokensMap().get(nickname));
