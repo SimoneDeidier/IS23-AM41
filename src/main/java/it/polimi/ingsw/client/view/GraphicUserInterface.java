@@ -36,6 +36,9 @@ public class GraphicUserInterface extends Application implements UserInterface, 
     private boolean isYourTurn = false;
     private boolean loadedGame = false;
 
+    /**
+     * Starting method to run the UI
+     */
     @Override
     public void run() {
         launch();
@@ -57,47 +60,81 @@ public class GraphicUserInterface extends Application implements UserInterface, 
         guiStage.show();
     }
 
+    /**
+     * Set the clientController
+     * @param clientController provide the clientController to be set
+     */
     @Override
     public void setClientController(ClientController clientController) {
         GraphicUserInterface.clientController = clientController;
     }
 
+    /**
+     * Ask the first user for the game parameters: number of players and number of common target cards
+     */
     @Override
     public void getGameParameters() {
         loginScreenController.getGameParameters();
     }
 
+    /**
+     * Send the nickname to the client controller
+     * @param nickname the nickname to send to the client controller
+     */
     @Override
     public void sendNickname(String nickname) {
         clientController.sendNickname(nickname);
         clientController.startClearThread();
     }
 
+    /**
+     * Warn the user that the name is already in use
+     */
     @Override
     public void invalidNickname() {
         loginScreenController.invalidNickname();
     }
 
+    /**
+     * Send the parameters to the client controller
+     * @param numPlayers the number of players
+     * @param numCommons the number of common target cards
+     */
     @Override
     public void sendParameters(int numPlayers, int numCommons) {
          clientController.sendParameters(numPlayers, numCommons);
     }
 
+    /**
+     * Tells the user that the nickname has been accepted and that he's in the lobby
+     */
     @Override
     public void nicknameAccepted() {
         loginScreenController.nicknameAccepted();
     }
 
+    /**
+     * Tells the user that a lobby was created and that the game will start soon.
+     */
     @Override
     public void lobbyCreated() {
         loginScreenController.lobbyCreated();
     }
 
+    /**
+     * Tells the user that someone else is trying to create a lobby and to retry in a few seconds
+     */
     @Override
     public void waitForLobby() {
         loginScreenController.waitForLobby();
     }
 
+    /**
+     * Save data useful for the game to start and load the game ui
+     * @param personalTargetCardNumber the number of the personal target card picked for the user
+     * @param nickname the nickname of the user
+     * @param commonTargetGoals list of strings with the common target goals
+     */
     @Override
     public void loadGameScreen(int personalTargetCardNumber, String nickname, List<String> commonTargetGoals) {
         Platform.runLater(() -> {
@@ -147,16 +184,30 @@ public class GraphicUserInterface extends Application implements UserInterface, 
         });
     }
 
+    /**
+     * Send a message from the chat to the client controller
+     * @param message message to send to the client controller
+     */
     @Override
     public void sendMessage(String message) {
         clientController.sendMessage(message);
     }
 
+    /**
+     * Receive a message from the chat and display it in the chat
+     * @param message message received
+     * @param sender nickname of the person that sent the message
+     * @param localDateTime date and time of when the message was sent
+     */
     @Override
     public void receiveMessage(String message, String sender, String localDateTime) {
         gameScreenController.addMessageInChat(message, sender, localDateTime);
     }
 
+    /**
+     * Receive all the data necessary to update the text user interface
+     * @param newView NewView object containing all the updated data for the interface
+     */
     @Override
     public void updateView(NewView newView) throws FileNotFoundException, URISyntaxException {
         String playerNickname = clientController.getPlayerNickname();
@@ -205,36 +256,61 @@ public class GraphicUserInterface extends Application implements UserInterface, 
         return this;
     }
 
+    /**
+     * Calls the exit method from the client controller to end the game
+     */
     @Override
     public void exit() {
         clientController.exit();
         guiStage.close();
     }
 
+    /**
+     * Tells the user that he rejoined a game he left before
+     */
     @Override
     public void rejoinedMatch() {
         loginScreenController.rejoinedMatch();
     }
 
+    /**
+     * Warns the user that he tried to send a message to a non existent user
+     */
     @Override
     public void invalidPlayer() {
         loginScreenController.invalidPlayerNickname();
     }
 
+    /**
+     * returns the isYourTurn parameter that determines if it is the user turn or not
+     * @return boolean referring to the user turn
+     */
     @Override
     public boolean isYourTurn() {
         return isYourTurn;
     }
 
+    /**
+     * Send the column where to put the selected items for the move to the client controller
+     * @param col column to send to the client controller
+     */
     @Override
     public void sendMove(int col) {
         clientController.sendMove(col);
     }
 
+    /**
+     * Send to the controller the coordinates of the element chosen by the user
+     * @param el coordinates of the element picked
+     */
     @Override
     public void insertInPositionPicked(int[] el) {
         clientController.insertInPositionPicked(el);
     }
+
+    /**
+     * Checks if the user has already picked the maximum amount of items for the move
+     */
     @Override
     public int getPositionPickedSize() {
         return clientController.getPositionPickedSize();
@@ -250,41 +326,70 @@ public class GraphicUserInterface extends Application implements UserInterface, 
         return gameScreenController.getSwapColIndex(n);
     }
 
+    /**
+     * Swap the order of two selected items
+     * @param col1 first column to swap
+     * @param col2 second column to swap
+     */
     @Override
     public void swapColsTUI(int col1, int col2) {
         // NO IN GUI
     }
 
+    /**
+     * Warns the user that his move is incorrect and that the board has been reset to the previous state
+     */
     @Override
     public void incorrectMove() {
         gameScreenController.incorrectMove();
     }
 
+    /**
+     * Warns the user that he tried to send a personal message to a non-existent user
+     */
     @Override
     public void wrongReceiver() {
         gameScreenController.wrongReceiver();
     }
 
+    /**
+     * Warns the user that he provided parameters that are not acceptable for the game
+     */
     @Override
     public void wrongParameters() {
         loginScreenController.wrongParameters();
     }
 
+    /**
+     * Send the column selected to the client controller to check if there's enough space to insert the items the user selected
+     * @param col column to check
+     * @return boolean telling if the column has enough space or not
+     */
     @Override
     public boolean columnHasEnoughSpace(int col) {
         return clientController.columnHasEnoughSpace(col);
     }
 
+    /**
+     * Send to the controller the column of the selected items that the user wants to remove
+     * @param col column where to remove the item
+     */
     @Override
     public void removeInPositionPicked(int col) {
         clientController.removeInPositionPicked(col);
     }
 
+    /**
+     * Tells the user that he's been restored from a previous saved game and that he's now waiting in the lobby
+     */
     @Override
     public void playerRestored() {
         loginScreenController.playerRestored();
     }
 
+    /**
+     * Warns the user that the server is not responding
+     */
     @Override
     public void serverNotResponding() {
         Platform.runLater(() -> {
@@ -304,16 +409,25 @@ public class GraphicUserInterface extends Application implements UserInterface, 
         });
     }
 
+    /**
+     * Tells the user that the lobby has been restored.
+     */
     @Override
     public void lobbyRestored() {
         loginScreenController.lobbyRestored();
     }
 
+    /**
+     * Warns the user that the lobby is full, and to close the client and try again
+     */
     @Override
     public void fullLobby() {
         loginScreenController.fullLobby();
     }
 
+    /**
+     * Warns the user that the lobby cannot be restored because a player that wasn't in the lobby tried to join
+     */
     @Override
     public void cantRestoreLobby() {
         Platform.runLater(() -> {
@@ -332,6 +446,9 @@ public class GraphicUserInterface extends Application implements UserInterface, 
         });
     }
 
+    /**
+     * Congratulate the user for the win because all the other players left for too much time
+     */
     @Override
     public void alonePlayerWins() {
         Platform.runLater(() -> {
@@ -349,6 +466,10 @@ public class GraphicUserInterface extends Application implements UserInterface, 
         });
     }
 
+    /**
+     * Tells the user that a user disconnected from the game
+     * @param nickname nickname of the user that disconnected
+     */
     @Override
     public void playerDisconnected(String nickname) {
         if(loadedGame) {
@@ -356,6 +477,10 @@ public class GraphicUserInterface extends Application implements UserInterface, 
         }
     }
 
+    /**
+     * Tells the user that a user reconnected to the game
+     * @param nickname nickname of the user that reconnected
+     */
     @Override
     public void playerReconnected(String nickname) {
         if(loadedGame) {
@@ -363,6 +488,12 @@ public class GraphicUserInterface extends Application implements UserInterface, 
         }
     }
 
+    /**
+     * Register which parameters are takeable on the board
+     * @param takeableItems a bitmask of the takeable items on the board
+     * @param yourTurn a boolean telling if it is the user turn or not
+     * @param waitForOtherPlayers a boolean about other players turns
+     */
     @Override
     public void setTakeableItems(boolean[][] takeableItems, boolean yourTurn, boolean waitForOtherPlayers) {
         Platform.runLater(() -> {
@@ -372,6 +503,9 @@ public class GraphicUserInterface extends Application implements UserInterface, 
         });
     }
 
+    /**
+     * Calls the client controller method to exit from the game without disconnecting from the server
+     */
     @Override
     public void exitWithoutWaitingDisconnectFromServer() {
         clientController.exitWithoutWaitingDisconnectFromServer();

@@ -98,7 +98,7 @@ public interface UserInterface extends Runnable {
     void rejoinedMatch();
 
     /**
-     * Warns the user that he tried to send a message to a non existant user
+     * Warns the user that he tried to send a message to a non existent user
      */
     void invalidPlayer();
 
