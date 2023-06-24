@@ -580,6 +580,8 @@ public class TextUserInterface implements UserInterface{
                         } else {
                             tileNotAvailable();
                         }
+                    } else {
+                        forbiddenInput();
                     }
                 } else {
                     forbiddenInput();
@@ -1282,7 +1284,7 @@ public class TextUserInterface implements UserInterface{
     public void updateView(NewView newView) throws FileNotFoundException, URISyntaxException {
         new Thread(() -> {
             if(newView.isGameOver()){
-                gameOver();
+                exit();
             }
             this.isYourTurn = Objects.equals(newView.getActivePlayer(), this.nickname);
             this.newView = newView;
@@ -1293,9 +1295,13 @@ public class TextUserInterface implements UserInterface{
     }
 
     /**
-     * Tells the user that the game is over
+     * Calls the exit method from the client controller to end the game and notify the user that the game is over
      */
-    private void gameOver() {
+    @Override
+    public void exit() {
+        clientController.exit();
+        closeTUI = true;
+
         /**
          * This attribute holds an arraylist of the text lines to display
          */
@@ -1304,25 +1310,10 @@ public class TextUserInterface implements UserInterface{
         // Add strings to the list
         textLines.add("GAME OVER!");
         textLines.add("");
-        textLines.add("Press enter to exit!");
+        textLines.add("The Game is over, you can close the client!");
 
         standardTextPage(textLines);
         System.out.println(drawHorizontalLine(sceneWidth));
-
-        scanner = new Scanner(System.in);
-
-        if(scanner.hasNextLine()){
-            exit();
-        }
-    }
-
-    /**
-     * Calls the exit method from the client controller to end the game
-     */
-    @Override
-    public void exit() {
-        clientController.exit();
-        closeTUI = true;
     }
 
     /**
@@ -1515,6 +1506,10 @@ public class TextUserInterface implements UserInterface{
     @Override
     public void serverNotResponding() {
         new Thread(() -> {
+
+            clientController.exit();
+            closeTUI = true;
+
             /**
              * This attribute holds an arraylist of the text lines to display
              */
@@ -1591,6 +1586,10 @@ public class TextUserInterface implements UserInterface{
     @Override
     public void alonePlayerWins() {
         new Thread(() -> {
+
+            clientController.exit();
+            closeTUI = true;
+
             /**
              * This attribute holds an arraylist of the text lines to display
              */
