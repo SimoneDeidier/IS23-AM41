@@ -72,8 +72,8 @@ public class GameController {
         return playerList;
     }
 
-    public boolean checkMove(Body body) {  //ok serve
-        if (!body.getPlayerNickname().equals(activePlayer.getNickname())) { //forse questo non va bene?
+    public boolean checkMove(Body body) {
+        if (!body.getPlayerNickname().equals(activePlayer.getNickname())) {
             return false;
         }
         if (!board.checkMove(body.getPositionsPicked())) {
@@ -93,19 +93,14 @@ public class GameController {
             } catch (Exception NotEnoughSpaceInColumnException) {
                 System.err.println("Not enough space in the column provided!");
             }
-            System.err.println("POST INSERT");
             if (checkBoardNeedForRefill()) {
                 board.refillBoard();
             }
-            System.err.println("POST REFILL");
             if (!lastTurn && checkLastTurn()) {
                 activePlayer.setEndGameToken(EndGameToken.getEndGameToken());
                 lastTurn = true;
             }
-            System.err.println("POST CHECK LAST TURN");
             activePlayer.updateScore();
-
-            System.err.println("POST UPDATE SCORE");
             //Setting the next active player
             changeActivePlayer();
 

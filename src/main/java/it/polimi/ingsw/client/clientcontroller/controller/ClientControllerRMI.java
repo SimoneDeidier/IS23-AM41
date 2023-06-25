@@ -19,8 +19,6 @@ import java.time.temporal.ChronoUnit;
 import java.util.*;
 
 public class ClientControllerRMI implements ClientController, Serializable {
-    //todo per ogni remoteException o interrupted non tirare throw new RuntimeException(e); ma messaggio d'errore così
-    //se caduta rete non errore brutto ma bello?
 
     private final ConnectionRMI connectionRMI;
     private UserInterface userInterface = null;
@@ -33,6 +31,8 @@ public class ClientControllerRMI implements ClientController, Serializable {
     private final static int COLS = 5;
     private final static int BOARD_DIM = 9;
     private boolean[][] takeableItems = new boolean[BOARD_DIM][BOARD_DIM];
+    private boolean[][] bitmask;
+    private Item[][] boardMatrix;
 
     public ClientControllerRMI(ConnectionRMI connectionRMI) {
         this.connectionRMI = connectionRMI;
@@ -139,6 +139,8 @@ public class ClientControllerRMI implements ClientController, Serializable {
             }
             columnsToFreeSpaces.put(i, count);
         }
+        bitmask= newView.getBoardBitMask();
+        boardMatrix= newView.getBoardItems();
         Item[][] board = newView.getBoardItems();
         for(int i = 0; i < BOARD_DIM; i++) {
             for(int j = 0; j < BOARD_DIM; j++) {
@@ -192,12 +194,87 @@ public class ClientControllerRMI implements ClientController, Serializable {
 
     @Override
     public void sendMove(int col) {
+        int size = positionPicked.size();
+        if(size < 1 || size>3) {
+            positionPicked= new ArrayList<>();
+            userInterface.incorrectMove();
+            return;
+        }
+        //Check if all the elements have a free side
+        for(int[] i : positionPicked){
+            if(!hasFreeSide(i[0],i[1])){
+                positionPicked= new ArrayList<>();
+                userInterface.incorrectMove();
+                return;
+            }
+        }
+        //Check if the elements are in line
+        if(!checkInLine(positionPicked)){
+            positionPicked= new ArrayList<>();
+            userInterface.incorrectMove();
+            return;
+        }
         Body body = new Body();
         body.setColumn(col);
         body.setPositionsPicked(positionPicked);
         body.setPlayerNickname(playerNickname);
         connectionRMI.sendMoveToServer(body);
         positionPicked = new ArrayList<>(3);
+    }
+
+    public boolean hasFreeSide(int i,int j){
+        //Check up
+        if(i>0 && getBoardMatrixElement(i-1,j)==null){
+            return true;
+        }
+        //Check down
+        if(i<BOARD_DIM-1 && getBoardMatrixElement(i+1,j)==null){
+            return true;
+        }
+        //Check left
+        if(j>0 && getBoardMatrixElement(i,j-1)==null){
+            return true;
+        }
+        //Check right
+        return j<BOARD_DIM-1 && getBoardMatrixElement(i, j + 1) == null;
+    }
+
+    public Item getBoardMatrixElement(int i, int j){
+        return boardMatrix[i][j];
+    }
+
+    public boolean checkInLine(List<int[]> list){
+        int x1=list.get(0)[0],y1=list.get(0)[1];
+        if(list.size()==2){
+            int x2=list.get(1)[0],y2=list.get(1)[1];
+            return (x1 == x2 - 1 && y1 == y2) || (x1 == x2 + 1 && y1 == y2)
+                    || (x1 == x2 && y1 == y2 - 1) || ((x1 == x2 && y1 == y2 + 1));
+        }
+
+        if(list.size()==3){
+            int x2=list.get(1)[0],y2=list.get(1)[1],x3=list.get(2)[0],y3=list.get(2)[1];
+            if(x1 == (x2 + 1) && (x3==x2-1 || x3==x1+1) && y1==y2 && y2==y3){
+                return true;
+            }
+            if(x1 == (x2 - 1) && (x3==x1-1 || x3==x2+1) && y1==y2 && y2==y3){
+                return true;
+            }
+            if(y1 == (y2 + 1) && (y3==y2-1 || y3==y1+1) && x1==x2 && x2==x3){
+                return true;
+            }
+            if(y1 == (y2 - 1) && (y3 == y2 + 1 || y3 == y1 - 1) && x1 == x2 && x2 == x3)
+                return true;
+            if(x1==x2+2 &&  x1==x3+1 && y1==y2 && y2==y3)
+                return true;
+            if(x1== (x2-2) && x1==x3-1 && y1==y2 && y2==y3)
+                return true;
+            if(y1 == (y2+2) && y1 == y3+1 && x1==x2 && x2==x3)
+                return true;
+            if(y1 == y2-2 && y1 == y3-1 && x1==x2 && x2==x3)
+                return true;
+            return false;
+        }
+        return true; //case where list.size==1
     }
 
     @Override
@@ -253,7 +330,7 @@ public class ClientControllerRMI implements ClientController, Serializable {
     }
 
     @Override
-    public void closeConnection() { //todo capire se serve altro
+    public void closeConnection() {
         connectionRMI.setClientConnected(false); //stops the ping thread
     }
 
