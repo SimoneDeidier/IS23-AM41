@@ -37,6 +37,7 @@ public class ConnectionRMI extends UnicastRemoteObject implements InterfaceClien
     @Override
     public void startConnection(String uiType) {
         try {
+            System.setProperty("java.rmi.server.hostname", IP);
             // Getting the registry
             Registry registry = LocateRegistry.getRegistry(IP, PORT);
             // Looking up the registry for the remote object
