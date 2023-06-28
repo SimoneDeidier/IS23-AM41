@@ -25,6 +25,7 @@ public class Client {
     public static void main(String[] args) {
 
         drawLogo();
+        System.out.println("\n\nWARNING!: Please if your OS is a Unix based, remember to run the command \"rmiregistry &\" on a new terminal!\n\n");
         Scanner stdin = new Scanner(System.in);
         if(!parseConnectionType(args)) {
             do {
