@@ -36,7 +36,7 @@ public class TCPMessageController implements TCPMessageControllerInterface {
                             Body body = new Body();
                             body.setNumberOfPlayers(gameController.getMaxPlayerNumber());
                             for(Player p : gameController.getPlayerList()) {
-                                body.getLobby().add(p.getNickname());
+                                body.getLobby().put(p.getNickname(), p.isConnected());
                             }
                             printTCPMessage("Nickname Accepted", body);
                             gameController.putNickToSocketMapping(nickname, this);
@@ -102,7 +102,7 @@ public class TCPMessageController implements TCPMessageControllerInterface {
                     Body body = new Body();
                     body.setNumberOfPlayers(gameController.getMaxPlayerNumber());
                     for(Player p : gameController.getPlayerList()) {
-                        body.getLobby().add(p.getNickname());
+                        body.getLobby().put(p.getNickname(), p.isConnected());
                     }
                     printTCPMessage("Lobby Created", body);
                 }

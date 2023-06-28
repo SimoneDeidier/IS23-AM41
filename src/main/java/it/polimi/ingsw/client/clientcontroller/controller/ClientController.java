@@ -7,6 +7,7 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.net.URISyntaxException;
 import java.util.List;
+import java.util.Map;
 
 public interface ClientController {
 
@@ -16,7 +17,7 @@ public interface ClientController {
     void invalidNickname();
     void sendParameters(int numPlayers, int numCommons);
     void nicknameAccepted(int nPlayers, List<String> lobby);
-    void lobbyCreated(int nPlayers, List<String> lobby);
+    void lobbyCreated(int nPlayers, Map<String, Boolean> lobby);
     void waitForLobby();
     void setPersonalTargetCardNumber(int personalTargetCardNumber);
     void setCommonGoalList(List<String> commonGoalsNameList);

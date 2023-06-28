@@ -16,6 +16,7 @@ import java.rmi.registry.LocateRegistry;
 import java.rmi.registry.Registry;
 import java.rmi.server.UnicastRemoteObject;
 import java.util.List;
+import java.util.Map;
 
 public class ConnectionRMI extends UnicastRemoteObject implements InterfaceClient, Serializable, Connection {
     private final int PORT;
@@ -150,7 +151,7 @@ public class ConnectionRMI extends UnicastRemoteObject implements InterfaceClien
     }
 
     @Override
-    public void lobbyCreated(boolean typeOfGame, int nPlayers, List<String> lobby) throws RemoteException {
+    public void lobbyCreated(boolean typeOfGame, int nPlayers, Map<String, Boolean> lobby) throws RemoteException {
         startClearThread();
         if (typeOfGame)
             controller.lobbyCreated(nPlayers, lobby);

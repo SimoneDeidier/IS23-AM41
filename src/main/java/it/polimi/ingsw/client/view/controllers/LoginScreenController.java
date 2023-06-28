@@ -110,14 +110,18 @@ public class LoginScreenController {
         });
     }
 
-    public void lobbyCreated(int nPlayers, List<String> lobby) {
+    public void lobbyCreated(int nPlayers, Map<String, Boolean> lobby) {
         Platform.runLater(() -> {
             changePane(parametersAnchorPane, waitAnchorPane);
             String text = lobbyLabel.getText();
             StringBuilder stringBuilder = new StringBuilder(text);
             stringBuilder.append("   ").append(nPlayers).append("\n\n");
-            for(String s : lobby) {
-                stringBuilder.append(" - ").append(s).append("\n");
+            for(String s : lobby.keySet()) {
+                stringBuilder.append(" - ").append(s);
+                if(!lobby.get(s)) {
+                    stringBuilder.append(" - DISCONNECTED!");
+                }
+                stringBuilder.append("\n");
             }
             lobbyLabel.setText(stringBuilder.toString());
         });
@@ -203,7 +207,7 @@ public class LoginScreenController {
                     stringBuilder.append(line).append("\n");
                 }
                 else {
-                    stringBuilder.append(line).append(" - DISCONNECTED! \n");
+                    stringBuilder.append(line).append(" - DISCONNECTED!\n");
                 }
             }
             lobbyLabel.setText(stringBuilder.toString());

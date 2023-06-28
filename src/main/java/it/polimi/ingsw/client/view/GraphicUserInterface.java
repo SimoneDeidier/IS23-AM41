@@ -24,6 +24,7 @@ import java.io.IOException;
 import java.io.Serializable;
 import java.net.URISyntaxException;
 import java.util.List;
+import java.util.Map;
 import java.util.Objects;
 
 public class GraphicUserInterface extends Application implements UserInterface, Serializable {
@@ -89,7 +90,7 @@ public class GraphicUserInterface extends Application implements UserInterface, 
     }
 
     @Override
-    public void lobbyCreated(int nPlayers, List<String> lobby) {
+    public void lobbyCreated(int nPlayers, Map<String, Boolean> lobby) {
         loginScreenController.lobbyCreated(nPlayers, lobby);
     }
 

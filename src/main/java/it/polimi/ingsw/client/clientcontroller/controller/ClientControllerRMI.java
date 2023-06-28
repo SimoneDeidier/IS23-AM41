@@ -82,7 +82,7 @@ public class ClientControllerRMI implements ClientController, Serializable {
     }
 
     @Override
-    public void lobbyCreated(int nPlayers, List<String> lobby) {
+    public void lobbyCreated(int nPlayers, Map<String, Boolean> lobby) {
         userInterface.lobbyCreated(nPlayers, lobby);
     }
 

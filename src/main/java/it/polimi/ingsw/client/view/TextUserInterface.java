@@ -890,7 +890,7 @@ public class TextUserInterface implements UserInterface{
     }
 
     @Override
-    public void lobbyCreated(int nPlayers, List<String> lobby) {
+    public void lobbyCreated(int nPlayers, Map<String, Boolean> lobby) {
         List<String> textLines = new ArrayList<>();
 
         // Add strings to the list

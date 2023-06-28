@@ -8,6 +8,7 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.net.URISyntaxException;
 import java.util.List;
+import java.util.Map;
 
 public interface UserInterface extends Runnable {
 
@@ -23,7 +24,7 @@ public interface UserInterface extends Runnable {
 
     void nicknameAccepted(int nPlayers, List<String> lobby);
 
-    void lobbyCreated(int nPlayers, List<String> lobby);
+    void lobbyCreated(int nPlayers, Map<String, Boolean> lobby);
 
     void waitForLobby();
 

@@ -5,6 +5,7 @@ import it.polimi.ingsw.messages.NewView;
 import java.rmi.Remote;
 import java.rmi.RemoteException;
 import java.util.List;
+import java.util.Map;
 
 public interface InterfaceClient extends Remote {
     //What the server can call from the client
@@ -12,7 +13,7 @@ public interface InterfaceClient extends Remote {
     void askForNewNickname() throws RemoteException;
     void updateView(NewView newView) throws RemoteException;
     void disconnectUser(int whichMessageToShow) throws RemoteException;
-    void confirmConnection(boolean bool, int nPlayers, List<String> lobby) throws RemoteException;
+    void confirmConnection(boolean bool, int nPlayers, Map<String, Boolean> lobby) throws RemoteException;
     void receiveMessage(String sender, String message, String localDateTime) throws RemoteException;
     void wrongMessageWarning(String message) throws RemoteException;
     void receiveCards(int whichPersonal, List<String> commonTargetCardList) throws RemoteException;

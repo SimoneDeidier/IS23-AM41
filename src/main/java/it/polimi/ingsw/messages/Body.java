@@ -5,7 +5,9 @@ import it.polimi.ingsw.server.model.PersonalTargetCard;
 import java.io.Serializable;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 public class Body implements Serializable {
     private String playerNickname;
@@ -21,7 +23,7 @@ public class Body implements Serializable {
     private String localDateTime;
     private List<String> commonTargetCardsName = new ArrayList<>(2);
     private int goodbyeType;
-    private List<String> lobby = new ArrayList<>(4);
+    private Map<String, Boolean> lobby = new HashMap<>(4);
 
     public String getPlayerNickname() {
         return playerNickname;
@@ -123,7 +125,7 @@ public class Body implements Serializable {
         this.goodbyeType = goodbyeType;
     }
 
-    public List<String> getLobby() {
+    public Map<String, Boolean> getLobby() {
         return lobby;
     }
 }
