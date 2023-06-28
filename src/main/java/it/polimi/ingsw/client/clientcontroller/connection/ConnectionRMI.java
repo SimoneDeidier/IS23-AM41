@@ -115,7 +115,7 @@ public class ConnectionRMI extends UnicastRemoteObject implements InterfaceClien
     }
 
     @Override
-    public void confirmConnection(boolean typeOfLobby, int nPlayers, List<String> lobby) throws RemoteException {
+    public void confirmConnection(boolean typeOfLobby, int nPlayers, Map<String, Boolean> lobby) throws RemoteException {
         startClearThread();
         if (typeOfLobby) {
             controller.playerRestored();
@@ -265,6 +265,16 @@ public class ConnectionRMI extends UnicastRemoteObject implements InterfaceClien
     @Override
     public void disconnectedFromLobby(String nickname) throws RemoteException {
         controller.disconnectedFromLobby(nickname);
+    }
+
+    @Override
+    public void rejoinedInLobby(Map<String, Boolean> lobby) throws RemoteException {
+        controller.nicknameAccepted(lobby.size(), lobby);
+    }
+
+    @Override
+    public void userRejoined(String nickname) throws RemoteException {
+        controller.userRejoined(nickname);
     }
 
 }

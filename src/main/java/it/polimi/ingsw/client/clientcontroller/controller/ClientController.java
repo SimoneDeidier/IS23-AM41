@@ -16,7 +16,7 @@ public interface ClientController {
     void getParameters();
     void invalidNickname();
     void sendParameters(int numPlayers, int numCommons);
-    void nicknameAccepted(int nPlayers, List<String> lobby);
+    void nicknameAccepted(int nPlayers, Map<String, Boolean> lobby);
     void lobbyCreated(int nPlayers, Map<String, Boolean> lobby);
     void waitForLobby();
     void setPersonalTargetCardNumber(int personalTargetCardNumber);
@@ -80,4 +80,6 @@ public interface ClientController {
     void userConnected(String playerNickname);
 
     void disconnectedFromLobby(String playerNickname);
+
+    void userRejoined(String playerNickname);
 }

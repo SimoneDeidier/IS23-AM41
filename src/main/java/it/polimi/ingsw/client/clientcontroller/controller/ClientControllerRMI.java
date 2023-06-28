@@ -77,7 +77,7 @@ public class ClientControllerRMI implements ClientController, Serializable {
     }
 
     @Override
-    public void nicknameAccepted(int nPlayers, List<String> lobby) {
+    public void nicknameAccepted(int nPlayers, Map<String, Boolean> lobby) {
         userInterface.nicknameAccepted(nPlayers, lobby);
     }
 
@@ -306,6 +306,11 @@ public class ClientControllerRMI implements ClientController, Serializable {
     @Override
     public void disconnectedFromLobby(String playerNickname) {
         userInterface.disconnectedFromLobby(playerNickname);
+    }
+
+    @Override
+    public void userRejoined(String playerNickname) {
+        userInterface.userRejoined(playerNickname);
     }
 
 }

@@ -346,11 +346,11 @@ public class GameController {
         else if (availableSlots == -2) {
             throw new WaitForLobbyParametersException();
         }
-        else if (availableSlots == 0) {  //No place for a new player
+        else if(checkForDisconnectedPlayer(nickname)) {
             // check if the connection is from a disconnected user
-            if(checkForDisconnectedPlayer(nickname)) {
-                throw new RejoinRequestException();
-            }
+            throw new RejoinRequestException();
+        }
+        else if (availableSlots == 0) {  //No place for a new player
             throw new FullLobbyException();
         }
 
@@ -716,6 +716,26 @@ public class GameController {
             nickToTCPMessageControllerMapping.get(s).printTCPMessage("Disconnected From Lobby", b);
         }
         server.notifyOfDisconnectionFromLobby(nickname);
+    }
+
+    public void notifyOfReconnectionInLobby(String nickname) {
+
+        for(String s : nickToTCPMessageControllerMapping.keySet()) {
+            if(Objects.equals(s, nickname)) {
+                Body b = new Body();
+                Map<String, Boolean> lobby = b.getLobby();
+                for(Player player : playerList) {
+                    lobby.put(player.getNickname(), player.isConnected());
+                }
+                nickToTCPMessageControllerMapping.get(s).printTCPMessage("Rejoined In Lobby", b);
+            }
+            else {
+                Body b = new Body();
+                b.setPlayerNickname(nickname);
+                nickToTCPMessageControllerMapping.get(s).printTCPMessage("User Rejoined", b);
+            }
+        }
+        server.notifyOfReconnectionInLobby(nickname);
     }
 
 }

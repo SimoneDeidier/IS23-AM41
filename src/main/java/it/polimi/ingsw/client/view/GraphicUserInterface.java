@@ -85,7 +85,7 @@ public class GraphicUserInterface extends Application implements UserInterface, 
     }
 
     @Override
-    public void nicknameAccepted(int nPlayers, List<String> lobby) {
+    public void nicknameAccepted(int nPlayers, Map<String, Boolean> lobby) {
         loginScreenController.nicknameAccepted(nPlayers, lobby);
     }
 
@@ -387,6 +387,11 @@ public class GraphicUserInterface extends Application implements UserInterface, 
     @Override
     public void disconnectedFromLobby(String nickname) {
         loginScreenController.disconnectedFromLobby(nickname);
+    }
+
+    @Override
+    public void userRejoined(String nickname) {
+        loginScreenController.userRejoined(nickname);
     }
 
 }

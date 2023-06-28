@@ -178,9 +178,9 @@ public class Server implements InterfaceServer {
                 case 1 -> { //joined a "new" game
                     clientMapRMI.put(nickname,cl); //starts the ping towards that user
                     int nPlayers = controller.getMaxPlayerNumber();
-                    List<String> lobby = new ArrayList<>();
+                    Map<String, Boolean> lobby = new HashMap<>();
                     for(Player p : controller.getPlayerList()) {
-                        lobby.add(p.getNickname());
+                        lobby.put(p.getNickname(), p.isConnected());
                     }
                     cl.confirmConnection(false, nPlayers, lobby);
                     controller.notifyOfConnectedUser(nickname);
@@ -188,18 +188,18 @@ public class Server implements InterfaceServer {
                 case 2 ->{ //first player joining a "restored" game
                     clientMapRMI.put(nickname,cl); //starts the ping towards that user
                     int nPlayers = controller.getMaxPlayerNumber();
-                    List<String> lobby = new ArrayList<>();
+                    Map<String, Boolean> lobby = new HashMap<>();
                     for(Player p : controller.getPlayerList()) {
-                        lobby.add(p.getNickname());
+                        lobby.put(p.getNickname(), p.isConnected());
                     }
                     cl.lobbyCreated(false, nPlayers, lobby);
                 }
                 case 3 -> { //joining a restored game
                     clientMapRMI.put(nickname,cl); //starts the ping towards that user
                     int nPlayers = controller.getMaxPlayerNumber();
-                    List<String> lobby = new ArrayList<>();
+                    Map<String, Boolean> lobby = new HashMap<>();
                     for(Player p : controller.getPlayerList()) {
-                        lobby.add(p.getNickname());
+                        lobby.put(p.getNickname(), p.isConnected());
                     }
                     cl.confirmConnection(true, nPlayers, lobby);
                 }
@@ -232,22 +232,27 @@ public class Server implements InterfaceServer {
     public void rejoinRequest(String nickname, InterfaceClient cl){
         try {
             controller.changePlayerConnectionStatus(nickname);
-            if (controller.didLastUserMadeHisMove()) { //updateView for everyone as soon as he connects because he needs to make a move right away
-                controller.notifyOfReconnectionAllUsers(nickname);
-                controller.setLastConnectedUserMadeHisMove(false);
-                clientMapRMI.put(nickname, cl);
-                try {
+            if(controller.getState().getClass().equals(RunningGameState.class)) {
+                if (controller.didLastUserMadeHisMove()) { //updateView for everyone as soon as he connects because he needs to make a move right away
+                    controller.notifyOfReconnectionAllUsers(nickname);
+                    controller.setLastConnectedUserMadeHisMove(false);
+                    clientMapRMI.put(nickname, cl);
+                    try {
+                        clientMapRMI.get(nickname).rejoinedMatch();
+                    }catch(RemoteException ignored){
+                    }
+                    sendCardsRMI();
+                    controller.changeActivePlayer();
+                    controller.updateView();
+                } else { //he'll wait for the first updateView
+                    controller.notifyOfReconnectionAllUsers(nickname);
+                    clientMapRMI.put(nickname, cl);
                     clientMapRMI.get(nickname).rejoinedMatch();
-                }catch(RemoteException ignored){
+                    sendCardsRMI();
                 }
-                sendCardsRMI();
-                controller.changeActivePlayer();
-                controller.updateView();
-            } else { //he'll wait for the first updateView
-                controller.notifyOfReconnectionAllUsers(nickname);
-                clientMapRMI.put(nickname, cl);
-                clientMapRMI.get(nickname).rejoinedMatch();
-                sendCardsRMI();
+            }
+            else {
+                controller.notifyOfReconnectionInLobby(nickname);
             }
         }catch (RemoteException ignored){
         }
@@ -257,9 +262,9 @@ public class Server implements InterfaceServer {
     public void sendParameters(InterfaceClient cl,int maxPlayerNumber, boolean onlyOneCommonCard) throws RemoteException {
         if(controller.createLobby(maxPlayerNumber,onlyOneCommonCard)) {
             int nPlayers = controller.getMaxPlayerNumber();
-            List<String> lobby = new ArrayList<>();
+            Map<String, Boolean> lobby = new HashMap<>();
             for(Player p : controller.getPlayerList()) {
-                lobby.add(p.getNickname());
+                lobby.put(p.getNickname(), p.isConnected());
             }
             cl.lobbyCreated(true, nPlayers, lobby);
         }
@@ -455,6 +460,25 @@ public class Server implements InterfaceServer {
                 clientMapRMI.get(s).disconnectedFromLobby(nickname);
             } catch (RemoteException ignored) {
             }
+        }
+    }
+
+    public void notifyOfReconnectionInLobby(String nickname) {
+        try {
+            for (String s : clientMapRMI.keySet()) {
+                if (Objects.equals(s, nickname)) {
+                    Map<String, Boolean> lobby = new HashMap<>();
+                    for (Player player : controller.getPlayerList()) {
+                        lobby.put(player.getNickname(), player.isConnected());
+                    }
+                    clientMapRMI.get(s).rejoinedInLobby(lobby);
+                } else {
+                    clientMapRMI.get(s).userRejoined(nickname);
+                }
+            }
+        }
+        catch (RemoteException ignored) {
+
         }
     }
 }

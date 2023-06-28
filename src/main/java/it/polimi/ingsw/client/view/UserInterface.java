@@ -22,7 +22,7 @@ public interface UserInterface extends Runnable {
 
     void sendParameters(int numPlayers, int numCommons);
 
-    void nicknameAccepted(int nPlayers, List<String> lobby);
+    void nicknameAccepted(int nPlayers, Map<String, Boolean> lobby);
 
     void lobbyCreated(int nPlayers, Map<String, Boolean> lobby);
 
@@ -88,4 +88,6 @@ public interface UserInterface extends Runnable {
     void userConnected(String nickname);
 
     void disconnectedFromLobby(String nickname);
+
+    void userRejoined(String nickname);
 }

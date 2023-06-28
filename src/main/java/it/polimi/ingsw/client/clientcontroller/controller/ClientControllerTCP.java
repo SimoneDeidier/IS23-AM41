@@ -79,7 +79,7 @@ public class ClientControllerTCP implements ClientController {
     }
 
     @Override
-    public void nicknameAccepted(int nPlayers, List<String> lobby) {
+    public void nicknameAccepted(int nPlayers, Map<String, Boolean> lobby) {
         userInterface.nicknameAccepted(nPlayers, lobby);
     }
 
@@ -310,4 +310,8 @@ public class ClientControllerTCP implements ClientController {
         userInterface.disconnectedFromLobby(playerNickname);
     }
 
+    @Override
+    public void userRejoined(String playerNickname) {
+        userInterface.userRejoined(playerNickname);
+    }
 }

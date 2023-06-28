@@ -877,7 +877,7 @@ public class TextUserInterface implements UserInterface{
     }
 
     @Override
-    public void nicknameAccepted(int nPlayers, List<String> lobby) {
+    public void nicknameAccepted(int nPlayers, Map<String, Boolean> lobby) {
         new Thread(() -> {
             List<String> textLines = new ArrayList<>();
 
@@ -1214,5 +1214,9 @@ public class TextUserInterface implements UserInterface{
 
     }
 
+    @Override
+    public void userRejoined(String nickname) {
+
+    }
 }
 

@@ -5,11 +5,14 @@ import it.polimi.ingsw.messages.Body;
 import it.polimi.ingsw.messages.TCPMessage;
 import it.polimi.ingsw.server.model.Player;
 import it.polimi.ingsw.server.model.commons.CommonTargetCard;
+import it.polimi.ingsw.server.servercontroller.controllerstates.RunningGameState;
 import it.polimi.ingsw.server.servercontroller.exceptions.*;
 
 import java.io.IOException;
 import java.net.Socket;
 import java.rmi.RemoteException;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.Objects;
 
 public class TCPMessageController implements TCPMessageControllerInterface {
@@ -75,24 +78,29 @@ public class TCPMessageController implements TCPMessageControllerInterface {
                 }
                 catch (RejoinRequestException e) {
                     gameController.changePlayerConnectionStatus(nickname);
-                    printTCPMessage("Rejoined", null);
-                    Body body = new Body();
-                    for(Player p : gameController.getPlayerList()) {
-                        if(Objects.equals(p.getNickname(), nickname)) {
-                            body.setPersonalCardNumber(p.getPersonalTargetCard().getPersonalNumber());
+                    if(gameController.getState().getClass().equals(RunningGameState.class)) {
+                        printTCPMessage("Rejoined", null);
+                        Body body = new Body();
+                        for (Player p : gameController.getPlayerList()) {
+                            if (Objects.equals(p.getNickname(), nickname)) {
+                                body.setPersonalCardNumber(p.getPersonalTargetCard().getPersonalNumber());
+                            }
                         }
+                        for (CommonTargetCard c : gameController.getCommonTargetCardsList()) {
+                            body.getCommonTargetCardsName().add(c.getName());
+                        }
+                        gameController.getNickToTCPMessageControllerMapping().put(nickname, this);
+                        printTCPMessage("Your Target", body);
+                        if (gameController.didLastUserMadeHisMove()) {
+                            gameController.setLastConnectedUserMadeHisMove(false);
+                            gameController.changeActivePlayer();
+                            gameController.updateView();
+                        }
+                        gameController.notifyOfReconnectionAllUsers(nickname);
                     }
-                    for(CommonTargetCard c : gameController.getCommonTargetCardsList()) {
-                        body.getCommonTargetCardsName().add(c.getName());
+                    else {
+                        gameController.notifyOfReconnectionInLobby(nickname);
                     }
-                    gameController.getNickToTCPMessageControllerMapping().put(nickname, this);
-                    printTCPMessage("Your Target", body);
-                    if(gameController.didLastUserMadeHisMove()) {
-                        gameController.setLastConnectedUserMadeHisMove(false);
-                        gameController.changeActivePlayer();
-                        gameController.updateView();
-                    }
-                    gameController.notifyOfReconnectionAllUsers(nickname);
                 }
             }
             case "Create Lobby" -> {

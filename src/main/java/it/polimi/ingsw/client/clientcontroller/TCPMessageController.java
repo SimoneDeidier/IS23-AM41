@@ -9,6 +9,7 @@ import it.polimi.ingsw.messages.TCPMessage;
 
 import java.io.IOException;
 import java.net.URISyntaxException;
+import java.util.Map;
 
 public class TCPMessageController implements TCPMessageControllerInterface {
 
@@ -116,6 +117,13 @@ public class TCPMessageController implements TCPMessageControllerInterface {
             }
             case "Disconnected From Lobby" -> {
                 controller.disconnectedFromLobby(message.getBody().getPlayerNickname());
+            }
+            case "Rejoined In Lobby" -> {
+                Map<String, Boolean> lobby = message.getBody().getLobby();
+                controller.nicknameAccepted(lobby.size(), lobby);
+            }
+            case "User Rejoined" -> {
+                controller.userRejoined(message.getBody().getPlayerNickname());
             }
         }
     }

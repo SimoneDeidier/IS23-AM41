@@ -96,15 +96,19 @@ public class LoginScreenController {
         }
     }
 
-    public void nicknameAccepted(int nPlayers, List<String> lobby) {
+    public void nicknameAccepted(int nPlayers, Map<String, Boolean> lobby) {
         nicknameSetted = true;
         Platform.runLater(() -> {
             changePane(nicknameAnchorPane, waitAnchorPane);
             String text = lobbyLabel.getText();
             StringBuilder stringBuilder = new StringBuilder(text);
             stringBuilder.append("   ").append(nPlayers).append("\n\n");
-            for(String s : lobby) {
-                stringBuilder.append(" - ").append(s).append("\n");
+            for(String s : lobby.keySet()) {
+                stringBuilder.append(" - ").append(s);
+                if(!lobby.get(s)) {
+                    stringBuilder.append(" - DISCONNECTED!");
+                }
+                stringBuilder.append("\n");
             }
             lobbyLabel.setText(stringBuilder.toString());
         });
@@ -208,6 +212,23 @@ public class LoginScreenController {
                 }
                 else {
                     stringBuilder.append(line).append(" - DISCONNECTED!\n");
+                }
+            }
+            lobbyLabel.setText(stringBuilder.toString());
+        });
+    }
+
+    public void userRejoined(String nickname) {
+        Platform.runLater(() ->{
+            String text = lobbyLabel.getText();
+            String[] lines = text.split("\n");
+            StringBuilder stringBuilder = new StringBuilder();
+            for(String line : lines) {
+                if(!line.contains(nickname)) {
+                    stringBuilder.append(line).append("\n");
+                }
+                else {
+                    stringBuilder.append(line.replace(" - DISCONNECTED!", "")).append("\n");
                 }
             }
             lobbyLabel.setText(stringBuilder.toString());
