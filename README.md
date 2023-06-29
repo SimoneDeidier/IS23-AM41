@@ -6,7 +6,7 @@ Students:
 
 * [D'Alessio Edoardo - edoardo.dalessio@mail.polimi.it](https://github.com/EdoardoDAlessio)
 * [De Ciechi Samuele - samuele.deciechi@mail.polimi.it](https://github.com/Samdec01)
-* [Deidier Simone simone.deidier@mail.polimi.it](https://github.com/SimoneDeidier)
+* [Deidier Simone - simone.deidier@mail.polimi.it](https://github.com/SimoneDeidier)
 * [Ermacora Iacopo - iacopo.ermacora@mail.polimi.it](https://github.com/IacopoErmacoraPolimi)
 
 ## Objectives
