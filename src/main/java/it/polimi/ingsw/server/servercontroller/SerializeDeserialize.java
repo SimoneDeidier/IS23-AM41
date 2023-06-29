@@ -8,7 +8,7 @@ import it.polimi.ingsw.server.model.Player;
 import java.io.IOException;
 import java.rmi.RemoteException;
 /**
- * The SerializeDeserialize class is responsible for serializing and deserializing TCP messages using the Gson library.
+ * The SerializeDeserialize class is responsible for serializing and deserializing TCP messages using the external library Gson.
  */
 public class SerializeDeserialize implements SerializeDeserializeInterface {
 
@@ -17,7 +17,7 @@ public class SerializeDeserialize implements SerializeDeserializeInterface {
     private final SocketManager socketManager;
 
     /**
-     * Constructs a new SerializeDeserialize instance with the specified SocketManager.
+     * Constructs a new SerializeDeserialize instance using the given SocketManager.
      *
      * @param socketManager The SocketManager instance.
      */
@@ -26,7 +26,7 @@ public class SerializeDeserialize implements SerializeDeserializeInterface {
         this.socketManager = socketManager;
     }
     /**
-     * Deserializes the input string into a TCPMessage object and passes it to the TCP message controller for processing.
+     * Deserializes the input string into a TCPMessage object and passes it to the TCP message controller.
      *
      * @param input The input string to deserialize.
      * @throws IOException if an I/O error occurs.

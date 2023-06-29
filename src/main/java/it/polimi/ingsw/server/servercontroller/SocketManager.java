@@ -8,7 +8,7 @@ import java.util.NoSuchElementException;
 import java.util.Objects;
 import java.util.Scanner;
 /**
- * The SocketManager class manages the socket connection, including reading and writing data from/to the socket.
+ * The SocketManager class handles the socket connection, including reading and writing data from and to the socket.
  */
 public class SocketManager implements Runnable {
 
@@ -18,7 +18,7 @@ public class SocketManager implements Runnable {
     private Scanner socketInput;
     private PrintWriter socketOutput;
     /**
-     * Constructs a new SocketManager instance with the specified socket.
+     * Constructs a new SocketManager instance with the socket provided.
      *
      * @param socket The Socket instance representing the socket connection.
      */
@@ -74,7 +74,7 @@ public class SocketManager implements Runnable {
         this.closeConnection = true;
     }
     /**
-     * Returns the Socket instance representing the socket connection.
+     * Returns the Socket instance.
      *
      * @return The Socket instance.
      */

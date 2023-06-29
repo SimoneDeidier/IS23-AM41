@@ -12,7 +12,7 @@ import java.net.Socket;
 import java.rmi.RemoteException;
 import java.util.Objects;
 /**
- * The TCPMessageController class handles incoming TCP messages and performs corresponding actions based on the message headers.
+ * The TCPMessageController class handles incoming TCP messages and, based on the message header, does corresponding actions.
  */
 public class TCPMessageController implements TCPMessageControllerInterface {
 
