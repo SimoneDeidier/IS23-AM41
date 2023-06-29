@@ -12,33 +12,50 @@ import java.nio.charset.StandardCharsets;
 import java.rmi.RemoteException;
 import java.util.Objects;
 import java.util.Scanner;
-
+/**
+ * The Client class represents the client application for connecting to the server.
+ */
 public class Client {
 
     private static Connection connection;
-    private static String ipAddress = null;
-    private final static int TCP_PORT = 8888;
-    private final static int RMI_PORT = 1234;
+    private static String ipAddress;
+    private static int portNumber;
     private static String connectionType;
     private static String uiType;
     private static boolean connectionOk = true;
 
+    /**
+     * The main method for starting the client application.
+     *
+     * @param args The command-line arguments.
+     */
     public static void main(String[] args) {
 
         drawLogo();
+        System.out.println("\n\nWARNING!: Please if your OS is a Unix based, remember to run the command \"rmiregistry &\" on a new terminal!\n\n");
         Scanner stdin = new Scanner(System.in);
         if(!parseConnectionType(args)) {
-            System.out.println("Select connection type: ");
-            connectionType = stdin.nextLine();
+            do {
+                System.out.println("Select connection type: ");
+                connectionType = stdin.nextLine();
+            } while(!connectionType.equalsIgnoreCase("tcp") && !connectionType.equalsIgnoreCase("rmi"));
         }
         if(!parseIPAddress(args)) {
-            System.out.println("Insert the server's IP address: ");
-            ipAddress = stdin.nextLine();
+            do {
+                System.out.println("Insert the server's IP address: ");
+                ipAddress = stdin.nextLine();
+            } while(!ipAddress.matches("[0-9][0-9.]*[0-9]+") && !ipAddress.equalsIgnoreCase("localhost"));
         }
-        switch (connectionType) {
+        if(!parsePortNumber(args)) {
+            do {
+                System.out.println("Insert the server's port number: ");
+                portNumber = stdin.nextInt();
+            } while(portNumber <= 1024 || portNumber > 65535);
+        }
+        switch (connectionType.toLowerCase()) {
             case "tcp" -> {
                 try {
-                    connection = new ConnectionTCP(ipAddress, TCP_PORT);
+                    connection = new ConnectionTCP(ipAddress, portNumber);
                 }
                 catch (IOException e) {
                     connectionOk = false;
@@ -46,7 +63,7 @@ public class Client {
             }
             case "rmi" -> {
                 try {
-                    connection = new ConnectionRMI(RMI_PORT, ipAddress);
+                    connection = new ConnectionRMI(portNumber, ipAddress);
                 } catch (RemoteException e) {
                     connectionOk = false;
                 }
@@ -55,10 +72,12 @@ public class Client {
         }
         if(connectionOk) {
             if (!parseUiType(args)) {
-                System.out.println("Select UI type: ");
-                uiType = stdin.nextLine();
+                do {
+                    System.out.println("Select UI type: ");
+                    uiType = stdin.nextLine();
+                } while(!uiType.equalsIgnoreCase("tui") && !uiType.equalsIgnoreCase("gui"));
             }
-            switch (uiType) {
+            switch (uiType.toLowerCase()) {
                 case "tui" -> connection.startConnection("tui");
                 case "gui" -> connection.startConnection("gui");
                 default -> System.err.println("Wrong parameter, restart client...");
@@ -75,7 +94,9 @@ public class Client {
         }
         System.out.println("Closing the client...");
     }
-
+    /**
+     * Draws the logo of the game.
+     */
     public static void drawLogo() {
         try {
             InputStream inputStream = ClassLoader.getSystemResourceAsStream("files/MyShelfieLogo.txt");
@@ -91,41 +112,75 @@ public class Client {
             System.err.println(e.getMessage());
         }
     }
-
+    /**
+     * Parses the IP address from the command-line arguments.
+     *
+     * @param args The command-line arguments.
+     * @return True if the IP address is successfully parsed, false otherwise.
+     */
     public static boolean parseIPAddress(String[] args) {
         for(int i = 0; i < args.length - 1; i++) {
             String cmd = args[i];
             String par = args[i + 1];
-            if(Objects.equals(cmd, "--ipaddr") && (par.matches("[0-9][0-9.]*[0-9]+") || Objects.equals(par, "localhost"))) {
+            if(Objects.equals(cmd, "--ipaddr") && (par.matches("[0-9][0-9.]*[0-9]+") || par.equalsIgnoreCase("localhost"))) {
                 ipAddress = par;
                 return true;
             }
         }
         return false;
     }
-
+    /**
+     * Parses the connection type from the command-line arguments.
+     *
+     * @param args The command-line arguments.
+     * @return True if the connection type is successfully parsed, false otherwise.
+     */
     public static boolean parseConnectionType(String[] args) {
         for(int i = 0; i < args.length - 1; i++) {
             String cmd = args[i];
             String par = args[i+1];
-            if(Objects.equals(cmd, "-c") && (Objects.equals(par, "tcp") || Objects.equals(par, "rmi"))) {
+            if((Objects.equals(cmd, "-c") || Objects.equals(cmd, "--conn")) && (par.equalsIgnoreCase("tcp") || par.equalsIgnoreCase("rmi"))) {
                 connectionType = par;
                 return true;
             }
         }
         return false;
     }
-
+    /**
+     * Parses the UI type from the command-line arguments.
+     *
+     * @param args The command-line arguments.
+     * @return True if the UI type is successfully parsed, false otherwise.
+     */
     public static boolean parseUiType(String[] args) {
         for(int i = 0; i < args.length - 1; i++) {
             String cmd = args[i];
             String par = args[i+1];
-            if(Objects.equals(cmd, "-u") && (Objects.equals(par, "tui") || Objects.equals(par, "gui"))) {
+            if((Objects.equals(cmd, "-u") || Objects.equals(cmd, "--ui")) && (par.equalsIgnoreCase("tui") || par.equalsIgnoreCase("gui"))) {
                 uiType = par;
                 return true;
             }
         }
         return false;
     }
+    /**
+     * Parses the port number from the command-line arguments.
+     *
+     * @param args The command-line arguments.
+     * @return True if the port number is successfully parsed, False otherwise.
+     */
+    public static boolean parsePortNumber(String[] args) {
+        for(int i = 0; i < args.length - 1; i++) {
+            String cmd = args[i];
+            String par = args[i+1];
+            if((Objects.equals(cmd, "-p") || Objects.equals(cmd, "--port")) && (Integer.parseInt(par) > 1024 && Integer.parseInt(par) <= 65535)) {
+                portNumber = Integer.parseInt(par);
+                return true;
+            }
+        }
+        return false;
+    }
+
+
 
 }

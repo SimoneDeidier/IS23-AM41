@@ -1,6 +1,5 @@
 package it.polimi.ingsw.client.clientcontroller;
 
-import it.polimi.ingsw.client.Client;
 import it.polimi.ingsw.client.clientcontroller.controller.ClientController;
 import it.polimi.ingsw.client.clientcontroller.controller.ClientControllerTCP;
 import it.polimi.ingsw.interfaces.TCPMessageControllerInterface;
@@ -9,7 +8,11 @@ import it.polimi.ingsw.messages.TCPMessage;
 
 import java.io.IOException;
 import java.net.URISyntaxException;
+import java.util.Map;
 
+ /**
+  * The TCPMessageController class handles TCP messages received from the server and interacts with the client controller.
+ */
 public class TCPMessageController implements TCPMessageControllerInterface {
 
     private final SerializeDeserialize serializeDeserialize;
@@ -18,18 +21,29 @@ public class TCPMessageController implements TCPMessageControllerInterface {
     private int clearUnanswered = 0;
     private boolean closeClearThread = false;
     private boolean wasIJustReconnected = false;
-
+    /**
+     * Constructs a new TCPMessageController with the specified SerializeDeserialize instance.
+     *
+     * @param serializeDeserialize The SerializeDeserialize instance.
+     */
     public TCPMessageController(SerializeDeserialize serializeDeserialize) {
         this.serializeDeserialize = serializeDeserialize;
         controller = new ClientControllerTCP(this);
     }
-
+    /**
+     * Reads and processes the TCP message received from the server.
+     *
+     * @param message The TCP message received.
+     * @throws IOException if an I/O exception occurs.
+     * @throws URISyntaxException if the URI syntax is invalid.
+     */
     @Override
     public void readTCPMessage(TCPMessage message) throws IOException, URISyntaxException {
         String header = message.getHeader();
         switch (header) {
             case "Nickname Accepted" -> {
-                controller.nicknameAccepted();
+                Body body = message.getBody();
+                controller.nicknameAccepted(body.getNumberOfPlayers(), body.getLobby());
             }
             case "Wait for Lobby" -> {
                 controller.waitForLobby();
@@ -75,7 +89,8 @@ public class TCPMessageController implements TCPMessageControllerInterface {
                 controller.updateView(message.getBody().getNewView());
             }
             case "Lobby Created" -> {
-                controller.lobbyCreated();
+                Body body = message.getBody();
+                controller.lobbyCreated(body.getNumberOfPlayers(), body.getLobby());
             }
             case "Wrong Parameters" -> {
                 controller.wrongParameters();
@@ -109,27 +124,56 @@ public class TCPMessageController implements TCPMessageControllerInterface {
             case "Player Reconnected" -> {
                 controller.playerReconnected(message.getBody().getPlayerNickname());
             }
+            case "User Connected" -> {
+                controller.userConnected(message.getBody().getPlayerNickname());
+            }
+            case "Disconnected From Lobby" -> {
+                controller.disconnectedFromLobby(message.getBody().getPlayerNickname());
+            }
+            case "Rejoined In Lobby" -> {
+                controller.nicknameAccepted(message.getBody().getNumberOfPlayers(), message.getBody().getLobby());
+            }
+            case "User Rejoined" -> {
+                controller.userRejoined(message.getBody().getPlayerNickname());
+            }
         }
     }
-
+    /**
+     * Prints the TCP message with the specified header and body.
+     *
+     * @param header The header of the TCP message.
+     * @param body The body of the TCP message.
+     */
     @Override
     public void printTCPMessage(String header, Body body) {
         TCPMessage tcpMessage = new TCPMessage(header, body);
         serializeDeserialize.serialize(tcpMessage);
     }
-
+    /**
+     * Closes the connection.
+     */
     public void closeConnection() {
         serializeDeserialize.closeConnection();
     }
-
+    /**
+     * Starts the user interface with the specified UI type (GUI or TCP).
+     *
+     * @param uiType The user interface type (GUI or TCP).
+     */
     public void startUserInterface(String uiType) {
         controller.startUserInterface(uiType);
     }
-
+    /**
+     * Returns the player's nickname.
+     *
+     * @return The player's nickname.
+     */
     public String getPlayerNickname() {
         return controller.getPlayerNickname();
     }
-
+    /**
+     * Starts the clear thread for sending clear messages to the server.
+     */
     public void startClearThread() {
         closeClearThread = false;
         new Thread(() -> {
@@ -147,11 +191,15 @@ public class TCPMessageController implements TCPMessageControllerInterface {
             }
         }).start();
     }
-
+    /**
+     * Stops the clear thread.
+     */
     public void stopClearThread() {
         this.closeClearThread = true;
     }
-
+    /**
+     * Closes the client by stopping the clear thread and closing the connection.
+     */
     public void closeClient() {
         this.stopClearThread();
         this.closeConnection();

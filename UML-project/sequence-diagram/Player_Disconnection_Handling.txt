@@ -2,12 +2,18 @@ title Player Disconnection Handling
 
 participant Server
 participant Client1
+participant Client2
 
 activate Server
 activate Client1
+activate Client2
 note over Server,Client1: Every second the Server sends a Check to each clientTCP\nand each Client sends a Clear message to the Server.
+parallel on
 Server->Client1: Check
+Server->Client2:
+parallel off
 Client1->Server: Clear
+Client2->Server: Clear
 alt Disconnection of the Client.
 alt Case player doesn't respond
 note over Server,Client1: After five unanswered checks the server assumes\nthat the player is disconnected and the socket\nconnection is closed.
@@ -18,18 +24,21 @@ Server->Client1: Check
 Server->Client1: Check
 deactivate Client1
 note right of Server: Game continues skipping the\ndisconnected player's turn.
+Server->Client2: Player Disconnected
 else Case player disconnects itself intentionally.
 activate Client1
 Client1->Server: Disconnect
 Server-->>Client1: Goodbye
 deactivate Client1
 note right of Server: Game continues skipping the\ndisconnected player's turn.
+Server->Client2: Player Disconnected
 end
 note over Server,Client1: The player can reconnecto to the lobby using its\nformer nickname.
 activate Client1
-Client1->Server: Re-Join
+Client1->Server: Presentation
 alt Game still running - former player
 Server-->>Client1: Joined
+Server->Client2: Player Reconnected
 else Game still running - wrong player
 Server-->>Client1: Invalid Player
 end
@@ -41,6 +50,7 @@ Client1->Server: Clear
 Client1->Server: Clear
 Client1->Server: Clear
 deactivate Client1
+deactivate Client2
 deactivate Server
 note over Server,Client1: After the server's restart, all the procedure for creating\na lobby and so on are described in the "Set-Up Phase"\nsequence diagram.
 end

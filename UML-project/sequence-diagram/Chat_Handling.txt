@@ -12,17 +12,17 @@ activate Client3
 note over Server,Client3: Players can send broadcast chat messages.
 Client1->Server: Broadcast Msg
 parallel 
-Server-->>Client1: Broadcast Msg
+Server-->>Client1: New Msg
 Server-->>Client2:
 Server-->>Client3:
 parallel off
 note over Server,Client3: Optionally, player can send a peer-to-peer message.
 Client2->Server: Peer-to-Peer Msg
 alt Invalid nickname of the receiver
-Server-->>Client2: Invalid Nickname
+Server-->>Client2: Wrong Receiver
 else Valid nickname of the receiver
 parallel 
-Server-->>Client2: Peer-toPeer Msg
+Server-->>Client2: New Msg
 Server-->>Client3:
 parallel off
 end

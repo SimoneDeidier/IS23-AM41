@@ -28,7 +28,7 @@ Students:
 |:-:|:-:|:-:|:-:|
 |Simple rules|Done|100%||
 |Full rules|Done|100%||
-|TUI|Work in progress|95%|We are refining some game screens|
+|TUI|Done|100%||
 |GUI|Done|100%||
 |RMI|Done|100%||
 |TCP|Done|100%||
@@ -64,3 +64,54 @@ All the code from the *Model classes* and the most important from the *Server-Co
 ![Screenshot od the tests](readme-resources/tests.png)
 
 * *Latest update: 20/06/2023*
+
+## How to launch the app
+
+The command to be executed to start the server and/or client is a single one:
+
+```console
+java -jar MyShelfie-SERVER.jar
+```
+
+if you want to ***start the server***, oterwise:
+
+```console
+java -jar MyShelfie-CLIENT.jar
+```
+
+if you want to ***run the client***.
+
+Both the server and the client *require certain connection and user interface parameters to be entered at start-up*, which can be provided directly from the command line as parameters to the commands listed above. Below is a **table of commands** with descriptions:
+
+### Server commands
+
+|Command|Short command|Description|Example|
+|:-:|:-:|:-:|:-:|
+|```--rmi```|```-r```|Specifies the port on which to open the RMI connection.|```--rmi 1234```|
+|```--tcp```|```-t```|Specifies the port on which to open the TCP connection.|```--tcp 8888```|
+|```--ipaddr```||Specifies the IP address of the host on which the server runs. This can be either an IPv4 address or the 'localhost' keyword.|```--ipaddr 192.168.1.12```|
+
+### Client commands
+
+|Command|Short command|Description|Example|
+|:-:|:-:|:-:|:-:|
+|```--conn```|```-c```|Specifies the type of connection with which the server will be reached. This may be 'rmi' or 'tcp'.|```--conn tcp```|
+|```--ui```|```-u```|Specifies the type of user interface to be launched. It can be 'tui' for the Text User Interface or 'gui' for the Graphical User Interface.|```--ui gui```|
+|```--ipaddr```||Specifies the IP address of the server to connect to. This can be either an IPv4 address or the 'localhost' keyword.|```--ipaddr localhost```|
+|```--port```|```-p```|Specifies the server port to connect to.|```--port 8888```|
+
+### Full example
+
+```console
+java -jar MyShelfie-SERVER.jar -r 1234 -t 8888 --ipaddr localhost
+```
+
+* *This command starts the server in localhost, with the TCP connection open on port 8888 and the RMI connection on port 1234.*
+
+```console
+java -jar MyShelfie-CLIENT.jar -c tcp -u gui --ipaddr 192.168.1.12 -p 8888
+```
+
+* *This command starts the client with Graphical User Interface, which will try to establish a connection to the server with IP address 192.168.1.12 via a TCP connection on port 8888.*
+
+> *Please, note that all values to commands are case insensitive (e.g. the software detects both command ```--ipaddr LOCALHOST``` and ```--ipaddr localhost``` without problems), while all commands are only accepted in lower case (command ```--PORT``` is not recognised, while ```--port``` is).*
