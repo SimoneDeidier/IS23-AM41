@@ -12,7 +12,9 @@ import java.nio.charset.StandardCharsets;
 import java.rmi.RemoteException;
 import java.util.Objects;
 import java.util.Scanner;
-
+/**
+ * The Client class represents the client application for connecting to the server.
+ */
 public class Client {
 
     private static Connection connection;
@@ -22,6 +24,11 @@ public class Client {
     private static String uiType;
     private static boolean connectionOk = true;
 
+    /**
+     * The main method for starting the client application.
+     *
+     * @param args The command-line arguments.
+     */
     public static void main(String[] args) {
 
         drawLogo();
@@ -87,7 +94,9 @@ public class Client {
         }
         System.out.println("Closing the client...");
     }
-
+    /**
+     * Draws the logo of the game.
+     */
     public static void drawLogo() {
         try {
             InputStream inputStream = ClassLoader.getSystemResourceAsStream("files/MyShelfieLogo.txt");
@@ -103,7 +112,12 @@ public class Client {
             System.err.println(e.getMessage());
         }
     }
-
+    /**
+     * Parses the IP address from the command-line arguments.
+     *
+     * @param args The command-line arguments.
+     * @return True if the IP address is successfully parsed, false otherwise.
+     */
     public static boolean parseIPAddress(String[] args) {
         for(int i = 0; i < args.length - 1; i++) {
             String cmd = args[i];
@@ -115,7 +129,12 @@ public class Client {
         }
         return false;
     }
-
+    /**
+     * Parses the connection type from the command-line arguments.
+     *
+     * @param args The command-line arguments.
+     * @return True if the connection type is successfully parsed, false otherwise.
+     */
     public static boolean parseConnectionType(String[] args) {
         for(int i = 0; i < args.length - 1; i++) {
             String cmd = args[i];
@@ -127,7 +146,12 @@ public class Client {
         }
         return false;
     }
-
+    /**
+     * Parses the UI type from the command-line arguments.
+     *
+     * @param args The command-line arguments.
+     * @return True if the UI type is successfully parsed, false otherwise.
+     */
     public static boolean parseUiType(String[] args) {
         for(int i = 0; i < args.length - 1; i++) {
             String cmd = args[i];
@@ -139,7 +163,12 @@ public class Client {
         }
         return false;
     }
-
+    /**
+     * Parses the port number from the command-line arguments.
+     *
+     * @param args The command-line arguments.
+     * @return True if the port number is successfully parsed, False otherwise.
+     */
     public static boolean parsePortNumber(String[] args) {
         for(int i = 0; i < args.length - 1; i++) {
             String cmd = args[i];

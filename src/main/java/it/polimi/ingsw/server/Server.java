@@ -25,6 +25,10 @@ import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
+/**
+ * The Server class represents the server component of the game application.
+ * This class manages the connection and communication with clients, handles game logic, and updates clients with the latest game state.
+ */
 public class Server implements InterfaceServer {
 
     private static int portRMI;
@@ -34,7 +38,10 @@ public class Server implements InterfaceServer {
     private final GameController controller = GameController.getGameController(this);
     private static final int CHECK_DELAY_MILLISECONDS = 5000;
 
-
+    /**
+     *The main method of the server. It initializes and starts the RMI and TCP servers, listens for incoming client connections, and manages the server shutdown.
+     * @param args Command-line arguments use to set Server properties
+     */
     public static void main(String[] args) {
 
         // SET THE PORT NUMBER
@@ -99,6 +106,11 @@ public class Server implements InterfaceServer {
 
     }
 
+    /**
+     * Parses the port number from command-line arguments
+     * @param args Command-line arguments
+     * @return True if the port number was successfully parsed, false otherwise
+     */
     public static boolean parsePortNumber(String[] args) {
 
         boolean rmiOK = false;
@@ -130,7 +142,11 @@ public class Server implements InterfaceServer {
         return false;
 
     }
-
+    /**
+     * Parses the IP address from command-line arguments
+     * @param args Command-line arguments
+     * @return True if the IP address was successfully parsed, false otherwise
+     */
     public static boolean parseIpAddress(String[] args) {
         for(int i = 0; i < args.length - 1; i++) {
             String cmd = args[i];
@@ -142,19 +158,25 @@ public class Server implements InterfaceServer {
         }
         return false;
     }
-
+    /**
+     * Sets the port number for the server
+     * @param type The type of server (RMI or TCP)
+     * @param firstPort The first port number
+     * @return The selected port number
+     */
     public static int setPortNumber(String type, int firstPort) {
         int input;
         Scanner in = new Scanner(System.in);
-
         do {
             System.out.print("Please select a port number for the " + type + " server: ");
             input = in.nextInt();
         }while(input <= 1024 || input > 65535 || input == firstPort);
-
         return input;
     }
-
+    /**
+     * Sets the IP address for the server
+     * @return The selected IP address
+     */
     public static String setIpAddress() {
         String input;
         Scanner in = new Scanner(System.in);
@@ -167,6 +189,13 @@ public class Server implements InterfaceServer {
         return input;
     }
 
+    /**
+     * Receives the presentation from the client and handles the connection process.
+     *
+     * @param cl The client interface (CLI o GUI)
+     * @param nickname The nickname of the client
+     * @throws IOException If an I/O error occurs during the process
+     */
     @Override
     public void presentation(InterfaceClient cl, String nickname) throws IOException {
         try {
@@ -212,6 +241,12 @@ public class Server implements InterfaceServer {
         }
     }
 
+    /**
+     * Receives rejoin request from a disconnected client and handles the reconnection process.
+     *
+     * @param nickname The nickname of the client
+     * @param cl The client interface (CLI o GUI)
+     */
     public void rejoinRequest(String nickname, InterfaceClient cl){
         try {
             controller.changePlayerConnectionStatus(nickname);
@@ -235,7 +270,14 @@ public class Server implements InterfaceServer {
         }catch (RemoteException ignored){
         }
     }
-
+    /**
+     * Sends the lobby parameters to the client and handles the lobby creation process.
+     *
+     * @param cl The client interface (GUI o CLI)
+     * @param maxPlayerNumber The maximum number of players allowed in the lobby
+     * @param onlyOneCommonCard A boolean indicating if there will be one common card or two common cards
+     * @throws RemoteException If a remote error occurs during the process
+     */
     @Override
     public void sendParameters(InterfaceClient cl,int maxPlayerNumber, boolean onlyOneCommonCard) throws RemoteException {
         if(controller.createLobby(maxPlayerNumber,onlyOneCommonCard))
@@ -243,7 +285,12 @@ public class Server implements InterfaceServer {
         else
             cl.askParametersAgain();
     }
-
+    /**
+     * Executes the move received from the client and updates the game state.
+     *
+     * @param move The move object representing the player's move
+     * @throws RemoteException If the move is invalid by the game rules
+     */
     @Override
     public void executeMove(Body move) throws RemoteException {
         try {
@@ -253,7 +300,11 @@ public class Server implements InterfaceServer {
             clientMapRMI.get(move.getPlayerNickname()).incorrectMove();
         }
     }
-
+    /**
+     * Updates the view for all connected RMI clients with the provided new view object.
+     *
+     * @param newView The new view object containing the updated game state
+     */
     public void updateViewRMI(NewView newView) {
         for(InterfaceClient cl: clientMapRMI.values()){
             try {
@@ -265,7 +316,9 @@ public class Server implements InterfaceServer {
     }
 
 
-
+    /**
+     * Disconnects all connected RMI users and stops the ping communication.
+     */
     public void disconnectAllRMIUsers() {
         for(Map.Entry<String,InterfaceClient> entry : clientMapRMI.entrySet()){
             try {
@@ -275,7 +328,9 @@ public class Server implements InterfaceServer {
             clientMapRMI.remove(entry.getKey());
         }
     }
-
+    /**
+     * Sends the target cards to connected RMI clients.
+     */
     public void sendCardsRMI() {
         List<String> commonList=new ArrayList<>();
         for(CommonTargetCard commonTargetCard: controller.getCommonTargetCardsList()){
@@ -290,11 +345,23 @@ public class Server implements InterfaceServer {
             }
         }
     }
-
+    /**
+     * Checks if a given nickname is connected via RMI.
+     * @param nickname The nickname of the player to check
+     * @return True if the nickname is connected via RMI, false otherwise
+     */
     public boolean checkReceiverInRMI(String nickname) {
         return clientMapRMI.containsKey(nickname);
     }
-
+    /**
+     * Handles the peer-to-peer message from the sender to the receiver.
+     *
+     * @param sender The nickname of the sender
+     * @param receiver The nickname of the receiver
+     * @param text The message text
+     * @param localDateTime The timestamp of the message
+     * @throws RemoteException If the nickname of the receiver is misspelled
+     */
     @Override
     public void peerToPeerMsgHandler(String sender, String receiver, String text, String localDateTime) throws RemoteException {
         try {
@@ -303,19 +370,39 @@ public class Server implements InterfaceServer {
             clientMapRMI.get(sender).wrongMessageWarning(text);
         }
     }
-
+    /**
+     * Sends the peer-to-peer message to the specified receiver.
+     *
+     * @param sender The nickname of the sender
+     * @param receiver The nickname of the receiver
+     * @param text The message text
+     * @param localDateTime The timestamp of the message
+     */
     public void peerToPeerMsg(String sender, String receiver, String text, String localDateTime) {
         try {
             clientMapRMI.get(receiver).receiveMessage(sender, text, localDateTime);
         } catch (RemoteException ignored) {
         }
     }
-
+    /**
+     * Handles the broadcast message from the sender to all connected clients.
+     *
+     * @param sender The nickname of the sender
+     * @param text The message text
+     * @param localDateTime The timestamp of the message
+     * @throws RemoteException If a remote error occurs during the process
+     */
     @Override
     public void broadcastMsgHandler(String sender, String text, String localDateTime) throws RemoteException {
         controller.broadcastMsg(sender,text, localDateTime);
     }
-
+    /**
+     * Sends the broadcast message to all connected clients.
+     *
+     * @param sender The nickname of the sender
+     * @param text The message text
+     * @param localDateTime The timestamp of the message
+     */
     public void broadcastMsg(String sender, String text,String localDateTime) {
         for(InterfaceClient interfaceClient: clientMapRMI.values()) {
             try {
@@ -325,6 +412,12 @@ public class Server implements InterfaceServer {
         }
     }
 
+    /**
+     * Handles intentional disconnection of a RMI user.
+     *
+     * @param nickname The nickname of the player that wants to disconnect.
+     * @throws RemoteException If a remote error occurs during the process
+     */
     @Override
     public void voluntaryDisconnection(String nickname) throws RemoteException {
         controller.notifyOfDisconnectionAllUsers(nickname);
@@ -336,10 +429,21 @@ public class Server implements InterfaceServer {
         }
     }
 
+    /**
+     * Ping called from the client to server only to check for RemoteExceptions
+     * @throws RemoteException A throw message used for ping purpose.
+     */
     @Override
-    public void clearRMI() throws RemoteException { //ping called from client to server
+    public void clearRMI() throws RemoteException {
+        //ping called from client to server
         //it's empty, we need to check on the other side for RemoteExceptions
     }
+
+    /**
+     * Starts the check thread for RMI clients.
+     * This method starts a separate thread that periodically checks the connectivity of RMI clients.
+     * If a client is no longer reachable, it is disconnected and removed from the client map.
+     */
     public void startCheckThreadRMI() {
         new Thread(() -> {
             while (true) {
@@ -375,6 +479,9 @@ public class Server implements InterfaceServer {
         }).start();
     }
 
+    /**
+     *Disconnects the last RMI client.
+     */
     public void disconnectLastRMIUser() {
         for(String nickname: clientMapRMI.keySet()) {
             for(Player player: controller.getPlayerList()) {
@@ -389,10 +496,18 @@ public class Server implements InterfaceServer {
         }
     }
 
+    /**
+     * Clears all server-to-client ping communications.
+     */
     public void prepareServerForNewGame(){
         clientMapRMI.clear();
     }
 
+    /**
+     * Notifies the nickname of the player that disconnected to all RMI clients.
+     *
+     * @param nickname The nickname of the player that disconnected.
+     */
     public void notifyOfDisconnectionAllRMIUsers(String nickname) {
         for(String user:clientMapRMI.keySet()){
             try {
@@ -401,7 +516,11 @@ public class Server implements InterfaceServer {
             }
         }
     }
-
+    /**
+     * Notifies the nickname of the player that reconnected to all RMI clients.
+     *
+     * @param nickname The nickname of the player that reconnected.
+     */
     public void notifyOfReconnectionAllRMIUsers(String nickname) {
         for(String user: clientMapRMI.keySet()){
             try {

@@ -11,19 +11,31 @@ import java.io.IOException;
 import java.net.Socket;
 import java.rmi.RemoteException;
 import java.util.Objects;
-
+/**
+ * The TCPMessageController class handles incoming TCP messages and performs corresponding actions based on the message headers.
+ */
 public class TCPMessageController implements TCPMessageControllerInterface {
 
     private final GameController gameController;
     private final Socket socket;
     private final SerializeDeserialize serializeDeserialize;
-
+    /**
+     * Constructs a new TCPMessageController instance with the specified SocketManager and SerializeDeserialize instances.
+     *
+     * @param socketManager The SocketManager instance managing the socket connection.
+     * @param serializeDeserialize The SerializeDeserialize instance for serializing and deserializing messages.
+     */
     public TCPMessageController(SocketManager socketManager, SerializeDeserialize serializeDeserialize) {
         this.socket = socketManager.getSocket();
         this.gameController = GameController.getGameController(null);
         this.serializeDeserialize = serializeDeserialize;
     }
-
+    /**
+     * Handles the incoming TCPMessage by performing actions based on the message header.
+     *
+     * @param message The TCPMessage to be processed.
+     * @throws IOException if an I/O error occurs.
+     */
     @Override
     public void readTCPMessage(TCPMessage message) throws IOException {
         String header = message.getHeader();
@@ -135,17 +147,30 @@ public class TCPMessageController implements TCPMessageControllerInterface {
             }
         }
     }
-
+    /**
+     * Sends a TCPMessage with the specified header and body to the client.
+     *
+     * @param header The header of the TCPMessage.
+     * @param body The body of the TCPMessage.
+     */
     @Override
     public void printTCPMessage(String header, Body body) {
         TCPMessage newMsg = new TCPMessage(header, body);
         serializeDeserialize.serialize(newMsg);
     }
-
+    /**
+     * Returns the Socket instance representing the socket connection.
+     *
+     * @return The Socket instance.
+     */
     public Socket getSocket() {
         return this.socket;
     }
-
+    /**
+     * Closes the socket connection.
+     *
+     * @throws IOException if an I/O error occurs.
+     */
     public void closeConnection() throws IOException {
         serializeDeserialize.closeConnection();
     }
