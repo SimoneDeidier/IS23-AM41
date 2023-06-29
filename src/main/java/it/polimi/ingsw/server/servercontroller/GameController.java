@@ -25,7 +25,7 @@ import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 
 /**
- * The GameController class is responsible for handling the lobby, that includes all game dynamics and player's move and connections.
+ * The GameController class is responsible for handling the lobby, that includes all game dynamics, player's moves and connections.
  */
 public class GameController {
 

@@ -22,6 +22,7 @@ import java.util.Random;
 public class WaitingForPlayerState implements GameState {
 
     /**
+     *
      * @param maxPlayerNumber the maximum number of players allowed in the game
      * @param playerList the list of Players currently in the game, with their connection status at the moment
      * @return how many more places are available for this game. It returns -2 if the first player still hasn't

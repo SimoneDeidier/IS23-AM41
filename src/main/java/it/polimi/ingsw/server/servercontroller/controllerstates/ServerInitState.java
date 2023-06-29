@@ -22,6 +22,7 @@ import java.util.List;
 public class ServerInitState implements GameState {
 
     /**
+     * won't be called during this state
      * @param maxPlayerNumber the max number of players allowed in the game
      * @param playerList the list of Players currently in the game, with their connection status at the moment
      * @return -1, to let the controller know the game is in this state
@@ -43,6 +44,7 @@ public class ServerInitState implements GameState {
     }
 
     /**
+     * won't be called during this state
      * @param nickname is the nickname to be checked
      * @param playerList the list of Players currently in the game, with their connection status at the moment
      * @return 0, to let the controller know the game is in this state
