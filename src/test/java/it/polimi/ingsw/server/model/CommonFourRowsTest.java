@@ -16,6 +16,9 @@ import static org.junit.jupiter.api.Assertions.*;
 */
 class CommonFourRowsTest {
 
+/**
+* Check if a shelf that respects the common card reauitements gets recognised
+*/
     @Test
     void checkFourRows() throws NotEnoughSpaceInColumnException {
         CommonTargetCard commonFourRows = new CommonFourRows(2);
@@ -33,6 +36,9 @@ class CommonFourRowsTest {
 
     }
 
+/**
+* Check if a shelf that doesn't respects the common card reauitements gets recognised
+*/
     @Test
     void checkNoFourRows() throws NotEnoughSpaceInColumnException {
         CommonTargetCard commonFourRows = new CommonFourRows(2);
