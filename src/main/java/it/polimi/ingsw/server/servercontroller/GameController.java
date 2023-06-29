@@ -944,6 +944,10 @@ public class GameController {
         server.notifyOfReconnectionAllRMIUsers(nickname);
     }
 
+    /**
+     * Notifies all the connected user in the lobby that a new player has joined.
+     * @param nickname
+     */
     public void notifyOfConnectedUser(String nickname) {
         for(String s : nickToTCPMessageControllerMapping.keySet()) {
             if(!Objects.equals(s, nickname)) {
@@ -955,6 +959,10 @@ public class GameController {
         server.notifyOfConnectedUser(nickname);
     }
 
+    /**
+     * Notifies all the connected users in the lobby that a player is now disconnected.
+     * @param nickname
+     */
     public void notifyOfDisconnectionFromLobby(String nickname) {
         for(String s : nickToTCPMessageControllerMapping.keySet()) {
             Body b = new Body();
@@ -964,6 +972,10 @@ public class GameController {
         server.notifyOfDisconnectionFromLobby(nickname);
     }
 
+    /**
+     * Notifies all the connected users in the lobby that a player formerly disconnected has reconnected.
+     * @param nickname
+     */
     public void notifyOfReconnectionInLobby(String nickname) {
 
         for(String s : nickToTCPMessageControllerMapping.keySet()) {

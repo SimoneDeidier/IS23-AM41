@@ -562,6 +562,10 @@ public class Server implements InterfaceServer {
         }
     }
 
+    /**
+     * Notifies all the connected users in the lobby that a new user has connected.
+     * @param nickname
+     */
     public void notifyOfConnectedUser(String nickname) {
         for(String s : clientMapRMI.keySet()) {
             if(!Objects.equals(s, nickname)) {
@@ -573,6 +577,10 @@ public class Server implements InterfaceServer {
         }
     }
 
+    /**
+     * Notifies all the connected users in the lobby that a user has been disconnected.
+     * @param nickname
+     */
     public void notifyOfDisconnectionFromLobby(String nickname) {
         for(String s : clientMapRMI.keySet()) {
             try {
@@ -582,6 +590,10 @@ public class Server implements InterfaceServer {
         }
     }
 
+    /**
+     * Notifies all the connected users in the lobby that a formerly connected user has now reconnected.
+     * @param nickname
+     */
     public void notifyOfReconnectionInLobby(String nickname) {
         try {
             for (String s : clientMapRMI.keySet()) {

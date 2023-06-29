@@ -28,7 +28,7 @@ Students:
 |:-:|:-:|:-:|:-:|
 |Simple rules|Done|100%||
 |Full rules|Done|100%||
-|TUI|Work in progress|95%|We are refining some game screens|
+|TUI|Done|100%||
 |GUI|Done|100%||
 |RMI|Done|100%||
 |TCP|Done|100%||

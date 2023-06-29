@@ -513,16 +513,28 @@ public class GraphicUserInterface extends Application implements UserInterface, 
         guiStage.close();
     }
 
+    /**
+     * Show in the GUI the name of the new player connected.
+     * @param nickname
+     */
     @Override
     public void userConnected(String nickname) {
         loginScreenController.userConnected(nickname);
     }
 
+    /**
+     * Show in the GUI the name of the disconnected player as: "nickname - DISCONNECTED!"
+     * @param nickname
+     */
     @Override
     public void disconnectedFromLobby(String nickname) {
         loginScreenController.disconnectedFromLobby(nickname);
     }
 
+    /**
+     * Show in the GUI the name of the player reconnected.
+     * @param nickname
+     */
     @Override
     public void userRejoined(String nickname) {
         loginScreenController.userRejoined(nickname);
