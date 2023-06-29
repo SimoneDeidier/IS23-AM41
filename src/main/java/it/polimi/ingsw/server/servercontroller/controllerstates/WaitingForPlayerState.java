@@ -16,8 +16,18 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Random;
 
+/**
+ * after ServerInitState, the controller enters this state if the first player's nickname wasn't in the saved game
+ */
 public class WaitingForPlayerState implements GameState {
 
+    /**
+     *
+     * @param maxPlayerNumber the maximum number of players allowed in the game
+     * @param playerList the list of Players currently in the game, with their connection status at the moment
+     * @return how many more places are available for this game. It returns -2 if the first player still hasn't
+     * finished setting up the parameters for the game
+     */
     @Override
     public int getAvailableSlot(int maxPlayerNumber, List<Player> playerList) {
         if(maxPlayerNumber == 0) {
@@ -26,7 +36,13 @@ public class WaitingForPlayerState implements GameState {
         else return maxPlayerNumber - playerList.size();
     }
 
-
+    /**
+     * generates a random PersonalTargetCard for each Player, making sure two Players doesn't have the same card
+     * @param playerList is passed to make the check that no other Player have the same PersonalTargetCard that is being generated at the moment
+     * @return a PersonalTargetCard for the Player
+     * @throws IOException because it reads from a JSON file to create the cards
+     * @throws URISyntaxException because it reads from a JSON file to create the cards
+     */
     public PersonalTargetCard generateRandomPersonal(List<Player> playerList) throws IOException, URISyntaxException {
         Random random = new Random();
         int personalCode= (random.nextInt(12));
@@ -50,6 +66,12 @@ public class WaitingForPlayerState implements GameState {
         return new PersonalTargetCard( personalCode);
     }
 
+    /**
+     * generates one or two CommonTargetCard for the game
+     * @param onlyOneCommonCard it's what is read to understand whether to create one or two CommonTargetCard (one if true, false otherwise)
+     * @param maxPlayerNumber the maximum number of players allowed in the game
+     * @return a list containing all CommonTargetCards needed for the match
+     */
     public List<CommonTargetCard> generateRandomCommonCards(boolean onlyOneCommonCard,int maxPlayerNumber) {
         List<CommonTargetCard> list =new ArrayList<>();
         list.add(getRandomCommon(maxPlayerNumber));
@@ -64,6 +86,12 @@ public class WaitingForPlayerState implements GameState {
         return list;
     }
 
+    /**
+     * helps the method generateRandomCommonCards, providing a randomly selected CommonTargetCard
+     * @param maxPlayerNumber the maximum number of players allowed in the game, provided here to assign to the CommontargetCard
+     *                        the right number of ScoringTokens
+     * @return a randomly selected CommonTargetCard*
+     */
     public CommonTargetCard getRandomCommon(int maxPlayerNumber){
         Random random=new Random();
         switch (random.nextInt(12)) {
@@ -106,6 +134,12 @@ public class WaitingForPlayerState implements GameState {
         }
     }
 
+    /**
+     * checks whether a nickname is available
+     * @param nickname is the nickname to be checked
+     * @param playerList the list of Players currently in the game, with their connection status at the moment
+     * @return 0 whether the nickname is not available, 1 otherwise
+     */
     @Override
     public int checkNicknameAvailability(String nickname, List<Player> playerList){
         for(Player player:playerList){
@@ -116,16 +150,31 @@ public class WaitingForPlayerState implements GameState {
         return 1;
     }
 
+    /**
+     * adds a Player to the playerList
+     * @param player is the Player that needs to be added
+     * @param playerList the list of Players currently in the game, with their connection status at the moment
+     */
     @Override
     public void addPlayer(Player player, List<Player> playerList) {
         playerList.add(player);
     }
 
+    /**
+     * @param isOnlyOneCommon is whether the game should have one or two CommonTargetCard (one if true, two otherwise)
+     * @param maxPlayerNumber the maximum number of players allowed in the game
+     * @return a list of the correct amount of CommonTargetCards for the game
+     */
     @Override
     public List<CommonTargetCard> setupCommonList(boolean isOnlyOneCommon, int maxPlayerNumber) {
         return generateRandomCommonCards(isOnlyOneCommon, maxPlayerNumber);
     }
 
+    /**
+     * handles the creation of the Board for the game, based on the maxPlayerNumber
+     * @param maxPlayerNumber the maximum number of players allowed in the game
+     * @return the created Board
+     */
     @Override
     public BoardFactory setupBoard(int maxPlayerNumber) {
         switch (maxPlayerNumber) {
@@ -144,11 +193,22 @@ public class WaitingForPlayerState implements GameState {
         }
     }
 
+    /**
+     * checks whether the Board needs to be refilled
+     * @param boardFactory the Board in the current game
+     */
     @Override
     public void boardNeedsRefill(BoardFactory boardFactory) {
         boardFactory.refillBoard();
     }
 
+    /**
+     * handles the procedure to make sure that all players have access to all the objects it should have during the game
+     * @param playerList the list of Players currently in the game, with their connection status at the moment
+     * @param commonTargetCardList the list of CommonTargetCard for the current game
+     * @param board the Board of the current game
+     * @param controller the reference to the GameController
+     */
     @Override
     public void setupPlayers(List<Player> playerList, List<CommonTargetCard> commonTargetCardList, BoardFactory board, GameController controller) {
         for(Player player: playerList){
@@ -164,6 +224,12 @@ public class WaitingForPlayerState implements GameState {
         Collections.shuffle(playerList);
     }
 
+    /**
+     * checks whether the game should start right now or not
+     * @param playerList the list of Players currently in the game, with their connection status at the moment
+     * @param maxPlayerNumber the maximum number of players allowed in the game
+     * @return whether the game should start right now or not
+     */
     @Override
     public boolean isGameReady(List<Player> playerList, int maxPlayerNumber){
         return playerList.size()==maxPlayerNumber;

@@ -7,7 +7,9 @@ import java.net.Socket;
 import java.net.URISyntaxException;
 import java.util.NoSuchElementException;
 import java.util.Scanner;
-
+/**
+ * The ConnectionTCP class manages the connection of TCP clients to the server.
+ */
 public class ConnectionTCP implements Connection {
 
 
@@ -20,6 +22,13 @@ public class ConnectionTCP implements Connection {
     private String IP = null;
     private int PORT = 0;
 
+    /**
+     * Constructs a new ConnectionTCP instance with the specified parameters.
+     *
+     * @param ip The IP address for TCP connection.
+     * @param port The port number for TCP connection.
+     * @throws IOException if an I/O exception occurs.
+     */
     public ConnectionTCP(String ip, int port) throws IOException {
         this.IP = ip;
         this.PORT = port;
@@ -28,7 +37,11 @@ public class ConnectionTCP implements Connection {
         this.socketOut = new PrintWriter(socket.getOutputStream(), true);
         this.serializeDeserialize = new SerializeDeserialize(this);
     }
-
+    /**
+     * Starts the TCP connection and initializes the socket reader and user interface threads.
+     *
+     * @param uiType the type of user interface to start (GUI o CLI)
+     */
     @Override
     public void startConnection(String uiType) {
         Thread socketReader = new Thread(() -> {
@@ -66,11 +79,18 @@ public class ConnectionTCP implements Connection {
             System.err.println("The socket thread could not be terminated, please kill the task and restart the client!");
         }
     }
-
+    /**
+     * Returns the PrintWriter for the socket output stream.
+     *
+     * @return The PrintWriter for the socket output stream.
+     */
     public PrintWriter getSocketOut() {
         return socketOut;
     }
-
+    
+    /**
+     * Closes the TCP connection.
+     */
     @Override
     public void closeConnection() {
         this.closeConnection = true;

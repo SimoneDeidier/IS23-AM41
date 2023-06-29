@@ -38,6 +38,7 @@ end
 end
 alt New player joins a brand new lobby
 Server-->>Client2: Nickname Accepted
+Server-->>Client1: User Connected
 else After new player the lobby is full
 parallel 
 Server-->>Client1: Game Start
@@ -57,3 +58,7 @@ end
 activate Client1
 activate Client2
 end
+note over Server,Client2: After the player has passed the "Presentation" phase,\nthe server sends Check messages also to him. After\nfive Check unanswered, the server assumes the player\ndisconnected and notifies other playerswaiting in the lobby.
+Server->Client1: Check x5
+deactivate Client1
+Server->Client2: Disconnected From Lobby

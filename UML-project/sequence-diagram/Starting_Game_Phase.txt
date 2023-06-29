@@ -7,14 +7,10 @@ participant Client2
 activate Server
 activate Client1
 activate Client2
-note over Server,Client2: Server chooses randomically two common target cards and\na personal caord foreach player in the lobby.
-parallel 
-Server->Client1: Common Cards
-Server->Client2:
-parallel off
+note over Server,Client2: Server chooses randomically a personal\ncard foreach player in the lobby.
 Server->Client1: Your Target
 Server->Client2: Your Target
-note over Server,Client2: Server now instanciate the board and fill it with items.
+note over Server,Client2: Server now instanciate the board filled with\nitems, common cards and the chair. 
 parallel
 Server->Client1: Update View
 Server->Client2:
