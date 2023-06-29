@@ -13,8 +13,14 @@ import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.*;
 
+/**
+* Class to check the CommonTwoRows class
+*/
 class CommonTwoRowsTest {
 
+/**
+* Checks if the check follow the correct rules for the card
+*/
     @Test
     void check() throws NotEnoughSpaceInColumnException {
         Shelf shelf = new Shelf();
