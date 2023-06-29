@@ -14,6 +14,9 @@ import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.*;
 
+/**
+* Class to fest the BoardFactory class
+*/
 class BoardFactoryTest {
 
     private static final int COLUMNS = 9;
@@ -27,16 +30,29 @@ class BoardFactoryTest {
         board.refillBoard();
     }
 
+/**
+* Test if the hasfreeside returns false with inout 4,4
+*/
     @Test
     public void testHasFreeSideForFalse() { assertFalse(board.hasFreeSide(4,4)); }
+/**
+* Test if the HasFreeSide method returns trur with input 3,6
+*/
     @Test
     public void testHasFreeSideForTrue()  {  assertTrue(board.hasFreeSide(3,6));  }
+
+/**
+* Test if the board has free sides after one pick
+*/
     @Test
     public void testHasFreeSideAfterOnePick() throws InvalidBoardPositionException, NullItemPickedException {
         board.pickItem(5,6);
         assertTrue(board.hasFreeSide(5,5));
     }
 
+/**
+* Test if the board has free sides on all four sides
+*/
     @Test
     public void testHasAllFreeSide() throws InvalidBoardPositionException, NullItemPickedException {
         board.pickItem(1,3);
@@ -45,6 +61,9 @@ class BoardFactoryTest {
         assertTrue(board.itemHasAllFreeSide(2,3));
     }
 
+/**
+* Test the method checkInLine in the horizontal setting
+*/
     @Test
     public void testCheckInLineHorizontally() {
         List<int[]> list= new ArrayList<>();
@@ -54,6 +73,9 @@ class BoardFactoryTest {
         assertTrue(board.checkInLine(list));
     }
 
+/**
+* Test rhe method checkInLine in the vertical setting
+*/
     @Test
     public void testCheckInLineVertically() {
         List<int[]> list= new ArrayList<>();
@@ -62,6 +84,10 @@ class BoardFactoryTest {
         list.add(new int[]{5,3});
         assertTrue(board.checkInLine(list));
     }
+
+/**
+* Checks chrvkInLinr in a false setting
+*/
     @Test
     public void testCheckInLineFalse() {
         List<int[]> list= new ArrayList<>();
@@ -71,6 +97,9 @@ class BoardFactoryTest {
         assertFalse(board.checkInLine(list));
     }
 
+/**
+* Test checkInLine in case of one element
+*/
     @Test
     public void testCheckInLineOneElement() {
         List<int[]> list= new ArrayList<>();
@@ -78,6 +107,9 @@ class BoardFactoryTest {
         assertTrue(board.checkInLine(list));
     }
 
+/**
+* Test checkInLine in case of two elements
+*/
     @Test
     public void testCheckInLineTwoElement() {
         List<int[]> list= new ArrayList<>();
@@ -86,6 +118,9 @@ class BoardFactoryTest {
         assertFalse(board.checkInLine(list));
     }
 
+/**
+* Test if getBit
+*/
     @Test
     public void testGetBitMaskElement() {
         assert(board.getBitMaskElement(4,4));
