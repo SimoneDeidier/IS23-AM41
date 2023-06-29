@@ -230,10 +230,18 @@ public class Body implements Serializable {
         this.goodbyeType = goodbyeType;
     }
 
+    /**
+     * Returns the map representing the lobby.
+     */
     public Map<String, Boolean> getLobby() {
         return lobby;
     }
 
+    /**
+     * Set the class lobby attribute as the received lobby.
+     *
+     * @param lobby lobby to be saved
+     */
     public void setLobby(Map<String, Boolean> lobby) {
         this.lobby = lobby;
     }

@@ -17,7 +17,7 @@ import java.time.temporal.ChronoUnit;
 import java.util.*;
 /**
  * The ClientControllerTCP class represents the TCP implementation of the client controller.
- * It handles the communication between the client and the server using TCP protocol.
+ * Handles communication between client and server using RMI.
  * It also interacts with the user interface to display information and receive user input.
  */
 public class ClientControllerTCP implements ClientController {

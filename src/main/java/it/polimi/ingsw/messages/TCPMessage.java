@@ -8,7 +8,7 @@ public class TCPMessage {
     private final Body body;
 
     /**
-     * Constructor of TCPMessage given the parameters.
+     * Constructor of TCPMessage using the given parameters.
      * @param header The header of the message.
      * @param body The body of the message.
      */
@@ -17,7 +17,7 @@ public class TCPMessage {
         this.body = body;
     }
     /**
-     * Gives the header of the TCP message.
+     * Returns the header of the message.
      *
      * @return The header.
      */
@@ -25,7 +25,7 @@ public class TCPMessage {
         return header;
     }
     /**
-     * Gives the body of the TCP message.
+     * Returns the body of the message.
      *
      * @return The body.
      */

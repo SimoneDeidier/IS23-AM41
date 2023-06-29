@@ -24,29 +24,33 @@ public class Save {
     private Map<String,List<ScoringToken>> commonTargetCardMap=new LinkedHashMap<>(4);
     private Item[][] boardItems;
     private boolean[][] boardBitMask;
+
     /**
-     * Constructs a new and clean Save.
+     * Constructor for the class Save.
      */
     public Save() {
         this.activePlayerNickname=null;
         this.endGameTokenAssignedToWhom = null;
     }
+
     /**
-     * Gives the nickname of the active player.
+     * Returns the nickname of the current active player.
      *
      * @return The active player's nickname.
      */
     public String getActivePlayerNickname() {
         return activePlayerNickname;
     }
+
     /**
-     * Sets the nickname of the active player.
+     * Returns the nickname of the current active player.
      *
      * @param activePlayerNickname The nickname of the active player.
      */
     public void setActivePlayerNickname(String activePlayerNickname) {
         this.activePlayerNickname = activePlayerNickname;
     }
+
     /**
      * Gives the map of player nicknames to their shelves.
      *
@@ -55,6 +59,7 @@ public class Save {
     public Map<String, Item[][]> getNicknameToShelfMap() {
         return nicknameToShelfMap;
     }
+
     /**
      * Maps player nicknames to their shelves.
      *
@@ -63,6 +68,7 @@ public class Save {
     public void setNicknameToShelfMap(Map<String, Item[][]> nicknameToShelfMap) {
         this.nicknameToShelfMap = nicknameToShelfMap;
     }
+
     /**
      * Gives the map of player nicknames to their points.
      *
@@ -71,6 +77,7 @@ public class Save {
     public Map<String, Integer> getNicknameToPointsMap() {
         return nicknameToPointsMap;
     }
+
     /**
      * Maps the player nicknames to their points.
      *
@@ -79,6 +86,7 @@ public class Save {
     public void setNicknameToPointsMap(Map<String, Integer> nicknameToPointsMap) {
         this.nicknameToPointsMap = nicknameToPointsMap;
     }
+
     /**
      * Gives the map of player nicknames to their scoring tokens.
      *
@@ -87,6 +95,7 @@ public class Save {
     public Map<String, List<ScoringToken>> getNicknameToScoringTokensMap() {
         return nicknameToScoringTokensMap;
     }
+
     /**
      * Maps the player nicknames to their scoring tokens.
      *
@@ -95,6 +104,7 @@ public class Save {
     public void setNicknameToScoringTokensMap(Map<String, List<ScoringToken>> nicknameToScoringTokensMap) {
         this.nicknameToScoringTokensMap = nicknameToScoringTokensMap;
     }
+
     /**
      * Gives the map of player nicknames to their personal target cards.
      *
@@ -103,6 +113,7 @@ public class Save {
     public Map<String, PersonalTargetCard> getNicknameToPersonalTargetCard() {
         return nicknameToPersonalTargetCard;
     }
+
     /**
      * Maps the player nicknames to their personal target cards.
      *
@@ -111,6 +122,7 @@ public class Save {
     public void setNicknameToPersonalTargetCard(Map<String, PersonalTargetCard> nicknameToPersonalTargetCard) {
         this.nicknameToPersonalTargetCard = nicknameToPersonalTargetCard;
     }
+
     /**
      * Gives the nickname of the player assigned the end game token.
      *
@@ -119,6 +131,7 @@ public class Save {
     public String getEndGameTokenAssignedToWhom() {
         return endGameTokenAssignedToWhom;
     }
+
     /**
      * Sets the nickname of the player that has got the end game token.
      *
@@ -127,6 +140,7 @@ public class Save {
     public void setEndGameTokenAssignedToWhom(String endGameTokenAssignedToWhom) {
         this.endGameTokenAssignedToWhom = endGameTokenAssignedToWhom;
     }
+
     /**
      * Checks if it is the last turn in the game.
      *
@@ -135,6 +149,7 @@ public class Save {
     public boolean isLastTurn() {
         return lastTurn;
     }
+
     /**
      * Sets whether it is the last turn in the game.
      *
@@ -143,6 +158,7 @@ public class Save {
     public void setLastTurn(boolean lastTurn) {
         this.lastTurn = lastTurn;
     }
+
     /**
      * Checks if the game is over.
      *
@@ -151,6 +167,7 @@ public class Save {
     public boolean isGameOver() {
         return gameOver;
     }
+
     /**
      * Sets the boolean flag that represent if the game is over.
      *
@@ -159,6 +176,7 @@ public class Save {
     public void setGameOver(boolean gameOver) {
         this.gameOver = gameOver;
     }
+
     /**
      * Gives the map of common target card names to their scoring tokens.
      *
@@ -167,6 +185,7 @@ public class Save {
     public Map<String, List<ScoringToken>> getCommonTargetCardMap() {
         return commonTargetCardMap;
     }
+
     /**
      * Mpas common target card names to their scoring tokens.
      *
@@ -184,6 +203,7 @@ public class Save {
     public Item[][] getBoardItems() {
         return boardItems;
     }
+
     /**
      * Sets the game board items.
      *
@@ -192,6 +212,7 @@ public class Save {
     public void setBoardItems(Item[][] boardItems) {
         this.boardItems = boardItems;
     }
+
     /**
      * Gives the bitmask representing the state of the game board.
      *
@@ -200,6 +221,7 @@ public class Save {
     public boolean[][] getBoardBitMask() {
         return boardBitMask;
     }
+
     /**
      * Sets the bitmask representing the state of the game board.
      *
@@ -208,6 +230,7 @@ public class Save {
     public void setBoardBitMask(boolean[][] boardBitMask) {
         this.boardBitMask = boardBitMask;
     }
+
     /**
      * Gives the maximum number of players allowed in the game.
      *
@@ -216,6 +239,7 @@ public class Save {
     public int getMaxPlayerPlayer() {
         return maxPlayerPlayer;
     }
+
     /**
      * Sets the maximum number of players allowed in the game.
      *

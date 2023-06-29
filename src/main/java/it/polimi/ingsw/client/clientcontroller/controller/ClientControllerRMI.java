@@ -19,7 +19,7 @@ import java.time.temporal.ChronoUnit;
 import java.util.*;
 /**
  * The ClientControllerRMI class represents the RMI implementation of the client controller.
- * It handles the communication between the client and the server using RMI.
+ * Handles communication between client and server using RMI.
  * It also interacts with the user interface to display information and receive user input.
  */
 public class ClientControllerRMI implements ClientController, Serializable {
@@ -525,16 +525,31 @@ public class ClientControllerRMI implements ClientController, Serializable {
 
     }
 
+    /**
+     * Notify the user that another user has connected
+     *
+     * @param playerNickname nickname of the player
+     */
     @Override
     public void userConnected(String playerNickname) {
         userInterface.userConnected(playerNickname);
     }
 
+    /**
+     * Notify the user that a user has disconnected from the lobby
+     *
+     * @param playerNickname nickname of the player
+     */
     @Override
     public void disconnectedFromLobby(String playerNickname) {
         userInterface.disconnectedFromLobby(playerNickname);
     }
 
+    /**
+     * Notify the user that another user has rejoined the game
+     *
+     * @param playerNickname nickname of the user
+     */
     @Override
     public void userRejoined(String playerNickname) {
         userInterface.userRejoined(playerNickname);

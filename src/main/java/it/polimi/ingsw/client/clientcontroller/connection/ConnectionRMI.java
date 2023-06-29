@@ -76,7 +76,7 @@ public class ConnectionRMI extends UnicastRemoteObject implements InterfaceClien
         }
     }
     /**
-     * Asks the server for the game parameters.
+     * Asks the server controller for the game parameters.
      *
      * @throws RemoteException if a remote exception occurs
      */
@@ -85,7 +85,7 @@ public class ConnectionRMI extends UnicastRemoteObject implements InterfaceClien
         controller.getParameters();
     }
     /**
-     * Sends the game parameters to the server.
+     * Sends the game parameters to the server controller.
      *
      * @param maxPlayerNumber the maximum number of players in the game
      * @param onlyOneCommon boolean flag rappresenting the number of commoncards: true if there is only one common goal card, false if there are two
@@ -98,7 +98,7 @@ public class ConnectionRMI extends UnicastRemoteObject implements InterfaceClien
         }
     }
     /**
-     * Asks the user for a new nickname.
+     * Asks the user for a new nickname and send it to the server controller.
      *
      * @throws RemoteException if a remote exception occurs
      */
@@ -129,6 +129,12 @@ public class ConnectionRMI extends UnicastRemoteObject implements InterfaceClien
         }
     }
 
+    /**
+     * Print the correct message after the disconnection of a user based on the message input
+     *
+     * @param whichMessageToShow the message to show
+     * @throws RemoteException if a remote exception occurs
+     */
     @Override
     public void disconnectUser(int whichMessageToShow) throws RemoteException {
         clientConnected=false; //stops the ping thread
@@ -148,10 +154,13 @@ public class ConnectionRMI extends UnicastRemoteObject implements InterfaceClien
         }
 
     }
+
     /**
      * Confirms the connection with the server.
      *
      * @param typeOfLobby The type of lobby.
+     * @param lobby map representing the lobby
+     * @param nPlayers number of players
      * @throws RemoteException if a remote exception occurs.
      */
     @Override
@@ -250,7 +259,7 @@ public class ConnectionRMI extends UnicastRemoteObject implements InterfaceClien
         }
     }
     /**
-     * Sends a broadcast message from one client to all othher clients via the server.
+     * Sends a broadcast message from one client to all other clients via the server.
      *
      * @param body The message body.
      */
@@ -375,21 +384,42 @@ public class ConnectionRMI extends UnicastRemoteObject implements InterfaceClien
         System.exit(0);
     }
 
+    /**
+     * Notify the server that a new user has connected.
+     *
+     * @param nickname nickname of the user
+     */
     @Override
     public void notifyConnectedUser(String nickname) {
         controller.userConnected(nickname);
     }
 
+    /**
+     * Notify the server that a user has disconnetted from the lobby.
+     *
+     * @param nickname nickname of the user
+     */
     @Override
     public void disconnectedFromLobby(String nickname) throws RemoteException {
         controller.disconnectedFromLobby(nickname);
     }
 
+    /**
+     * Notify the server that a user has rejoined the lobby.
+     *
+     * @param lobby Map of the lobby
+     * @param numPlayers number of current players
+     */
     @Override
     public void rejoinedInLobby(Map<String, Boolean> lobby, int numPlayers) throws RemoteException {
         controller.nicknameAccepted(numPlayers, lobby);
     }
 
+    /**
+     * Notify the server that a user has rejoined.
+     *
+     * @param nickname nickname of the user
+     */
     @Override
     public void userRejoined(String nickname) throws RemoteException {
         controller.userRejoined(nickname);
