@@ -231,6 +231,7 @@ public class Server implements InterfaceServer {
 
     public void rejoinRequest(String nickname, InterfaceClient cl){
         try {
+            clientMapRMI.put(nickname, cl);
             controller.changePlayerConnectionStatus(nickname);
             if(controller.getState().getClass().equals(RunningGameState.class)) {
                 if (controller.didLastUserMadeHisMove()) { //updateView for everyone as soon as he connects because he needs to make a move right away
@@ -374,7 +375,6 @@ public class Server implements InterfaceServer {
             while (true) {
                 try {
                     for (String nickname : clientMapRMI.keySet()) {
-                        System.out.println("Pingo " + nickname);
                         try {
                             clientMapRMI.get(nickname).check();
                         } catch (RemoteException | NullPointerException e) {
@@ -471,7 +471,7 @@ public class Server implements InterfaceServer {
                     for (Player player : controller.getPlayerList()) {
                         lobby.put(player.getNickname(), player.isConnected());
                     }
-                    clientMapRMI.get(s).rejoinedInLobby(lobby);
+                    clientMapRMI.get(s).rejoinedInLobby(lobby, controller.getMaxPlayerNumber());
                 } else {
                     clientMapRMI.get(s).userRejoined(nickname);
                 }

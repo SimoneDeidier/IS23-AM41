@@ -109,15 +109,11 @@ public class CommonGoalController {
     public Image getMaxTokenValueByCardNumber(String name, Map<String, List<ScoringToken>> map) throws URISyntaxException, FileNotFoundException {
         for(String s : map.keySet()) {
             if(Objects.equals(s, name)) {
-                System.out.println(s);
                 List<ScoringToken> list = map.get(s);
                 int max = -1;
                 for(ScoringToken tk : list) {
                     if(tk.isTakeable()) {
-                        System.out.println("TOKEN VAL: " + tk.getValue() + " - TAKEABLE: " + tk.isTakeable());
-                        System.out.println("TK taken by: " + tk.whoTookThatToken());
                         if (tk.getValue() > max) {
-                            System.out.println(tk.getValue() + " > " + max);
                             max = tk.getValue();
                         }
                     }

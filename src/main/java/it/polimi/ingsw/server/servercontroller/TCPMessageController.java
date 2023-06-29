@@ -78,6 +78,7 @@ public class TCPMessageController implements TCPMessageControllerInterface {
                 }
                 catch (RejoinRequestException e) {
                     gameController.changePlayerConnectionStatus(nickname);
+                    gameController.putNickToSocketMapping(nickname, this);
                     if(gameController.getState().getClass().equals(RunningGameState.class)) {
                         printTCPMessage("Rejoined", null);
                         Body body = new Body();

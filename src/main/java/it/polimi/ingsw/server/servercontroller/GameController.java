@@ -723,10 +723,12 @@ public class GameController {
         for(String s : nickToTCPMessageControllerMapping.keySet()) {
             if(Objects.equals(s, nickname)) {
                 Body b = new Body();
-                Map<String, Boolean> lobby = b.getLobby();
+                Map<String, Boolean> lobby = new HashMap<>();
                 for(Player player : playerList) {
                     lobby.put(player.getNickname(), player.isConnected());
                 }
+                b.setLobby(lobby);
+                b.setNumberOfPlayers(getMaxPlayerNumber());
                 nickToTCPMessageControllerMapping.get(s).printTCPMessage("Rejoined In Lobby", b);
             }
             else {

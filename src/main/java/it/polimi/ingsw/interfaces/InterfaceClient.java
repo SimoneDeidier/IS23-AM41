@@ -32,7 +32,7 @@ public interface InterfaceClient extends Remote {
 
     void disconnectedFromLobby(String nickname) throws RemoteException;
 
-    void rejoinedInLobby(Map<String, Boolean> lobby) throws RemoteException;
+    void rejoinedInLobby(Map<String, Boolean> lobby, int numPlayers) throws RemoteException;
 
     void userRejoined(String nickname) throws RemoteException;
 }

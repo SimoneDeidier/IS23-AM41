@@ -128,4 +128,8 @@ public class Body implements Serializable {
     public Map<String, Boolean> getLobby() {
         return lobby;
     }
+
+    public void setLobby(Map<String, Boolean> lobby) {
+        this.lobby = lobby;
+    }
 }

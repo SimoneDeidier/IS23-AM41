@@ -179,9 +179,6 @@ public class ClientControllerTCP implements ClientController {
     @Override
     public void insertInPositionPicked(int[] el) {
         positionPicked.add(el);
-        for(int[] x : positionPicked) {
-            System.out.println(x[0] + " - " + x[1]);
-        }
     }
     @Override
     public int getPositionPickedSize() {
@@ -233,9 +230,6 @@ public class ClientControllerTCP implements ClientController {
     @Override
     public void removeInPositionPicked(int col) {
         positionPicked.remove(col);
-        for(int[] el : positionPicked) {
-            System.out.println(el[0] + " - " + el[1]);
-        }
     }
 
     @Override

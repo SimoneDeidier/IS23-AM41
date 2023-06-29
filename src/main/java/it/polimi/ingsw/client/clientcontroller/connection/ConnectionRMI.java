@@ -268,8 +268,8 @@ public class ConnectionRMI extends UnicastRemoteObject implements InterfaceClien
     }
 
     @Override
-    public void rejoinedInLobby(Map<String, Boolean> lobby) throws RemoteException {
-        controller.nicknameAccepted(lobby.size(), lobby);
+    public void rejoinedInLobby(Map<String, Boolean> lobby, int numPlayers) throws RemoteException {
+        controller.nicknameAccepted(numPlayers, lobby);
     }
 
     @Override

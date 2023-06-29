@@ -1,6 +1,5 @@
 package it.polimi.ingsw.client.clientcontroller;
 
-import it.polimi.ingsw.client.Client;
 import it.polimi.ingsw.client.clientcontroller.controller.ClientController;
 import it.polimi.ingsw.client.clientcontroller.controller.ClientControllerTCP;
 import it.polimi.ingsw.interfaces.TCPMessageControllerInterface;
@@ -119,8 +118,7 @@ public class TCPMessageController implements TCPMessageControllerInterface {
                 controller.disconnectedFromLobby(message.getBody().getPlayerNickname());
             }
             case "Rejoined In Lobby" -> {
-                Map<String, Boolean> lobby = message.getBody().getLobby();
-                controller.nicknameAccepted(lobby.size(), lobby);
+                controller.nicknameAccepted(message.getBody().getNumberOfPlayers(), message.getBody().getLobby());
             }
             case "User Rejoined" -> {
                 controller.userRejoined(message.getBody().getPlayerNickname());
