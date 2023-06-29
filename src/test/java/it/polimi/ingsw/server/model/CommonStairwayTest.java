@@ -13,8 +13,14 @@ import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.*;
 
+/**
+* Class to check the CommonStairwayTest
+*/
 class CommonStairwayTest {
 
+/**
+* Checks if the check follow the correct rules for the card
+*/
     @Test
     void check() throws NotEnoughSpaceInColumnException {
         CommonTargetCard card  = new CommonStairway(2);
