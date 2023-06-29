@@ -11,8 +11,14 @@ import java.util.Arrays;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
+/**
+* Class to test the Personal Target Card class
+*/
 class PersonalTargetCardTest {
 
+/**
+* Test if the points get calculated correctly
+*/
     @Test
     void testCalculatePoints() throws NotEnoughSpaceInColumnException, IOException, URISyntaxException {
         PersonalTargetCard personal = new PersonalTargetCard(0);
@@ -35,6 +41,9 @@ class PersonalTargetCardTest {
         assertEquals(12, personal.calculatePoints(shelf));
     }
 
+/**
+* Tests if number of the personal target card gets returned correctly
+*/
     @Test
     void testGetPersonalNumber(){
         try {
