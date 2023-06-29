@@ -16,6 +16,9 @@ import static org.junit.jupiter.api.Assertions.*;
 */
 class CommonFourGroupsOfFourTest {
 
+/**
+* Check if a shelf that respects the common card reauitements gets recognised
+*/
     @Test
     void checkFourGroupsOfFour() throws NotEnoughSpaceInColumnException {
         CommonTargetCard commonFourGroupsOfFour = new CommonFourGroupsOfFour(2);
@@ -32,6 +35,10 @@ class CommonFourGroupsOfFourTest {
         assertTrue(commonFourGroupsOfFour.check(shelfA));
 
     }
+
+/**
+* Check if a shelf that doesn't respects the common card reauitements gets recognised
+*/
     @Test
     void checkNosFourGroupsOfFour() throws NotEnoughSpaceInColumnException {
 
