@@ -10,6 +10,7 @@ import it.polimi.ingsw.server.servercontroller.GameController;
 import it.polimi.ingsw.server.servercontroller.SocketManager;
 import it.polimi.ingsw.server.servercontroller.controllerstates.RunningGameState;
 import it.polimi.ingsw.server.servercontroller.controllerstates.ServerInitState;
+import it.polimi.ingsw.server.servercontroller.controllerstates.WaitingForPlayerState;
 import it.polimi.ingsw.server.servercontroller.exceptions.*;
 
 import java.io.IOException;
@@ -205,15 +206,31 @@ public class Server implements InterfaceServer {
                 }
                 case 1 -> { //joined a "new" game
                     clientMapRMI.put(nickname,cl); //starts the ping towards that user
-                    cl.confirmConnection(false);
+                    int nPlayers = controller.getMaxPlayerNumber();
+                    Map<String, Boolean> lobby = new HashMap<>();
+                    for(Player p : controller.getPlayerList()) {
+                        lobby.put(p.getNickname(), p.isConnected());
+                    }
+                    cl.confirmConnection(false, nPlayers, lobby);
+                    controller.notifyOfConnectedUser(nickname);
                 }
                 case 2 ->{ //first player joining a "restored" game
                     clientMapRMI.put(nickname,cl); //starts the ping towards that user
-                    cl.lobbyCreated(false);
+                    int nPlayers = controller.getMaxPlayerNumber();
+                    Map<String, Boolean> lobby = new HashMap<>();
+                    for(Player p : controller.getPlayerList()) {
+                        lobby.put(p.getNickname(), p.isConnected());
+                    }
+                    cl.lobbyCreated(false, nPlayers, lobby);
                 }
                 case 3 -> { //joining a restored game
                     clientMapRMI.put(nickname,cl); //starts the ping towards that user
-                    cl.confirmConnection(true);
+                    int nPlayers = controller.getMaxPlayerNumber();
+                    Map<String, Boolean> lobby = new HashMap<>();
+                    for(Player p : controller.getPlayerList()) {
+                        lobby.put(p.getNickname(), p.isConnected());
+                    }
+                    cl.confirmConnection(true, nPlayers, lobby);
                 }
             }
         } catch (CancelGameException e) { //the game is being canceled because a restoring of a saved game failed
@@ -249,23 +266,29 @@ public class Server implements InterfaceServer {
      */
     public void rejoinRequest(String nickname, InterfaceClient cl){
         try {
+            clientMapRMI.put(nickname, cl);
             controller.changePlayerConnectionStatus(nickname);
-            if (controller.didLastUserMadeHisMove()) { //updateView for everyone as soon as he connects because he needs to make a move right away
-                controller.notifyOfReconnectionAllUsers(nickname);
-                controller.setLastConnectedUserMadeHisMove(false);
-                clientMapRMI.put(nickname, cl);
-                try {
+            if(controller.getState().getClass().equals(RunningGameState.class)) {
+                if (controller.didLastUserMadeHisMove()) { //updateView for everyone as soon as he connects because he needs to make a move right away
+                    controller.notifyOfReconnectionAllUsers(nickname);
+                    controller.setLastConnectedUserMadeHisMove(false);
+                    clientMapRMI.put(nickname, cl);
+                    try {
+                        clientMapRMI.get(nickname).rejoinedMatch();
+                    }catch(RemoteException ignored){
+                    }
+                    sendCardsRMI();
+                    controller.changeActivePlayer();
+                    controller.updateView();
+                } else { //he'll wait for the first updateView
+                    controller.notifyOfReconnectionAllUsers(nickname);
+                    clientMapRMI.put(nickname, cl);
                     clientMapRMI.get(nickname).rejoinedMatch();
-                }catch(RemoteException ignored){
+                    sendCardsRMI();
                 }
-                sendCardsRMI();
-                controller.changeActivePlayer();
-                controller.updateView();
-            } else { //he'll wait for the first updateView
-                controller.notifyOfReconnectionAllUsers(nickname);
-                clientMapRMI.put(nickname, cl);
-                clientMapRMI.get(nickname).rejoinedMatch();
-                sendCardsRMI();
+            }
+            else {
+                controller.notifyOfReconnectionInLobby(nickname);
             }
         }catch (RemoteException ignored){
         }
@@ -280,10 +303,17 @@ public class Server implements InterfaceServer {
      */
     @Override
     public void sendParameters(InterfaceClient cl,int maxPlayerNumber, boolean onlyOneCommonCard) throws RemoteException {
-        if(controller.createLobby(maxPlayerNumber,onlyOneCommonCard))
-            cl.lobbyCreated(true);
-        else
+        if(controller.createLobby(maxPlayerNumber,onlyOneCommonCard)) {
+            int nPlayers = controller.getMaxPlayerNumber();
+            Map<String, Boolean> lobby = new HashMap<>();
+            for(Player p : controller.getPlayerList()) {
+                lobby.put(p.getNickname(), p.isConnected());
+            }
+            cl.lobbyCreated(true, nPlayers, lobby);
+        }
+        else {
             cl.askParametersAgain();
+        }
     }
     /**
      * Executes the move received from the client and updates the game state.
@@ -449,7 +479,6 @@ public class Server implements InterfaceServer {
             while (true) {
                 try {
                     for (String nickname : clientMapRMI.keySet()) {
-                        System.out.println("Pingo " + nickname);
                         try {
                             clientMapRMI.get(nickname).check();
                         } catch (RemoteException | NullPointerException e) {
@@ -468,6 +497,9 @@ public class Server implements InterfaceServer {
                                 controller.getPlayerList().clear();
                             }
                             clientMapRMI.remove(nickname);
+                            if(controller.getState().getClass().equals(WaitingForPlayerState.class)) {
+                                controller.notifyOfDisconnectionFromLobby(nickname);
+                            }
                             break;
                         }
                         Thread.sleep(CHECK_DELAY_MILLISECONDS);
@@ -527,6 +559,45 @@ public class Server implements InterfaceServer {
                 clientMapRMI.get(user).notificationForReconnection(nickname);
             } catch (RemoteException ignored) {
             }
+        }
+    }
+
+    public void notifyOfConnectedUser(String nickname) {
+        for(String s : clientMapRMI.keySet()) {
+            if(!Objects.equals(s, nickname)) {
+                try {
+                    clientMapRMI.get(s).notifyConnectedUser(nickname);
+                } catch (RemoteException ignored) {
+                }
+            }
+        }
+    }
+
+    public void notifyOfDisconnectionFromLobby(String nickname) {
+        for(String s : clientMapRMI.keySet()) {
+            try {
+                clientMapRMI.get(s).disconnectedFromLobby(nickname);
+            } catch (RemoteException ignored) {
+            }
+        }
+    }
+
+    public void notifyOfReconnectionInLobby(String nickname) {
+        try {
+            for (String s : clientMapRMI.keySet()) {
+                if (Objects.equals(s, nickname)) {
+                    Map<String, Boolean> lobby = new HashMap<>();
+                    for (Player player : controller.getPlayerList()) {
+                        lobby.put(player.getNickname(), player.isConnected());
+                    }
+                    clientMapRMI.get(s).rejoinedInLobby(lobby, controller.getMaxPlayerNumber());
+                } else {
+                    clientMapRMI.get(s).userRejoined(nickname);
+                }
+            }
+        }
+        catch (RemoteException ignored) {
+
         }
     }
 }

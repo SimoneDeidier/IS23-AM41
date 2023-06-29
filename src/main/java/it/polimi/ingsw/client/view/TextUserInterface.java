@@ -9,10 +9,8 @@ import it.polimi.ingsw.server.model.items.Item;
 import it.polimi.ingsw.server.model.items.ItemColor;
 import it.polimi.ingsw.server.model.tokens.ScoringToken;
 import javafx.scene.Node;
-import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.IOUtils;
 
-import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.net.URISyntaxException;
@@ -1184,7 +1182,7 @@ public class TextUserInterface implements UserInterface{
      * Tells the user that the nickname has been accepted and that he's in the lobby
      */
     @Override
-    public void nicknameAccepted() {
+    public void nicknameAccepted(int nPlayers, Map<String, Boolean> lobby) {
         new Thread(() -> {
             /**
              * This attribute holds an arraylist of the text lines to display
@@ -1203,7 +1201,7 @@ public class TextUserInterface implements UserInterface{
      * Tells the user that a lobby was created and that the game will start soon.
      */
     @Override
-    public void lobbyCreated() {
+    public void lobbyCreated(int nPlayers, Map<String, Boolean> lobby) {
         /**
          * This attribute holds an arraylist of the text lines to display
          */
@@ -1652,5 +1650,19 @@ public class TextUserInterface implements UserInterface{
         closeTUI = true;
     }
 
+    @Override
+    public void userConnected(String nickname) {
+
+    }
+
+    @Override
+    public void disconnectedFromLobby(String nickname) {
+
+    }
+
+    @Override
+    public void userRejoined(String nickname) {
+
+    }
 }
 

@@ -8,6 +8,7 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.net.URISyntaxException;
 import java.util.List;
+import java.util.Map;
 
 public interface UserInterface extends Runnable {
     /**
@@ -43,16 +44,16 @@ public interface UserInterface extends Runnable {
      * @param numCommons the number of common target cards
      */
     void sendParameters(int numPlayers, int numCommons);
-
+  
     /**
      * Tells the user that the nickname has been accepted and that he's in the lobby
      */
-    void nicknameAccepted();
-
+    void nicknameAccepted(int nPlayers, Map<String, Boolean> lobby);
+  
     /**
      * Tells the user that a lobby was created and that the game will start soon.
      */
-    void lobbyCreated();
+    void lobbyCreated(int nPlayers, Map<String, Boolean> lobby);
 
     /**
      * Tells the user that someone else is trying to create a lobby and to retry in a few seconds
@@ -218,4 +219,10 @@ public interface UserInterface extends Runnable {
      * Calls the client controller method to exit from the game without disconnecting from the server
      */
     void exitWithoutWaitingDisconnectFromServer();
+
+    void userConnected(String nickname);
+
+    void disconnectedFromLobby(String nickname);
+
+    void userRejoined(String nickname);
 }

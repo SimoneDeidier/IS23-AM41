@@ -1,6 +1,5 @@
 package it.polimi.ingsw.client.clientcontroller;
 
-import it.polimi.ingsw.client.Client;
 import it.polimi.ingsw.client.clientcontroller.controller.ClientController;
 import it.polimi.ingsw.client.clientcontroller.controller.ClientControllerTCP;
 import it.polimi.ingsw.interfaces.TCPMessageControllerInterface;
@@ -9,7 +8,8 @@ import it.polimi.ingsw.messages.TCPMessage;
 
 import java.io.IOException;
 import java.net.URISyntaxException;
-/**
+import java.util.Map;
+
  * The TCPMessageController class handles TCP messages received from the server and interacts with the client controller.
  */
 public class TCPMessageController implements TCPMessageControllerInterface {
@@ -41,7 +41,8 @@ public class TCPMessageController implements TCPMessageControllerInterface {
         String header = message.getHeader();
         switch (header) {
             case "Nickname Accepted" -> {
-                controller.nicknameAccepted();
+                Body body = message.getBody();
+                controller.nicknameAccepted(body.getNumberOfPlayers(), body.getLobby());
             }
             case "Wait for Lobby" -> {
                 controller.waitForLobby();
@@ -87,7 +88,8 @@ public class TCPMessageController implements TCPMessageControllerInterface {
                 controller.updateView(message.getBody().getNewView());
             }
             case "Lobby Created" -> {
-                controller.lobbyCreated();
+                Body body = message.getBody();
+                controller.lobbyCreated(body.getNumberOfPlayers(), body.getLobby());
             }
             case "Wrong Parameters" -> {
                 controller.wrongParameters();
@@ -120,6 +122,18 @@ public class TCPMessageController implements TCPMessageControllerInterface {
             }
             case "Player Reconnected" -> {
                 controller.playerReconnected(message.getBody().getPlayerNickname());
+            }
+            case "User Connected" -> {
+                controller.userConnected(message.getBody().getPlayerNickname());
+            }
+            case "Disconnected From Lobby" -> {
+                controller.disconnectedFromLobby(message.getBody().getPlayerNickname());
+            }
+            case "Rejoined In Lobby" -> {
+                controller.nicknameAccepted(message.getBody().getNumberOfPlayers(), message.getBody().getLobby());
+            }
+            case "User Rejoined" -> {
+                controller.userRejoined(message.getBody().getPlayerNickname());
             }
         }
     }

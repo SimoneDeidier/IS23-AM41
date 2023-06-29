@@ -5,7 +5,10 @@ import it.polimi.ingsw.server.model.PersonalTargetCard;
 import java.io.Serializable;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
+
 /**
  * The Body class represents a message body used in communication player-to-server.
  */
@@ -23,6 +26,8 @@ public class Body implements Serializable {
     private String localDateTime;
     private List<String> commonTargetCardsName = new ArrayList<>(2);
     private int goodbyeType;
+    private Map<String, Boolean> lobby = new HashMap<>(4);
+
     /**
      * Gives the nickname of the player associated with this message body.
      *
@@ -223,5 +228,13 @@ public class Body implements Serializable {
      */
     public void setGoodbyeType(int goodbyeType) {
         this.goodbyeType = goodbyeType;
+    }
+
+    public Map<String, Boolean> getLobby() {
+        return lobby;
+    }
+
+    public void setLobby(Map<String, Boolean> lobby) {
+        this.lobby = lobby;
     }
 }

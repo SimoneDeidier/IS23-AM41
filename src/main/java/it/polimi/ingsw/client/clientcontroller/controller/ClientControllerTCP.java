@@ -110,15 +110,15 @@ public class ClientControllerTCP implements ClientController {
      * Notifies the user that the nickname provided was accepted.
      */
     @Override
-    public void nicknameAccepted() {
-        userInterface.nicknameAccepted();
+    public void nicknameAccepted(int nPlayers, Map<String, Boolean> lobby) {
+        userInterface.nicknameAccepted(nPlayers, lobby);
     }
     /**
      * Notifies the user that the lobby was created.
      */
     @Override
-    public void lobbyCreated() {
-        userInterface.lobbyCreated();
+    public void lobbyCreated(int nPlayers, Map<String, Boolean> lobby) {
+        userInterface.lobbyCreated(nPlayers, lobby);
     }
     /**
      * Notifies the user that to wait for the lobby to start.
@@ -436,9 +436,6 @@ public class ClientControllerTCP implements ClientController {
     @Override
     public void removeInPositionPicked(int col) {
         positionPicked.remove(col);
-        for(int[] el : positionPicked) {
-            System.out.println(el[0] + " - " + el[1]);
-        }
     }
     /**
      * Notifies the user that the player has been restored.
@@ -533,4 +530,18 @@ public class ClientControllerTCP implements ClientController {
         tcpMessageController.closeClient();
     }
 
+    @Override
+    public void userConnected(String playerNickname) {
+        userInterface.userConnected(playerNickname);
+    }
+
+    @Override
+    public void disconnectedFromLobby(String playerNickname) {
+        userInterface.disconnectedFromLobby(playerNickname);
+    }
+
+    @Override
+    public void userRejoined(String playerNickname) {
+        userInterface.userRejoined(playerNickname);
+    }
 }

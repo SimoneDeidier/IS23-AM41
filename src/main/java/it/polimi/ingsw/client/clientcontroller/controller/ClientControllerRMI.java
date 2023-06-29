@@ -101,15 +101,15 @@ public class ClientControllerRMI implements ClientController, Serializable {
      * Notifies the user that the entered nickname is accepted.
      */
     @Override
-    public void nicknameAccepted() {
-        userInterface.nicknameAccepted();
+    public void nicknameAccepted(int nPlayers, Map<String, Boolean> lobby) {
+        userInterface.nicknameAccepted(nPlayers, lobby);
     }
     /**
      * Notifies the user that the lobby is created.
      */
     @Override
-    public void lobbyCreated() {
-        userInterface.lobbyCreated();
+    public void lobbyCreated(int nPlayers, Map<String, Boolean> lobby) {
+        userInterface.lobbyCreated(nPlayers, lobby);
     }
     /**
      * Notifies the user to wait for lobby.
@@ -523,6 +523,21 @@ public class ClientControllerRMI implements ClientController, Serializable {
     @Override
     public void exitWithoutWaitingDisconnectFromServer() {
 
+    }
+
+    @Override
+    public void userConnected(String playerNickname) {
+        userInterface.userConnected(playerNickname);
+    }
+
+    @Override
+    public void disconnectedFromLobby(String playerNickname) {
+        userInterface.disconnectedFromLobby(playerNickname);
+    }
+
+    @Override
+    public void userRejoined(String playerNickname) {
+        userInterface.userRejoined(playerNickname);
     }
 
 }

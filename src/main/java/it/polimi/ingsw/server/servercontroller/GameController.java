@@ -469,11 +469,11 @@ public class GameController {
         else if (availableSlots == -2) {
             throw new WaitForLobbyParametersException();
         }
-        else if (availableSlots == 0) {  //No place for a new player
+        else if(checkForDisconnectedPlayer(nickname)) {
             // check if the connection is from a disconnected user
-            if(checkForDisconnectedPlayer(nickname)) {
-                throw new RejoinRequestException();
-            }
+            throw new RejoinRequestException();
+        }
+        else if (availableSlots == 0) {  //No place for a new player
             throw new FullLobbyException();
         }
 
@@ -754,6 +754,9 @@ public class GameController {
                                 changeState(new ServerInitState());
                                 getPlayerList().clear();
                             }
+                            else if(state.getClass().equals(WaitingForPlayerState.class)) {
+                                notifyOfDisconnectionFromLobby(nickname);
+                            }
                         }
                     }
                 }
@@ -939,6 +942,48 @@ public class GameController {
             }
         }
         server.notifyOfReconnectionAllRMIUsers(nickname);
+    }
+
+    public void notifyOfConnectedUser(String nickname) {
+        for(String s : nickToTCPMessageControllerMapping.keySet()) {
+            if(!Objects.equals(s, nickname)) {
+                Body b = new Body();
+                b.setPlayerNickname(nickname);
+                nickToTCPMessageControllerMapping.get(s).printTCPMessage("User Connected", b);
+            }
+        }
+        server.notifyOfConnectedUser(nickname);
+    }
+
+    public void notifyOfDisconnectionFromLobby(String nickname) {
+        for(String s : nickToTCPMessageControllerMapping.keySet()) {
+            Body b = new Body();
+            b.setPlayerNickname(nickname);
+            nickToTCPMessageControllerMapping.get(s).printTCPMessage("Disconnected From Lobby", b);
+        }
+        server.notifyOfDisconnectionFromLobby(nickname);
+    }
+
+    public void notifyOfReconnectionInLobby(String nickname) {
+
+        for(String s : nickToTCPMessageControllerMapping.keySet()) {
+            if(Objects.equals(s, nickname)) {
+                Body b = new Body();
+                Map<String, Boolean> lobby = new HashMap<>();
+                for(Player player : playerList) {
+                    lobby.put(player.getNickname(), player.isConnected());
+                }
+                b.setLobby(lobby);
+                b.setNumberOfPlayers(getMaxPlayerNumber());
+                nickToTCPMessageControllerMapping.get(s).printTCPMessage("Rejoined In Lobby", b);
+            }
+            else {
+                Body b = new Body();
+                b.setPlayerNickname(nickname);
+                nickToTCPMessageControllerMapping.get(s).printTCPMessage("User Rejoined", b);
+            }
+        }
+        server.notifyOfReconnectionInLobby(nickname);
     }
 
 }

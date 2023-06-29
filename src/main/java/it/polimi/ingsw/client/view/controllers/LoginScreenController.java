@@ -1,6 +1,7 @@
 package it.polimi.ingsw.client.view.controllers;
 
 import it.polimi.ingsw.client.view.GraphicUserInterface;
+import it.polimi.ingsw.server.model.Player;
 import javafx.application.Platform;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
@@ -9,6 +10,7 @@ import javafx.scene.Scene;
 import javafx.scene.chart.Axis;
 import javafx.scene.control.Button;
 import javafx.scene.control.ChoiceBox;
+import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.text.Text;
@@ -46,6 +48,8 @@ public class LoginScreenController {
     private AnchorPane lobbyRestoredAnchorPane;
     @FXML
     private AnchorPane fullLobbyAnchorPane;
+    @FXML
+    private Label lobbyLabel;
 
     private GraphicUserInterface gui = null;
     private List<Integer> players = Arrays.asList(2, 3, 4);
@@ -92,13 +96,39 @@ public class LoginScreenController {
         }
     }
 
-    public void nicknameAccepted() {
+    public void nicknameAccepted(int nPlayers, Map<String, Boolean> lobby) {
         nicknameSetted = true;
-        changePane(nicknameAnchorPane, waitAnchorPane);
+        Platform.runLater(() -> {
+            changePane(nicknameAnchorPane, waitAnchorPane);
+            String text = lobbyLabel.getText();
+            StringBuilder stringBuilder = new StringBuilder(text);
+            stringBuilder.append("   ").append(nPlayers).append("\n\n");
+            for(String s : lobby.keySet()) {
+                stringBuilder.append(" - ").append(s);
+                if(!lobby.get(s)) {
+                    stringBuilder.append(" - DISCONNECTED!");
+                }
+                stringBuilder.append("\n");
+            }
+            lobbyLabel.setText(stringBuilder.toString());
+        });
     }
 
-    public void lobbyCreated() {
-        changePane(parametersAnchorPane, waitAnchorPane);
+    public void lobbyCreated(int nPlayers, Map<String, Boolean> lobby) {
+        Platform.runLater(() -> {
+            changePane(parametersAnchorPane, waitAnchorPane);
+            String text = lobbyLabel.getText();
+            StringBuilder stringBuilder = new StringBuilder(text);
+            stringBuilder.append("   ").append(nPlayers).append("\n\n");
+            for(String s : lobby.keySet()) {
+                stringBuilder.append(" - ").append(s);
+                if(!lobby.get(s)) {
+                    stringBuilder.append(" - DISCONNECTED!");
+                }
+                stringBuilder.append("\n");
+            }
+            lobbyLabel.setText(stringBuilder.toString());
+        });
     }
 
     public void waitForLobby() {
@@ -160,6 +190,49 @@ public class LoginScreenController {
         else {
             gui.exitWithoutWaitingDisconnectFromServer();
         }
+    }
+
+    public void userConnected(String nickname) {
+        Platform.runLater(() -> {
+            String text = lobbyLabel.getText();
+            StringBuilder stringBuilder = new StringBuilder(text);
+            stringBuilder.append(" - ").append(nickname).append("\n");
+            lobbyLabel.setText(stringBuilder.toString());
+        });
+    }
+
+    public void disconnectedFromLobby(String nickname) {
+        Platform.runLater(() ->{
+            String text = lobbyLabel.getText();
+            String[] lines = text.split("\n");
+            StringBuilder stringBuilder = new StringBuilder();
+            for(String line : lines) {
+                if(!line.contains(nickname)) {
+                    stringBuilder.append(line).append("\n");
+                }
+                else {
+                    stringBuilder.append(line).append(" - DISCONNECTED!\n");
+                }
+            }
+            lobbyLabel.setText(stringBuilder.toString());
+        });
+    }
+
+    public void userRejoined(String nickname) {
+        Platform.runLater(() ->{
+            String text = lobbyLabel.getText();
+            String[] lines = text.split("\n");
+            StringBuilder stringBuilder = new StringBuilder();
+            for(String line : lines) {
+                if(!line.contains(nickname)) {
+                    stringBuilder.append(line).append("\n");
+                }
+                else {
+                    stringBuilder.append(line.replace(" - DISCONNECTED!", "")).append("\n");
+                }
+            }
+            lobbyLabel.setText(stringBuilder.toString());
+        });
     }
 
 }

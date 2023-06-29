@@ -24,6 +24,7 @@ import java.io.IOException;
 import java.io.Serializable;
 import java.net.URISyntaxException;
 import java.util.List;
+import java.util.Map;
 import java.util.Objects;
 
 public class GraphicUserInterface extends Application implements UserInterface, Serializable {
@@ -109,16 +110,16 @@ public class GraphicUserInterface extends Application implements UserInterface, 
      * Tells the user that the nickname has been accepted and that he's in the lobby
      */
     @Override
-    public void nicknameAccepted() {
-        loginScreenController.nicknameAccepted();
+    public void nicknameAccepted(int nPlayers, Map<String, Boolean> lobby) {
+        loginScreenController.nicknameAccepted(nPlayers, lobby);
     }
 
     /**
      * Tells the user that a lobby was created and that the game will start soon.
      */
     @Override
-    public void lobbyCreated() {
-        loginScreenController.lobbyCreated();
+    public void lobbyCreated(int nPlayers, Map<String, Boolean> lobby) {
+        loginScreenController.lobbyCreated(nPlayers, lobby);
     }
 
     /**
@@ -510,6 +511,21 @@ public class GraphicUserInterface extends Application implements UserInterface, 
     public void exitWithoutWaitingDisconnectFromServer() {
         clientController.exitWithoutWaitingDisconnectFromServer();
         guiStage.close();
+    }
+
+    @Override
+    public void userConnected(String nickname) {
+        loginScreenController.userConnected(nickname);
+    }
+
+    @Override
+    public void disconnectedFromLobby(String nickname) {
+        loginScreenController.disconnectedFromLobby(nickname);
+    }
+
+    @Override
+    public void userRejoined(String nickname) {
+        loginScreenController.userRejoined(nickname);
     }
 
 }

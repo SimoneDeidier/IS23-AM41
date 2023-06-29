@@ -11,12 +11,12 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.Serializable;
 import java.net.URISyntaxException;
-import java.rmi.NoSuchObjectException;
 import java.rmi.RemoteException;
 import java.rmi.registry.LocateRegistry;
 import java.rmi.registry.Registry;
 import java.rmi.server.UnicastRemoteObject;
 import java.util.List;
+import java.util.Map;
 
 /**
  * The ConnectionRMI class manages the connection of RMI clients to the server.
@@ -155,12 +155,12 @@ public class ConnectionRMI extends UnicastRemoteObject implements InterfaceClien
      * @throws RemoteException if a remote exception occurs.
      */
     @Override
-    public void confirmConnection(boolean typeOfLobby) throws RemoteException {
+    public void confirmConnection(boolean typeOfLobby, int nPlayers, Map<String, Boolean> lobby) throws RemoteException {
         startClearThread();
         if (typeOfLobby) {
             controller.playerRestored();
         } else {
-            controller.nicknameAccepted();
+            controller.nicknameAccepted(nPlayers, lobby);
         }
     }
     /**
@@ -214,10 +214,10 @@ public class ConnectionRMI extends UnicastRemoteObject implements InterfaceClien
      * @throws RemoteException if a remote exception occurs.
      */
     @Override
-    public void lobbyCreated(boolean typeOfGame) throws RemoteException {
+    public void lobbyCreated(boolean typeOfGame, int nPlayers, Map<String, Boolean> lobby) throws RemoteException {
         startClearThread();
         if (typeOfGame)
-            controller.lobbyCreated();
+            controller.lobbyCreated(nPlayers, lobby);
         else
             controller.lobbyRestored();
     }
@@ -374,4 +374,25 @@ public class ConnectionRMI extends UnicastRemoteObject implements InterfaceClien
     public void closeConnection() {
         System.exit(0);
     }
+
+    @Override
+    public void notifyConnectedUser(String nickname) {
+        controller.userConnected(nickname);
+    }
+
+    @Override
+    public void disconnectedFromLobby(String nickname) throws RemoteException {
+        controller.disconnectedFromLobby(nickname);
+    }
+
+    @Override
+    public void rejoinedInLobby(Map<String, Boolean> lobby, int numPlayers) throws RemoteException {
+        controller.nicknameAccepted(numPlayers, lobby);
+    }
+
+    @Override
+    public void userRejoined(String nickname) throws RemoteException {
+        controller.userRejoined(nickname);
+    }
+
 }
