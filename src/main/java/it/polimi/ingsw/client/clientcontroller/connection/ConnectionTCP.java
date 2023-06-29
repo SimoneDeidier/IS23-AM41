@@ -39,7 +39,7 @@ public class ConnectionTCP implements Connection {
     }
     /**
      * Starts the TCP connection and initializes the socket reader and user interface threads.
-     * 
+     *
      * @param uiType the type of user interface to start (GUI o CLI)
      */
     @Override
@@ -79,11 +79,18 @@ public class ConnectionTCP implements Connection {
             System.err.println("The socket thread could not be terminated, please kill the task and restart the client!");
         }
     }
-
+    /**
+     * Returns the PrintWriter for the socket output stream.
+     *
+     * @return The PrintWriter for the socket output stream.
+     */
     public PrintWriter getSocketOut() {
         return socketOut;
     }
-
+    
+    /**
+     * Closes the TCP connection.
+     */
     @Override
     public void closeConnection() {
         this.closeConnection = true;
