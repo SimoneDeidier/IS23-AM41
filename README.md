@@ -37,8 +37,6 @@ Students:
 |Disconnection resilience|Done|100%||
 |Chat|Done|100%||
 
-* *Latest update: 20/06/2023*
-
 ## Unified Modeling Language
 
 The first step for this course is to design the *UML* of the game with the mandatory implementation of the *Model-View-Controller design pattern*. All the UML's are published and available to inspect, they can be found in the ***deliveries/UML*** folder. 
@@ -59,11 +57,9 @@ All the code from the *Model classes* and the most important from the *Server-Co
 |*MVC* Classes|Class coverage|Method coverage|Lines of code coverage|
 |:-:|:-:|:-:|:-:|
 |Model|100%|100%|93%|
-|Server-Controller|29%|40%|22%|
+|Server-Controller|29%|39%|22%|
 
-![Screenshot od the tests](readme-resources/tests.png)
-
-* *Latest update: 20/06/2023*
+![Screenshot of the tests](readme-resources/testing.png)
 
 ## How to launch the app
 
@@ -115,3 +111,21 @@ java -jar MyShelfie-CLIENT.jar -c tcp -u gui --ipaddr 192.168.1.12 -p 8888
 * *This command starts the client with Graphical User Interface, which will try to establish a connection to the server with IP address 192.168.1.12 via a TCP connection on port 8888.*
 
 > *Please, note that all values to commands are case insensitive (e.g. the software detects both command ```--ipaddr LOCALHOST``` and ```--ipaddr localhost``` without problems), while all commands are only accepted in lower case (command ```--PORT``` is not recognised, while ```--port``` is).*
+
+## *In-game* GUI screenshots
+
+![Screenshot of the first scene](readme-resources/home.png)
+
+> *In-game screen of the first scene.*
+
+![Screenshot of the lobby](readme-resources/lobby.png)
+
+> *In-game screen of the lobby.*
+
+![Screenshot of the gaming phase](readme-resources/gaming-phase.png)
+
+> *In-game screen of the gaming phase.*
+
+![Screenshot of the end game scene](readme-resources/end-game.png)
+
+> *In-game screen of the end game scene.*
