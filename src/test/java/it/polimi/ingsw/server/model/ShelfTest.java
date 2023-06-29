@@ -15,6 +15,9 @@ import java.util.Random;
 
 import static org.junit.jupiter.api.Assertions.*;
 
+/**
+* Checks the methods related to the shelf
+*/
 class ShelfTest {
 
     private static final int MAXITEMS = 3;
@@ -56,6 +59,9 @@ class ShelfTest {
         }
     }
 
+/**
+* Checks if the function calculateAdjacebtItemsPoints is returning the expected amount
+*/
     @Test
     void calculateAdjacentItemsPoints() throws EmptyShelfException {
         assertThrows(EmptyShelfException.class, () -> emptyShelf.calculateAdjacentItemsPoints());
@@ -63,6 +69,9 @@ class ShelfTest {
         assertEquals(0, chessboardShelf.calculateAdjacentItemsPoints());
     }
 
+/**
+* Checks ig getShelfPoints is returning the expected amount of points
+*/
    @Test
    void getShelfPoints() {
         assertEquals(0, emptyShelf.getShelfPoints());
@@ -70,26 +79,41 @@ class ShelfTest {
         assertEquals(8, fullShelf.getShelfPoints());
    }
 
+/**
+* Checks with a repeated test if the decodePoints method returns 0 if negative
+*/
     @RepeatedTest(5000)
     void decodeNegativePoints() {
         assertEquals(0, emptyShelf.decodePoints(random.nextInt(0, 9999) * -1));
     }
 
+/**
+* Checks with a repeated test if the decodePoints method returns 0 if 0
+*/
     @RepeatedTest(5000)
     void decodeZeroPoints() {
         assertEquals(0, emptyShelf.decodePoints(random.nextInt(3)));
     }
 
+/**
+* Checks with a repeated test if the decodePoints method returns the correct amount of points in case of Max
+*/
     @RepeatedTest(5000)
     void decodeMaxPoints() {
         assertEquals(8, emptyShelf.decodePoints(random.nextInt(6, 9999)));
     }
 
+/**
+* Checks if the method isFull return negative in case of empty shelf
+*/
     @Test
     void emptyShelf() {
         assert(!emptyShelf.isFull());
     }
 
+/**
+* Checks repeatedly if the isFull function return false in case of an half emoty shelf
+*/
     @RepeatedTest(5000)
     void notFullEmptyShelf() throws NotEnoughSpaceInColumnException {
         emptyShelf = new Shelf();
@@ -98,11 +122,17 @@ class ShelfTest {
         assert(!emptyShelf.isFull());
     }
 
+/**
+* Checks if the method isFull return true in case of a full shelf
+*/
     @Test
     void fullShelf() {
         assert(fullShelf.isFull());
     }
 
+/**
+* Checks with a 
+*/
     @RepeatedTest(5000)
     void insertItemNotThrowsException() {
         emptyShelf = new Shelf();
