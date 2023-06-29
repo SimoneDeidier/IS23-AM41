@@ -11,6 +11,9 @@ import java.util.Arrays;
 
 import static org.junit.jupiter.api.Assertions.*;
 
+/**
+* Class to test the class CommonFourGroupsOfFour
+*/
 class CommonFourGroupsOfFourTest {
 
     @Test
