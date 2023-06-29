@@ -16,6 +16,9 @@ import static org.junit.jupiter.api.Assertions.*;
 */
 class CommonFourCornersTest {
 
+/**
+* Check if a shelf that respects the common card reauitements gets recognised
+*/
     @Test
     void checkFourCorners() throws NotEnoughSpaceInColumnException {
 
@@ -32,6 +35,10 @@ class CommonFourCornersTest {
 
         assertTrue(commonFourCorners.check(shelfA));
     }
+
+/**
+* Check if a shelf that doesn't respects the common card reauitements gets recognised
+*/
     @Test
     void checkNoFourCorners() throws NotEnoughSpaceInColumnException {
 
