@@ -131,7 +131,7 @@ class ShelfTest {
     }
 
 /**
-* Checks with a 
+* Checks with a repeated test if an item can be inserted without throwing an exception
 */
     @RepeatedTest(5000)
     void insertItemNotThrowsException() {
@@ -139,6 +139,9 @@ class ShelfTest {
         assertDoesNotThrow(() -> emptyShelf.insertItems(random.nextInt(COLUMNS), itemList));
     }
 
+/**
+* Checks if the items get inserted correctly
+*/
     @RepeatedTest(5000)
     void itemExistsInShelfAfterInsertItem() throws NotEnoughSpaceInColumnException {
         emptyShelf = new Shelf();
@@ -148,6 +151,9 @@ class ShelfTest {
         assertNotNull(emptyShelf.getItemByCoordinates(row, col));
     }
 
+/**
+* Checks that a full shelf has no null items inside
+*/
     @RepeatedTest(5000)
     void randomPickItemInFullShelf() {
         int row = random.nextInt(ROWS);
@@ -155,11 +161,17 @@ class ShelfTest {
         assertNotNull(fullShelf.getItemByCoordinates(row, col));
     }
 
+/**
+* Checks if the correct exception gets thrown when trying to insert an item in a full shelf
+*/
     @RepeatedTest(5000)
     void insertItemThrowsExceptionInFullShelf() {
         assertThrows(NotEnoughSpaceInColumnException.class, () -> fullShelf.insertItems(random.nextInt(COLUMNS), itemList));
     }
 
+/**
+* Checks if the isFull method returns true if the shelf is full
+*/
     @Test
     void isFull() throws NotEnoughSpaceInColumnException {
         Shelf shelf = new Shelf();
@@ -172,6 +184,9 @@ class ShelfTest {
         assertTrue(shelf.isFull());
     }
 
+/**
+* Checks if the points gets assigned correctly
+*/
     @Test
     void setShelfPoints() throws NotEnoughSpaceInColumnException {
         Shelf shelf = new Shelf();
@@ -185,7 +200,9 @@ class ShelfTest {
         assertEquals(7, shelf.getShelfPoints());
     }
 
-
+/**
+* Checks if the ShelfMatrix gets taken correctly
+*/
     @Test
     void getShelfMatrix(){
         Shelf shelf = new Shelf();
@@ -195,6 +212,9 @@ class ShelfTest {
         assertEquals(matrix[3][3], item);
     }
 
+/**
+* Checks if the shelf matrix gets set correctly
+*/
     @Test
     void setShelfMatrix(){
         Shelf shelf = new Shelf();
