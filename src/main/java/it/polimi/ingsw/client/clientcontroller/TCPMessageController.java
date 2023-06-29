@@ -10,7 +10,8 @@ import java.io.IOException;
 import java.net.URISyntaxException;
 import java.util.Map;
 
- * The TCPMessageController class handles TCP messages received from the server and interacts with the client controller.
+ /**
+  * The TCPMessageController class handles TCP messages received from the server and interacts with the client controller.
  */
 public class TCPMessageController implements TCPMessageControllerInterface {
 

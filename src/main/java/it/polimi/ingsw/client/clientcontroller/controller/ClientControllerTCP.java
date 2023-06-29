@@ -530,16 +530,28 @@ public class ClientControllerTCP implements ClientController {
         tcpMessageController.closeClient();
     }
 
+    /**
+     * Notifies the user of the new connected player.
+     * @param playerNickname
+     */
     @Override
     public void userConnected(String playerNickname) {
         userInterface.userConnected(playerNickname);
     }
 
+    /**
+     * Notifies the user of the disconnected player.
+     * @param playerNickname
+     */
     @Override
     public void disconnectedFromLobby(String playerNickname) {
         userInterface.disconnectedFromLobby(playerNickname);
     }
 
+    /**
+     * Notifies the user of the reconnected player.
+     * @param playerNickname
+     */
     @Override
     public void userRejoined(String playerNickname) {
         userInterface.userRejoined(playerNickname);

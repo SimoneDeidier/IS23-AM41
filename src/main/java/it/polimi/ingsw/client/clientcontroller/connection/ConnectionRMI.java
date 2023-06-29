@@ -375,21 +375,41 @@ public class ConnectionRMI extends UnicastRemoteObject implements InterfaceClien
         System.exit(0);
     }
 
+    /**
+     * Notifies the user of the new connected player.
+     * @param nickname
+     */
     @Override
     public void notifyConnectedUser(String nickname) {
         controller.userConnected(nickname);
     }
 
+    /**
+     * Notifies the user of the disconnected player.
+     * @param nickname
+     * @throws RemoteException
+     */
     @Override
     public void disconnectedFromLobby(String nickname) throws RemoteException {
         controller.disconnectedFromLobby(nickname);
     }
 
+    /**
+     * Notifies the player that has been reconnected into the lobby.
+     * @param lobby
+     * @param numPlayers
+     * @throws RemoteException
+     */
     @Override
     public void rejoinedInLobby(Map<String, Boolean> lobby, int numPlayers) throws RemoteException {
         controller.nicknameAccepted(numPlayers, lobby);
     }
 
+    /**
+     * Notifies the user of the reconnection in the lobby of a player.
+     * @param nickname
+     * @throws RemoteException
+     */
     @Override
     public void userRejoined(String nickname) throws RemoteException {
         controller.userRejoined(nickname);
