@@ -66,13 +66,13 @@ All the code from the *Model classes* and the most important from the *Server-Co
 The command to be executed to start the server and/or client is a single one:
 
 ```console
-java -jar MyShelfie-SERVER.jar
+java -jar MyShelfie-SERVER-AM41.jar
 ```
 
 if you want to ***start the server***, oterwise:
 
 ```console
-java -jar MyShelfie-CLIENT.jar
+java -jar MyShelfie-CLIENT-AM41.jar
 ```
 
 if you want to ***run the client***.
@@ -99,13 +99,13 @@ Both the server and the client *require certain connection and user interface pa
 ### Full example
 
 ```console
-java -jar MyShelfie-SERVER.jar -r 1234 -t 8888 --ipaddr localhost
+java -jar MyShelfie-SERVER-AM41.jar -r 1234 -t 8888 --ipaddr localhost
 ```
 
 * *This command starts the server in localhost, with the TCP connection open on port 8888 and the RMI connection on port 1234.*
 
 ```console
-java -jar MyShelfie-CLIENT.jar -c tcp -u gui --ipaddr 192.168.1.12 -p 8888
+java -jar MyShelfie-CLIENT-AM41.jar -c tcp -u gui --ipaddr 192.168.1.12 -p 8888
 ```
 
 * *This command starts the client with Graphical User Interface, which will try to establish a connection to the server with IP address 192.168.1.12 via a TCP connection on port 8888.*
