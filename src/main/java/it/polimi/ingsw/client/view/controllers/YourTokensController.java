@@ -15,6 +15,9 @@ import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 
+/**
+ * YourTokenController controls the your tokens screen in the client's GUI.
+ */
 public class YourTokensController {
 
     @FXML
@@ -26,6 +29,14 @@ public class YourTokensController {
     private static final double TOKEN_OFFSET = 5.0;
 
 
+    /**
+     * Set up the tokens based on the given parameters
+     *
+     * @param list list of the scoring tokens
+     * @param endGameToken end game token
+     * @throws URISyntaxException
+     * @throws FileNotFoundException
+     */
     public void setupTokens(List<ScoringToken> list, EndGameToken endGameToken) throws URISyntaxException, FileNotFoundException {
         if(endGameToken != null) {
             ImageView egtImgv = new ImageView(new Image(Objects.requireNonNull(ClassLoader.getSystemResourceAsStream("images/tokens/endgametoken.jpg"))));

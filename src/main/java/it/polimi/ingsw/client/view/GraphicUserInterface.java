@@ -45,6 +45,9 @@ public class GraphicUserInterface extends Application implements UserInterface, 
         launch();
     }
 
+    /**
+     * Starting method to run the GUI
+     */
     @Override
     public void start(Stage stage) throws Exception {
         GraphicUserInterface.guiStage = stage;
@@ -515,6 +518,7 @@ public class GraphicUserInterface extends Application implements UserInterface, 
 
     /**
      * Show in the GUI the name of the new player connected.
+     *
      * @param nickname
      */
     @Override
@@ -524,6 +528,7 @@ public class GraphicUserInterface extends Application implements UserInterface, 
 
     /**
      * Show in the GUI the name of the disconnected player as: "nickname - DISCONNECTED!"
+     *
      * @param nickname
      */
     @Override

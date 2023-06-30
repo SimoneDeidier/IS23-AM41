@@ -13,8 +13,14 @@ import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.*;
 
+/**
+* Class to test the CommonEightSame class
+*/
 class CommonEightSameTest {
 
+/**
+* Checks if the check follow the correct rules for the card
+*/
     @Test
     void check() throws NotEnoughSpaceInColumnException {
 

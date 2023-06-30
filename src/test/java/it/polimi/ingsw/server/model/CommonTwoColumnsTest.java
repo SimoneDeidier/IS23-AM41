@@ -11,8 +11,14 @@ import java.util.Arrays;
 
 import static org.junit.jupiter.api.Assertions.*;
 
+/**
+* Class to test the class CommonTwoColumns
+*/
 class CommonTwoColumnsTest {
 
+/**
+* Check if a shelf that respects the common card reauitements gets recognised
+*/
     @Test
     void checkTwoColumns() throws NotEnoughSpaceInColumnException {
         CommonTargetCard commonTwoColumns = new CommonTwoColumns(2);
@@ -27,6 +33,9 @@ class CommonTwoColumnsTest {
         assertTrue(commonTwoColumns.check(shelfA));
     }
 
+/**
+* Check if a shelf that doesn't respects the common card reauitements gets recognised
+*/
     @Test
     void checkNoTwoColumns() throws NotEnoughSpaceInColumnException {
         CommonTargetCard commonTwoColumns = new CommonTwoColumns(2);

@@ -385,14 +385,9 @@ public class ConnectionRMI extends UnicastRemoteObject implements InterfaceClien
     }
 
     /**
-<<<<<<< HEAD
      * Notify the server that a new user has connected.
      *
      * @param nickname nickname of the user
-=======
-     * Notifies the user of the new connected player.
-     * @param nickname
->>>>>>> 107e2b16783f0839cdcb237161503d8577456324
      */
     @Override
     public void notifyConnectedUser(String nickname) {
@@ -400,15 +395,9 @@ public class ConnectionRMI extends UnicastRemoteObject implements InterfaceClien
     }
 
     /**
-<<<<<<< HEAD
-     * Notify the server that a user has disconnetted from the lobby.
+     * Notify the server that a user has disconnected from the lobby.
      *
      * @param nickname nickname of the user
-=======
-     * Notifies the user of the disconnected player.
-     * @param nickname
-     * @throws RemoteException
->>>>>>> 107e2b16783f0839cdcb237161503d8577456324
      */
     @Override
     public void disconnectedFromLobby(String nickname) throws RemoteException {
@@ -416,17 +405,10 @@ public class ConnectionRMI extends UnicastRemoteObject implements InterfaceClien
     }
 
     /**
-<<<<<<< HEAD
      * Notify the server that a user has rejoined the lobby.
      *
      * @param lobby Map of the lobby
      * @param numPlayers number of current players
-=======
-     * Notifies the player that has been reconnected into the lobby.
-     * @param lobby
-     * @param numPlayers
-     * @throws RemoteException
->>>>>>> 107e2b16783f0839cdcb237161503d8577456324
      */
     @Override
     public void rejoinedInLobby(Map<String, Boolean> lobby, int numPlayers) throws RemoteException {
@@ -434,15 +416,9 @@ public class ConnectionRMI extends UnicastRemoteObject implements InterfaceClien
     }
 
     /**
-<<<<<<< HEAD
      * Notify the server that a user has rejoined.
      *
      * @param nickname nickname of the user
-=======
-     * Notifies the user of the reconnection in the lobby of a player.
-     * @param nickname
-     * @throws RemoteException
->>>>>>> 107e2b16783f0839cdcb237161503d8577456324
      */
     @Override
     public void userRejoined(String nickname) throws RemoteException {

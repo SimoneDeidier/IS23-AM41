@@ -11,8 +11,14 @@ import java.util.Arrays;
 
 import static org.junit.jupiter.api.Assertions.*;
 
+/**
+* Class to test the class CommonSixGroupsOfTwoTest
+*/
 class CommonSixGroupsOfTwoTest {
 
+/**
+* Check if a shelf that respects the common card reauitements gets recognised
+*/
     @Test
     void checkSixGroupsOfTwo() throws NotEnoughSpaceInColumnException {
         CommonTargetCard commonSixGroupsOfTwo = new CommonSixGroupsOfTwo(2);
@@ -29,6 +35,10 @@ class CommonSixGroupsOfTwoTest {
         assertTrue(commonSixGroupsOfTwo.check(shelfA));
 
     }
+
+/**
+* Check if a shelf that doesn't respects the common card reauitements gets recognised
+*/
     @Test
     void checkNoSixGroupsOfTwo() throws NotEnoughSpaceInColumnException {
 

@@ -9,7 +9,9 @@ import it.polimi.ingsw.server.model.exceptions.NullItemPickedException;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
-
+/**
+* Class to test the board with four pkayers
+*/
 public class FourPlayersBoardTest {
 
     private static final int COLUMNS = 9;
@@ -22,6 +24,9 @@ public class FourPlayersBoardTest {
         board.refillBoard();
     }
 
+/**
+* Checks if the board gets refilled with the correct amount of items 
+*/
     @Test
     public void testRefillBoard() throws InvalidBoardPositionException, NullItemPickedException {
         board.pickItem(5,4);
@@ -41,6 +46,9 @@ public class FourPlayersBoardTest {
         assertEquals(45,count);
     }
 
+/**
+* Checks if the bitmask creates the exact amount of valid positions
+*/
     @Test
     public void testCreateBitMask() {
         //assert verifies the bitmask creates exactly 45 valid positions
@@ -58,12 +66,18 @@ public class FourPlayersBoardTest {
         assertEquals(45,count);
     }
 
+/**
+* Checks if the correct exception gets thrown if the item picked is null
+*/
     @Test
     public void testPickNullItem() throws InvalidBoardPositionException, NullItemPickedException {
         board.pickItem(0,4);
         assertThrows(NullItemPickedException.class,()->board.pickItem(0,4));
     }
 
+/**
+* Checks if the correct exception gets thrown if the item picked is in an invalid position
+*/
     @Test
     public void testPickItemInInvalidPosition() throws InvalidBoardPositionException, NullItemPickedException {
         assertThrows(InvalidBoardPositionException.class,()->board.pickItem(1,1));

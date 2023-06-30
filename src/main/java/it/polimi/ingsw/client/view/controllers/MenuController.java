@@ -14,21 +14,36 @@ import java.net.URI;
 import java.net.URISyntaxException;
 import java.net.URL;
 
+/**
+ * MenuController controls the menu screen in the client's GUI.
+ */
 public class MenuController {
 
     private Stage menuStage = null;
 
     private GraphicUserInterface gui = null;
 
+    /**
+     * Sets the GUI of the game based on the given GUI
+     *
+     * @param gui the gui to be set
+     */
     public void setGui(GraphicUserInterface gui) {
         this.gui = gui;
     }
 
+    /**
+     * Sets the menu stage based on the given stage
+     *
+     * @param menuStage the stage to be set
+     */
     public void setMenuStage(Stage menuStage) {
         this.menuStage = menuStage;
     }
 
-
+    /**
+     * Opens the git repository
+     */
     public void openGit() {
         try {
             Desktop.getDesktop().browse(new URL("https://github.com/SimoneDeidier/IS23-AM41").toURI());
@@ -50,6 +65,9 @@ public class MenuController {
         }
     }
 
+    /**
+     * Opens the game website
+     */
     public void openWebsite() {
         try {
             Desktop.getDesktop().browse(new URL("https://www.craniocreations.it/prodotto/my-shelfie").toURI());
@@ -71,11 +89,17 @@ public class MenuController {
         }
     }
 
+    /**
+     * Exit from the GUI
+     */
     public void exit() {
         gui.exit();
         close();
     }
 
+    /**
+     * Close the menu stage
+     */
     public void close() {
         menuStage.close();
     }

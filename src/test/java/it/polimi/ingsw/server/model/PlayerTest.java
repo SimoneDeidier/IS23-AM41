@@ -18,6 +18,9 @@ import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.*;
 
+/**
+* Test class for the player class
+*/
 class PlayerTest {
 
     private Player emptyPlayer;
@@ -42,28 +45,44 @@ class PlayerTest {
         player.setCommonTargetCardList(commonTargetList);
     }
 
+/**
+* Check the behaviour of getNickname
+*/
     @Test
     void getNickname() {
         assertNull(emptyPlayer.getNickname());
         assertEquals(PLAYER_NAME, player.getNickname());
     }
 
+/**
+* Check if getshelf return null or not null on an null and not null shelf
+*/
     @Test
     void getShelf() {
         assertNull(emptyPlayer.getShelf());
         assertNotNull(player.getShelf());
     }
 
+/**
+* Checks if the score uodates as expected using the method UpdateScore
+*/
     @Test
     void updateScore() {
         player.updateScore();
         assertEquals(9, player.getPlayerScore());
     }
+
+/**
+* Checks if the isConnected method return true on a connected player
+*/
     @Test
     void isConnected() {
         assertTrue(player.isConnected());
     }
 
+/**
+* Checks if adding a token to a player actually add it
+*/
     @Test
     void addScoringToken(){
         ScoringToken scoringToken = new ScoringToken(8);
@@ -72,7 +91,9 @@ class PlayerTest {
         assertEquals(scoringToken, player1.getScoringToken(0));
     }
 
-
+/**
+* Check if the checkColumnChosen behaves ad expected on a filled shelf
+*/
     @Test
     void checkColumnChosen() throws NotEnoughSpaceInColumnException {
         Shelf shelf = new Shelf();
@@ -87,12 +108,19 @@ class PlayerTest {
         assertTrue(player.checkColumnChosen(3, 1));
     }
 
+/**
+* Check if the setPersonalTargetCard method actually sets the personal target card
+*/
     @Test
     void setPersonalTargetCard() throws IOException, URISyntaxException {
         PersonalTargetCard personalTargetCard = new PersonalTargetCard(0);
         player.setPersonalTargetCard(personalTargetCard);
         assertEquals(personalTargetCard, player.getPersonalTargetCard());
     }
+
+/**
+* Checks if the getPersobalTargetCard method returns the correct personal
+*/
     @Test
     void getPersonalTargetCard() throws IOException, URISyntaxException {
         PersonalTargetCard personalTargetCard = new PersonalTargetCard(0);
@@ -100,7 +128,9 @@ class PlayerTest {
         assertEquals(personalTargetCard, player.getPersonalTargetCard());
     }
 
-
+/**
+* Checks if the common target cards are set correctly by the setComminTargetCard method
+*/
     @Test
     void setCommonTargetCardList(){
         List<CommonTargetCard> list = new ArrayList<>();
@@ -112,6 +142,10 @@ class PlayerTest {
         assertEquals(commonTargetCard0, player.getCommonTargetCardList().get(0));
         assertEquals(commonTargetCard1, player.getCommonTargetCardList().get(1));
     }
+
+/**
+* Checks if the correct common target cards are returned by the getCommonTargetCardList
+*/
     @Test
     void getCommonTargetCardList(){
         List<CommonTargetCard> list = new ArrayList<>();
@@ -124,7 +158,9 @@ class PlayerTest {
         assertEquals(commonTargetCard1, player.getCommonTargetCardList().get(1));
     }
 
-
+/**
+* Checks if the getBoard method return the board correcly
+*/
     @Test
     void getBoard(){
         TwoPlayersBoard board = new TwoPlayersBoard();
@@ -133,6 +169,9 @@ class PlayerTest {
 
     }
 
+/**
+* Checks if the player score is set correctly by the setplayerscore method
+*/
     @Test
     void setPlayerScore(){
         player.setPlayerScore(10);
@@ -140,7 +179,9 @@ class PlayerTest {
     }
 
 
-
+/**
+* Checks if the list of scoring token is set correctly by the method setScoringTokenList
+*/
     @Test
     void ScoringTokenList(){
         List<ScoringToken> list = new ArrayList<>();

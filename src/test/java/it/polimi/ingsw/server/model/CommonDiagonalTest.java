@@ -12,8 +12,14 @@ import java.util.Arrays;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
+/**
+* Class to test the class CommonDiagonalTest
+*/
 class CommonDiagonalTest {
 
+/**
+* Check if a diafonal left to right gets recognised
+*/
     @Test
     void checkLtoRDiag() throws NotEnoughSpaceInColumnException {
         CommonTargetCard CommonDiagonal = new CommonDiagonal(2);
@@ -30,6 +36,10 @@ class CommonDiagonalTest {
 
         assert (CommonDiagonal.check(shelfA));
     }
+
+/**
+* Check if a diafonal left to right upwards gets recognised
+*/
     @Test
     void checkUpLtoRDiag() throws NotEnoughSpaceInColumnException {
 
@@ -48,6 +58,9 @@ class CommonDiagonalTest {
         assert (CommonDiagonal.check(shelfB));
     }
 
+/**
+* Check if a diafonal right to left gets recognised
+*/
     @Test
     void checkRtoLDiag() throws NotEnoughSpaceInColumnException {
 
@@ -66,6 +79,9 @@ class CommonDiagonalTest {
 
     }
 
+/**
+* Check if a diafonal right to left upwards gets recognised
+*/
     @Test
     void checkUpRtoLDiag() throws NotEnoughSpaceInColumnException {
 
@@ -84,6 +100,9 @@ class CommonDiagonalTest {
 
     }
 
+/**
+* Check if an absent diagonal gets recognised
+*/
     @Test
     void checkNoDiag() throws NotEnoughSpaceInColumnException {
 
@@ -100,6 +119,9 @@ class CommonDiagonalTest {
         assert(!CommonDiagonal.check(shelfE));
     }
     
+/**
+* Check if a first Diagonal gets recognised
+*/
     @Test 
     void checkFirstDiagonal() throws NotEnoughSpaceInColumnException {
         CommonTargetCard CommonDiagonal = new CommonDiagonal(2);
@@ -114,6 +136,9 @@ class CommonDiagonalTest {
         assert(CommonDiagonal.check(shelFirst));
     }
 
+/**
+* Check if a second Diagonal gets recognised
+*/
     @Test
     void checkSecondDiagonal() throws NotEnoughSpaceInColumnException {
         CommonTargetCard CommonDiagonal = new CommonDiagonal(2);
@@ -128,6 +153,9 @@ class CommonDiagonalTest {
         assert(CommonDiagonal.check(shelSecond));
     }
 
+/**
+* Check if a third Diagonal gets recognised
+*/
     @Test
     void checkThirdDiagonal() throws NotEnoughSpaceInColumnException {
         CommonTargetCard CommonDiagonal = new CommonDiagonal(2);
@@ -145,6 +173,9 @@ class CommonDiagonalTest {
         assertTrue(CommonDiagonal.check(shelThird));
     }
     
+/**
+* Check if a fourth Diagonal gets recognised
+*/
     @Test
     void checkFourthDiagonal() throws NotEnoughSpaceInColumnException {
         CommonTargetCard CommonDiagonal = new CommonDiagonal(2);

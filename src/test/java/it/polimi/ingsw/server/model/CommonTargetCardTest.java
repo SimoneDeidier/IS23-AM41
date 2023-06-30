@@ -12,8 +12,14 @@ import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+* Class to test the CommonTargetCard class
+*/
 public class CommonTargetCardTest extends TestCase {
 
+/**
+* Test the flow to get a random common target card
+*/
     public void testGetRandomCommon() throws InvocationTargetException, InstantiationException, IllegalAccessException, NoSuchMethodException {
 
         CommonTargetCard card2players = new CommonTwoSquares(2);
@@ -48,12 +54,18 @@ public class CommonTargetCardTest extends TestCase {
         assertEquals(p3.getScoringToken(1).getValue(), 4);
     }
 
+/**
+* Test if the getName method return the expected name
+*/
     @Test
     public void testGetName(){
         CommonTargetCard commonTargetCard=new CommonDiagonal(2);
         assertEquals("CommonDiagonal",commonTargetCard.getName());
     }
 
+/**
+* Test id the scoringTokenLkst gets set and returned as expected
+*/
     @Test
     public void testGetAndSetScoringTokenList(){
         CommonTargetCard commonTargetCard=new CommonX(2);

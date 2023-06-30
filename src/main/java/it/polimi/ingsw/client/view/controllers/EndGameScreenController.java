@@ -8,6 +8,9 @@ import javafx.scene.text.Text;
 
 import java.util.*;
 
+/**
+ * EndGameScreenController controls the end game screen in the client's GUI.
+ */
 public class EndGameScreenController {
 
     @FXML
@@ -23,6 +26,12 @@ public class EndGameScreenController {
 
     private GraphicUserInterface gui = null;
 
+    /**
+     * Sets the parameters for the end game screen based on the provided NewView object.
+     * It displays the winners, rankings, and points of each player.
+     *
+     * @param newView the NewView object containing the information about the players' scores
+     */
     public void setParameters(NewView newView) {
         Map<String, Integer> pointsMap = newView.getNicknameToPointsMap();
         List<String> orderedPlayers = getAscendingPointsFromMap(pointsMap);
@@ -38,6 +47,12 @@ public class EndGameScreenController {
         }
     }
 
+    /**
+     * Return a list of player names sorted in ascending order of their points.
+     *
+     * @param pointsMap the map containing the players' names as keys and their points as values
+     * @return a list of player names sorted in ascending order of their points
+     */
     private List<String> getAscendingPointsFromMap(Map<String, Integer> pointsMap) {
         List<String> playerList = new ArrayList<>();
         playerList.addAll(pointsMap.keySet());
@@ -77,10 +92,18 @@ public class EndGameScreenController {
         return orderPlayerList;
     }
 
+    /**
+     * Exit the gui
+     */
     public void exit() {
         gui.exit();
     }
 
+    /**
+     * Save the gui value
+     *
+     * @param gui the gui to save
+     */
     public void setGui(GraphicUserInterface gui) {
         this.gui = gui;
     }

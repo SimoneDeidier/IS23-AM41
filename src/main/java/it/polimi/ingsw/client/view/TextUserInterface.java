@@ -22,80 +22,22 @@ import java.util.*;
  */
 public class TextUserInterface implements UserInterface{
 
-    /**
-     * This attribute holds the client controller
-     */
     private static ClientController clientController;
-    /**
-     * This attribute keep track if it is the user turn or not
-     */
     private boolean isYourTurn = false;
-    /**
-     * Scanner attribute to scan for input
-     */
     private Scanner scanner;
-
-    /**
-     * This attribute define the width of the scene displayed on the terminal
-     */
     private final int sceneWidth = 150;
-    /**
-     * This attribute define the height of the scene displayed on the terminal
-     */
     private final int sceneHeight = 35;
-
-    /**
-     * This attribute holds the number of the personal target card assigned to the user
-     */
     private int personalTargetCardNumber;
-    /**
-     * This attribute holds the nickname of the user
-     */
     private String nickname;
-    /**
-     * This attribute keep track if the chat is open or not
-     */
     private boolean chatOpen;
-    /**
-     * This attribute keep a record of all the messages received or sent into the chat
-     */
     private final List<String> chatList = new ArrayList<>();
-
-    /**
-     * This attribute keeps track of the position of the items on the board selected by the user
-     */
     private boolean[][] selectedBoardBitMask = new boolean[9][9];
-
-    /**
-     * This attribute define a list with the items selected by the user
-     */
     private List<Item> selectedItems = new ArrayList<>(3);
-    /**
-     * This attribute keeps track of the coordinates of the selected items
-     */
     private List<int[]> selectedItemsCoordinates = new ArrayList<>(3);
-
-    /**
-     * This attribute holds the last view provided by the controller
-     */
     private NewView newView = new NewView();
-    /**
-     * This attribute keeps track of the items that are takeable on the board
-     */
     private boolean[][] takeableItems;
-
-    /**
-     * This attribute keeps track if the TUI has been closed or not
-     */
     private volatile boolean closeTUI = false;
-
-    /**
-     * String containing the current error to display
-     */
     private String CommunicationText = "";
-    /**
-     * This attribute keeps track if the user is currently on the main game page
-     */
     private boolean onMainGamePage = true;
 
     /**
@@ -1652,17 +1594,17 @@ public class TextUserInterface implements UserInterface{
 
     @Override
     public void userConnected(String nickname) {
-
+        //NO TUI
     }
 
     @Override
     public void disconnectedFromLobby(String nickname) {
-
+        //NO TUI
     }
 
     @Override
     public void userRejoined(String nickname) {
-
+        //NO TUI
     }
 }
 

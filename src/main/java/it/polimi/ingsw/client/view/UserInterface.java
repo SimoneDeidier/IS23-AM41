@@ -220,9 +220,24 @@ public interface UserInterface extends Runnable {
      */
     void exitWithoutWaitingDisconnectFromServer();
 
+    /**
+     * Tells the user that a user has connected
+     *
+     * @param nickname nickname of the user that connected
+     */
     void userConnected(String nickname);
 
+    /**
+     * Tells the user that a user has disconnected from the lobby
+     *
+     * @param nickname nickname of the user that disconnected from the lobby
+     */
     void disconnectedFromLobby(String nickname);
 
+    /**
+     * Tells the user that a user has rejoined the game
+     *
+     * @param nickname nickname of the user that rejoined the lobby
+     */
     void userRejoined(String nickname);
 }

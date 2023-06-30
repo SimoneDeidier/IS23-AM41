@@ -25,6 +25,9 @@ import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.*;
 
+/**
+ * Class to unit test the server controller
+ */
 class GameControllerTest {
 
     private GameController controller;
@@ -38,7 +41,9 @@ class GameControllerTest {
         controller.setupLobbyParameters(0, true);
     }
 
-
+    /**
+     * Tests the getAvailableSlot() method
+     */
     @Test
     void getAvailableSlot() {
         //WaitingForPlayerState
@@ -72,7 +77,9 @@ class GameControllerTest {
         assertEquals(4, controller.getAvailableSlot());
     }
 
-
+    /**
+     * Tests the isGameReady() method.
+     */
     @Test
     void isGameReady() {
         //WaitingForPlayerState
@@ -94,6 +101,9 @@ class GameControllerTest {
         assertTrue(controller.isGameReady());
     }
 
+    /**
+     * Tests the checkNicknameAvailability() method.
+     */
     @Test
     void checkNicknameAvailability() {
         //WaitingForPlayerState
@@ -120,7 +130,9 @@ class GameControllerTest {
         assertEquals(0, controller.checkNicknameAvailability("player2"));
     }
 
-
+    /**
+     * Tests the getListItem() method.
+     */
     @Test
     void getListItems() {
         Body body = new Body();
@@ -144,6 +156,9 @@ class GameControllerTest {
     }
 
 
+    /**
+     * Tests the getPlayerList() method.
+     */
     @Test
     void addPlayer() {
         //WaintingForPlayerState
@@ -170,6 +185,9 @@ class GameControllerTest {
     }
 
 
+    /**
+     * Tests the nextIndexCalc() method.
+     */
     @Test
     void nextIndexCalc() throws NotEnoughSpaceInColumnException {
         Player player1 = new Player("player1");
@@ -184,6 +202,9 @@ class GameControllerTest {
     }
 
 
+    /**
+     * Tests the checkLastTurn() method.
+     */
     @Test
     void checkLastTurn() throws NotEnoughSpaceInColumnException {
         Player player1 = new Player("player1");
@@ -212,6 +233,9 @@ class GameControllerTest {
 
     }
 
+    /**
+     * Tests the checkMove() method.
+     */
     @Test
     void checkMove() throws NotEnoughSpaceInColumnException {
         Body body = new Body();
@@ -265,6 +289,9 @@ class GameControllerTest {
         assertFalse(controller.checkMove(body));
     }
 
+    /**
+     * Tests the checkBoardNeedForRefill() method.
+     */
     @Test
     void checkBoardNeedForRefill() {
         BoardFactory board1 = new TwoPlayersBoard();
@@ -288,6 +315,9 @@ class GameControllerTest {
 
     }
 
+    /**
+     * Tests the presentation() method.
+     */
     @Test
     void testPresentation() throws FullLobbyException, WaitForLobbyParametersException, GameStartException, CancelGameException, FirstPlayerException, RejoinRequestException {
         controller.setState(new ServerInitState());
@@ -301,6 +331,9 @@ class GameControllerTest {
         //assertThrows(FullLobbyException.class, () -> controller.presentation("Mirko"));
     }
 
+    /**
+     * Tests the methods necessary to set up a game.
+     */
     @Test
     void setupGame() {
         Player player0 = new Player("player0");

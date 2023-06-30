@@ -13,8 +13,15 @@ import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.*;
 
+
+/**
+* Class to test the CommonXTest class
+*/
 class CommonXTest {
 
+/**
+* Checks if the check follow the correct rules for the card
+*/
     @Test
     void check() throws NotEnoughSpaceInColumnException {
 

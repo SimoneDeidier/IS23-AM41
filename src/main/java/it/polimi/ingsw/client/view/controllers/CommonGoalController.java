@@ -14,6 +14,9 @@ import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 
+/**
+ * Class responsible for the display of common goals in the client view.
+ */
 public class CommonGoalController {
 
     @FXML
@@ -45,7 +48,15 @@ public class CommonGoalController {
 
     private static final double TOKEN_ROTATE = -8.0;
 
-
+    /**
+     * Sets the common goals on the view.
+     *
+     * @param isOneCommon a boolean indicating if there is one or two common goals
+     * @param commons a list of strings representing the names of the common goals
+     * @param map a map with all common goals and their ScoringTokens
+     * @throws FileNotFoundException if the image file for the common goal or token is not found
+     * @throws URISyntaxException if there is a syntax error in the URI of the image file
+     */
     public void setCommons(boolean isOneCommon, List<String> commons, Map<String, List<ScoringToken>> map) throws FileNotFoundException, URISyntaxException {
 
         if(isOneCommon) {
@@ -102,10 +113,24 @@ public class CommonGoalController {
         }
     }
 
+    /**
+     * Return the image of a common goal based on its name
+     * @param name the name of the common card
+     * @throws FileNotFoundException if the image file for the common goal or token is not found
+     * @throws URISyntaxException if there is a syntax error in the URI of the image file
+     */
     public Image getCommonImageByName(String name) throws URISyntaxException, FileNotFoundException {
         return new Image(Objects.requireNonNull(ClassLoader.getSystemResourceAsStream("images/commons/" + name + ".jpg")));
     }
 
+    /**
+     * Return the max token value of a common goal based on its name
+     *
+     * @param name the name of the common card
+     * @param map a map with all common goals and their ScoringTokens
+     * @throws FileNotFoundException if the image file for the common goal or token is not found
+     * @throws URISyntaxException if there is a syntax error in the URI of the image file
+     */
     public Image getMaxTokenValueByCardNumber(String name, Map<String, List<ScoringToken>> map) throws URISyntaxException, FileNotFoundException {
         for(String s : map.keySet()) {
             if(Objects.equals(s, name)) {
