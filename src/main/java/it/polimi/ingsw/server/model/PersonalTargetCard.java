@@ -72,6 +72,13 @@ public class PersonalTargetCard implements Serializable {
     }
 
 
+    /**
+     * Calculate the points made by the user based on the condition of his shelf
+     * @param shelf shelf of the user
+     * @return the points calculated
+     * @throws URISyntaxException
+     * @throws IOException
+     */
     public int calculatePoints(Shelf shelf) throws URISyntaxException, IOException {
         int correctCards = 0;
         Item item;
@@ -111,6 +118,10 @@ public class PersonalTargetCard implements Serializable {
         };
     }
 
+    /**
+     * Return the persona target card identifier number
+     * @return the persona target card identifier number
+     */
     public int getPersonalNumber() {
         return personalNumber;
     }

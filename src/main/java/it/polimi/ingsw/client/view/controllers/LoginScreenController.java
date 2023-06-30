@@ -20,6 +20,9 @@ import javafx.stage.Stage;
 import java.io.IOException;
 import java.util.*;
 
+/**
+ * LoginScreenControlller controls the login screen in the client's GUI.
+ */
 public class LoginScreenController {
 
     @FXML
@@ -57,6 +60,9 @@ public class LoginScreenController {
     private boolean nicknameSetted = false;
     private static final int MAX_NICKNAME = 20;
 
+    /**
+     * Shows the page asking for the nickname
+     */
     public void setNickname() {
         if(gui != null) {
             String text = nicknameTextField.getText();
@@ -70,6 +76,9 @@ public class LoginScreenController {
         }
     }
 
+    /**
+     * Shows the page asking for the game parameters
+     */
     public void getGameParameters() {
         nicknameSetted = true;
         changePane(nicknameAnchorPane, parametersAnchorPane);
@@ -77,6 +86,9 @@ public class LoginScreenController {
         commonsChoiceBox.getItems().addAll(commons);
     }
 
+    /**
+     * Send the game parameters to the GUI
+     */
     public void sendParameters() {
         Integer numPlayers = playersChoiceBox.getSelectionModel().getSelectedItem();
         Integer numCommons = commonsChoiceBox.getSelectionModel().getSelectedItem();
@@ -85,6 +97,9 @@ public class LoginScreenController {
         }
     }
 
+    /**
+     * Warns the user that the chosen nickname is not valid
+     */
     public void invalidNickname() {
         for(Node n : nicknameAnchorPane.getChildren()) {
             if(Objects.equals(n.getId(), "insertNickText")) {
@@ -96,6 +111,11 @@ public class LoginScreenController {
         }
     }
 
+    /**
+     * Tells the user that the nickname was accepted
+     * @param nPlayers
+     * @param lobby
+     */
     public void nicknameAccepted(int nPlayers, Map<String, Boolean> lobby) {
         nicknameSetted = true;
         Platform.runLater(() -> {
@@ -114,6 +134,12 @@ public class LoginScreenController {
         });
     }
 
+    /**
+     * Tells the user that the lobby was created
+     *
+     * @param nPlayers number of players
+     * @param lobby the created lobby
+     */
     public void lobbyCreated(int nPlayers, Map<String, Boolean> lobby) {
         Platform.runLater(() -> {
             changePane(parametersAnchorPane, waitAnchorPane);
@@ -131,23 +157,41 @@ public class LoginScreenController {
         });
     }
 
+    /**
+     * Tells the user that it's waiting for a lobby
+     */
     public void waitForLobby() {
         insertNickText.setVisible(false);
         waitForLobbyText.setVisible(true);
     }
 
+    /**
+     * Tells the user that he just rejoined a past game
+     */
     public void rejoinedMatch() {
         changePane(nicknameAnchorPane, rejoinedAnchorPane);
     }
 
+    /**
+     * Tells the user that the chosen nickname is invalid
+     */
     public void invalidPlayerNickname() {
         changePane(nicknameAnchorPane, impossibleEventAnchorPane);
     }
 
+    /**
+     * Set the gui of the game
+     * @param gui the gui of the game
+     */
     public void setGui(GraphicUserInterface gui) {
         this.gui = gui;
     }
 
+    /**
+     * Change a GUI pane from the old to the new one
+     * @param oldAP old pane to be changed
+     * @param newAP new pane to be set
+     */
     public void changePane(AnchorPane oldAP, AnchorPane newAP) {
         oldAP.setDisable(true);
         oldAP.setVisible(false);
@@ -155,6 +199,9 @@ public class LoginScreenController {
         newAP.setVisible(true);
     }
 
+    /**
+     * Warns the user that the parameters for the game that he provided are wrong
+     */
     public void wrongParameters() {
         Platform.runLater(() -> {
             FXMLLoader loader = new FXMLLoader(ClassLoader.getSystemResource("fxml/WrongParameters.fxml"));
@@ -171,18 +218,31 @@ public class LoginScreenController {
         });
     }
 
+    /**
+     * Tells the user that a player has been restored
+     */
     public void playerRestored() {
         changePane(nicknameAnchorPane, playerRestoredAnchorPane);
     }
 
+    /**
+     * Tells the user that the lobby has been restored
+     */
     public void lobbyRestored() {
         changePane(nicknameAnchorPane, lobbyRestoredAnchorPane);
     }
 
+    /**
+     * Tells the user that the lobby is full
+     */
     public void fullLobby() {
         changePane(nicknameAnchorPane, fullLobbyAnchorPane);
     }
 
+    /**
+     * Exit from the GUI of the game
+     * @param gui
+     */
     public void exit(GraphicUserInterface gui) {
         if(nicknameSetted) {
             gui.exit();
@@ -192,6 +252,10 @@ public class LoginScreenController {
         }
     }
 
+    /**
+     * Tells the user that a user has just connected
+     * @param nickname nickname of the connected user
+     */
     public void userConnected(String nickname) {
         Platform.runLater(() -> {
             String text = lobbyLabel.getText();
@@ -201,6 +265,10 @@ public class LoginScreenController {
         });
     }
 
+    /**
+     * Tells the user that another user has disconnected from the lobby
+     * @param nickname nickname of the disconnected user
+     */
     public void disconnectedFromLobby(String nickname) {
         Platform.runLater(() ->{
             String text = lobbyLabel.getText();
@@ -218,6 +286,11 @@ public class LoginScreenController {
         });
     }
 
+    /**
+     * Tells the user that another player rejoined the game
+     *
+     * @param nickname nickname of the player that rejoined the game
+     */
     public void userRejoined(String nickname) {
         Platform.runLater(() ->{
             String text = lobbyLabel.getText();

@@ -36,7 +36,9 @@ import java.io.IOException;
 import java.net.URISyntaxException;
 import java.util.*;
 
-
+/**
+ * GameScreenController controls the game screen in the client's GUI.
+ */
 public class GameScreenController {
 
     private final static double OFFSET = 13.0;
@@ -98,23 +100,42 @@ public class GameScreenController {
     @FXML
     private Label turnLabel;
 
+    /**
+     * Initialize the game screen
+     */
     public void initialize() {
         chatVBox.setStyle("-fx-background-color: #442211;");
     }
 
+    /**
+     * Save the gui value
+     *
+     * @param gui the gui to save
+     */
     public void setGui(GraphicUserInterface gui) {
         this.gui = gui;
     }
 
+    /**
+     * Set the text displaying the user nickname and his points
+     */
     public void setPlayerText(String nickname, int points) {
         String text = nickname + " - Total points: " + points;
         playerText.setText(text);
     }
 
+    /**
+     * Set the user personal target card
+     *
+     * @param personalNumber the number of the personal target card
+     */
     public void setPersonalTargetCard(int personalNumber) throws URISyntaxException, IOException {
         this.personalGoalImage = new Image(Objects.requireNonNull(ClassLoader.getSystemResourceAsStream("images/personal/personal" + personalNumber + ".png")));
     }
 
+    /**
+     * Shows the personal target card to the user
+     */
     public void showPersonalTargetCard() {
         Platform.runLater(() -> {
             FXMLLoader loader = new FXMLLoader(ClassLoader.getSystemResource("fxml/PersonalGoal.fxml"));
@@ -132,12 +153,22 @@ public class GameScreenController {
         });
     }
 
+    /**
+     * Set the common target card(s) of the game
+     *
+     * @param commonTargetCardName the name of the common target card
+     * @throws FileNotFoundException if the image file for the common goal or token is not found
+     * @throws URISyntaxException if there is a syntax error in the URI of the image file
+     */
     public void setCommonTargetCard(List<String> commonTargetCardName) throws URISyntaxException, FileNotFoundException {
 
         this.commonGoalNames = commonTargetCardName;
         this.onlyOneCommon = this.commonGoalNames.size() == 1;
     }
 
+    /**
+     * Shows the common target card(s) of the game
+     */
     public void showCommonTargetCard() {
         Platform.runLater(() -> {
             FXMLLoader loader = new FXMLLoader(ClassLoader.getSystemResource("fxml/CommonGoal.fxml"));
@@ -155,6 +186,9 @@ public class GameScreenController {
         });
     }
 
+    /**
+     * Send a message in the chat
+     */
     public void sendInChat() {
         String message = chatMessageTextArea.getText();
         if(message != null && !message.equals("")) {
@@ -163,6 +197,9 @@ public class GameScreenController {
         }
     }
 
+    /**
+     * Shows other players shelfs
+     */
     public void showOtherPlayers() {
         Platform.runLater(() -> {
             FXMLLoader loader = new FXMLLoader(ClassLoader.getSystemResource("fxml/OtherPlayers.fxml"));
@@ -181,6 +218,13 @@ public class GameScreenController {
         });
     }
 
+    /**
+     * Add a message to the chat
+     *
+     * @param message the message to send
+     * @param sender the sender of the message
+     * @param localDateTime the date and time of when the message was sent
+     */
     public void addMessageInChat(String message, String sender, String localDateTime) {
         String messageText = localDateTime + "\n" + sender + ": " + message;
         Label newMsg = new Label(messageText);
@@ -194,6 +238,12 @@ public class GameScreenController {
         });
     }
 
+    /**
+     * Initialize the game screen
+     *
+     * @param board array of item representing the board
+     * @param bitMask array of boolean representing the available spots on the board
+     */
     public void setBoardItems(Item[][] board, boolean[][] bitMask) throws IOException, URISyntaxException {
         this.boardMatrx = board;
         for(int i = 0; i < BOARD_DIM; i++) {
@@ -227,6 +277,10 @@ public class GameScreenController {
         }
     }
 
+    /**
+     * Gives back a random item image based on the color given
+     * @param color color representing the item
+     */
     public Image randomItemImageByColors(ItemColor color) throws URISyntaxException, IOException { // todo PROBLEMI
         Random random = new Random();
         int rand = random.nextInt(3);
@@ -254,6 +308,14 @@ public class GameScreenController {
         return img;
     }
 
+    /**
+     * Sets parameters for the player
+     *
+     * @param nicknameToShelfMap map with each user nickname and his shelf
+     * @param nicknameToPointsMap map with each user nickname and his points
+     * @param playerNickname nickname of the player
+     * @param firstPlayer nickname of the first player
+     */
     public void setOtherPlayersParameters(Map<String, Item[][]> nicknameToShelfMap, Map<String, Integer> nicknameToPointsMap, String playerNickname, String firstPlayer) {
         this.nicknameToShelfMap = nicknameToShelfMap;
         this.nicknameToPointsMap = nicknameToPointsMap;
@@ -261,6 +323,11 @@ public class GameScreenController {
         this.firstPlayer = firstPlayer;
     }
 
+    /**
+     * Method to add in to the selected items
+     *
+     * @param n node selected
+     */
     public void addInSelected(Node n) {
         int col = gui.getPositionPickedSize();
         if(col < 3 && gui.isYourTurn() && n.getOpacity() == 1.0) {
@@ -290,6 +357,11 @@ public class GameScreenController {
         }
     }
 
+    /**
+     * Method to remove from the selected items
+     *
+     * @param n node selected
+     */
     public void removeFromSelected(Node n) {
         int col = 0;
 
@@ -315,6 +387,12 @@ public class GameScreenController {
         n.setOpacity(1.0);
     }
 
+    /**
+     * Sets up the shelf for the player in the GUI
+     *
+     * @throws FileNotFoundException if the image file for the common goal or token is not found
+     * @throws URISyntaxException if there is a syntax error in the URI of the image file
+     */
     public void setupPlayerShelf() throws URISyntaxException, FileNotFoundException {
         for(int i = 0; i < SHELF_ROWS; i++) {
             for(int j = 0; j < SHELF_COL; j++) {
@@ -344,6 +422,12 @@ public class GameScreenController {
         }
     }
 
+    /**
+     * Sets up the "your turn" panel
+     * @param name name of the current user
+     * @param set boolean indicating if it is the player's turn
+     * @param waitForOtherPlayers boolean indicating if the game is waiting for other players
+     */
     public void setYourTurnPane(boolean set, String name, boolean waitForOtherPlayers) {
         if(!waitForOtherPlayers) {
             if (set) {
@@ -357,6 +441,11 @@ public class GameScreenController {
         }
     }
 
+    /**
+     * Swaps the picked items in the GUI
+     *
+     * @param n node of the items to switch
+     */
     public void swapPickedItems(Node n) {
         if(swapCols.size() == 0) {
             swapCols.add(n);
@@ -373,14 +462,29 @@ public class GameScreenController {
         }
     }
 
+    /**
+     * Gets the index of the column to swap given the node
+     * @param n
+     * @return
+     */
     public int getSwapColIndex(Node n) {
         return GridPane.getColumnIndex(n);
     }
 
+    /**
+     * Clear the board
+     */
     public void clearBoard() {
         boardGridPane.getChildren().clear();
     }
 
+    /**
+     * Sets up the personal shelf
+     *
+     * @param shelf the shelf to be set up
+     * @throws IOException
+     * @throws URISyntaxException
+     */
     public void setPersonalShelf(Item[][] shelf) throws IOException, URISyntaxException {
         for(int i = 0; i < SHELF_ROWS; i++) {
             for(int j = 0; j < SHELF_COL; j++) {
@@ -398,6 +502,9 @@ public class GameScreenController {
         }
     }
 
+    /**
+     * Warns the user that an incorrect move was made
+     */
     public void incorrectMove() {
         for(Node n: boardGridPane.getChildren()) {
             if(n.getOpacity() != 1.0) {
@@ -419,6 +526,9 @@ public class GameScreenController {
         });
     }
 
+    /**
+     * Warns the user that there's been a wrong receiver
+     */
     public void wrongReceiver() {
         Platform.runLater(() -> {
             FXMLLoader loader = new FXMLLoader(ClassLoader.getSystemResource("fxml/WrongReceiver.fxml"));
@@ -435,11 +545,17 @@ public class GameScreenController {
         });
     }
 
+    /**
+     * Set the chair as visible in the GUI
+     */
     public void setChair() {
         chairImageView.setDisable(false);
         chairImageView.setVisible(true);
     }
 
+    /**
+     * Shows the tokens of the user
+     */
     public void yourTokens() {
         Platform.runLater(() -> {
             FXMLLoader loader = new FXMLLoader(ClassLoader.getSystemResource("fxml/YourTokens.fxml"));
@@ -461,20 +577,41 @@ public class GameScreenController {
         });
     }
 
+    /**
+     * Removes the end game token
+     */
     public void removeEndGameToken() {
         endGameTokenImageView.setDisable(true);
         endGameTokenImageView.setVisible(false);
     }
 
+    /**
+     * Sets the tokens of the player
+     *
+     * @param commonsToTokens map of the common cards and their tokens
+     * @param playerTokens list of the player's tokens
+     */
     public void setTokens(Map<String, List<ScoringToken>> commonsToTokens, List<ScoringToken> playerTokens) {
         this.commonsToTokens = commonsToTokens;
         this.playerTokens = playerTokens;
     }
 
+    /**
+     * Sets the endgame token based on the given token
+     * @param endGameToken token to be set
+     */
     public void setEndGameToken(EndGameToken endGameToken) {
         this.endGameToken = endGameToken;
     }
 
+    /**
+     * Gets a children in the grid pane using the coordinates given
+     *
+     * @param gp gridpane to analyze
+     * @param row row coordinate
+     * @param col column coordinate
+     * @return the node of the child
+     */
     public Node getGridPaneChildrenByCoordinate(GridPane gp, int row, int col) {
         for(Node n : gp.getChildren()) {
             if(GridPane.getColumnIndex(n) == col && GridPane.getRowIndex(n) == row) {
@@ -484,6 +621,12 @@ public class GameScreenController {
         return null;
     }
 
+    /**
+     * Swaps two image views in the grid pane
+     *
+     * @param one node of the first image view to swap
+     * @param two node of the second image view to swap
+     */
     public void swapTwoImageViewInGridPane(Node one, Node two) {
         ImageView oneImgv = (ImageView) one;
         ImageView twoImgv = (ImageView) two;
@@ -492,6 +635,11 @@ public class GameScreenController {
         twoImgv.setImage(tmp);
     }
 
+    /**
+     * Notify that the player has disconnected
+     *
+     * @param nickname nickname of the disconnected user
+     */
     public void playerDisconnected(String nickname) {
         if(!notifyIsOn) {
             notifyIsOn = true;
@@ -515,6 +663,11 @@ public class GameScreenController {
         }
     }
 
+    /**
+     * Notify that the player has reconnected
+     *
+     * @param nickname nickname of the disconnected user
+     */
     public void playerReconnected(String nickname) {
         if(!notifyIsOn) {
             notifyIsOn = true;
@@ -538,6 +691,11 @@ public class GameScreenController {
         }
     }
 
+    /**
+     * Sets the takeable items on the gridpane
+     *
+     * @param takeableItems boolean array representing the position of the takeable items
+     */
     public void setTakeableItems(boolean[][] takeableItems) {
         this.takeableItems = takeableItems;
         for(int i = 0; i < BOARD_DIM; i++) {
@@ -557,6 +715,9 @@ public class GameScreenController {
         }
     }
 
+    /**
+     * Open the menu in the GUI
+     */
     public void openMenu() {
         Platform.runLater(() -> {
             FXMLLoader loader = new FXMLLoader(ClassLoader.getSystemResource("fxml/Menu.fxml"));
@@ -575,6 +736,9 @@ public class GameScreenController {
         });
     }
 
+    /**
+     * Shows the "wait for other players" page
+     */
     public void waitForOtherPlayers() {
         Platform.runLater(() -> {
             FXMLLoader loader = new FXMLLoader(ClassLoader.getSystemResource("fxml/LastUserAlreadyMadeYourMove.fxml"));

@@ -19,6 +19,9 @@ import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 
+/**
+ * OtherPlayersController controls the other players screen in the client's GUI.
+ */
 public class OtherPlayersController {
 
     @FXML
@@ -78,6 +81,9 @@ public class OtherPlayersController {
     private final List<GridPane> twoGridPanes = new ArrayList<>(2);
     private final List<GridPane> threeGridPanes = new ArrayList<>(3);
 
+    /**
+     * Initialize the other players screen
+     */
     public void initialize() {
         twoGridPanes.add(twoShelfGridPane_L);
         twoGridPanes.add(twoShelfGridPane_R);
@@ -86,7 +92,15 @@ public class OtherPlayersController {
         threeGridPanes.add(threeShelfGridPane_R);
     }
 
-
+    /**
+     * Sets the parameters for the other players controller based on the given parameters
+     *
+     * @param nickToShelf map with nicknames and their shelfs
+     * @param nickToPoints map with nicknames and their points
+     * @param playerNick nickname of the current player
+     * @throws URISyntaxException
+     * @throws IOException
+     */
     public void setParameters(Map<String, Item[][]> nickToShelf, Map<String, Integer> nickToPoints, String playerNick) throws URISyntaxException, IOException {
         Image shelf = new Image(Objects.requireNonNull(ClassLoader.getSystemResourceAsStream("images/shelf1.png")));
         switch (nickToShelf.size()) {
@@ -184,6 +198,10 @@ public class OtherPlayersController {
         }
     }
 
+    /**
+     * Sets the game screen controller
+     * @param gsc
+     */
     public void setGsc(GameScreenController gsc) {
         this.gsc = gsc;
     }

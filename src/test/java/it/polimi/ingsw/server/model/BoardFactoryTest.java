@@ -15,7 +15,7 @@ import java.util.List;
 import static org.junit.jupiter.api.Assertions.*;
 
 /**
-* Class to fest the BoardFactory class
+* Class to test the BoardFactory class
 */
 class BoardFactoryTest {
 
@@ -31,12 +31,12 @@ class BoardFactoryTest {
     }
 
 /**
-* Test if the hasfreeside returns false with inout 4,4
+* Test if the hasFreeSide returns false with input 4,4
 */
     @Test
     public void testHasFreeSideForFalse() { assertFalse(board.hasFreeSide(4,4)); }
 /**
-* Test if the HasFreeSide method returns trur with input 3,6
+* Test if the HasFreeSide method returns true with input 3,6
 */
     @Test
     public void testHasFreeSideForTrue()  {  assertTrue(board.hasFreeSide(3,6));  }
@@ -119,40 +119,58 @@ class BoardFactoryTest {
     }
 
 /**
-* Test if getBit
+* Test if getBitMaskElement return true on an available element
 */
     @Test
     public void testGetBitMaskElement() {
         assert(board.getBitMaskElement(4,4));
     }
 
+    /**
+     * Test if getBitMaskElement return true on an unavailable element
+     */
     @Test
     public void testGetBitMaskElementForFalse() {
         assert(!board.getBitMaskElement(4,0));
     }
 
+    /**
+     * Test if getBoardMatrixElement return the expected item
+     */
     @Test
     public void testGetBoardMatrixElement(){
         board.setBoardMatrixElement(new Item(ItemColor.GREEN),3,3);
         assertEquals(ItemColor.GREEN,board.getBoardMatrixElement(3,3).getColor());
     }
 
+    /**
+     * Another test to check if getBitMaskElement return true on an available element
+     */
     @Test
     public void testSetBoardMatrixElement(){
         board.setBoardMatrixElement(new Item(ItemColor.LIGHT_BLUE),6,4);
         assertEquals(ItemColor.LIGHT_BLUE,board.getBoardMatrixElement(6,4).getColor());
     }
 
+    /**
+     * Test if getBoardNumberOfRows return the correct amount of rows
+     */
     @Test
     public void testGetBoardNumberOfRows(){
         assertEquals(ROWS,board.getBoardNumberOfRows());
     }
 
+    /**
+     * Test if getBoardNumberOfRows return the correct amount of columns
+     */
     @Test
     public void testGetBoardNumberOfColumns(){
         assertEquals(COLUMNS,board.getBoardNumberOfColumns());
     }
 
+    /**
+     * Test if checkMove return true on a correct move
+     */
     @Test
     public void testCheckMoveForTrue(){
         List<int[]> itemsPicked= new ArrayList<>();
@@ -161,6 +179,9 @@ class BoardFactoryTest {
         assert (board.checkMove(itemsPicked));
     }
 
+    /**
+     * Test if checkMove return false on a incorrect move
+     */
     @Test
     public void testCheckMoveForFalseForFreeSide(){
         List<int[]> itemsPicked= new ArrayList<>();
@@ -169,6 +190,9 @@ class BoardFactoryTest {
         assert (!board.checkMove(itemsPicked));
     }
 
+    /**
+     * Test if checkMove return false on a incorrect move with too many items
+     */
     @Test
     public void testCheckMoveForTooManyItems(){
         List<int[]> itemsPicked= new ArrayList<>();
@@ -179,6 +203,9 @@ class BoardFactoryTest {
         assert (!board.checkMove(itemsPicked));
     }
 
+    /**
+     * Test if checkMove return false on a incorrect move with items not in line
+     */
     @Test
     public void testCheckMoveForFalseForNotInLine(){
         List<int[]> itemsPicked= new ArrayList<>();
@@ -187,6 +214,9 @@ class BoardFactoryTest {
         assert (!board.checkMove(itemsPicked));
     }
 
+    /**
+     * Test if checkMove return false on a incorrect move with items not nearby
+     */
     @Test
     public void testCheckMoveForFalseForNotNearby(){
         List<int[]> itemsPicked= new ArrayList<>();
@@ -195,17 +225,26 @@ class BoardFactoryTest {
         assert (!board.checkMove(itemsPicked));
     }
 
+    /**
+     * Test if the method getBoardMatrixElement return the expected element
+     */
     @Test
     public void testGetBoardMatrix(){
         board.setBoardMatrixElement(new Item(ItemColor.GREEN),1,2);
         assertEquals(board.getBoardMatrix()[1][2],board.getBoardMatrixElement(1,2));
     }
 
+    /**
+     * Test if the method getBitmaskElement return the expected element
+     */
     @Test
     public void testGetBitmask(){
         assertEquals(board.getBitMask()[1][2],board.getBitMaskElement(1,2));
     }
 
+    /**
+     * Test if the method setBitmask set the bitmask correctly
+     */
     @Test
     public void testSetBitMask(){
         boolean[][] bitMask = new boolean[ROWS][COLUMNS];
@@ -213,6 +252,9 @@ class BoardFactoryTest {
         assertEquals(board.getBitMask(),bitMask);
     }
 
+    /**
+     * Test if the method setBoardMatrix set the bitmask correctly
+     */
     @Test
     public void testSetBoardMatrix(){
         Item[][] boardMatrix=new Item[ROWS][COLUMNS];
