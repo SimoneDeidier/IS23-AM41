@@ -75,6 +75,8 @@ if you want to ***start the server***, oterwise:
 java -jar MyShelfie-CLIENT-AM41.jar
 ```
 
+> Warning! In the case of **Aarch64 architecture** start *MyShelfie-CLIENT-Aarch64.jar*, in the case of **x86/x64 architecture** start *MyShelfie-CLIENT-x86.jar* (*unfortunately, the JavaFX libraries in the JARs are not architecture-independent*)!
+
 if you want to ***run the client***.
 
 Both the server and the client *require certain connection and user interface parameters to be entered at start-up*, which can be provided directly from the command line as parameters to the commands listed above. Below is a **table of commands** with descriptions:
