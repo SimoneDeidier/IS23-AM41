@@ -131,3 +131,9 @@ java -jar MyShelfie-CLIENT-AM41.jar -c tcp -u gui --ipaddr 192.168.1.12 -p 8888
 ![Screenshot of the end game scene](readme-resources/end-game.png)
 
 > *In-game screen of the end game scene.*
+
+## Slideshow
+
+A short slideshow summarising the key points of this project is available [here](slideshow/Slideshow-IS23-AM41.pdf).
+
+## Final evaluation
