@@ -33,7 +33,7 @@
         <artifactId>maven-assembly-plugin</artifactId>
         <version>3.4.2</version>
         <configuration>
-          <finalName>MyShelfie-CLIENT</finalName>
+          <finalName>MyShelfie-SERVER-AM41</finalName>
           <outputDirectory>${project.basedir}/jar</outputDirectory>
           <appendAssemblyId>false</appendAssemblyId>
           <descriptorRefs>
@@ -41,7 +41,7 @@
           </descriptorRefs>
           <archive>
             <manifest>
-              <mainClass>it.polimi.ingsw.client.Client</mainClass>
+              <mainClass>it.polimi.ingsw.server.Server</mainClass>
             </manifest>
           </archive>
         </configuration>

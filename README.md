@@ -137,3 +137,5 @@ java -jar MyShelfie-CLIENT-AM41.jar -c tcp -u gui --ipaddr 192.168.1.12 -p 8888
 A short slideshow summarising the key points of this project is available [here](slideshow/Slideshow-IS23-AM41.pdf).
 
 ## Final evaluation
+
+Final project grade proposed by the professor was: ***30L/30***.
