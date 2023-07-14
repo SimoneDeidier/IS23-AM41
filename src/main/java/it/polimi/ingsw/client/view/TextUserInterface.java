@@ -39,6 +39,8 @@ public class TextUserInterface implements UserInterface{
     private volatile boolean closeTUI = false;
     private String CommunicationText = "";
     private boolean onMainGamePage = true;
+    private String command;
+    private boolean thread_flag;
 
     /**
      * Starting method to run the TUI
@@ -408,130 +410,145 @@ public class TextUserInterface implements UserInterface{
         /**
          * Scanner for user input
          */
-        scanner = new Scanner(System.in);
-        String command = scanner.nextLine();
-        switch (command) {
-            case "/tokens" -> {
-                onMainGamePage = false;
-                tokensPage();
-            }
-            case "/personal" -> {
-                onMainGamePage = false;
-                personalGoalsPage();
-            }
-            case "/common" -> {
-                onMainGamePage = false;
-                commonGoalsPage();
-            }
-            case "/other" -> {
-                onMainGamePage = false;
-                otherPlayersPage();
-            }
-            case "/chat" -> {
-                onMainGamePage = false;
-                chat();
-            }
-            case "/swap" -> {
-                if(isYourTurn()) {
-                    System.out.print("Insert the index (0, 1 or 2) of the first column you want to swap: ");
-                    int first = scanner.nextInt();
-                    System.out.print("Insert the index (0, 1 or 2) of the second column you want to swap: ");
-                    int second = scanner.nextInt();
-                    if(first < getPositionPickedSize() && second < getPositionPickedSize() && first != second){
-                        Collections.swap(selectedItems, first, second);
-                        Collections.swap(selectedItemsCoordinates, first, second);
-                        swapColsTUI(first, second);
-                        mainGamePage();
-                    } else {
-                        tileNotAvailable();
-                    }
-                } else {
-                    forbiddenInput();
+        if(!thread_flag) {
+            thread_flag = true;
+            scanner = new Scanner(System.in);
+            command = scanner.nextLine();
+            switch (command) {
+                case "/tokens" -> {
+                    thread_flag = false;
+                    onMainGamePage = false;
+                    tokensPage();
                 }
-            }
-            case "/column" -> {
-                if(isYourTurn()) {
-                    System.out.print("Insert the index of the column you want to insert the tiles into: ");
-                    int column = scanner.nextInt();
-                    if(column >= 0 && column < 5){
-                        if(columnHasEnoughSpace(column)){
-                            sendMove(column);
+                case "/personal" -> {
+                    thread_flag = false;
+                    onMainGamePage = false;
+                    personalGoalsPage();
+                }
+                case "/common" -> {
+                    thread_flag = false;
+                    onMainGamePage = false;
+                    commonGoalsPage();
+                }
+                case "/other" -> {
+                    thread_flag = false;
+                    onMainGamePage = false;
+                    otherPlayersPage();
+                }
+                case "/chat" -> {
+                    thread_flag = false;
+                    onMainGamePage = false;
+                    chat();
+                }
+                case "/swap" -> {
+                    thread_flag = false;
+                    if (isYourTurn()) {
+                        System.out.print("Insert the index (0, 1 or 2) of the first column you want to swap: ");
+                        int first = scanner.nextInt();
+                        System.out.print("Insert the index (0, 1 or 2) of the second column you want to swap: ");
+                        int second = scanner.nextInt();
+                        if (first < getPositionPickedSize() && second < getPositionPickedSize() && first != second) {
+                            Collections.swap(selectedItems, first, second);
+                            Collections.swap(selectedItemsCoordinates, first, second);
+                            swapColsTUI(first, second);
+                            mainGamePage();
+                        } else {
+                            tileNotAvailable();
+                        }
+                    } else {
+                        forbiddenInput();
+                    }
+                }
+                case "/column" -> {
+                    thread_flag = false;
+                    if (isYourTurn()) {
+                        System.out.print("Insert the index of the column you want to insert the tiles into: ");
+                        int column = scanner.nextInt();
+                        if (column >= 0 && column < 5) {
+                            if (columnHasEnoughSpace(column)) {
+                                sendMove(column);
+                                selectedItems.clear();
+                            } else {
+                                forbiddenInput();
+                            }
                         } else {
                             forbiddenInput();
                         }
                     } else {
                         forbiddenInput();
                     }
-                } else {
-                    forbiddenInput();
                 }
-            }
-            case "/select" -> {
-                if(isYourTurn()) {
-                    if(getPositionPickedSize()<3) {
-                        int[] el = new int[2];
-                        while (!validInput) {
-                            try {
-                                System.out.print("Insert the row coordinate (from 0 to 8) of the tile you want to select: ");
-                                el[0] = scanner.nextInt();
-                                validInput = true;
-                            } catch (InputMismatchException e) {
-                                System.out.print("Invalid input! Insert the row coordinate (from 0 to 8) of the tile you want to select: ");
-                                scanner.nextLine(); // Clear the invalid input from the scanner
+                case "/select" -> {
+                    thread_flag = false;
+                    if (isYourTurn()) {
+                        if (getPositionPickedSize() < 3) {
+                            int[] el = new int[2];
+                            while (!validInput) {
+                                try {
+                                    System.out.print("Insert the row coordinate (from 0 to 8) of the tile you want to select: ");
+                                    el[0] = scanner.nextInt();
+                                    if(el[0] < 0 || el[0] > 8) throw new InputMismatchException();
+                                    validInput = true;
+                                } catch (InputMismatchException e) {
+                                    System.out.print("Invalid input! Insert the row coordinate (from 0 to 8) of the tile you want to select: ");
+                                    scanner.nextLine(); // Clear the invalid input from the scanner
+                                }
                             }
-                        }
-                        validInput = false;
-                        while (!validInput) {
-                            try {
-                                System.out.print("Insert the column coordinate (from 0 to 8) of the tile you want to select: ");
-                                el[1] = scanner.nextInt();
-                                validInput = true;
-                            } catch (InputMismatchException e) {
-                                System.out.print("Invalid input! Insert the column coordinate (from 0 to 8) of the tile you want to select: ");
-                                scanner.nextLine(); // Clear the invalid input from the scanner
+                            validInput = false;
+                            while (!validInput) {
+                                try {
+                                    System.out.print("Insert the column coordinate (from 0 to 8) of the tile you want to select: ");
+                                    el[1] = scanner.nextInt();
+                                    if(el[1] < 0 || el[1] > 8) throw new InputMismatchException();
+                                    validInput = true;
+                                } catch (InputMismatchException e) {
+                                    System.out.print("Invalid input! Insert the column coordinate (from 0 to 8) of the tile you want to select: ");
+                                    scanner.nextLine(); // Clear the invalid input from the scanner
+                                }
                             }
-                        }
-                        if(boardBitMask[el[0]][el[1]] && !selectedBoardBitMask[el[0]][el[1]]){
-                            selectedBoardBitMask[el[0]][el[1]] = true;
-                            selectedItems.add(boardItems[el[0]][el[1]]);
-                            selectedItemsCoordinates.add(el);
-                            insertInPositionPicked(el);
-                            mainGamePage();
-                        } else {
-                            tileNotAvailable();
-                        }
-                    }
-                } else {
-                    forbiddenInput();
-                }
-            }
-            case "/remove" -> {
-                if(isYourTurn()) {
-                    if(getPositionPickedSize()>0) {
-                        System.out.print("Insert the index (0, 1 or 2) of the item you want to remove: ");
-                        int itemToRemove = scanner.nextInt();
-                        if(selectedItems.size()>itemToRemove){
-                            int[] el = selectedItemsCoordinates.get(itemToRemove);
-                            selectedItemsCoordinates.remove(itemToRemove);
-                            selectedItems.remove(itemToRemove);
-                            selectedBoardBitMask[el[0]][el[1]] = false;
-                            removeInPositionPicked(itemToRemove);
-                            mainGamePage();
-                        } else {
-                            tileNotAvailable();
+                            if (boardBitMask[el[0]][el[1]] && !selectedBoardBitMask[el[0]][el[1]]) {
+                                selectedBoardBitMask[el[0]][el[1]] = true;
+                                selectedItems.add(boardItems[el[0]][el[1]]);
+                                selectedItemsCoordinates.add(el);
+                                insertInPositionPicked(el);
+                                mainGamePage();
+                            } else {
+                                tileNotAvailable();
+                            }
                         }
                     } else {
                         forbiddenInput();
                     }
-                } else {
+                }
+                case "/remove" -> {
+                    thread_flag = false;
+                    if (isYourTurn()) {
+                        if (getPositionPickedSize() > 0) {
+                            System.out.print("Insert the index (0, 1 or 2) of the item you want to remove: ");
+                            int itemToRemove = scanner.nextInt();
+                            if (selectedItems.size() > itemToRemove) {
+                                int[] el = selectedItemsCoordinates.get(itemToRemove);
+                                selectedItemsCoordinates.remove(itemToRemove);
+                                selectedItems.remove(itemToRemove);
+                                selectedBoardBitMask[el[0]][el[1]] = false;
+                                removeInPositionPicked(itemToRemove);
+                                mainGamePage();
+                            } else {
+                                tileNotAvailable();
+                            }
+                        } else {
+                            forbiddenInput();
+                        }
+                    } else {
+                        forbiddenInput();
+                    }
+                }
+                default -> {
+                    thread_flag = false;
                     forbiddenInput();
                 }
             }
-            default -> {
-                forbiddenInput();
-            }
         }
-
     }
 
     /**
@@ -1229,6 +1246,7 @@ public class TextUserInterface implements UserInterface{
             this.isYourTurn = Objects.equals(newView.getActivePlayer(), this.nickname);
             this.newView = newView;
             if(onMainGamePage){
+                command = "";
                 mainGamePage();
             }
         }).start();

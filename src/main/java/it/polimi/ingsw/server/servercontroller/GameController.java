@@ -44,7 +44,7 @@ public class GameController {
     private final Server server;
     private boolean gameOver;
     private static final int THREAD_SLEEP_MILLISECONDS = 1000;
-    private static final int TIMER_DURATION_MILLISECONDS = 30000;
+    private static final int TIMER_DURATION_MILLISECONDS = 10000;
     private Timer timer;
     private boolean timerIsRunning = false;
     private boolean lastConnectedUserMadeHisMove = false;
@@ -381,6 +381,19 @@ public class GameController {
     }
 
     /**
+     * Changes the player connection status.
+     *
+     * @param nickname the nickname of the player
+     */
+    public void changePlayerConnectionStatus(String nickname, boolean status){
+        for (Player player : playerList) {
+            if (player.getNickname().equals(nickname)) {
+                player.setConnected(status);
+                break;
+            }
+        }
+    }
+    /**
      * Creates the lobby of the game and sets the lobby parameters.
      *
      * @param maxPlayerNumber The maximum number of players
@@ -469,7 +482,7 @@ public class GameController {
         else if (availableSlots == -2) {
             throw new WaitForLobbyParametersException();
         }
-        else if(checkForDisconnectedPlayer(nickname)) {
+        else if(checkForDisconnectedPlayer(nickname) && !state.getClass().equals(WaitingForSavedGameState.class)) {
             // check if the connection is from a disconnected user
             throw new RejoinRequestException();
         }

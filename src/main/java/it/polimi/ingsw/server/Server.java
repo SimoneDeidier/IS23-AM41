@@ -450,10 +450,10 @@ public class Server implements InterfaceServer {
      */
     @Override
     public void voluntaryDisconnection(String nickname) throws RemoteException {
+        clientMapRMI.remove(nickname); //stops the ping from the server towards that user
         controller.notifyOfDisconnectionAllUsers(nickname);
         controller.changePlayerConnectionStatus(nickname);
-        clientMapRMI.remove(nickname); //stops the ping from the server towards that user
-        if(controller.getActivePlayer().getNickname().equals(nickname)){
+        if(controller.getActivePlayer().getNickname().equals(nickname) && controller.countConnectedUsers() != 0){
             controller.changeActivePlayer();
             controller.updateView();
         }
@@ -484,7 +484,7 @@ public class Server implements InterfaceServer {
                         } catch (RemoteException | NullPointerException e) {
                             System.out.println("Client " + nickname + " disconnesso");
                             controller.notifyOfDisconnectionAllUsers(nickname);
-                            controller.changePlayerConnectionStatus(nickname);
+                            controller.changePlayerConnectionStatus(nickname,false);
                             if (controller.getState().getClass().equals(RunningGameState.class)
                                     && controller.getActivePlayer().getNickname().equals(nickname)) {
                                 controller.changeActivePlayer();
