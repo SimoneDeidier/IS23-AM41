@@ -43,7 +43,7 @@ The first step for this course is to design the *UML* of the game with the manda
 
 ## *Peer-reviews*
 
-During this course, we will have to review some documents of other's groups. Our group will also be reviewd, and to help other students understanding our works and our ideas, we will create some *"description documents"*. All the documents (*peer-reviews and description*) are published, in fact:
+During this course, we will have to review some documents of other's groups. Our group will also be reviewed, and to help other students understanding our works and our ideas, we will create some *"description documents"*. All the documents (*peer-reviews and description*) are published, in fact:
 
 * All the *peer-review documents* are available to read in the ***deliveries/peer-reviews/reviews*** folder.
 * All the *description documents* are available to read in the ***deliveries/peer-reviews/documents*** folder.
